@@ -739,26 +739,22 @@ int openwindow(icon_data *data, int next)
 #ifdef USE_64BIT
 	{
 		UQUAD tmp = (UQUAD)data->info.id_NumBlocks * (UQUAD)data->info.id_BytesPerBlock;
-		tmp >>= 10;
-		ItoaU64(&tmp, buf, sizeof(buf), data->decimal_sep);
+		BytesToString64(&tmp, buf, sizeof(buf), 1, data->decimal_sep);
 	}
 #else
-	Itoa((data->info.id_NumBlocks * data->info.id_BytesPerBlock) >> 10, buf, data->decimal_sep);
+	BytesToString(data->info.id_NumBlocks * data->info.id_BytesPerBlock, buf, 1, data->decimal_sep);
 #endif
-	strcat(buf, "K");
 	SetGadgetValue(data->list, GAD_ICON_SIZE, (IPTR)buf);
 
 // Disk used
 #ifdef USE_64BIT
 	{
 		UQUAD tmp = (UQUAD)data->info.id_NumBlocksUsed * (UQUAD)data->info.id_BytesPerBlock;
-		tmp >>= 10;
-		ItoaU64(&tmp, buf, sizeof(buf), data->decimal_sep);
+		BytesToString64(&tmp, buf, sizeof(buf), 1, data->decimal_sep);
 	}
 #else
-	Itoa((data->info.id_NumBlocksUsed * data->info.id_BytesPerBlock) >> 10, buf, data->decimal_sep);
+	BytesToString(data->info.id_NumBlocksUsed * data->info.id_BytesPerBlock, buf, 1, data->decimal_sep);
 #endif
-	strcat(buf, "K");
 	SetGadgetValue(data->list, GAD_ICON_USED, (IPTR)buf);
 
 // Disk free
@@ -766,15 +762,14 @@ int openwindow(icon_data *data, int next)
 	{
 		UQUAD tmp =
 			((UQUAD)data->info.id_NumBlocks - (UQUAD)data->info.id_NumBlocksUsed) * (UQUAD)data->info.id_BytesPerBlock;
-		tmp >>= 10;
-		ItoaU64(&tmp, buf, sizeof(buf), data->decimal_sep);
+		BytesToString64(&tmp, buf, sizeof(buf), 1, data->decimal_sep);
 	}
 #else
-	Itoa(((data->info.id_NumBlocks - data->info.id_NumBlocksUsed) * data->info.id_BytesPerBlock) >> 10,
-		 buf,
-		 data->decimal_sep);
+	BytesToString((data->info.id_NumBlocks - data->info.id_NumBlocksUsed) * data->info.id_BytesPerBlock,
+				  buf,
+				  1,
+				  data->decimal_sep);
 #endif
-	strcat(buf, "K");
 	SetGadgetValue(data->list, GAD_ICON_FREE, (IPTR)buf);
 
 	// Disk type
