@@ -27,7 +27,7 @@ For more information on Directory Opus for Windows please see:
 static int function_change_get_comment(FunctionHandle *handle, char *file, char *buffer);
 static int function_change_get_protect(FunctionHandle *handle, char *file, ULONG old_prot, unsigned char *masks);
 static int function_change_get_date(FunctionHandle *handle, char *file, struct DateStamp *date);
-static BOOL function_change_date_arg_empty(char *date);
+static BOOL function_change_arg_empty(char *arg);
 
 #ifndef __amigaos3__
 	#pragma pack(2)
@@ -80,8 +80,14 @@ DOPUS_FUNC(function_change)
 			// Comment supplied?
 			if (instruction->funcargs->FA_Arguments[1])
 			{
-				// Copy comment
-				stccpy(data->comment, (char *)instruction->funcargs->FA_Arguments[1], 80);
+				// An empty (or quoted-empty) comment clears the filenote
+				if (function_change_arg_empty((char *)instruction->funcargs->FA_Arguments[1]))
+					data->comment[0] = 0;
+
+				// Otherwise copy the supplied comment
+				else
+					stccpy(data->comment, (char *)instruction->funcargs->FA_Arguments[1], 80);
+
 				handle->inst_flags |= INSTF_NO_ASK;
 			}
 
@@ -140,7 +146,7 @@ DOPUS_FUNC(function_change)
 			if (instruction->funcargs->FA_Arguments[2])
 			{
 				// Null date?
-				if (function_change_date_arg_empty((char *)instruction->funcargs->FA_Arguments[2]))
+				if (function_change_arg_empty((char *)instruction->funcargs->FA_Arguments[2]))
 					DateStamp(&data->date);
 
 				// Otherwise
@@ -761,35 +767,35 @@ static int function_change_get_protect(FunctionHandle *handle, char *file, ULONG
 	return 1;
 }
 
-// Check for an empty date argument, including DATE="" if quotes survive parsing
-static BOOL function_change_date_arg_empty(char *date)
+// Check for an empty argument, including ARG="" if quotes survive parsing
+static BOOL function_change_arg_empty(char *arg)
 {
 	char *end;
 
-	if (!date)
+	if (!arg)
 		return 0;
 
-	while (*date && isspace(*date))
-		++date;
+	while (*arg && isspace(*arg))
+		++arg;
 
-	end = date + strlen(date);
-	while (end > date && isspace(*(end - 1)))
+	end = arg + strlen(arg);
+	while (end > arg && isspace(*(end - 1)))
 		--end;
 
-	if (end == date)
+	if (end == arg)
 		return 1;
 
-	if ((*date == '"' || *date == '\'') && end > date && *(end - 1) == *date)
+	if ((*arg == '"' || *arg == '\'') && end > arg && *(end - 1) == *arg)
 	{
-		++date;
+		++arg;
 		--end;
 
-		while (date < end && isspace(*date))
-			++date;
-		while (end > date && isspace(*(end - 1)))
+		while (arg < end && isspace(*arg))
+			++arg;
+		while (end > arg && isspace(*(end - 1)))
 			--end;
 
-		return (end == date);
+		return (end == arg);
 	}
 
 	return 0;
