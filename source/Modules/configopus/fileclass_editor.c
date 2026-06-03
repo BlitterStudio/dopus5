@@ -699,7 +699,7 @@ void _fileclassed_end_edit(fileclass_ed_data *data, short disable)
 void fileclassed_view_file(fileclass_ed_data *data)
 {
 	struct FileRequester *filereq;
-	struct TagItem tags[4];
+	struct TagItem tags[5];
 
 	// Get requester pointer
 	if (!(filereq = WINREQUESTER(data->window)))
@@ -715,7 +715,9 @@ void fileclassed_view_file(fileclass_ed_data *data)
 	tags[1].ti_Data = (IPTR)GetString(data->new_win.locale, MSG_CLASSED_SELECT_VIEW_FILE);
 	tags[2].ti_Tag = ASLFR_Flags1;
 	tags[2].ti_Data = FRF_PRIVATEIDCMP;
-	tags[3].ti_Tag = TAG_DONE;
+	tags[3].ti_Tag = ASLFR_InitialDrawer;
+	tags[3].ti_Data = (IPTR)"DOpus5:";
+	tags[4].ti_Tag = TAG_DONE;
 
 	// Put window to sleep
 	SetWindowBusy(data->window);

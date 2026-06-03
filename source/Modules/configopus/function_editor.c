@@ -567,8 +567,19 @@ void FunctionEditor(void)
 							tags[2].ti_Data = FRF_DOSAVEMODE | FRF_PRIVATEIDCMP;
 							tags[3].ti_Tag = ASLFR_Flags2;
 							tags[3].ti_Data = FRF_REJECTICONS;
+							char path1[256];
+							BPTR lock1 = Lock("DOpus5:Commands", ACCESS_READ);
+							if (lock1)
+							{
+								NameFromLock(lock1, path1, sizeof(path1));
+								UnLock(lock1);
+							}
+							else
+							{
+								path1[0] = 0;
+							}
 							tags[4].ti_Tag = (gadgetid == MENU_FUNCED_EXPORT_CMD) ? ASLFR_InitialDrawer : TAG_DONE;
-							tags[4].ti_Data = (IPTR) "DOpus5:Commands";
+							tags[4].ti_Data = (IPTR)path1;
 							tags[5].ti_Tag = TAG_DONE;
 
 							// Show filerequester
@@ -1624,8 +1635,29 @@ BOOL funced_command_req(FuncEdData *data, char *buffer, short type)
 		tags[1].ti_Data = (IPTR)GetString(data->locale, MSG_SELECT_FILE);
 		tags[2].ti_Tag = ASLFR_InitialFile;
 		tags[2].ti_Data = (IPTR) "";
+		char path2[256];
+		BPTR lock2;
+		path2[0] = 0;
+		if (type == INST_SCRIPT)
+		{
+			lock2 = Lock("s:", ACCESS_READ);
+			if (lock2)
+			{
+				NameFromLock(lock2, path2, sizeof(path2));
+				UnLock(lock2);
+			}
+		}
+		else if (type == INST_AREXX)
+		{
+			lock2 = Lock("DOpus5:ARexx/", ACCESS_READ);
+			if (lock2)
+			{
+				NameFromLock(lock2, path2, sizeof(path2));
+				UnLock(lock2);
+			}
+		}
 		tags[3].ti_Tag = (data->last_type != type) ? ASLFR_InitialDrawer : TAG_IGNORE;
-		tags[3].ti_Data = (IPTR)((type == INST_SCRIPT) ? "s:" : ((type == INST_AREXX) ? "DOpus5:ARexx/" : ""));
+		tags[3].ti_Data = (IPTR)path2;
 		tags[4].ti_Tag = ASLFR_Flags1;
 		tags[4].ti_Data = FRF_PRIVATEIDCMP;
 		tags[5].ti_Tag = TAG_END;
