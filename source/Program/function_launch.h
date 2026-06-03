@@ -473,6 +473,8 @@ BOOL function_lock_paths(FunctionHandle *handle, PathList *, int);
 void function_unlock_paths(FunctionHandle *handle, PathList *, int);
 
 int function_build_list(FunctionHandle *function, PathNode **, InstructionParsed *);
+void function_drop_brace_name_arg(InstructionParsed *);
+short function_brace_name_arg(InstructionParsed *);
 int function_build_dest_list(FunctionHandle *function, PathNode **, InstructionParsed *);
 FunctionEntry *function_new_entry(FunctionHandle *, char *, BOOL);
 FunctionEntry *function_current_entry(FunctionHandle *handle);

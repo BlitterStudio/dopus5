@@ -445,6 +445,7 @@ DOPUS_FUNC(function_change)
 				if (change && path->lister)
 				{
 					struct FileInfoBlock fib;
+					FileChange *filechange;
 
 					// Fill out dummy fileinfoblock
 					strcpy(fib.fib_FileName, entry->name);
@@ -458,12 +459,19 @@ DOPUS_FUNC(function_change)
 					fib.fib_Protection = protection;
 
 					// Add new file
-					if (function_filechange_addfile(handle,
-													path->path,
-													&fib,
-													(NetworkInfo *)GetTagData(DE_NetworkInfo, 0, entry->entry->de_Tags),
-													0))
+					if ((filechange = function_filechange_addfile(
+							 handle,
+							 path->path,
+							 &fib,
+							 (NetworkInfo *)GetTagData(DE_NetworkInfo, 0, entry->entry->de_Tags),
+							 0)))
 					{
+						// Changing an entry replaces it in the lister, which clears its selected
+						// state. If the {fu}/{ou} no-unselect intent applies, reselect the new entry
+						// so the selection is preserved.
+						if (entry->flags & FUNCENTF_NO_UNSELECT)
+							filechange->node.ln_Pri |= FCF_SELECT;
+
 						// Mark old entry for removal
 						entry->flags |= FUNCENTF_REMOVE;
 					}
