@@ -68,6 +68,91 @@ LONG MatchNext64Plus(struct AnchorPath *panchor, ULONG blocksize)
 static int function_check_filter(FunctionHandle *handle);
 static FunctionEntry *function_new_entry_on_list(FunctionHandle *handle, struct List *list, char *name, BOOL icon);
 
+// Is an argument a standalone no-unselect selection reference, i.e. exactly {fu} or {ou}
+// (the no-unselect code plus its own quote/suffix modifier bytes), with no literal text?
+// An embedded code such as {fu}.info or old-{ou} carries literal characters and names
+// specific files, so it must NOT be treated as "operate on the whole selection".
+static BOOL function_arg_is_no_unselect_only(const char *arg)
+{
+	BOOL found = 0;
+
+	if (!arg)
+		return 0;
+
+	for (; *arg; ++arg)
+	{
+		switch ((unsigned char)*arg)
+		{
+		// The no-unselect file/path codes themselves
+		case FUNC_ONE_FILE_NO_UNSELECT:
+		case FUNC_ONE_PATH_NO_UNSELECT:
+			found = 1;
+			break;
+
+		// Quote/suffix modifier bytes the parser appends to a single file/path code
+		case FUNC_QUOTES:
+		case FUNC_NO_QUOTES:
+		case FUNC_NORMAL:
+		case FUNC_STRIP_SUFFIX:
+			break;
+
+		// Literal text or any other code: the {} reference is part of a larger filename
+		default:
+			return 0;
+		}
+	}
+
+	return found;
+}
+
+// If an internal command supplies its file via a NAME/file template argument that is a
+// standalone no-unselect {} code ({fu}/{ou}), return that argument's index; otherwise return
+// -1. FA_ArgArray[] keeps the raw (control-byte) argument even after expansion, so this stays
+// valid in both phases.
+short function_brace_name_arg(InstructionParsed *instruction)
+{
+	char *key;
+	short num;
+
+	// Internal command with a template and parsed arguments only
+	if (!instruction || instruction->type != INST_COMMAND || !instruction->command ||
+		(instruction->command->flags & FUNCF_EXTERNAL_FUNCTION) || !instruction->command->template_key ||
+		!instruction->funcargs)
+		return -1;
+
+	// Find the file-supplying argument
+	if (!(key = strchr(instruction->command->template_key, FUNCKEY_FILE)) &&
+		!(key = strchr(instruction->command->template_key, FUNCKEY_FILENO)))
+		return -1;
+
+	num = atoi(key + 1);
+
+	// Only when that argument is a standalone no-unselect code ({fu}/{ou}), not one embedded
+	// in a larger filename (e.g. {fu}.info), which names specific files
+	if (!instruction->funcargs->FA_ArgArray[num] ||
+		!function_arg_is_no_unselect_only((char *)instruction->funcargs->FA_ArgArray[num]))
+		return -1;
+
+	return num;
+}
+
+// An internal command whose NAME/file argument is a no-unselect code ({fu}/{ou}) means
+// "operate on the current selection and keep it selected". Drop the argument so
+// function_build_list() gathers the live selection (with its real lister entries) instead of
+// treating the expanded control-byte string as a filename/path to look up: the latter loses
+// the lister-entry link for {fu} (which expands to a full path) and only ever yields a single
+// file. The selection is rewound and kept selected later, in function_run_instruction(), once
+// argument expansion has finished consuming entries.
+void function_drop_brace_name_arg(InstructionParsed *instruction)
+{
+	short num;
+
+	if ((num = function_brace_name_arg(instruction)) < 0)
+		return;
+
+	instruction->funcargs->FA_Arguments[num] = 0;
+}
+
 // Build entry list for a function
 int function_build_list(FunctionHandle *handle, PathNode **path, InstructionParsed *instruction)
 {

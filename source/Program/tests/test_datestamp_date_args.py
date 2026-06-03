@@ -19,26 +19,26 @@ class DateStampDateArgumentTests(unittest.TestCase):
         source = read_source()
         setup = source[source.index("// Arguments supplied?") : source.index("// Any directories selected?")]
 
-        self.assertIn("function_change_date_arg_empty", source)
-        self.assertIn("if (function_change_date_arg_empty((char *)instruction->funcargs->FA_Arguments[2]))", setup)
+        self.assertIn("function_change_arg_empty", source)
+        self.assertIn("if (function_change_arg_empty((char *)instruction->funcargs->FA_Arguments[2]))", setup)
         self.assertRegex(
             setup,
             re.compile(
-                r"function_change_date_arg_empty\(\(char \*\)instruction->funcargs->FA_Arguments\[2\]\)\)\s*"
+                r"function_change_arg_empty\(\(char \*\)instruction->funcargs->FA_Arguments\[2\]\)\)\s*"
                 r"DateStamp\(&data->date\);.*?"
                 r"else\s*\{.*?ParseDateStrings",
                 re.S,
             ),
         )
 
-    def test_empty_date_argument_helper_handles_quoted_empty_strings(self):
+    def test_empty_arg_helper_handles_quoted_empty_strings(self):
         source = read_source()
-        helper = source[source.index("static BOOL function_change_date_arg_empty") :]
+        helper = source[source.index("static BOOL function_change_arg_empty") :]
 
-        self.assertIn("*date == '\"'", helper)
-        self.assertIn("*date == '\\''", helper)
-        self.assertRegex(helper, r"while \(\*date && isspace\(\*date\)\)")
-        self.assertRegex(helper, r"return \(end == date\);")
+        self.assertIn("*arg == '\"'", helper)
+        self.assertIn("*arg == '\\''", helper)
+        self.assertRegex(helper, r"while \(\*arg && isspace\(\*arg\)\)")
+        self.assertRegex(helper, r"return \(end == arg\);")
 
 
 if __name__ == "__main__":

@@ -166,6 +166,10 @@ short function_run(FunctionHandle *handle)
 				// Are we out of files?
 				if (!function_current_entry(handle))
 				{
+					// A {fu}/{ou} NAME argument on an internal command means "use the selection":
+					// drop it so the entry list below is built from the live selection
+					function_drop_brace_name_arg(instruction);
+
 					// Build new entry list
 					if ((function_build_list(handle, &path, instruction)) == -1)
 					{
@@ -316,6 +320,21 @@ static int function_run_instruction(FunctionHandle *handle, InstructionParsed *i
 
 					// Check arguments
 					function_parse_arguments(handle, instruction);
+
+					// For an internal command with a {fu}/{ou} NAME argument, the entry list holds
+					// the whole selection (see function_drop_brace_name_arg). Expanding the {fu}/{ou}
+					// code while building the arguments above consumed one or more of those entries;
+					// rewind so the command processes the entire selection, and mark every entry
+					// no-unselect so it stays selected afterwards.
+					if (function_brace_name_arg(instruction) >= 0)
+					{
+						FunctionEntry *bent;
+
+						handle->current_entry = (FunctionEntry *)handle->entry_list.lh_Head;
+						for (bent = (FunctionEntry *)handle->entry_list.lh_Head; bent->node.mln_Succ;
+							 bent = (FunctionEntry *)bent->node.mln_Succ)
+							bent->flags |= FUNCENTF_NO_UNSELECT;
+					}
 
 					// If we needs files, check there are some
 					if (!(instruction->flags & FUNCF_NEED_ENTRIES) || instruction->flags & FUNCF_WANT_ENTRIES ||
