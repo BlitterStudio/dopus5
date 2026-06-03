@@ -1026,7 +1026,18 @@ BOOL filetypeed_pick_icon(filetype_ed_data *data)
 	}
 
 	if (!path[0])
-		strcpy(path, "DOpus5:");
+	{
+		BPTR lock = Lock("ENVARC:Sys", ACCESS_READ);
+		if (lock)
+		{
+			NameFromLock(lock, path, sizeof(path));
+			UnLock(lock);
+		}
+		else
+		{
+			path[0] = 0;
+		}
+	}
 
 	// Build pattern. ParsePatternNoCase's buffer arg is STRPTR (char*)
 	// on AOS3/AOS4 but UBYTE* on MorphOS, so use the matching cast on
