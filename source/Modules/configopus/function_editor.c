@@ -568,15 +568,14 @@ void FunctionEditor(void)
 							tags[3].ti_Tag = ASLFR_Flags2;
 							tags[3].ti_Data = FRF_REJECTICONS;
 							char path1[256];
-							BPTR lock1 = Lock("DOpus5:Commands", ACCESS_READ);
+							BPTR lock1;
+							path1[0] = 0;
+							lock1 = Lock("DOpus5:Commands", ACCESS_READ);
 							if (lock1)
 							{
-								NameFromLock(lock1, path1, sizeof(path1));
+								if (!(NameFromLock(lock1, path1, sizeof(path1))))
+									path1[0] = 0;
 								UnLock(lock1);
-							}
-							else
-							{
-								path1[0] = 0;
 							}
 							tags[4].ti_Tag = (gadgetid == MENU_FUNCED_EXPORT_CMD) ? ASLFR_InitialDrawer : TAG_DONE;
 							tags[4].ti_Data = (IPTR)path1;
@@ -1643,7 +1642,8 @@ BOOL funced_command_req(FuncEdData *data, char *buffer, short type)
 			lock2 = Lock("s:", ACCESS_READ);
 			if (lock2)
 			{
-				NameFromLock(lock2, path2, sizeof(path2));
+				if (!(NameFromLock(lock2, path2, sizeof(path2))))
+					path2[0] = 0;
 				UnLock(lock2);
 			}
 		}
@@ -1652,7 +1652,8 @@ BOOL funced_command_req(FuncEdData *data, char *buffer, short type)
 			lock2 = Lock("DOpus5:ARexx/", ACCESS_READ);
 			if (lock2)
 			{
-				NameFromLock(lock2, path2, sizeof(path2));
+				if (!(NameFromLock(lock2, path2, sizeof(path2))))
+					path2[0] = 0;
 				UnLock(lock2);
 			}
 		}

@@ -375,15 +375,14 @@ void _config_env_grabwb(config_env_data *data)
 
 	// Show requester
 	char path3[256];
-	BPTR lock3 = Lock("sys:prefs/presets", ACCESS_READ);
+	BPTR lock3;
+	path3[0] = 0;
+	lock3 = Lock("sys:prefs/presets", ACCESS_READ);
 	if (lock3)
 	{
-		NameFromLock(lock3, path3, sizeof(path3));
+		if (!(NameFromLock(lock3, path3, sizeof(path3))))
+			path3[0] = 0;
 		UnLock(lock3);
-	}
-	else
-	{
-		path3[0] = 0;
 	}
 	if (AslRequestTags(req,
 					   ASLFR_Window,

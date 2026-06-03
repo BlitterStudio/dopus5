@@ -1030,7 +1030,8 @@ BOOL filetypeed_pick_icon(filetype_ed_data *data)
 		BPTR lock = Lock("ENVARC:Sys", ACCESS_READ);
 		if (lock)
 		{
-			NameFromLock(lock, path, sizeof(path));
+			if (!(NameFromLock(lock, path, sizeof(path))))
+				path[0] = 0;
 			UnLock(lock);
 		}
 		else
