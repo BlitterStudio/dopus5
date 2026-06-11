@@ -102,6 +102,7 @@ For more information on Directory Opus for Windows please see:
 #include "ftp_arexx.h"
 #include "ftp_ipc.h"
 #include "ftp_lister.h"
+#include "ftp_lister_entry.h"
 #include "ftp_opusftp.h"
 #include "ftp_recursive.h"
 #include "ftp_util.h"
@@ -429,8 +430,7 @@ int parent_buffer(struct ftp_info *ftp, char *buf, int get_current)
 BOOL entry_info_from_lister(struct ftp_node *node, char *entryname, struct entry_info *ei, ULONG flags)
 {
 	char *fileinfo;
-	char *p;
-	char *p2;
+	struct ftp_lister_entry_info parsed;
 	BOOL retval = FALSE;
 
 	// Defalt settings
@@ -440,89 +440,27 @@ BOOL entry_info_from_lister(struct ftp_node *node, char *entryname, struct entry
 	// Ask Opus for the info on this entry
 	if ((fileinfo = rexx_lst_query_entry(node->fn_opus, node->fn_handle, entryname)))
 	{
-		retval = TRUE;
-
-		p = fileinfo;
-
-		// Get real name
-
-		p2 = p;
-
-		// Terminate name
-		p += strlen(entryname);
-		*p++ = 0;
-
-		stccpy(ei->ei_name, p2, FILENAMELEN + 1);
-
-		// Get size
-		ei->ei_size = atoi(p);
-		p = strchr(p, ' ') + 1;
-
-		// Get type
-		ei->ei_type = atoi(p);
-		p = strchr(p, ' ') + 1;
-
-		// Skip selection
-		p = strchr(p, ' ') + 1;
-
-		// Get seconds (unsigned long)
-		ei->ei_seconds = strtoul(p, &p, 10);
-		p++;
-
-		// Get protection
-		ei->ei_prot = 0;
-		if (*p++ == 'h')
-			ei->ei_prot |= FIBF_HIDDEN;
-		if (*p++ == 's')
-			ei->ei_prot |= FIBF_SCRIPT;
-		if (*p++ == 'p')
-			ei->ei_prot |= FIBF_PURE;
-		if (*p++ == 'a')
-			ei->ei_prot |= FIBF_ARCHIVE;
-		if (*p++ != 'r')
+		if (ftp_lister_parse_entry_info(fileinfo, entryname, &parsed))
 		{
-			ei->ei_prot |= FIBF_READ;
-			ei->ei_unixprot &= ~0444;
-		}
-		if (*p++ != 'w')
-		{
-			ei->ei_prot |= FIBF_WRITE;
-			if (*(p + 1) != 'd')
-				ei->ei_unixprot &= ~0222;
-		}
-		if (*p++ != 'e')
-		{
-			ei->ei_prot |= FIBF_EXECUTE;
-			ei->ei_unixprot &= ~0111;
-		}
-		if (*p++ != 'd')
-		{
-			ei->ei_prot |= FIBF_DELETE;
-		}
+			retval = TRUE;
 
-		// Does comment exist? (may be a dangling space!)
-		if (*p && *(p + 1))
-		{
-			p2 = p;
-
-			// The rest of the line is all comment
-			p = strchr(p, '\n');
-
-			// Terminate comment
-			if (p)
-				*p = 0;
-
-			stccpy(ei->ei_comment, p2, COMMENTLEN);
+			stccpy(ei->ei_name, parsed.name, FILENAMELEN + 1);
+			ei->ei_size = parsed.size;
+			ei->ei_type = parsed.type;
+			ei->ei_seconds = parsed.seconds;
+			ei->ei_prot = parsed.prot;
+			stccpy(ei->ei_comment, parsed.comment, COMMENTLEN + 1);
+			ei->ei_unixprot = parsed.unixprot;
 		}
-
-		// No comment exists
-		else
-			*ei->ei_comment = 0;
 
 		// Free ARexx result string
 		DeleteArgstring(fileinfo);
 	}
-	else if (flags & ENTRYFROMF_DEFAULT)
+
+	if (!retval)
+		retval = entry_info_from_remote(node, entryname, ei, flags) != 0;
+
+	if (!retval && (flags & ENTRYFROMF_DEFAULT))
 	{
 		retval = TRUE;
 

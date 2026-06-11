@@ -15,6 +15,8 @@ FTP_TLS_TEST := $(TEST_BUILD_DIR)/ftp_tls_tests
 FTP_TLS_TEST_SRCS := tests/ftp_tls_tests.c ftp_tls.c
 FTP_PROTOCOL_TEST := $(TEST_BUILD_DIR)/ftp_protocol_tests
 FTP_PROTOCOL_TEST_SRCS := tests/ftp_protocol_tests.c ftp_protocol.c
+FTP_LISTER_ENTRY_TEST := $(TEST_BUILD_DIR)/ftp_lister_entry_tests
+FTP_LISTER_ENTRY_TEST_SRCS := tests/ftp_lister_entry_tests.c ftp_lister_entry.c
 FTP_SFTP_TEST := $(TEST_BUILD_DIR)/ftp_sftp_tests
 FTP_SFTP_TEST_SRCS := tests/ftp_sftp_tests.c ftp_sftp.c
 FTP_SFTP_LIBSSH2_TEST := $(TEST_BUILD_DIR)/ftp_sftp_tests_libssh2
@@ -23,11 +25,12 @@ LIBSSH2_LIBS ?= $(shell pkg-config --libs libssh2)
 
 .PHONY: test test-libssh2 clean
 
-test: $(FTP_PARSE_TEST) $(FTP_LISTCMD_TEST) $(FTP_TLS_TEST) $(FTP_PROTOCOL_TEST) $(FTP_SFTP_TEST)
+test: $(FTP_PARSE_TEST) $(FTP_LISTCMD_TEST) $(FTP_TLS_TEST) $(FTP_PROTOCOL_TEST) $(FTP_LISTER_ENTRY_TEST) $(FTP_SFTP_TEST)
 	$(FTP_PARSE_TEST)
 	$(FTP_LISTCMD_TEST)
 	$(FTP_TLS_TEST)
 	$(FTP_PROTOCOL_TEST)
+	$(FTP_LISTER_ENTRY_TEST)
 	$(FTP_SFTP_TEST)
 
 test-libssh2: $(FTP_SFTP_LIBSSH2_TEST)
@@ -45,6 +48,9 @@ $(FTP_TLS_TEST): $(FTP_TLS_TEST_SRCS) ftp_tls.h | $(TEST_BUILD_DIR)
 $(FTP_PROTOCOL_TEST): $(FTP_PROTOCOL_TEST_SRCS) ftp_protocol.h | $(TEST_BUILD_DIR)
 	$(CC) $(CFLAGS) -I. $(FTP_PROTOCOL_TEST_SRCS) -o $@
 
+$(FTP_LISTER_ENTRY_TEST): $(FTP_LISTER_ENTRY_TEST_SRCS) ftp_lister_entry.h | $(TEST_BUILD_DIR)
+	$(CC) $(CFLAGS) -I. $(FTP_LISTER_ENTRY_TEST_SRCS) -o $@
+
 $(FTP_SFTP_TEST): $(FTP_SFTP_TEST_SRCS) ftp_sftp.h | $(TEST_BUILD_DIR)
 	$(CC) $(CFLAGS) -I. $(FTP_SFTP_TEST_SRCS) -o $@
 
@@ -55,4 +61,4 @@ $(TEST_BUILD_DIR):
 	mkdir -p $@
 
 clean:
-	$(RM) $(FTP_PARSE_TEST) $(FTP_LISTCMD_TEST) $(FTP_TLS_TEST) $(FTP_PROTOCOL_TEST) $(FTP_SFTP_TEST) $(FTP_SFTP_LIBSSH2_TEST)
+	$(RM) $(FTP_PARSE_TEST) $(FTP_LISTCMD_TEST) $(FTP_TLS_TEST) $(FTP_PROTOCOL_TEST) $(FTP_LISTER_ENTRY_TEST) $(FTP_SFTP_TEST) $(FTP_SFTP_LIBSSH2_TEST)

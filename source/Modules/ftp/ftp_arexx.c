@@ -47,6 +47,7 @@ For more information on Directory Opus for Windows please see:
 
 #include "ftp.h"
 #include "ftp_arexx.h"
+#include "ftp_lister_entry.h"
 #include "ftp_opusftp.h"
 #include "ftp_util.h"
 
@@ -481,8 +482,13 @@ IPTR rexx_lst_query_dest1(const char *opus)
 
 char *rexx_lst_query_entry(const char *opus, IPTR handle, char *entry)
 {
+	char quoted[FTP_LISTER_QUOTED_NAME_BUFSIZE];
+
+	if (!ftp_lister_quote_entry_name(entry, quoted, sizeof(quoted)))
+		return NULL;
+
 	return rexx_result_string(send_rexxa(
-		opus, REXX_REPLY_RESULT, "lister query " FTP_HANDLE_PRINTF " entry \"%s\"", FTP_HANDLE_VALUE(handle), entry));
+		opus, REXX_REPLY_RESULT, "lister query " FTP_HANDLE_PRINTF " entry %s", FTP_HANDLE_VALUE(handle), quoted));
 }
 
 /********************************/

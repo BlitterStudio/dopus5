@@ -7,7 +7,7 @@ NAME := ftp.module
 
 COMMON_OBJS := 	init/libinit.o init/amiga.o \
 				ftp_main.o ftp_lister.o ftp_lister_list.o \
-				ftp_lister_xfer.o ftp_lister_connect.o ftp.o ftp_parse.o ftp_listcmd.o ftp_tls.o ftp_protocol.o ftp_sftp.o \
+				ftp_lister_xfer.o ftp_lister_connect.o ftp_lister_entry.o ftp.o ftp_parse.o ftp_listcmd.o ftp_tls.o ftp_protocol.o ftp_sftp.o \
 				ftp_sftp_sockets.o \
 				ftp_arexx.o ftp_util.o ftp_recursive.o \
 				ftp_addressbook.o ftp_addrsupp.o ftp_addrformat.o \
