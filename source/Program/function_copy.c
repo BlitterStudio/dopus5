@@ -127,6 +127,8 @@ DOPUS_FUNC(function_copy)
 	// Get function
 	function = command->function;
 	copy_flags = environment->env->settings.copy_flags;
+	if (function == FUNC_CLONE)
+		copy_flags &= ~COPY_DATE;
 
 	// Icon copy?
 	if (environment->env->desktop_flags & DESKTOPF_SMART_ICONCOPY)
