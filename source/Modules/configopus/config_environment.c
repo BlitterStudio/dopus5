@@ -2870,9 +2870,22 @@ void config_env_check_device(config_env_data *data)
 		// Lock the dos list
 		dos = LockDosList(LDF_DEVICES | LDF_READ);
 
-		// See if entry is there, and not a disk
-		if (!(dos = FindDosEntry(dos, name, LDF_DEVICES)) || dos->dol_Task ||
-			(IPTR)dos->dol_misc.dol_handler.dol_Startup > 511)
+		// See if entry is there.
+		//
+		// This used to also reject any entry with a running handler process
+		// (dol_Task), or with dol_Startup > 511, as heuristics for "this is a
+		// filesystem rather than a console handler". Both misclassify modern
+		// console handlers. CCON: creates its handler process on first
+		// reference, so dol_Task is set as soon as it has been used, and
+		// handlers mounted with a string Startup (CRAW:, RAW:) have a
+		// dol_Startup BSTR pointer well above 511. Stock CON: trips the
+		// dol_Task test too - that went unnoticed only because the fallback
+		// value is "CON:" itself, so the reset was invisible.
+		//
+		// The DOS list offers no reliable way to tell a handler from a
+		// filesystem, so just check the device exists, which is what catches
+		// typos.
+		if (!FindDosEntry(dos, name, LDF_DEVICES))
 		{
 			// Error
 			DisplayBeep(data->window->WScreen);
