@@ -988,3 +988,98 @@ Lister *function_get_paths(FunctionHandle *handle, PathList *list, ULONG flags, 
 	// Return first pointer
 	return first;
 }
+
+// Check whether any source lister currently has a selection. This is the
+// precedence guard for the desktop selection fallback: when a lister already
+// provides entries, the desktop must not be snapshotted.
+BOOL lister_has_selection(void)
+{
+	Lister *lister;
+	IPCData *ipc;
+	BOOL found = FALSE;
+
+	// Lock lister list
+	lock_listlock(&GUI->lister_list, FALSE);
+
+	// Go through lister list
+	for (ipc = (IPCData *)GUI->lister_list.list.lh_Head; ipc->node.mln_Succ; ipc = (IPCData *)ipc->node.mln_Succ)
+	{
+		// Get lister
+		lister = IPCDATA(ipc);
+
+		// Dual lister sides are resolved locally by their launch path.
+		if (lister_dual_is_side(lister))
+			continue;
+
+		// Same candidacy as function_get_paths for a source lister: must be a
+		// source, not busy, and an icon view only when in icon action mode.
+		if (!(lister->flags & LISTERF_SOURCE) || lister->flags & LISTERF_BUSY ||
+			(lister->flags & LISTERF_VIEW_ICONS && !(lister->flags & LISTERF_ICON_ACTION)))
+			continue;
+
+		// Icon mode: look for a selected backdrop object
+		if (lister->flags & (LISTERF_VIEW_ICONS | LISTERF_ICON_ACTION))
+		{
+			BackdropInfo *info;
+			BackdropObject *object;
+
+			if ((info = lister->backdrop_info))
+			{
+				// Lock backdrop list
+				lock_listlock(&info->objects, FALSE);
+
+				// Go through backdrop list
+				for (object = (BackdropObject *)info->objects.list.lh_Head; object->node.ln_Succ;
+					 object = (BackdropObject *)object->node.ln_Succ)
+				{
+					// Selected?
+					if (object->state)
+					{
+						found = TRUE;
+						break;
+					}
+				}
+
+				// Unlock backdrop list
+				unlock_listlock(&info->objects);
+			}
+		}
+
+		// Normal mode: look for a selected buffer entry
+		else
+		{
+			DirBuffer *buffer;
+			DirEntry *entry;
+
+			if ((buffer = lister->cur_buffer))
+			{
+				// Lock buffer
+				buffer_lock(buffer, FALSE);
+
+				// Go through buffer
+				for (entry = (DirEntry *)buffer->entry_list.mlh_Head; entry->de_Node.dn_Succ;
+					 entry = (DirEntry *)entry->de_Node.dn_Succ)
+				{
+					// Selected?
+					if (entry->de_Flags & ENTF_SELECTED)
+					{
+						found = TRUE;
+						break;
+					}
+				}
+
+				// Unlock buffer
+				buffer_unlock(buffer);
+			}
+		}
+
+		// Found a selection?
+		if (found)
+			break;
+	}
+
+	// Unlock lister list
+	unlock_listlock(&GUI->lister_list);
+
+	return found;
+}

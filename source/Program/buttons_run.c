@@ -91,10 +91,29 @@ Cfg_ButtonFunction *button_find_function(Cfg_Button *button, short which, APTR *
 void buttons_run_button(Buttons *buttons, Cfg_Button *button, short which)
 {
 	Cfg_Function *function;
+	struct ArgArray *array = 0;
 
 	// Get the function to run
 	if (!(function = button_valid(button, which)))
 		return;
+
+	// Desktop selection fallback: when no lister provides a selection,
+	// honour a selected desktop icon (as the icon context menu does)
+	if (!lister_has_selection() && (array = desktop_selection_argarray(GUI->backdrop)))
+	{
+		function_launch(FUNCTION_RUN_FUNCTION_EXTERNAL,
+						function,
+						0,
+						0,
+						0,
+						0,
+						environment->env->desktop_location,
+						0,
+						array,
+						0,
+						buttons);
+		return;
+	}
 
 	// Launch function
 	function_launch(FUNCTION_RUN_FUNCTION, function, 0, 0, 0, 0, 0, 0, 0, 0, buttons);

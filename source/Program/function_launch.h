@@ -488,6 +488,7 @@ char *function_build_file_string(FunctionHandle *handle, short);
 void function_progress_on(FunctionHandle *handle, char *operation, ULONG total, ULONG flags);
 BOOL function_progress_update(FunctionHandle *handle, FunctionEntry *entry, ULONG count);
 Lister *function_get_paths(FunctionHandle *, PathList *, ULONG, short);
+BOOL lister_has_selection(void);
 BOOL function_valid_path(PathNode *path);
 PathNode *function_add_path(FunctionHandle *, PathList *, Lister *, char *);
 void function_init_path_node(PathNode *);

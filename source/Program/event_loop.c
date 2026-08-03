@@ -1589,11 +1589,34 @@ BOOL menu_process_event(IPTR id, struct MenuItem *item, struct Window *window)
 				// Match function
 				if (func == (Cfg_ButtonFunction *)id)
 				{
+					struct ArgArray *array = 0;
+
 					// Remember function
 					function = (Cfg_Function *)func;
 
-					// Launch function
-					function_launch_quick(FUNCTION_RUN_FUNCTION, function, 0);
+					// Desktop selection fallback: when no lister provides a
+					// selection, honour a selected desktop icon (as the icon
+					// context menu does)
+					if (!lister_has_selection() && (array = desktop_selection_argarray(GUI->backdrop)))
+					{
+						function_launch(FUNCTION_RUN_FUNCTION_EXTERNAL,
+										function,
+										0,
+										0,
+										0,
+										0,
+										environment->env->desktop_location,
+										0,
+										array,
+										0,
+										0);
+					}
+
+					// Otherwise launch normally
+					else
+					{
+						function_launch_quick(FUNCTION_RUN_FUNCTION, function, 0);
+					}
 					break;
 				}
 			}

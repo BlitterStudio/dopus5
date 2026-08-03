@@ -210,3 +210,90 @@ void icon_function(BackdropInfo *info, BackdropObject *only_one, char *data, Cfg
 	// Unlock list
 	unlock_listlock(&info->objects);
 }
+
+// Collect the selected objects of a desktop backdrop into an argument array,
+// in the same form the icon context menu supplies them. Returns NULL when no
+// object is selected. Used by the desktop selection fallback for User Menu and
+// Button Bank launches.
+struct ArgArray *desktop_selection_argarray(BackdropInfo *info)
+{
+	struct ArgArray *array;
+	BackdropObject *object;
+	short count = 0;
+
+	// Lock backdrop list
+	lock_listlock(&info->objects, FALSE);
+
+	// Go through backdrop list, count the objects we can supply
+	for (object = (BackdropObject *)info->objects.list.lh_Head; object->node.ln_Succ;
+		 object = (BackdropObject *)object->node.ln_Succ)
+	{
+		// Selected object of a type we supply?
+		if (object->state && object->icon &&
+			(object->type == BDO_DISK || object->type == BDO_BAD_DISK || object->type == BDO_LEFT_OUT))
+			++count;
+	}
+
+	// Nothing to work on?
+	if (count == 0 || !(array = NewArgArray()))
+	{
+		unlock_listlock(&info->objects);
+		return 0;
+	}
+
+	// Go through backdrop list again
+	for (object = (BackdropObject *)info->objects.list.lh_Head; object->node.ln_Succ;
+		 object = (BackdropObject *)object->node.ln_Succ)
+	{
+		char name[80];
+		BOOL dir = 0, link = 0;
+		struct ArgArrayEntry *aae;
+
+		// Selected object of a type we supply?
+		if (!(object->state && object->icon) ||
+			!(object->type == BDO_DISK || object->type == BDO_BAD_DISK || object->type == BDO_LEFT_OUT))
+			continue;
+
+		// Drive/disk: supply the device name
+		if (object->type == BDO_DISK || object->type == BDO_BAD_DISK)
+		{
+			// Need a device name
+			if (!object->device_name)
+				continue;
+			stccpy(name, object->device_name, sizeof(name));
+		}
+
+		// Left-out icon: supply the object name
+		else
+		{
+			stccpy(name, object->name, sizeof(name));
+
+			// Directory or link?
+			if (object->icon->do_Type == WBDRAWER || object->icon->do_Type == WBGARBAGE)
+				dir = 1;
+			if (object->flags & BDOF_LINK_ICON)
+				link = 1;
+
+			// Tack on a / for directories
+			if (dir)
+				strcat(name, "/");
+		}
+
+		// Allocate array entry
+		if ((aae = NewArgArrayEntry(array, name)))
+		{
+			// Dir?
+			if (dir)
+				aae->ae_Flags |= AEF_DIR;
+
+			// Link?
+			if (link)
+				aae->ae_Flags |= AEF_LINK;
+		}
+	}
+
+	// Unlock backdrop list
+	unlock_listlock(&info->objects);
+
+	return array;
+}
