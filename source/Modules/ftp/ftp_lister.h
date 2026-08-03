@@ -245,7 +245,8 @@ struct message_update_info
 	#pragma pack()
 #endif
 
-int message_update(struct message_update_info *, int num, char *text);
+// Matches the int (*)(void *, int, char *) callback type used by ftp.c
+int message_update(void *update_info, int num, char *text);
 
 /***********************
 

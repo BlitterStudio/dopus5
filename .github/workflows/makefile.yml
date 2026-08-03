@@ -56,11 +56,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # The sacredbanana/amiga-compiler tags are mutable and are rebuilt in
+        # place, so CI can break on commits that change nothing relevant. An
+        # upstream rebuild on 2026-07-04 shipped a ppc-morphos image whose amd64
+        # cc1 cannot be executed ("posix_spawn: Exec format error"), which broke
+        # every MorphOS build. Pin by digest instead; bump these deliberately
+        # after verifying a newer image builds.
+        #
+        # m68k-amigaos / ppc-amigaos: current images (2026-07-04), verified green.
+        # ppc-morphos: last known-good image (2025-08-31, GCC 15.1.0). The
+        #   2026-07-04 rebuild (GCC 15.2.0) is broken - see above.
         platform:
-          - { name: os3, image: "sacredbanana/amiga-compiler:m68k-amigaos" }
-          - { name: os3-68000, image: "sacredbanana/amiga-compiler:m68k-amigaos" }
-          - { name: os4, image: "sacredbanana/amiga-compiler:ppc-amigaos" }
-          - { name: mos, image: "sacredbanana/amiga-compiler:ppc-morphos" }
+          - { name: os3, image: "sacredbanana/amiga-compiler@sha256:7fa7056330ce0e7b31b5e497070b3380b4f672d7d6f169ac5b3003c1af483215" }
+          - { name: os3-68000, image: "sacredbanana/amiga-compiler@sha256:7fa7056330ce0e7b31b5e497070b3380b4f672d7d6f169ac5b3003c1af483215" }
+          - { name: os4, image: "sacredbanana/amiga-compiler@sha256:7cd544cdbd6bf58a552e93183cc58e6268800305c10d5913dac96f2433c33d24" }
+          - { name: mos, image: "sacredbanana/amiga-compiler@sha256:464de9e085367f16605c34cb8c544a3ab1dcb92f494e826a004a12a501a83829" }
           - { name: i386-aros, image: "midwan/aros-compiler:i386-aros" }
           - { name: x86_64-aros, image: "midwan/aros-compiler:x86_64-aros" }
         variant:

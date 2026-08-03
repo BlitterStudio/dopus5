@@ -1448,7 +1448,7 @@ static int iread(struct ftp_info *info, int skt, BOOL checkbreak, struct ftp_tls
 	int retval = -1;
 	fd_set rd, ex;
 	ULONG flags;
-	struct timeval timer = {0, 0};
+	struct timeval timer = {0};
 
 	retval = ftp_socket_read_pending(tls_session, skt, info->fi_bufiobuf, BUFIOBUFSIZE);
 	if (retval != -2)
