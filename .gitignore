@@ -16,3 +16,4 @@ source/Modules/ftp/third_party/libssh2/build/
 docs/superpowers
 .omo
 docs/plans
+__pycache__/
