@@ -39,6 +39,8 @@ char *isicon(char *);
 
 void icon_function(BackdropInfo *, BackdropObject *, char *, Cfg_Function *, ULONG);
 
+struct ArgArray *desktop_selection_argarray(BackdropInfo *info);
+
 void icon_rename(IPCData *, BackdropInfo *, BackdropObject *);
 
 struct DiskObject *GetProperIcon(char *, short *, ULONG);
