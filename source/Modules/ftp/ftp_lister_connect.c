@@ -315,24 +315,15 @@ static int systype_lookup(char *text)
 	};
 
 	static struct ftpsystem sys_types[] = {
-		"UNIX",
-		FTP_UNIX,  // Check Unix before OS/2 - "Unix type OS/2"
-		"AMIGA",
-		FTP_AMIGA,
-		"WINDOWS_NT",
-		FTP_WINDOWSNT,
-		"WIN32",
-		FTP_WIN32,	// NT or Win95/98
-		"OS/2",
-		FTP_OS2,
-		"MACOS",
-		FTP_MACOS,
-		"VMS",
-		FTP_VAX_VMS,  // Check VMS before VM
-		"VM",
-		FTP_VM_CMS,
-		NULL,
-		FTP_UNKNOWN,
+		{"UNIX", FTP_UNIX},  // Check Unix before OS/2 - "Unix type OS/2"
+		{"AMIGA", FTP_AMIGA},
+		{"WINDOWS_NT", FTP_WINDOWSNT},
+		{"WIN32", FTP_WIN32},  // NT or Win95/98
+		{"OS/2", FTP_OS2},
+		{"MACOS", FTP_MACOS},
+		{"VMS", FTP_VAX_VMS},  // Check VMS before VM
+		{"VM", FTP_VM_CMS},
+		{NULL, FTP_UNKNOWN},
 	};
 	struct ftpsystem *p = sys_types;
 	int type = FTP_UNKNOWN;
@@ -1244,7 +1235,7 @@ struct ftp_node *lister_new_connection(struct opusftp_globals *ogp, struct msg_l
 
 	if (imsg && (cm = imsg->data_free))
 	{
-		if (cm->cm_opus && *cm->cm_opus && lister_get_args(ogp, mld, imsg))
+		if (*cm->cm_opus && lister_get_args(ogp, mld, imsg))
 		{
 			if ((node = lister_create_node(ogp, mld->mld_ipc, cm)))
 			{

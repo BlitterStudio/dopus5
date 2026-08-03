@@ -963,8 +963,9 @@ int lst_dos_err(struct opusftp_globals *og, struct ftp_node *ftpnode, ULONG flag
 //
 //	Callback hook for connect and login
 //
-int message_update(struct message_update_info *mu, int num, char *text)
+int message_update(void *update_info, int num, char *text)
 {
+	struct message_update_info *mu = update_info;
 	Att_Node *node;
 	char *p;
 
