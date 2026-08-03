@@ -1,3 +1,76 @@
+[dopus5 5.102] Release summary
+Program bumps to 5.102, library and modules to v73r6, commands to
+v65r4.
+
+Program:
+- NewShell menu entry on the Opus menu opens an AmigaDOS Shell with
+  the configured CLI Launching window/device/stack settings (issue #141).
+- Customizable titlebar clock format via Environment / Screen Title,
+  using standard FormatDate tokens (%Y, %m, %d, %I, %Q, %r, etc.);
+  12-hour tokens (%I, %Q, %r) now render noon/midnight as 12 instead
+  of 00.
+- Lister Colours gains a "Tooltip colours" entry for toolbar tooltip
+  foreground/background pen customisation (issue #141).
+- Function argument expansion: {fu} and {ou} NAME on internal commands
+  now acts on the selection rather than consuming entries; consumed
+  entries with no-unselect remain selected after function completion.
+- Duplicate command preserves the original file's date instead of
+  stamping the new file with the current time.
+- User Menu and Button Bank launches honour selected desktop icons
+  (issue #155).
+- Console output device validation now accepts console handlers that
+  already have a running process (issue #164).
+- Mouse wheel scroll lines honours the configured WheelScrollLines
+  setting for native-scroll listers.
+- Dual Lister: fix targeted refresh state and allocation rollback on
+  partial gadget creation failure.
+- Icon Info requester auto-scales device Size/Used/Free values using
+  locale-aware formatting (issue #140).
+- DateStamp handles locale edge cases in date parsing correctly.
+- CLI number conversion avoids overlapping memcpy in RawDoFmt paths.
+- OS3 titlebar drawing: preserve contour line, trim fallback, and
+  clock erase bounds.
+
+configopus.module:
+- AROS x86_64: fix CLI/lister resize window opening off-screen
+  (issue #143).
+- Filetypes Icon requester defaults to ENVARC:Sys instead of the
+  current drawer (issue #149).
+- Requester drawer paths guarded against failed resolution.
+- Control label backfill in config requesters preserves patterned
+  requester backgrounds (follow-up polish).
+- Listview title backfill preserves patterned requester backfills.
+
+ftp.module:
+- Fix module type and initializer defects surfaced by GCC 13 warnings.
+- FTP lister entry queries hardened against malformed server responses.
+- MLSD: preserve semicolons in filenames, skip current-directory
+  markers (".", ".."), fix recursive copy paths.
+
+icon.module:
+- Auto-scale device Size/Used/Free in Icon Info requester to match
+  the program's behaviour.
+
+read.module:
+- Guard drawer path resolution failures so requesters do not crash
+  when a configured default drawer is unreachable.
+
+ViewFont (command):
+- Added opt-in "Extended chars" checkbox for printable high-character
+  preview (codes 160-255), persisted by Save Settings.
+
+Library / dopus5.library:
+- Defensive environment loading guards against malformed config chunks.
+- Localized date parsing fix for edge-case locale formats.
+- ARexx handler argument tracking corrected for 64-bit AROS.
+
+Versioning notes:
+- Global LIB_REVISION moves 5 -> 6 (library, configopus, ftp, icon,
+  read all ship at v73r6).
+- CMD_REVISION moves 3 -> 4 (ViewFont ships at v65r4).
+
+2026-08-03 by Dimitris Panokostas <midwan@gmail.com>
+
 [dopus5 5.101] Release summary
 Program bumps to 5.101, library and modules to v73r5, commands to
 v65r3.  This release consolidates the work landed since 5.100, plus
