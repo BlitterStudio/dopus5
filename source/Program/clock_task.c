@@ -157,19 +157,17 @@ static unsigned long clock_format_append(struct Hook *hook, ULONG ch)
 	return 0;
 }
 
-#ifdef __AROS__
-static unsigned long clock_format_hook(struct Hook *hook, APTR dummy, IPTR ch)
+// FormatDate() calls this with A0=hook, A2=locale, A1=character, so the parameters must be
+// declared in the standard hook order (hook, object, message). m68k picks the registers up from
+// the REG() annotations whatever the position, but everywhere else REG() expands to nothing and
+// the declaration order *is* the calling convention. Listing the character second made OS4 and
+// MorphOS read the locale pointer as the character, painting the clock as a run of one repeated
+// garbage glyph (issue #170).
+static unsigned long ASM clock_format_hook(REG(a0, struct Hook *hook), REG(a2, APTR dummy), REG(a1, IPTR ch))
 {
 	(void)dummy;
 	return clock_format_append(hook, (ULONG)ch);
 }
-#else
-static unsigned long ASM clock_format_hook(REG(a0, struct Hook *hook), REG(a1, ULONG ch), REG(a2, APTR dummy))
-{
-	(void)dummy;
-	return clock_format_append(hook, ch);
-}
-#endif
 
 static BOOL clock_format_date_raw(char *buffer, short size, char *format, struct DateStamp *stamp)
 {
