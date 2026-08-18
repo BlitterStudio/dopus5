@@ -766,7 +766,7 @@ BOOL environment_open(Cfg_Environment *env, char *name, BOOL first, APTR prog)
 // point of this function is to drain the list environment_open just
 // populated. env_drop_banks, on the other hand, is cleared up-front
 // so a previous load whose follow-up save failed cannot bleed its
-// removals into a different env file (Codex review).
+// removals into a different env file.
 void environment_resolve_missing_banks(Cfg_Environment *env, struct Window *parent)
 {
 	struct EnvBankPathNode *node;

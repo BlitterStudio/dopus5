@@ -358,7 +358,7 @@ void LIBFUNC L_GetDragMask(REG(a0, DragInfo *drag))
 			// L_GetDragInfo); for DRAGF_CUSTOM (the only path that reaches
 			// the RTG branches) sprite.Width/Height happen to equal
 			// drag->width/height, but normalising on the alloc-side pair
-			// removes the lurking inconsistency Codex flagged and bounds
+			// removes the lurking allocation/write inconsistency and bounds
 			// every ImageShadow word write by the same dimension used to
 			// size it.
 

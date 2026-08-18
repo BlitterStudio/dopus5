@@ -7,13 +7,9 @@
 */bin.mos/*
 */bin.i386-aros/*
 */bin.x86_64-aros/*
-.omg
 .DS_Store
 releases
 local-notes/
 notes/
 source/Modules/ftp/third_party/libssh2/build/
-docs/superpowers
-.omo
-docs/plans
 __pycache__/
