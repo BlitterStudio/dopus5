@@ -27,7 +27,7 @@
 #define CMD_REVISION   4
 
 // set platform identification
-#ifdef DEBUG
+#if defined(DEBUG) && DEBUG
 	#if defined(__amigaos3__)
 		#define PLATFORM [OS3dev]
 	#elif defined(__amigaos4__)
@@ -35,7 +35,9 @@
 	#elif defined(__MORPHOS__)
 		#define PLATFORM [MOSdev]
 	#elif defined(__AROS__)
-		#if ARCH == 386
+		#if defined(__aarch64__)
+			#define PLATFORM [AROSdev-aarch64]
+		#elif ARCH == 386
 			#undef i386
 			#define PLATFORM [AROSdev-i386]
 		#elif ARCH == 64
@@ -56,7 +58,10 @@
 	#elif defined(__MORPHOS__)
 		#define PLATFORM [MOS]
 	#elif defined(__AROS__)
-		#if ARCH == 386
+		#undef AROS
+		#if defined(__aarch64__)
+			#define PLATFORM [AROS-aarch64]
+		#elif ARCH == 386
 			#undef i386
 			#define PLATFORM [AROS-i386]
 		#elif ARCH == 64

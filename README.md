@@ -37,7 +37,7 @@ work.
 | AmigaOS 3  | m68k 68020-60 (default) and plain m68k 68000 | Tested on OS 3.1, 3.1.4, 3.2 and 3.9               |
 | AmigaOS 4  | PPC                                        |                                                    |
 | MorphOS    | PPC                                        |                                                    |
-| AROS       | i386 (ABIv0), x86_64 (ABIv11)              | Both architectures have CI debug + release parity  |
+| AROS       | i386 (ABIv0), x86_64 / aarch64 (ABIv11)  | All three architectures have CI debug + release parity |
 
 The 68000 OS3 variant ships in its own archive (`DOpus5_<rev>_os3-68000.lha`)
 so users on stock 68000-based hardware (A500, A600, A1000, A2000, CDTV) can
@@ -62,6 +62,7 @@ recommended way is via the prebuilt Docker images used by CI:
 | MorphOS (PPC)       | `sacredbanana/amiga-compiler:ppc-morphos`    |
 | AROS i386 (ABIv0)   | `midwan/aros-compiler:i386-aros`             |
 | AROS x86_64 (ABIv11)| `midwan/aros-compiler:x86_64-aros`           |
+| AROS aarch64 (ABIv11)| `midwan/aros-compiler:aarch64-aros`          |
 
 Native builds on Amiga / MorphOS / AROS are also possible if you have a
 working GCC + libc + AmigaOS SDK installed.
@@ -79,6 +80,7 @@ make os4            # AmigaOS 4 (PPC)
 make mos            # MorphOS (PPC)
 make i386-aros      # AROS i386 (ABIv0)
 make x86_64-aros    # AROS x86_64 (ABIv11)
+make aarch64-aros   # AROS aarch64 (ABIv11, Raspberry Pi 3/4/5 64-bit)
 ```
 
 By default the build is a debug build. Add `debug=no` for the optimised
@@ -108,14 +110,17 @@ The FTP module supports SFTP via [libssh2](https://libssh2.org/).
 - On **AmigaOS 3 / AmigaOS 4 / MorphOS** SFTP is **always built in**:
   the cross-build helper at `source/Modules/ftp/third_party/libssh2/`
   fetches and statically links libssh2 1.11.1 by default.
-- On **AROS** SFTP is opt-in (the AROS toolchain image already provides a
-  shared `libssh2`):
+- On **AROS i386 / x86_64** SFTP is opt-in (those toolchain images already
+  provide a shared `libssh2`):
 
   ```sh
   cd source
   make i386-aros sftp=yes
   make x86_64-aros sftp=yes
   ```
+
+  The current `aarch64-aros` SDK does not ship libssh2, so `sftp=yes` is not
+  yet available for that target.
 
 ### xadopus.module
 
