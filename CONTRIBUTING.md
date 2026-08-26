@@ -34,6 +34,7 @@ match exactly what runs on the build server, so "works on my machine" maps
 | MorphOS (PPC)       | `sacredbanana/amiga-compiler:ppc-morphos`    |
 | AROS i386 (ABIv0)   | `midwan/aros-compiler:i386-aros`             |
 | AROS x86_64 (ABIv11)| `midwan/aros-compiler:x86_64-aros`           |
+| AROS aarch64 (ABIv11)| `midwan/aros-compiler:aarch64-aros`          |
 
 A typical build looks like:
 
@@ -43,8 +44,9 @@ docker run --rm -v "$PWD":/work sacredbanana/amiga-compiler:m68k-amigaos \
 ```
 
 Available platform targets are `os3`, `os3-68000`, `os4`, `mos`,
-`i386-aros`, `x86_64-aros`. Add `debug=no` for an optimised release build,
-or `release` to also produce the `.lha` archive in `releases/`.
+`i386-aros`, `x86_64-aros`, and `aarch64-aros`. Add `debug=no` for an
+optimised release build, or `release` to also produce the `.lha` archive in
+`releases/`.
 
 The full reference (including `release-package`, the SFTP build flow and
 native-Amiga builds) is in [`README.md`](README.md).

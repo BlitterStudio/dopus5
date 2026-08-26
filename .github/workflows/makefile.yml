@@ -73,6 +73,7 @@ jobs:
           - { name: mos, image: "sacredbanana/amiga-compiler@sha256:464de9e085367f16605c34cb8c544a3ab1dcb92f494e826a004a12a501a83829" }
           - { name: i386-aros, image: "midwan/aros-compiler:i386-aros" }
           - { name: x86_64-aros, image: "midwan/aros-compiler:x86_64-aros" }
+          - { name: aarch64-aros, image: "midwan/aros-compiler:aarch64-aros" }
         variant:
           - { name: debug,   flags: "",          suffix: "_debug" }
           - { name: release, flags: "debug=no",  suffix: "" }
@@ -110,7 +111,7 @@ jobs:
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "artifacts/DOpus5_*_os3.lha,artifacts/DOpus5_*_os3-68000.lha,artifacts/DOpus5_*_os4.lha,artifacts/DOpus5_*_mos.lha,artifacts/DOpus5_*_i386-aros.lha,artifacts/DOpus5_*_x86_64-aros.lha"
+          artifacts: "artifacts/DOpus5_*_os3.lha,artifacts/DOpus5_*_os3-68000.lha,artifacts/DOpus5_*_os4.lha,artifacts/DOpus5_*_mos.lha,artifacts/DOpus5_*_i386-aros.lha,artifacts/DOpus5_*_x86_64-aros.lha,artifacts/DOpus5_*_aarch64-aros.lha"
           generateReleaseNotes: true
           allowUpdates: true
         env:

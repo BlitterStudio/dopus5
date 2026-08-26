@@ -1,3 +1,16 @@
+[dopus5 next] New AROS aarch64 build target
+Ships in 5.103. Build-system / CI change; no existing program, library,
+module or command version changes.
+
+New build targets:
+- New AROS aarch64 (ABIv11) build package for the Raspberry Pi 3/4/5
+  64-bit port, with CI debug + release parity and AROS-compatible DWARF
+  debug output.
+- Treat the AROS SDK's `DEBUG=0` definition as a release build for platform
+  identification and debug logging.
+- Report ARM64 and FPU in the version substitutions instead of falling back
+  to m68k CPU/FPU detection on aarch64.
+
 [dopus5 5.102] Release summary
 Program bumps to 5.102, library and modules to v73r6, commands to
 v65r4.

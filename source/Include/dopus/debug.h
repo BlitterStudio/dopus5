@@ -10,7 +10,7 @@
 	#undef D
 #endif /* __AROS__ */
 
-#ifdef DEBUG
+#if defined(DEBUG) && DEBUG
 	#define D(x) x
 #else
 	#define D(x)

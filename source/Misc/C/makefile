@@ -31,7 +31,7 @@ export cpu
 ###########################################################
 # Read platform arguments from the "Make" command line:
 # Acceptable platform arguments are os3, os3-68000, os4, mos,
-# i386-aros or x86_64-aros.
+# i386-aros, x86_64-aros or aarch64-aros.
 #
 # Order matters: check os3-68000 BEFORE os3 because `os3` is a
 # substring of `os3-68000` and findstring would otherwise match both.
@@ -63,16 +63,29 @@ ifeq ($(findstring x86_64-aros, $(MAKECMDGOALS)),x86_64-aros)
 	arch:= x86_64
 	NAME:= $(arch)-$(PLATFORM) $(NAME)
 endif
+ifeq ($(findstring aarch64-aros, $(MAKECMDGOALS)),aarch64-aros)
+	PLATFORM:= aros
+	arch:= aarch64
+	NAME:= $(arch)-$(PLATFORM) $(NAME)
+endif
 NAME := $(strip $(NAME))
+# Direct component builds need the same aarch64 DWARF override as the root
+# makefile; MAKEOVERRIDES carries it into each command sub-make.
+ifeq ($(arch),aarch64)
+ifneq ($(debug),no)
+override DEBUGSYM := -g
+MAKEOVERRIDES += DEBUGSYM=$(DEBUGSYM)
+endif
+endif
 
 # Generate error if no platform entered on "Make" command line.
 ifeq ($(PLATFORM), none)
-$(error Error: Enter a platform (os3, os3-68000, os4, mos, i386-aros or x86_64-aros).)
+$(error Error: Enter a platform (os3, os3-68000, os4, mos, i386-aros, x86_64-aros or aarch64-aros).)
 endif
 
 #Generate error if multiple platforms entered on "Make" command line.
 ifneq ($(words $(NAME)), 1)
-$(error Error: Enter only 1 platform (os3, os3-68000, os4, mos, i386-aros or x86_64-aros).)
+$(error Error: Enter only 1 platform (os3, os3-68000, os4, mos, i386-aros, x86_64-aros or aarch64-aros).)
 endif
 
 # Compile all if only a platform is entered on "Make" command line.
@@ -136,9 +149,10 @@ clean-viewfont:
 # commands when entered as a goal for "make"
 # on the command line (like: make os3).
 
-.PHONY : os3 os3-68000 os4 mos aros i386-aros x86_64-aros
+.PHONY : os3 os3-68000 os4 mos aros i386-aros x86_64-aros aarch64-aros
 i386-aros: mos
 x86_64-aros: mos
+aarch64-aros: mos
 os3: mos
 os3-68000: mos
 os4: mos

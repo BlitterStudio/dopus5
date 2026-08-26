@@ -26,6 +26,7 @@ the rest, but please be honest about what you exercised locally. -->
 - [ ] MorphOS (`mos`)
 - [ ] AROS i386 (`i386-aros`)
 - [ ] AROS x86_64 (`x86_64-aros`)
+- [ ] AROS aarch64 (`aarch64-aros`)
 
 ## Verification
 

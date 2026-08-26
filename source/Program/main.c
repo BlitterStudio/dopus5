@@ -679,6 +679,8 @@ void startup_init_gui()
 	#else
 	strcpy(GUI->ver_cpu, "PowerPC");
 	#endif
+#elif defined(__aarch64__)
+	strcpy(GUI->ver_cpu, "ARM64");
 #elif defined(__i386__)
 	strcpy(GUI->ver_cpu, "i386");
 #else
@@ -700,7 +702,7 @@ void startup_init_gui()
 #endif
 
 	// Build co-processor string
-#if defined(__PPC__) || defined(__i386__)
+#if defined(__PPC__) || defined(__i386__) || defined(__aarch64__)
 	strcpy(GUI->ver_fpu, "FPU");
 #else
 	if (SysBase->AttnFlags & AFF_68040 && SysBase->AttnFlags & AFF_FPU40)
