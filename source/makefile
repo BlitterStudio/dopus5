@@ -76,14 +76,6 @@ ifeq ($(findstring aarch64-aros, $(MAKECMDGOALS)),aarch64-aros)
 	NAME:= $(arch)-$(PLATFORM) $(NAME)
 endif
 NAME := $(strip $(NAME))
-# The aarch64 GCC backend only supports DWARF debug information. Adding the
-# command-line override to MAKEOVERRIDES propagates it through nested sub-makes.
-ifeq ($(arch),aarch64)
-ifneq ($(debug),no)
-override DEBUGSYM := -g
-MAKEOVERRIDES += DEBUGSYM=$(DEBUGSYM)
-endif
-endif
 
 # Generate error if no platform entered on "Make" command line.
 ifeq ($(PLATFORM), none)

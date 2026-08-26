@@ -4,13 +4,7 @@ SHELL:= sh
 NEWDATE  := $(shell date +%d.%m.%Y)
 
 # Enter debug=no on "Make" command line to disable debug output.
-ifeq ($(debug), no)
-DEBUG := 
-DEBUGSYM := 
-else
-DEBUG := -DDEBUG
-DEBUGSYM := -gstabs
-endif
+include ../../makefile.aros-debug
 
 # TODO: add sanity checks
 ifdef arch

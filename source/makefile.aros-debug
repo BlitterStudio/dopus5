@@ -1,0 +1,12 @@
+# Common debug configuration for AROS components.
+ifeq ($(debug), no)
+DEBUG :=
+DEBUGSYM :=
+else
+DEBUG := -DDEBUG
+ifeq ($(arch), aarch64)
+DEBUGSYM := -g
+else
+DEBUGSYM := -gstabs
+endif
+endif

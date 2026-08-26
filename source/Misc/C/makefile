@@ -69,14 +69,6 @@ ifeq ($(findstring aarch64-aros, $(MAKECMDGOALS)),aarch64-aros)
 	NAME:= $(arch)-$(PLATFORM) $(NAME)
 endif
 NAME := $(strip $(NAME))
-# Direct component builds need the same aarch64 DWARF override as the root
-# makefile; MAKEOVERRIDES carries it into each command sub-make.
-ifeq ($(arch),aarch64)
-ifneq ($(debug),no)
-override DEBUGSYM := -g
-MAKEOVERRIDES += DEBUGSYM=$(DEBUGSYM)
-endif
-endif
 
 # Generate error if no platform entered on "Make" command line.
 ifeq ($(PLATFORM), none)
