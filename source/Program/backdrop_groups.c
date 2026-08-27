@@ -229,7 +229,7 @@ IPC_EntryCode(backdrop_group_handler, static)
 	GroupData *group = 0;
 
 	// Do group
-	if ((ipc = IPC_ProcStartup((IPTR *)&group, &backdrop_group_init)))
+	if ((ipc = IPC_ProcStartup((IPTR *)&group, (ULONG (*)(IPCData *, APTR))&backdrop_group_init)))
 	{
 		// Read objects
 		SetBusyPointer(group->window);

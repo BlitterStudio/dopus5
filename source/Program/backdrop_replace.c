@@ -123,7 +123,7 @@ void backdrop_replace_icon_image(BackdropInfo *info, char *source_name, Backdrop
 				{
 					// fix new icon with dest details
 					char *do_DefaultTool;
-					char **do_ToolTypes;
+					STRPTR *do_ToolTypes;
 					struct DrawerData *do_DrawerData;
 					char *do_ToolWindow;
 

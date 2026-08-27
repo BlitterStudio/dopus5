@@ -215,7 +215,7 @@ DirEntry *create_file_entry(DirBuffer *buffer,
 			// Get info from soft link
 			entry_type = sinfo->sli_Fib.fib_DirEntryType;
 			entry_date = &sinfo->sli_Fib.fib_Date;
-			entry_comment = &sinfo->sli_Fib.fib_Comment;
+			entry_comment = (char *)sinfo->sli_Fib.fib_Comment;
 			if (entry_type == ST_FILE)
 			{
 				entry_size = GETFIBSIZE(&sinfo->sli_Fib);

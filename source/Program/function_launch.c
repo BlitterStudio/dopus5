@@ -363,7 +363,7 @@ IPC_EntryCode(function_launch_code, static)
 	IPCData *ipc;
 
 	// Get startup message
-	if (!(ipc = IPC_ProcStartup((IPTR *)&handle, &function_init)))
+	if (!(ipc = IPC_ProcStartup((IPTR *)&handle, (ULONG (*)(IPCData *, APTR))&function_init)))
 	{
 		function_free(handle);
 		return;

@@ -771,7 +771,7 @@ void _buttoned_show_button(ButtonEdData *data)
 				0,
 				-1,
 				DOpusBase,
-				GfxBase);
+				(struct Library *)GfxBase);
 
 	// Fill out fields
 	SetGadgetValue(data->objlist, GAD_BUTTONED_NAME, (func) ? (IPTR)func->node.ln_Name : 0);
@@ -834,7 +834,7 @@ void _button_editor_edit_function(ButtonEdData *data)
 						IPC_NATIVE(FunctionEditor),
 						STACK_DEFAULT,
 						(IPTR)startup,
-						DOSBase)) &&
+						(struct Library *)DOSBase)) &&
 			ipc)
 		{
 			// Allocate edit node
@@ -1656,7 +1656,7 @@ void _button_editor_change_label(ButtonEdData *data, UWORD id, BOOL refresh)
 					0,
 					-1,
 					DOpusBase,
-					GfxBase);
+					(struct Library *)GfxBase);
 
 		// Fill out fields on a real refresh
 		if (refresh)

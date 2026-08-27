@@ -373,7 +373,7 @@ static BOOL get_qualified(VOID)
 		InputBase = input_req.io_Device;
 		IInput = (struct InputIFace *)GetInterface((struct Library *)InputBase, "main", 1, NULL);
 #else
-		InputBase = (struct Library *)input_req.io_Device;
+		InputBase = input_req.io_Device;
 #endif
 
 		// See if shift is held down
@@ -661,7 +661,7 @@ static void address_drag_arrange(struct display_globals *dg, int swap)
 					if (swap)
 					{
 						// Swap two entries?
-						SwapListNodes(dg->dg_og->og_SiteList, (struct Node *)drag_node, (struct Node *)drop_node);
+						SwapListNodes((struct List *)dg->dg_og->og_SiteList, (struct Node *)drag_node, (struct Node *)drop_node);
 					}
 					else
 					{

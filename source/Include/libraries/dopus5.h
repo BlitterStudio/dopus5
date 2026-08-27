@@ -1505,7 +1505,7 @@ typedef VOID (*REF_CALLBACK)(ULONG iclass __asm("d0"), APTR window __asm("a0"), 
 		struct EmulLibEntry name##_trap = {TRAP_LIB, 0, (APTR)&name##stubs};                         \
 		__VA_ARGS__ ret name(REG(r1, t1 n1), REG(r2, t2 n2), REG(r3, t3 n3))
 #else
-	#define GET_CALLBACK(name) name
+	#define GET_CALLBACK(name) ((REF_CALLBACK)(name))
 	#define REF_CALLBACK_PROTO(ret, name, r1, t1, n1, r2, t2, n2, r3, t3, n3) \
 		extern ret name(REG(r1, t1 n1), REG(r2, t2 n2), REG(r3, t3 n3))
 	#define REF_CALLBACK_BEGIN(ret, name, r1, t1, n1, r2, t2, n2, r3, t3, n3, ...) \

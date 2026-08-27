@@ -1660,7 +1660,7 @@ void lister_doubleclick(struct ftp_node *node, IPCMessage *msg)
 						node->fn_ftp.fi_errno = 0;
 						node->fn_ftp.fi_ioerr = 0;
 						*node->fn_ftp.fi_serverr = 0;
-						actual = ftp_sftp_get(&node->fn_sftp, xfer_update, &ui, send_name, temp, FALSE);
+						actual = ftp_sftp_get(&node->fn_sftp, (ftp_sftp_xfer_callback)xfer_update, &ui, send_name, temp, FALSE);
 						if (ftp_sftp_session_error(&node->fn_sftp) != FTP_SFTP_ERROR_NONE)
 						{
 							if (ftp_sftp_session_error(&node->fn_sftp) == FTP_SFTP_ERROR_ABORTED)
@@ -1673,7 +1673,7 @@ void lister_doubleclick(struct ftp_node *node, IPCMessage *msg)
 						}
 					}
 					else
-						actual = get(&node->fn_ftp, xfer_update, &ui, send_name, temp, FALSE);
+						actual = get(&node->fn_ftp, (int (*)(void *, unsigned int, unsigned int))xfer_update, &ui, send_name, temp, FALSE);
 
 					if (utf8_name)
 						ftp_codesets_free(utf8_name);
@@ -1820,7 +1820,7 @@ void lister_traptemp(struct ftp_node *node, IPCMessage *msg)
 								node->fn_ftp.fi_errno = 0;
 								node->fn_ftp.fi_ioerr = 0;
 								*node->fn_ftp.fi_serverr = 0;
-								actual = ftp_sftp_get(&node->fn_sftp, xfer_update, &ui, send_name, temp, FALSE);
+								actual = ftp_sftp_get(&node->fn_sftp, (ftp_sftp_xfer_callback)xfer_update, &ui, send_name, temp, FALSE);
 								if (ftp_sftp_session_error(&node->fn_sftp) != FTP_SFTP_ERROR_NONE)
 								{
 									if (ftp_sftp_session_error(&node->fn_sftp) == FTP_SFTP_ERROR_ABORTED)
@@ -1833,7 +1833,7 @@ void lister_traptemp(struct ftp_node *node, IPCMessage *msg)
 								}
 							}
 							else
-								actual = get(&node->fn_ftp, xfer_update, &ui, send_name, temp, FALSE);
+								actual = get(&node->fn_ftp, (int (*)(void *, unsigned int, unsigned int))xfer_update, &ui, send_name, temp, FALSE);
 
 							if (utf8_name)
 								ftp_codesets_free(utf8_name);
@@ -1963,7 +1963,7 @@ BOOL lister_xferindex(struct ftp_node *ftpnode, char *localname, char *remotenam
 			ftpnode->fn_ftp.fi_errno = 0;
 			ftpnode->fn_ftp.fi_ioerr = 0;
 			*ftpnode->fn_ftp.fi_serverr = 0;
-			actual = ftp_sftp_get(&ftpnode->fn_sftp, xfer_update, &ui, send_name, localname, FALSE);
+			actual = ftp_sftp_get(&ftpnode->fn_sftp, (ftp_sftp_xfer_callback)xfer_update, &ui, send_name, localname, FALSE);
 			if (ftp_sftp_session_error(&ftpnode->fn_sftp) != FTP_SFTP_ERROR_NONE)
 			{
 				if (ftp_sftp_session_error(&ftpnode->fn_sftp) == FTP_SFTP_ERROR_ABORTED)
@@ -1976,7 +1976,7 @@ BOOL lister_xferindex(struct ftp_node *ftpnode, char *localname, char *remotenam
 			}
 		}
 		else
-			actual = get(&ftpnode->fn_ftp, xfer_update, &ui, send_name, localname, FALSE);
+			actual = get(&ftpnode->fn_ftp, (int (*)(void *, unsigned int, unsigned int))xfer_update, &ui, send_name, localname, FALSE);
 
 		if (utf8_name)
 			ftp_codesets_free(utf8_name);

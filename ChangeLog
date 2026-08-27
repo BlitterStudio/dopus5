@@ -1,3 +1,19 @@
+[dopus5 next] GCC 14+/16 build compatibility for OS3
+Build-system / source-compatibility change; no runtime behavior change and
+no existing program, library, module or command version changes.
+
+Compatibility with modern GCC (tested with GCC 16.2.0b m68k):
+- Fix all -Wincompatible-pointer-types sites that GCC 14+ treats as errors:
+  explicit casts for IPC startup procs, refresh callbacks (GET_CALLBACK now
+  adapts to REF_CALLBACK on non-MorphOS), library/device base pointers,
+  ToolTypes arrays, and the ftp module transfer/list callbacks.
+- Replace the undefined `(1 << 32)` shift in the Kickstart revision mask
+  with `0xFFFF` (behaviour unchanged for all real revision numbers).
+- Work around a GCC 16+ m68k register allocator ICE ("unable to find a
+  register to spill in class 'DATA_REGS'") in show.c with -Os/-flto by
+  adding -fno-cse-follow-jumps when the compiler is GCC 16 or newer;
+  drop once a fixed GCC is released.
+
 [dopus5 next] New AROS aarch64 build target
 Ships in 5.103. Build-system / CI change; no existing program, library,
 module or command version changes.

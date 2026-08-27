@@ -35,6 +35,16 @@ else
 	OS3_SUFFIX :=
 endif
 
+# GCC 16+ m68k backend workaround: "unable to find a register to spill in
+# class 'DATA_REGS'" when compiling Modules/show/show.c with -Os (also -O2/-O3
+# under -flto). Reported upstream against berniecodewiz/m68k-amigaos-gcc
+# gcc-v16.2-20260827; -fno-cse-follow-jumps avoids the faulty transform.
+# Drop this block once a fixed GCC is verified.
+GCC_MAJOR := $(shell $(CC) -dumpversion 2>/dev/null | cut -d. -f1)
+ifeq ($(shell test "$(GCC_MAJOR)" -ge 16 2>/dev/null && echo yes),yes)
+	OPTIMIZE += -fno-cse-follow-jumps
+endif
+
 OPTIONS  := $(CPUFLAGS) -flto -fshort-enums -D__amigaos3__ -D__USE_SYSBASE -D__NO_NET_API -DUSE_64BIT -DCOMPDATE=$(NEWDATE)
 INCLUDES := -I./../ -Iinit/../ -I$(SOURCE_TOP) -I$(SOURCE_TOP)/Include $(OS3_INCLUDE)
 LDFLAGS  := $(OPTIONS) $(DEBUGSYM) -noixemul

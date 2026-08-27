@@ -1027,7 +1027,7 @@ int UserLibInit()
 		return 1;
 	init_locale_data(locale);
 
-	if ((LocaleBase = OpenLibrary("locale.library", 38)))
+	if ((LocaleBase = (struct LocaleBase *)OpenLibrary("locale.library", 38)))
 	{
 		locale->li_LocaleBase = LocaleBase;
 		locale->li_Catalog = OpenCatalogA(0, "configopus.catalog", 0);
