@@ -38,11 +38,14 @@ endif
 # GCC 16+ m68k backend workaround: "unable to find a register to spill in
 # class 'DATA_REGS'" when compiling Modules/show/show.c with -Os (also -O2/-O3
 # under -flto). Reported upstream against berniecodewiz/m68k-amigaos-gcc
-# gcc-v16.2-20260827; -fno-cse-follow-jumps avoids the faulty transform.
+# gcc-v16.2-20260827. Per upstream advice we build with -mlra (LRA register
+# allocator), which bypasses the buggy old reload pass entirely; the
+# alternatives (-fno-tree-ter, or -O2 per module) only dodge the pattern.
+# GCC <= 6 does not know -mlra at all, hence the version gate.
 # Drop this block once a fixed GCC is verified.
 GCC_MAJOR := $(shell $(CC) -dumpversion 2>/dev/null | cut -d. -f1)
 ifeq ($(shell test "$(GCC_MAJOR)" -ge 16 2>/dev/null && echo yes),yes)
-	OPTIMIZE += -fno-cse-follow-jumps
+	OPTIMIZE += -mlra
 endif
 
 OPTIONS  := $(CPUFLAGS) -flto -fshort-enums -D__amigaos3__ -D__USE_SYSBASE -D__NO_NET_API -DUSE_64BIT -DCOMPDATE=$(NEWDATE)
