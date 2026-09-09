@@ -373,7 +373,11 @@ static BOOL get_qualified(VOID)
 		InputBase = input_req.io_Device;
 		IInput = (struct InputIFace *)GetInterface((struct Library *)InputBase, "main", 1, NULL);
 #else
+#ifdef __MORPHOS__
+		InputBase = (struct Library *)input_req.io_Device;
+#else
 		InputBase = input_req.io_Device;
+#endif
 #endif
 
 		// See if shift is held down

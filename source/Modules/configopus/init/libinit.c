@@ -1027,7 +1027,11 @@ int UserLibInit()
 		return 1;
 	init_locale_data(locale);
 
+#if defined(__amigaos4__) || defined(__MORPHOS__)
+	if ((LocaleBase = OpenLibrary("locale.library", 38)))
+#else
 	if ((LocaleBase = (struct LocaleBase *)OpenLibrary("locale.library", 38)))
+#endif
 	{
 		locale->li_LocaleBase = LocaleBase;
 		locale->li_Catalog = OpenCatalogA(0, "configopus.catalog", 0);
