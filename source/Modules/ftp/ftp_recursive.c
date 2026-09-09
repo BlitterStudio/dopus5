@@ -314,7 +314,7 @@ static int rec_retry_get(struct hook_rec_data *hc,
 
 		actual = recursive_getput_file(hc->hc_source,
 									   FAVOUR_GET_FILE,
-									   xfer_update,
+									   (int (*)(void *, unsigned int, unsigned int))xfer_update,
 									   &hc->hc_ui,
 									   entry->ei_name,
 									   destname,
@@ -464,7 +464,7 @@ static int rec_retry_put(struct hook_rec_data *hc, struct entry_info *entry, cha
 
 		actual = recursive_getput_file(hc->hc_dest,
 									   FAVOUR_PUT_FILE,
-									   xfer_update,
+									   (int (*)(void *, unsigned int, unsigned int))xfer_update,
 									   &hc->hc_ui,
 									   destname,
 									   entry->ei_name,
@@ -581,7 +581,7 @@ static int rec_retry_getput(struct hook_rec_data *hc, struct entry_info *entry, 
 
 			actual = recursive_getput(hc->hc_source,
 									  hc->hc_dest,
-									  getput_update,
+									  (int (*)(void *, unsigned int, unsigned int))getput_update,
 									  &hc->hc_ui,
 									  entry->ei_name,
 									  destname,
@@ -880,7 +880,7 @@ static unsigned int recursive_getput_via_temp(struct hook_rec_data *hc,
 
 	actual = recursive_getput_file(hc->hc_source,
 								   FAVOUR_GET_FILE,
-								   xfer_update,
+								   (int (*)(void *, unsigned int, unsigned int))xfer_update,
 								   &hc->hc_ui,
 								   entry->ei_name,
 								   tempname,
@@ -913,7 +913,7 @@ static unsigned int recursive_getput_via_temp(struct hook_rec_data *hc,
 
 		actual = recursive_getput_file(hc->hc_dest,
 									   FAVOUR_PUT_FILE,
-									   xfer_update,
+									   (int (*)(void *, unsigned int, unsigned int))xfer_update,
 									   &hc->hc_ui,
 									   destname,
 									   tempname,
@@ -2804,7 +2804,7 @@ struct rec_entry_list *rec_ftp_list(endpoint *ep, char *dirname)
 			for (;;)
 			{
 				ui.ui_ls_to_entryinfo = ep->ep_ftpnode->fn_ls_to_entryinfo;
-				list_result = list(&ep->ep_ftpnode->fn_ftp, callback_func, &ui, ep->ep_ftpnode->fn_lscmd, send_dirname);
+				list_result = list(&ep->ep_ftpnode->fn_ftp, (int (*)(void *, const char *))callback_func, &ui, ep->ep_ftpnode->fn_lscmd, send_dirname);
 				if (list_result == -2 && lister_fallback_list_command(ep->ep_ftpnode))
 					rec_entry_list_clear(rel);
 				else

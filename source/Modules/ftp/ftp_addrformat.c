@@ -76,7 +76,7 @@ ListFormat *get_opus_format(struct opusftp_globals *og)
 	pp.pointer = 0;
 	pp.flags = 0;
 
-	if (DC_CALL1(infoptr, dc_GetPointer, DC_REGA0, &pp))
+	if (DC_CALL1(infoptr, dc_GetPointer, DC_REGA0, (struct GetPointerPkt *)&pp))
 	// if	(og->og_hooks.dc_GetPointer(&pp ))
 	{
 		opus = (ListFormat *)pp.pointer;
@@ -84,7 +84,7 @@ ListFormat *get_opus_format(struct opusftp_globals *og)
 		*(&og->og_opus_format) = *opus;
 
 		if (pp.flags & POINTERF_LOCKED)
-			DC_CALL1(infoptr, dc_FreePointer, DC_REGA0, &pp);
+			DC_CALL1(infoptr, dc_FreePointer, DC_REGA0, (struct GetPointerPkt *)&pp);
 		// og->og_hooks.dc_FreePointer(&pp );
 	}
 

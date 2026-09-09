@@ -367,7 +367,11 @@ void startup_open_libraries()
 		!(UtilityBase = main_open_library("utility.library", 37)) ||
 #endif
 		!(GadToolsBase = main_open_library("gadtools.library", 37)) ||
+#if defined(__amigaos4__) || defined(__MORPHOS__)
 		!(RexxSysBase = main_open_library("rexxsyslib.library", 0)) ||
+#else
+		!(RexxSysBase = (struct RxsLib *)main_open_library("rexxsyslib.library", 0)) ||
+#endif
 		!(AslBase = main_open_library("asl.library", 37)))
 		quit(0);
 
@@ -390,7 +394,11 @@ void startup_open_libraries()
 	// Some other useful libraries
 	DataTypesBase = OpenLibrary("datatypes.library", 0);
 	AmigaGuideBase = OpenLibrary("amigaguide.library", 0);
+#ifdef __MORPHOS__
 	NewIconBase = (struct NewIconBase *)OpenLibrary("newicon.library", 0);
+#else
+	NewIconBase = OpenLibrary("newicon.library", 0);
+#endif
 #ifdef __amigaos4__
 	IDataTypes = (struct DataTypesIFace *)GetInterface(DataTypesBase, "main", 1, NULL);
 	IAmigaGuide = (struct AmigaGuideIFace *)GetInterface(AmigaGuideBase, "main", 1, NULL);
@@ -446,7 +454,11 @@ void startup_open_libraries()
 		InputBase = input_req.io_Device;
 		IInput = (struct InputIFace *)GetInterface((struct Library *)InputBase, "main", 1, NULL);
 #else
+#ifdef __MORPHOS__
 		InputBase = (struct Library *)input_req.io_Device;
+#else
+		InputBase = input_req.io_Device;
+#endif
 #endif
 	}
 
@@ -649,7 +661,7 @@ void startup_init_gui()
 		ptr = *ptr2;
 
 		ver = ptr >> 16;
-		rev = ptr & (((1 << 32) - (1 << 16)) - 1);
+		rev = ptr & 0xFFFF;
 #endif
 
 		lsprintf(GUI->ver_kickstart, "%ld.%ld", ver, rev);
@@ -772,7 +784,7 @@ void startup_process_args(int argc, char **argv)
 
 		// If we got icon, get tooltype array
 		if (icon)
-			arg_array = icon->do_ToolTypes;
+			arg_array = (char **)icon->do_ToolTypes;
 	}
 
 	// Otherwise, from CLI

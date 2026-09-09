@@ -91,7 +91,7 @@ IPC_EntryCode(rexx_proc)
 	TimerHandle *timer = 0;
 
 	// Do startup
-	if (!(ipc = IPC_ProcStartup(0, &rexx_init)) || !(reply_port = CreateMsgPort()) ||
+	if (!(ipc = IPC_ProcStartup(0, (ULONG (*)(IPCData *, APTR))&rexx_init)) || !(reply_port = CreateMsgPort()) ||
 		!(GUI->rexx_app_port = CreateMsgPort()) || !(notify_port = CreateMsgPort()) ||
 		!(timer = AllocTimer(UNIT_VBLANK, 0)) || !(rexx_port = (struct MsgPort *)IPCDATA(ipc)))
 	{

@@ -396,7 +396,7 @@ void SAVEDS launcher_proc(void)
 	reply_port = CreateMsgPort();
 
 	// Copy environment variables
-	CopyLocalEnv(DOSBase);
+	CopyLocalEnv((struct Library *)DOSBase);
 
 	// Set program name
 	SetProgramName(ipc->proc->pr_Task.tc_Node.ln_Name);

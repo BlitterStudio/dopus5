@@ -147,7 +147,7 @@ IPC_EntryCode(start_proc, static)
 	short quit_flag = 0;
 
 	// Do startup
-	if (!(IPC_ProcStartup((IPTR *)&menu, &start_init)))
+	if (!(IPC_ProcStartup((IPTR *)&menu, (ULONG (*)(IPCData *, APTR))&start_init)))
 	{
 		// Failed
 		start_cleanup(menu);

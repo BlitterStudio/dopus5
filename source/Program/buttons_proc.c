@@ -87,7 +87,7 @@ IPC_EntryCode(buttons_code)
 	IPCData *ipc;
 
 	// Do startup
-	if (!(IPC_ProcStartup((IPTR *)&buttons, &buttons_init)))
+	if (!(IPC_ProcStartup((IPTR *)&buttons, (ULONG (*)(IPCData *, APTR))&buttons_init)))
 	{
 		buttons_cleanup(buttons, 0);
 		return;

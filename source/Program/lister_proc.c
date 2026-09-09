@@ -162,7 +162,7 @@ IPC_EntryCode(lister_code)
 	struct MinList sniff_list;
 
 	// Do startup
-	if (!(IPC_ProcStartup((IPTR *)&lister, &lister_init)))
+	if (!(IPC_ProcStartup((IPTR *)&lister, (ULONG (*)(IPCData *, APTR))&lister_init)))
 	{
 		lister_cleanup(lister, 0);
 		return;
