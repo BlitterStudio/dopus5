@@ -11,8 +11,9 @@ Compatibility with modern GCC (tested with GCC 16.2.0b m68k):
   with `0xFFFF` (behaviour unchanged for all real revision numbers).
 - Work around a GCC 16+ m68k register allocator ICE ("unable to find a
   register to spill in class 'DATA_REGS'") in show.c with -Os/-flto by
-  adding -fno-cse-follow-jumps when the compiler is GCC 16 or newer;
-  drop once a fixed GCC is released.
+  building with -mlra when the compiler is GCC 16 or newer, which
+  bypasses the faulty old reload pass entirely; drop once a fixed GCC
+  is verified.
 
 [dopus5 next] New AROS aarch64 build target
 Ships in 5.103. Build-system / CI change; no existing program, library,
