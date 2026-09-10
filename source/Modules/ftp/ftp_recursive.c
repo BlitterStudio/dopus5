@@ -3474,7 +3474,7 @@ int rec_filesys_getreply(endpoint *ep, ULONG flags)
 int rec_ftp_select(endpoint *ep)
 {
 	struct opusftp_globals *ogp = ep->ep_ftpnode->fn_og;
-	struct timeval t = {0};
+	struct timeval t = {.tv_sec = 0, .tv_usec = 500000};
 	fd_set rd, ex;
 	ULONG flags = SIGBREAKF_CTRL_D;
 	int nds;
@@ -3487,17 +3487,6 @@ int rec_ftp_select(endpoint *ep)
 		return rec_ask_lister_favour(FAVOUR_SELECT, ep, 0, 0);
 
 	D(bug("FTP select\n"));
-
-	/**********************************
-	* far too short a timeout
-
-	t.tv_secs = 0;
-	t.tv_micro = 20;
-
-	*******************************/
-
-	t.tv_secs = 0;
-	t.tv_micro = 500000;
 
 	FD_ZERO(&rd);
 	FD_ZERO(&ex);

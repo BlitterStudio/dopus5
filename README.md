@@ -57,12 +57,21 @@ recommended way is via the prebuilt Docker images used by CI:
 
 | Target              | Docker image                                 |
 | ------------------- | -------------------------------------------- |
-| AmigaOS 3 (m68k)    | `sacredbanana/amiga-compiler:m68k-amigaos`   |
-| AmigaOS 4 (PPC)     | `sacredbanana/amiga-compiler:ppc-amigaos`    |
-| MorphOS (PPC)       | `sacredbanana/amiga-compiler:ppc-morphos`    |
+| AmigaOS 3 (m68k)    | `amigadev/crosstools:m68k-amigaos-gcc10`     |
+| AmigaOS 4 (PPC)     | `sacredbanana/amiga-compiler:ppc-amigaos`     |
+| MorphOS (PPC)       | `sacredbanana/amiga-compiler:ppc-morphos`     |
 | AROS i386 (ABIv0)   | `midwan/aros-compiler:i386-aros`             |
 | AROS x86_64 (ABIv11)| `midwan/aros-compiler:x86_64-aros`           |
 | AROS aarch64 (ABIv11)| `midwan/aros-compiler:aarch64-aros`          |
+
+CI pins the tested Amiga images by digest in
+[the build workflow](.github/workflows/makefile.yml). Use those digest references
+instead of the mutable tags above to reproduce a CI build. The OS3 `gcc10` tag
+currently contains patched GCC 16.2.0b; its name does not indicate the compiler version.
+
+OS4 and MorphOS retain their existing image pins until their
+`amigadev/crosstools` replacements include the SDKs required by the FTP module:
+AmiSSL and codesets for OS4, and codesets for MorphOS.
 
 Native builds on Amiga / MorphOS / AROS are also possible if you have a
 working GCC + libc + AmigaOS SDK installed.

@@ -189,7 +189,11 @@ struct update_info
 	unsigned int ui_total_bytes;	// Total size of file
 	unsigned int ui_bytes_so_far;	// Bytes transferred so far
 	unsigned int ui_resumed_bytes;	// resume point for peed calc
+#ifdef DEVICES_TIMER_H_TIMEVAL_CAMELCASE
+	struct TimeVal ui_start, ui_last, ui_curr;
+#else
 	struct timeval ui_start, ui_last, ui_curr;
+#endif
 	int ui_info_type;  // extended display
 	char ui_infotext_path[256];
 };
