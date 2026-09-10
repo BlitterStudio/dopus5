@@ -8,7 +8,7 @@ module or command version changes.
   include the required SDKs: AmiSSL and codesets on OS4, codesets on MorphOS.
 - Prepare FTP for the newer MorphOS SDK by separating timer.device TimeVal
   storage from socket timeval timeouts. Preserve all timeout values with
-  initializers that work with both SDK member-name conventions.
+  designated initializers and SDK-provided socket member-name aliases.
 - Use the SDK's SFS2 disk identifier when available instead of redefining it.
 
 [dopus5 next] GCC 14+/16 build compatibility for OS3

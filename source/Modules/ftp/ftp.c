@@ -1167,7 +1167,7 @@ DropInterface((struct Interface *)ITimer);
 
 static VOID set_timeout(struct ftp_info *info, struct timeval *timer)
 {
-	*timer = (struct timeval){info->fi_timeout ? info->fi_timeout : 60, 0};
+	*timer = (struct timeval){.tv_sec = info->fi_timeout ? info->fi_timeout : 60, .tv_usec = 0};
 }
 
 #define WBUFSIZE (16 * 1024)  // disk buffer size for buffered read
@@ -1622,7 +1622,7 @@ static int sgetc(struct ftp_info *info, int skt, int checkabort_time, struct ftp
 	// set network timeout for the select wait call
 
 	if (checkabort_time == 2)
-		t = (struct timeval){5, 0};	 // special return soon to update progress bar
+		t = (struct timeval){.tv_sec = 5, .tv_usec = 0};  // special return soon to update progress bar
 	else
 		set_timeout(info, &t);
 

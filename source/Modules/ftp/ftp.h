@@ -75,6 +75,7 @@ For more information on Directory Opus for Windows please see:
 #endif
 #include <netdb.h>
 #include <time.h>
+#include <sys/time.h>
 
 #include "ftp_tls.h"
 
