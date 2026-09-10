@@ -23,15 +23,15 @@ flag up front than to chase down in code review.
 ## Building
 
 The build system is GCC + GNU make, cross-compiled from a Unix-like host.
-The recommended path is the prebuilt Docker images that CI uses — they
-match exactly what runs on the build server, so "works on my machine" maps
-1:1 to "works in CI".
+The recommended path is the prebuilt Docker toolchains used by CI. The tags
+below identify each toolchain; for reproducible builds, use the tested digest
+references in [the build workflow](.github/workflows/makefile.yml).
 
 | Target              | Docker image                                 |
 | ------------------- | -------------------------------------------- |
-| AmigaOS 3 (m68k)    | `sacredbanana/amiga-compiler:m68k-amigaos`   |
-| AmigaOS 4 (PPC)     | `sacredbanana/amiga-compiler:ppc-amigaos`    |
-| MorphOS (PPC)       | `sacredbanana/amiga-compiler:ppc-morphos`    |
+| AmigaOS 3 (m68k)    | `amigadev/crosstools:m68k-amigaos-gcc10`     |
+| AmigaOS 4 (PPC)     | `sacredbanana/amiga-compiler:ppc-amigaos`     |
+| MorphOS (PPC)       | `sacredbanana/amiga-compiler:ppc-morphos`     |
 | AROS i386 (ABIv0)   | `midwan/aros-compiler:i386-aros`             |
 | AROS x86_64 (ABIv11)| `midwan/aros-compiler:x86_64-aros`           |
 | AROS aarch64 (ABIv11)| `midwan/aros-compiler:aarch64-aros`          |
@@ -39,7 +39,7 @@ match exactly what runs on the build server, so "works on my machine" maps
 A typical build looks like:
 
 ```sh
-docker run --rm -v "$PWD":/work sacredbanana/amiga-compiler:m68k-amigaos \
+docker run --rm -v "$PWD":/work amigadev/crosstools:m68k-amigaos-gcc10 \
     sh -c "cd /work/source && make os3 clean && make os3 all"
 ```
 

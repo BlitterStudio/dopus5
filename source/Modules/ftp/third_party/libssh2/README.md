@@ -10,7 +10,8 @@ repository's `THIRD_PARTY_NOTICES.md` file, or equivalent notices, alongside
 the binaries.
 
 The FTP module makefiles use this automatically when built with `sftp=yes`.
-For example, inside the sacredbanana Docker images:
+For example, inside the corresponding toolchain Docker image listed in the
+[root README](../../../../../README.md):
 
 ```sh
 make -f makefile.os3 sftp=yes

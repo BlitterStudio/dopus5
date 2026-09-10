@@ -1,3 +1,16 @@
+[dopus5 next] Adopt validated amigadev OS3 toolchain
+Build-system / source-compatibility change; no existing program, library,
+module or command version changes.
+
+- Pin OS3 and OS3-68000 CI builds to the validated amigadev/crosstools
+  GCC 16.2.0b image. Retain the GCC >=16 -mlra workaround.
+- Keep the existing OS4 and MorphOS image pins until the amigadev images
+  include the required SDKs: AmiSSL and codesets on OS4, codesets on MorphOS.
+- Prepare FTP for the newer MorphOS SDK by separating timer.device TimeVal
+  storage from socket timeval timeouts. Preserve all timeout values with
+  initializers that work with both SDK member-name conventions.
+- Use the SDK's SFS2 disk identifier when available instead of redefining it.
+
 [dopus5 next] GCC 14+/16 build compatibility for OS3
 Build-system / source-compatibility change; no runtime behavior change and
 no existing program, library, module or command version changes.

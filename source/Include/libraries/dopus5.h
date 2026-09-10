@@ -1698,7 +1698,9 @@ typedef struct
 #define ID_VP255_DISK (0x444F5309L)	 // DOS\09 - OS4's V53 dostype is for newer vector-port based filesystems
 #define ID_SFS0_DISK (0x53465300L)	 // SFS\00 - SmartFileSystem0
 #define ID_SFS1_DISK (0x53465301L)	 // SFS\01 - SmartFileSystem1
-#define ID_SFS2_DISK (0x53465302L)	 // SFS\02 - SmartFileSystem2
+#ifndef ID_SFS2_DISK
+	#define ID_SFS2_DISK (0x53465302L)	// SFS\02 - SmartFileSystem2
+#endif
 #define ID_SFS3_DISK (0x53465303L)	 // SFS\03 - SmartFileSystem3
 #define ID_JXFS_DISK (0x4a584604L)	 // JXFS\4 - JXFileSystem
 #ifndef ID_BOX0_DISK
