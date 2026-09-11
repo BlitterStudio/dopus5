@@ -1,3 +1,14 @@
+[dopus5 next] Adopt amigadev PPC toolchains
+Build-system change; no existing program, library, module or command
+version changes.
+
+- Pin OS4 CI builds to amigadev/crosstools:ppc-amigaos (GCC 11.5.0) and
+  MorphOS to amigadev/crosstools:ppc-morphos (GCC 15.2.0), replacing the
+  sacredbanana/amiga-compiler images. Both images now ship the SDKs the
+  FTP module needs: AmiSSL and codesets on OS4, codesets on MorphOS.
+- Link the MorphOS FTP module with -lpthread: the newer SDK's shared
+  libcrypto references pthread cancellation routines.
+
 [dopus5 next] Adopt validated amigadev OS3 toolchain
 Build-system / source-compatibility change; no existing program, library,
 module or command version changes.

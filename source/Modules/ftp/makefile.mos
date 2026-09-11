@@ -42,6 +42,10 @@ SFTP_DEP_CPPFLAGS := -D_NO_PPCINLINE
 SFTP_DEP_LIBS := -lssl_shared -lcrypto_shared -L$(CROSS_ROOT)/ppc-morphos/lib -lz_shared
 include makefile.sftp
 
+# The MorphOS SDK's shared libcrypto references pthread cancellation
+# routines; link the static pthread stubs after libssh2 and its deps.
+LIBS += -lpthread
+
 REMOVE = rm -f
 MAKEDIR := mkdir -p
 

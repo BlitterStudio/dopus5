@@ -60,13 +60,13 @@ jobs:
         # upstream rebuild must not silently change release compilers.
         # Validate replacements with debug/release builds and LHA packaging.
         # os3 / os3-68000: amigadev/crosstools:m68k-amigaos-gcc10 (GCC 16.2.0b)
-        # os4: retain sacredbanana until the amigadev image supplies AmiSSL and codesets.
-        # mos: retain known-good sacredbanana (GCC 15.1.0) until amigadev supplies codesets.
+        # os4: amigadev/crosstools:ppc-amigaos (GCC 11.5.0, AmiSSL + codesets)
+        # mos: amigadev/crosstools:ppc-morphos (GCC 15.2.0, codesets)
         platform:
           - { name: os3, image: "amigadev/crosstools@sha256:5313d96c7995c9ed573679212ddf7d2607e057e537dffb1360cba441e01ae829" }
           - { name: os3-68000, image: "amigadev/crosstools@sha256:5313d96c7995c9ed573679212ddf7d2607e057e537dffb1360cba441e01ae829" }
-          - { name: os4, image: "sacredbanana/amiga-compiler@sha256:7cd544cdbd6bf58a552e93183cc58e6268800305c10d5913dac96f2433c33d24" }
-          - { name: mos, image: "sacredbanana/amiga-compiler@sha256:464de9e085367f16605c34cb8c544a3ab1dcb92f494e826a004a12a501a83829" }
+          - { name: os4, image: "amigadev/crosstools@sha256:693cedf407e23957f5bb95340b9623388aa28e9a0e18f3127166ce79ee582545" }
+          - { name: mos, image: "amigadev/crosstools@sha256:c5f0078722ace9139cd44e56838df369d7ca465fe49768ecf15a8e8cefe703de" }
           - { name: i386-aros, image: "midwan/aros-compiler:i386-aros" }
           - { name: x86_64-aros, image: "midwan/aros-compiler:x86_64-aros" }
           - { name: aarch64-aros, image: "midwan/aros-compiler:aarch64-aros" }

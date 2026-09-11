@@ -30,8 +30,8 @@ references in [the build workflow](.github/workflows/makefile.yml).
 | Target              | Docker image                                 |
 | ------------------- | -------------------------------------------- |
 | AmigaOS 3 (m68k)    | `amigadev/crosstools:m68k-amigaos-gcc10`     |
-| AmigaOS 4 (PPC)     | `sacredbanana/amiga-compiler:ppc-amigaos`     |
-| MorphOS (PPC)       | `sacredbanana/amiga-compiler:ppc-morphos`     |
+| AmigaOS 4 (PPC)     | `amigadev/crosstools:ppc-amigaos`             |
+| MorphOS (PPC)       | `amigadev/crosstools:ppc-morphos`             |
 | AROS i386 (ABIv0)   | `midwan/aros-compiler:i386-aros`             |
 | AROS x86_64 (ABIv11)| `midwan/aros-compiler:x86_64-aros`           |
 | AROS aarch64 (ABIv11)| `midwan/aros-compiler:aarch64-aros`          |
