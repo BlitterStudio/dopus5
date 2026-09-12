@@ -1,3 +1,15 @@
+[dopus5 next] Pin OS4 CI to the amd64 manifest digest
+Build-system change; no existing program, library, module or command
+version changes.
+
+- GitHub runners fail to pull the amigadev/crosstools ppc-amigaos
+  multi-arch manifest-list digest (693cedf4...) with "manifest unknown",
+  reproducibly across two runs, while the registry serves the same digest
+  and Docker Hub still resolves the tag to it. Pin the amd64 child
+  manifest digest (0a8e052a...) directly instead; verified to produce the
+  same GCC 11.5.0 toolchain, a clean OS4 build, and a valid release
+  archive.
+
 [dopus5 next] Revert OS3 builds to the GCC 6.5.0b toolchain
 Build-system change; no existing program, library, module or command
 version changes.

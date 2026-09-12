@@ -66,12 +66,15 @@ jobs:
         #   such a stub jumps through garbage at runtime (read.module, about.module,
         #   and others). Preserved on the toolchain/gcc16-os3 branch pending an
         #   upstream binutils fix.
-        # os4: amigadev/crosstools:ppc-amigaos (GCC 11.5.0, AmiSSL + codesets)
+        # os4: amigadev/crosstools:ppc-amigaos (GCC 11.5.0, AmiSSL + codesets).
+        #   Pinned to the amd64 child manifest digest (runners are amd64):
+        #   runners failed to resolve the multi-arch manifest-list digest
+        #   with "manifest unknown" even while the registry served it.
         # mos: amigadev/crosstools:ppc-morphos (GCC 15.2.0, codesets)
         platform:
           - { name: os3, image: "sacredbanana/amiga-compiler@sha256:7fa7056330ce0e7b31b5e497070b3380b4f672d7d6f169ac5b3003c1af483215" }
           - { name: os3-68000, image: "sacredbanana/amiga-compiler@sha256:7fa7056330ce0e7b31b5e497070b3380b4f672d7d6f169ac5b3003c1af483215" }
-          - { name: os4, image: "amigadev/crosstools@sha256:693cedf407e23957f5bb95340b9623388aa28e9a0e18f3128166ce79ee582545" }
+          - { name: os4, image: "amigadev/crosstools@sha256:0a8e052ab1553c46e2acaa7839e5f1c5acf4b778f76da4d6685aa50692bd5314" }
           - { name: mos, image: "amigadev/crosstools@sha256:c5f0078722ace9139cd44e56838df369d7ca465fe49768ecf15a8e8cefe703de" }
           - { name: i386-aros, image: "midwan/aros-compiler:i386-aros" }
           - { name: x86_64-aros, image: "midwan/aros-compiler:x86_64-aros" }
