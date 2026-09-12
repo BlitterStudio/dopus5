@@ -1,3 +1,18 @@
+[dopus5 next] Revert OS3 builds to the GCC 6.5.0b toolchain
+Build-system change; no existing program, library, module or command
+version changes.
+
+- Pin os3 and os3-68000 CI builds back to the sacredbanana/amiga-compiler
+  m68k-amigaos image (GCC 6.5.0b) and restore the matching build docs. The
+  GCC 16.2.0b amigadev image is reverted because its binutils
+  (2.46.0.20260504) linker emits synthesized library-call stubs whose base
+  load is relocated against the text hunk instead of the data hunk; the
+  stub then loads the module's first instruction bytes as a library base
+  and jumps through garbage on first call (crashes read.module at reader
+  window open, plus latent stubs in ten other modules).
+- Keep the GCC 16 toolchain adoption on the toolchain/gcc16-os3 branch
+  until binutils fixes the stub relocation upstream.
+
 [dopus5 next] Adopt amigadev PPC toolchains
 Build-system change; no existing program, library, module or command
 version changes.

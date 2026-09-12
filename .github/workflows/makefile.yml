@@ -59,13 +59,19 @@ jobs:
         # Pin tested Amiga toolchains by digest: tags are mutable, so an
         # upstream rebuild must not silently change release compilers.
         # Validate replacements with debug/release builds and LHA packaging.
-        # os3 / os3-68000: amigadev/crosstools:m68k-amigaos-gcc10 (GCC 16.2.0b)
+        # os3 / os3-68000: sacredbanana m68k-amigaos (GCC 6.5.0b, 2026-07-04 image).
+        #   The GCC 16.2.0b amigadev image is reverted: its binutils (2.46.0.20260504)
+        #   emits synthesized library-call stubs whose base reference is relocated
+        #   against the text hunk instead of the data hunk, so the first call through
+        #   such a stub jumps through garbage at runtime (read.module, about.module,
+        #   and others). Preserved on the toolchain/gcc16-os3 branch pending an
+        #   upstream binutils fix.
         # os4: amigadev/crosstools:ppc-amigaos (GCC 11.5.0, AmiSSL + codesets)
         # mos: amigadev/crosstools:ppc-morphos (GCC 15.2.0, codesets)
         platform:
-          - { name: os3, image: "amigadev/crosstools@sha256:5313d96c7995c9ed573679212ddf7d2607e057e537dffb1360cba441e01ae829" }
-          - { name: os3-68000, image: "amigadev/crosstools@sha256:5313d96c7995c9ed573679212ddf7d2607e057e537dffb1360cba441e01ae829" }
-          - { name: os4, image: "amigadev/crosstools@sha256:693cedf407e23957f5bb95340b9623388aa28e9a0e18f3127166ce79ee582545" }
+          - { name: os3, image: "sacredbanana/amiga-compiler@sha256:7fa7056330ce0e7b31b5e497070b3380b4f672d7d6f169ac5b3003c1af483215" }
+          - { name: os3-68000, image: "sacredbanana/amiga-compiler@sha256:7fa7056330ce0e7b31b5e497070b3380b4f672d7d6f169ac5b3003c1af483215" }
+          - { name: os4, image: "amigadev/crosstools@sha256:693cedf407e23957f5bb95340b9623388aa28e9a0e18f3128166ce79ee582545" }
           - { name: mos, image: "amigadev/crosstools@sha256:c5f0078722ace9139cd44e56838df369d7ca465fe49768ecf15a8e8cefe703de" }
           - { name: i386-aros, image: "midwan/aros-compiler:i386-aros" }
           - { name: x86_64-aros, image: "midwan/aros-compiler:x86_64-aros" }

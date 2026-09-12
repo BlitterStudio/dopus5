@@ -57,7 +57,7 @@ recommended way is via the prebuilt Docker images used by CI:
 
 | Target              | Docker image                                 |
 | ------------------- | -------------------------------------------- |
-| AmigaOS 3 (m68k)    | `amigadev/crosstools:m68k-amigaos-gcc10`     |
+| AmigaOS 3 (m68k)    | `sacredbanana/amiga-compiler:m68k-amigaos`   |
 | AmigaOS 4 (PPC)     | `amigadev/crosstools:ppc-amigaos`             |
 | MorphOS (PPC)       | `amigadev/crosstools:ppc-morphos`             |
 | AROS i386 (ABIv0)   | `midwan/aros-compiler:i386-aros`             |
@@ -66,8 +66,14 @@ recommended way is via the prebuilt Docker images used by CI:
 
 CI pins the tested Amiga images by digest in
 [the build workflow](.github/workflows/makefile.yml). Use those digest references
-instead of the mutable tags above to reproduce a CI build. The OS3 `gcc10` tag
-currently contains patched GCC 16.2.0b; its name does not indicate the compiler version.
+instead of the mutable tags above to reproduce a CI build.
+
+The OS3 build stays on the GCC 6.5.0b toolchain: the GCC 16.2.0b
+`amigadev/crosstools:m68k-amigaos-gcc10` image ships a binutils build whose
+linker emits broken library-call stub relocations (the base reference lands in
+the text hunk instead of the data hunk, crashing at runtime on the first such
+call). That toolchain is preserved on the `toolchain/gcc16-os3` branch until
+binutils is fixed upstream.
 
 The OS4 and MorphOS images include the SDKs required by the FTP module
 (AmiSSL and codesets on OS4, codesets on MorphOS).
