@@ -16,9 +16,12 @@ Program and XADOpus module behaviour change.
   lister's own process when the function unwinds and releases the lock.
 - Program: honour the function's "rescan destination" flag for inline
   external (module) commands in function_internal_command(); only the
-  script path implemented it before. The shipped Archives_over_XAD
-  filetype already sets the flag on XADExtract, so the destination lister
-  now re-reads its directory in place: extract, refresh, no extra lister.
+  script path implemented it before. A module command that requires a
+  destination (XADExtract is the only one) gets the rescan
+  unconditionally, so the refresh does not depend on the calling
+  function's flags - buttons and hotkeys invoke XADExtract without
+  the flag set. The destination lister re-reads its directory in
+  place: extract, refresh, no extra lister.
 
 [dopus5 next] Pin OS4 CI to the amd64 manifest digest
 Build-system change; no existing program, library, module or command
