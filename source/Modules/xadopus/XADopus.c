@@ -1340,10 +1340,15 @@ int LIBFUNC L_Module_Entry(REG(a0, char *args),
 					AddPart(arcname, Entry->name, 512);
 				}
 			}
-			xad_format_handle(data.lists, (IPTR)data.destp->lister);
-			sprintf(buf, "command source %s ScanDir %s", data.lists, data.destp->path);
-			DC_CALL4(infoptr, dc_SendCommand, DC_REGA0, IPCDATA(ipc), DC_REGA1, buf, DC_REGA2, NULL, DC_REGD0, 0);
-			// data.hook.dc_SendCommand(IPCDATA(ipc),buf,NULL,NULL);
+			// No explicit destination refresh here.  This code runs inside the
+			// function process that holds the destination lister's busy lock, so
+			// a "command source <lister> ScanDir <path>" round-trip launches a
+			// second function process which cannot re-lock the busy lister
+			// (LISTER_BUSY answers IPC_ABORT), drops the lister handle and ends
+			// up opening a duplicate lister for the destination instead of
+			// refreshing it (issue #174).  The XADExtract filetype function
+			// carries the "rescan destination" flag, which now refreshes the
+			// destination lister when the function unwinds.
 
 			xadFreeObject(data.ArcInf, (IPTR)NULL);
 		}

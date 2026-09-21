@@ -1,3 +1,28 @@
+[dopus5 next] XADOpus: stop duplicate lister on archive drag&drop
+Program and XADOpus module behaviour change.
+
+- Dragging an XAD archive (e.g. .lha) from one lister onto another
+  extracted the archive and then opened a duplicate lister showing the
+  destination directory instead of refreshing the destination lister
+  (issue #174). XADExtract finished by sending "command source <lister>
+  ScanDir <path>", which spawns a second function process while the
+  filetype function still holds the destination lister's busy lock; the
+  new process cannot re-lock the busy lister (LISTER_BUSY answers
+  IPC_ABORT), clears its lister handle, and function_scandir() then falls
+  through to NewLister(), opening the duplicate window.
+- XADOpus module: drop the ScanDir round-trip from the XADExtract
+  completion path. The refresh now comes through the destination path
+  node's rescan flag instead, so it is performed by the destination
+  lister's own process when the function unwinds and releases the lock.
+- Program: honour the function's "rescan destination" flag for inline
+  external (module) commands in function_internal_command(); only the
+  script path implemented it before. A module command that requires a
+  destination (XADExtract is the only one) gets the rescan
+  unconditionally, so the refresh does not depend on the calling
+  function's flags - buttons and hotkeys invoke XADExtract without
+  the flag set. The destination lister re-reads its directory in
+  place: extract, refresh, no extra lister.
+
 [dopus5 next] Pin OS4 CI to the amd64 manifest digest
 Build-system change; no existing program, library, module or command
 version changes.
