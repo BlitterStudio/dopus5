@@ -25,8 +25,11 @@ XADOpus module change; version bump deferred.
 - The archive is validated before the takeover empties the buffer and
   installs the handler, so a corrupt or misidentified archive leaves
   the source lister untouched (and no new lister is opened either).
-  The root-Parent command quotes the directory and the command buffer
-  is sized for full-length paths, so directories with spaces or very
+  The buffer swap itself waits until the message port exists, so an
+  allocation failure also leaves the lister intact.  The root-Parent
+  command quotes the directory, the module's command buffer is sized
+  for full-length paths, and "lister read" now parses paths up to the
+  buffer's full 512-byte capacity, so directories with spaces or very
   long names work.
 
 [dopus5 next] XADOpus: stop duplicate lister on archive drag&drop
