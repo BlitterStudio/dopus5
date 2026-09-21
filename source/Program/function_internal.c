@@ -203,6 +203,15 @@ int function_internal_command(CommandList *command, char *args, FunctionHandle *
 			if (*buffer)
 				strcat(buffer, "\n");
 
+			// Rescan the destination when the function finishes?  Function
+			// scripts get this in function_close_script(); inline module
+			// commands change the destination outside DOpus's knowledge
+			// (e.g. XADOpus extracting a dropped archive), so flag the
+			// destination here, before the module's dc_EndDest advances the
+			// current path (issue #174)
+			if (handle && dest_n && handle->func_parameters.flags & FUNCF_RESCAN_DEST)
+				dest_n->flags |= LISTNF_RESCAN;
+
 			// Call module
 			ret = Module_Entry((command->flags & FUNCF_NO_ARGS) ? 0 : (struct List *)buffer,
 							   GUI->screen_pointer,
