@@ -354,10 +354,6 @@ BOOL AllocPort(struct xoData *data)
 		AddPort(data->mp);
 #endif
 
-		sprintf(data->buf, "lister set %s handler %s quotes", data->lists, data->mp_name);
-		DC_CALL4(
-			infoptr, dc_SendCommand, DC_REGA0, IPCDATA(data->ipc), DC_REGA1, data->buf, DC_REGA2, NULL, DC_REGD0, 0);
-		// data->hook.dc_SendCommand(IPCDATA(data->ipc),data->buf,NULL,NULL);
 		sprintf(data->buf, "dopus addtrap * %s", data->mp_name);
 		DC_CALL4(
 			infoptr, dc_SendCommand, DC_REGA0, IPCDATA(data->ipc), DC_REGA1, data->buf, DC_REGA2, NULL, DC_REGD0, 0);
@@ -1511,8 +1507,9 @@ int LIBFUNC L_Module_Entry(REG(a0, char *args),
 			// reading; swap it to a fresh buffer so those entries don't
 			// linger beneath the archive contents.  Deferred until the
 			// port exists so an AllocPort failure leaves the lister
-			// untouched; the handler just installed by AllocPort is
-			// carried across the swap.  The old buffer goes to the cache
+			// untouched; no handler is installed yet, so the swap's
+			// cleanup of the old buffer stays quiet.  The old buffer
+			// goes to the cache
 			sprintf(buf, "lister empty %s", data.lists);
 			DC_CALL4(
 				infoptr, dc_SendCommand, DC_REGA0, IPCDATA(ipc), DC_REGA1, buf, DC_REGA2, NULL, DC_REGD0, 0);
@@ -1524,6 +1521,14 @@ int LIBFUNC L_Module_Entry(REG(a0, char *args),
 				infoptr, dc_SendCommand, DC_REGA0, IPCDATA(ipc), DC_REGA1, buf, DC_REGA2, NULL, DC_REGD0, 0);
 			// data.hook.dc_SendCommand(IPCDATA(ipc), buf, NULL, NULL);
 		}
+
+		// Install the handler after the buffer swap: swapping with the
+		// handler already installed makes RXCMD_EMPTY's cleanup of the
+		// old buffer queue an "inactive" trap, which the event loop
+		// would consume as its first message and end the browse at once
+		sprintf(buf, "lister set %s handler %s quotes", data.lists, data.mp_name);
+		DC_CALL4(infoptr, dc_SendCommand, DC_REGA0, IPCDATA(ipc), DC_REGA1, buf, DC_REGA2, NULL, DC_REGD0, 0);
+
 			strcpy(data.listpath, data.rootpath);
 			sprintf(buf, "lister set %s path %s", data.lists, data.listpath);
 			DC_CALL4(infoptr, dc_SendCommand, DC_REGA0, IPCDATA(ipc), DC_REGA1, buf, DC_REGA2, NULL, DC_REGD0, 0);
