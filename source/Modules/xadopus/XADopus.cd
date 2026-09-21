@@ -88,3 +88,6 @@ Unable to get DOpus callback hooks !
 MSG_READING_ARCHIVE (//)
 Reading archive...
 ;        
+;
+MSG_XADOPENINLISTER_DESC (//)
+Open XAD Archive in this lister

@@ -86,6 +86,8 @@ struct xoData
 	struct path_node listp;
 	BOOL All;
 	char password[512];
+	BOOL same_lister;
+	char origpath[512];
 };
 
 struct TempFile

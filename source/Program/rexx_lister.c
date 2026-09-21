@@ -385,10 +385,12 @@ BOOL rexx_lister_cmd(struct RexxMsg *msg, short command, char *args)
 		// Read a path
 		case RXCMD_READ: {
 			long flags;
-			char path[256];
+			// Paths are stored in DirBuffer.buf_Path[512]; keep the parse
+			// capacity consistent so long paths are not silently truncated
+			char path[512];
 
 			// Get path to read
-			rexx_parse_word(&args, path, 256);
+			rexx_parse_word(&args, path, 512);
 
 			// Force re-read?
 			rexx_skip_space(&args);
