@@ -31,9 +31,6 @@ Open XAD Archive
 MSG_XADEXTRACT_DESC (//)
 Extract XAD Archive
 ;
-MSG_XADOPENINLISTER_DESC (//)
-Open XAD Archive in this lister
-;
 MSG_ERROR (//)
 Error
 ;
@@ -91,3 +88,6 @@ Unable to get DOpus callback hooks !
 MSG_READING_ARCHIVE (//)
 Reading archive...
 ;        
+;
+MSG_XADOPENINLISTER_DESC (//)
+Open XAD Archive in this lister

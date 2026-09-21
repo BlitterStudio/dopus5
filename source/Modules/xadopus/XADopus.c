@@ -562,7 +562,7 @@ void _parent(struct xoData *data)
 	{
 		DOpusCallbackInfo *infoptr = &data->hook;
 
-		sprintf(data->buf, "lister read %s %s", data->lists, data->origpath);
+		sprintf(data->buf, "lister read %s \"%s\"", data->lists, data->origpath);
 		DC_CALL4(
 			infoptr, dc_SendCommand, DC_REGA0, IPCDATA(data->ipc), DC_REGA1, data->buf, DC_REGA2, NULL, DC_REGD0, 0);
 	}
@@ -1160,7 +1160,6 @@ BOOL ExtractF(struct xoData *data)
 
 	return (over);
 }
-///
 
 /// Main
 int LIBFUNC L_Module_Entry(REG(a0, char *args),
@@ -1171,7 +1170,7 @@ int LIBFUNC L_Module_Entry(REG(a0, char *args),
 						   REG(d1, EXT_FUNC(func_callback)))
 {
 	char arcname[512];
-	char buf[512];
+	char buf[1088];
 	STRPTR result;
 	struct xoData data;
 	struct Tree root;
@@ -1455,6 +1454,48 @@ int LIBFUNC L_Module_Entry(REG(a0, char *args),
 		}
 	}
 
+	// Validate the archive before touching the lister: the takeover
+	// below empties the buffer and installs the handler, so on failure
+	// the source lister must still be untouched (and no fresh lister
+	// should have been opened either)
+	if (!(data.ArcInf = xadAllocObject(XADOBJ_ARCHIVEINFO, (IPTR)NULL)))
+	{
+		FreeMemHandle(data.rhand);
+		RemoveTemp(&data);
+		return 0;
+	}
+
+	err = xadGetInfo(data.ArcInf, XAD_INFILENAME, (IPTR)arcname, TAG_DONE);
+	if (!err)
+	{
+		data.ArcMode = data.ArcInf->xai_Client->xc_Flags & XADCF_DISKARCHIVER;
+	}
+	else if (err == XADERR_FILETYPE)
+	{
+		if (!(err = xadGetDiskInfo(data.ArcInf, XAD_INFILENAME, (IPTR)arcname, TAG_DONE)))
+		{
+			data.ArcMode = XADCF_DISKARCHIVER;
+		}
+	}
+	else if ((!err) && data.ArcMode)
+	{
+		struct TagItem ti[2];
+
+		xadFreeInfo(data.ArcInf);
+		ti[0].ti_Tag = XAD_INFILENAME;
+		ti[0].ti_Data = (IPTR)arcname;
+		ti[1].ti_Tag = TAG_DONE;
+		err = xadGetDiskInfo(data.ArcInf, XAD_INDISKARCHIVE, (IPTR)ti, TAG_DONE);
+	}
+
+	if (err)
+	{
+		ErrorReq(&data, xadGetErrorText(err));
+		xadFreeObject(data.ArcInf, (IPTR)NULL);
+		FreeMemHandle(data.rhand);
+		RemoveTemp(&data);
+		return 0;
+	}
 	// A taken-over lister still shows the real directory it was reading;
 	// swap it to a fresh buffer so those entries don't linger beneath the
 	// archive contents.  The old buffer goes back to the cache
@@ -1516,33 +1557,6 @@ int LIBFUNC L_Module_Entry(REG(a0, char *args),
 			data.listw = (APTR)DC_CALL1(infoptr, dc_GetWindow, DC_REGA0, &data.listp);
 			// data.listw = data.hook.dc_GetWindow(&data.listp);
 
-			if ((data.ArcInf = xadAllocObject(XADOBJ_ARCHIVEINFO, (IPTR)NULL)))
-			{
-				err = xadGetInfo(data.ArcInf, XAD_INFILENAME, (IPTR)arcname, TAG_DONE);
-				if (!err)
-				{
-					data.ArcMode = data.ArcInf->xai_Client->xc_Flags & XADCF_DISKARCHIVER;
-				}
-				else if (err == XADERR_FILETYPE)
-				{
-					if (!(err = xadGetDiskInfo(data.ArcInf, XAD_INFILENAME, (IPTR)arcname, TAG_DONE)))
-					{
-						data.ArcMode = XADCF_DISKARCHIVER;
-					}
-				}
-				else if ((!err) && data.ArcMode)
-				{
-					struct TagItem ti[2];
-
-					xadFreeInfo(data.ArcInf);
-					ti[0].ti_Tag = XAD_INFILENAME;
-					ti[0].ti_Data = (IPTR)arcname;
-					ti[1].ti_Tag = TAG_DONE;
-					err = xadGetDiskInfo(data.ArcInf, XAD_INDISKARCHIVE, (IPTR)ti, TAG_DONE);
-				}
-
-				if (!err)
-				{
 					BuildTree(&data);
 					ChangeDir(&data, &root);
 
@@ -1620,19 +1634,10 @@ int LIBFUNC L_Module_Entry(REG(a0, char *args),
 						}
 					}
 					xadFreeInfo(data.ArcInf);
-				}
-				else
-				{
-					sprintf(buf, "dopus remtrap * %s", data.mp_name);
-					DC_CALL4(
-						infoptr, dc_SendCommand, DC_REGA0, IPCDATA(ipc), DC_REGA1, buf, DC_REGA2, NULL, DC_REGD0, 0);
-					// data.hook.dc_SendCommand(IPCDATA(ipc), buf, NULL, NULL);
-					ErrorReq(&data, xadGetErrorText(err));
-				}
-				xadFreeObject(data.ArcInf, (IPTR)NULL);
-			}
 			FreePort(&data);
-		}
+	}
+
+	xadFreeObject(data.ArcInf, (IPTR)NULL);
 
 	FreeMemHandle(data.rhand);
 	RemoveTemp(&data);

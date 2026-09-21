@@ -22,6 +22,12 @@ XADOpus module change; version bump deferred.
   doubleclick still opens a new lister and drag&drop still extracts
   (issue #174); users who prefer same-lister opening rebind the
   Archives_over_XAD doubleclick action themselves.
+- The archive is validated before the takeover empties the buffer and
+  installs the handler, so a corrupt or misidentified archive leaves
+  the source lister untouched (and no new lister is opened either).
+  The root-Parent command quotes the directory and the command buffer
+  is sized for full-length paths, so directories with spaces or very
+  long names work.
 
 [dopus5 next] XADOpus: stop duplicate lister on archive drag&drop
 Program and XADOpus module behaviour change.
