@@ -17,7 +17,7 @@ typedef struct
 	char *locale_name;			 // Catalog name
 	ULONG flags;				 // Module flags
 	ULONG function_count;		 // Number of functions in module
-	ModuleFunction function[2];	 // All the module functions
+	ModuleFunction function[3];	 // All the module functions
 } ModuleInfo_2;
 #ifndef __amigaos3__
 	#pragma pack()

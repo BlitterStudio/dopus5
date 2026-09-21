@@ -73,6 +73,7 @@ extern struct Library *LocaleBase;
 #define MSG_NO_PATH_ERR 1019
 #define MSG_NO_HOOKS_ERR 1020
 #define MSG_READING_ARCHIVE 1021
+#define MSG_XADOPENINLISTER_DESC 1022
 
 #endif /* XADopus_NUMBERS */
 
@@ -104,6 +105,7 @@ extern struct Library *LocaleBase;
 #define MSG_NO_PATH_ERR_STR "Path doesn't exist!"
 #define MSG_NO_HOOKS_ERR_STR "Unable to get DOpus callback hooks !"
 #define MSG_READING_ARCHIVE_STR "Reading archive..."
+#define MSG_XADOPENINLISTER_DESC_STR "Open XAD Archive in this lister"
 
 #endif /* XADopus_STRINGS */
 
@@ -143,6 +145,7 @@ static const struct XADopus_ArrayType XADopus_Array[] =
     { MSG_NO_PATH_ERR, (STRPTR)MSG_NO_PATH_ERR_STR },
     { MSG_NO_HOOKS_ERR, (STRPTR)MSG_NO_HOOKS_ERR_STR },
     { MSG_READING_ARCHIVE, (STRPTR)MSG_READING_ARCHIVE_STR },
+    { MSG_XADOPENINLISTER_DESC, (STRPTR)MSG_XADOPENINLISTER_DESC_STR },
 };
 
 
@@ -201,6 +204,8 @@ static const char XADopus_Block[] =
     MSG_NO_HOOKS_ERR_STR ""
      "\x00\x00\x03\xfd" "\x00\x12"
     MSG_READING_ARCHIVE_STR ""
+     "\x00\x00\x03\xfe" "\x00\x20"
+    MSG_XADOPENINLISTER_DESC_STR ""
 
 };
 

@@ -67,6 +67,20 @@ class XADopusAROS64LayoutTests(unittest.TestCase):
         self.assertIn("if (!data.listh)", block)
         self.assertIn("FreeMemHandle(data.rhand);", block)
 
+    def test_module_registration_fits_function_array(self):
+        deps = read_source(ROOT / "source" / "Modules" / "xadopus" / "module_deps.h")
+        data_c = read_source(ROOT / "source" / "Modules" / "xadopus" / "XADopus_data.c")
+
+        match = re.search(r"ModuleFunction function\[(\d+)\];", deps)
+        self.assertIsNotNone(match, "module_deps.h must size the ModuleInfo_2 function array")
+        capacity = int(match.group(1))
+
+        count = re.search(r"^\t(\d+),\t+// Number of functions", data_c, re.M)
+        self.assertIsNotNone(count, "XADopus_data.c must declare the function count")
+        entries = len(re.findall(r'\{\d+,\s*"', data_c))
+        self.assertEqual(int(count.group(1)), entries)
+        self.assertLessEqual(entries, capacity)
+
 
 if __name__ == "__main__":
     unittest.main()

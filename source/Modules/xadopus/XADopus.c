@@ -553,6 +553,19 @@ void _parent(struct xoData *data)
 		*((char *)PathPart(path)) = 0;
 		_cd(data, tmp);
 	}
+
+	// At the archive root of a lister we took over: leave the archive
+	// and read the real directory that contains it.  The read resets
+	// the buffer, clears our handler and delivers the "inactive" trap
+	// that ends our event loop
+	else if (data->same_lister)
+	{
+		DOpusCallbackInfo *infoptr = &data->hook;
+
+		sprintf(data->buf, "lister read %s %s", data->lists, data->origpath);
+		DC_CALL4(
+			infoptr, dc_SendCommand, DC_REGA0, IPCDATA(data->ipc), DC_REGA1, data->buf, DC_REGA2, NULL, DC_REGD0, 0);
+	}
 }
 
 void _root(struct xoData *data)
@@ -1180,6 +1193,7 @@ int LIBFUNC L_Module_Entry(REG(a0, char *args),
 	data.buf = buf;
 	data.listw = NULL;
 	data.cur = NULL;
+	data.same_lister = FALSE;
 	data.locale = locale;
 	/*data.DOpusBase = DOpusBase;
 	data.DOSBase = (APTR)DOSBase;
@@ -1220,6 +1234,11 @@ int LIBFUNC L_Module_Entry(REG(a0, char *args),
 	// note: this one was commented out by the author
 	//	if( (!(data.listp2 = data.hook.dc_GetSource(IPCDATA(ipc), arcname))) ||
 	//(!(Entry=data.hook.dc_GetEntry(IPCDATA(ipc)))) )
+
+	// Remember the real directory the archive lives in (before the
+	// filename is appended); XADOpenInLister needs it to leave the
+	// archive again from the root
+	strcpy(data.origpath, arcname);
 
 	AddPart(arcname, filename, 512);
 
@@ -1368,45 +1387,103 @@ int LIBFUNC L_Module_Entry(REG(a0, char *args),
 	//		data.listh = (IPTR)data.listp2->lister;
 	//		sprintf(data.lists, "%d", data.listh);
 
-	if (!DC_CALL4(infoptr,
-				  dc_SendCommand,
-				  DC_REGA0,
-				  IPCDATA(ipc),
-				  DC_REGA1,
-				  "lister new",
-				  DC_REGA2,
-				  (APTR)&result,
-				  DC_REGD0,
-				  COMMANDF_RESULT))
-	// if(!data.hook.dc_SendCommand(IPCDATA(ipc), "lister new", &result, COMMANDF_RESULT))
+	// XADOpenInLister: take over the source lister instead of opening
+	// a fresh one.  Fall back to a new lister when there is no source
+	// lister (desktop and AppMessage double-clicks pass none) or its
+	// buffer already belongs to another custom handler (another
+	// archive, an FTP session, ...)
+	if (mod_id == 2 && data.listp2->lister)
 	{
-		if (!result)
-		{
-			FreeMemHandle(data.rhand);
-			RemoveTemp(&data);
-			return 0;
-		}
-
-		data.listh = xad_parse_handle(result);
-		FreeVec(result);
-
-		if (!data.listh)
-		{
-			FreeMemHandle(data.rhand);
-			RemoveTemp(&data);
-			return 0;
-		}
-
+		data.listh = (IPTR)data.listp2->lister;
 		xad_format_handle(data.lists, data.listh);
 
-		//		ErrorReq(&data, data.lists); // *********************
+		sprintf(buf, "lister query %s handler", data.lists);
+		if (!DC_CALL4(
+				infoptr, dc_SendCommand, DC_REGA0, IPCDATA(ipc), DC_REGA1, buf, DC_REGA2, (APTR)&result, DC_REGD0, COMMANDF_RESULT))
+		{
+			if (result)
+			{
+				data.same_lister = (result[0] == 0);
+				FreeVec(result);
+			}
+		}
 
-		if (AllocPort(&data))
+		if (!data.same_lister)
+			data.listh = 0;
+	}
+
+	if (!data.same_lister)
+	{
+		if (!DC_CALL4(infoptr,
+					  dc_SendCommand,
+					  DC_REGA0,
+					  IPCDATA(ipc),
+					  DC_REGA1,
+					  "lister new",
+					  DC_REGA2,
+					  (APTR)&result,
+					  DC_REGD0,
+					  COMMANDF_RESULT))
+		// if(!data.hook.dc_SendCommand(IPCDATA(ipc), "lister new", &result, COMMANDF_RESULT))
+		{
+			if (!result)
+			{
+				FreeMemHandle(data.rhand);
+				RemoveTemp(&data);
+				return 0;
+			}
+
+			data.listh = xad_parse_handle(result);
+			FreeVec(result);
+
+			if (!data.listh)
+			{
+				FreeMemHandle(data.rhand);
+				RemoveTemp(&data);
+				return 0;
+			}
+
+			xad_format_handle(data.lists, data.listh);
+		}
+
+		// Could not get a lister at all
+		else
+		{
+			FreeMemHandle(data.rhand);
+			RemoveTemp(&data);
+			return 0;
+		}
+	}
+
+	// A taken-over lister still shows the real directory it was reading;
+	// swap it to a fresh buffer so those entries don't linger beneath the
+	// archive contents.  The old buffer goes back to the cache
+	if (data.same_lister)
+	{
+		sprintf(buf, "lister empty %s", data.lists);
+		DC_CALL4(
+			infoptr, dc_SendCommand, DC_REGA0, IPCDATA(ipc), DC_REGA1, buf, DC_REGA2, NULL, DC_REGD0, 0);
+	}
+
+
+	if (AllocPort(&data))
+	{
+		if (data.same_lister)
+		{
+			// The filetype function that invoked us holds this lister
+			// busy for the whole module call; clear the visual busy
+			// state so the lister stays usable while browsing
+			sprintf(buf, "lister set %s busy off", data.lists);
+			DC_CALL4(
+				infoptr, dc_SendCommand, DC_REGA0, IPCDATA(ipc), DC_REGA1, buf, DC_REGA2, NULL, DC_REGD0, 0);
+		}
+		else
 		{
 			sprintf(buf, "lister wait %s quick", data.lists);
-			DC_CALL4(infoptr, dc_SendCommand, DC_REGA0, IPCDATA(ipc), DC_REGA1, buf, DC_REGA2, NULL, DC_REGD0, 0);
+			DC_CALL4(
+				infoptr, dc_SendCommand, DC_REGA0, IPCDATA(ipc), DC_REGA1, buf, DC_REGA2, NULL, DC_REGD0, 0);
 			// data.hook.dc_SendCommand(IPCDATA(ipc), buf, NULL, NULL);
-
+		}
 			strcpy(data.listpath, data.rootpath);
 			sprintf(buf, "lister set %s path %s", data.lists, data.listpath);
 			DC_CALL4(infoptr, dc_SendCommand, DC_REGA0, IPCDATA(ipc), DC_REGA1, buf, DC_REGA2, NULL, DC_REGD0, 0);
@@ -1422,9 +1499,16 @@ int LIBFUNC L_Module_Entry(REG(a0, char *args),
 			/*data.hook.dc_SendCommand(IPCDATA(ipc),buf,NULL,NULL);
 			data.hook.dc_RefreshLister(data.listh, HOOKREFRESH_FULL);*/
 
-			sprintf(buf, "lister wait %s quick", data.lists);
-			DC_CALL4(infoptr, dc_SendCommand, DC_REGA0, IPCDATA(ipc), DC_REGA1, buf, DC_REGA2, NULL, DC_REGD0, 0);
-			// data.hook.dc_SendCommand(IPCDATA(ipc), buf, NULL, NULL);
+			// The taken-over lister stays function-locked until we return;
+			// a "lister wait" on it would never come back
+			if (!data.same_lister)
+			{
+				sprintf(buf, "lister wait %s quick", data.lists);
+				DC_CALL4(
+					infoptr, dc_SendCommand, DC_REGA0, IPCDATA(ipc), DC_REGA1, buf, DC_REGA2, NULL, DC_REGD0, 0);
+				// data.hook.dc_SendCommand(IPCDATA(ipc), buf, NULL, NULL);
+			}
+
 
 			data.listp.lister = (APTR)data.listh;
 			*data.listp.buffer = data.listp.flags = 0;
@@ -1549,7 +1633,6 @@ int LIBFUNC L_Module_Entry(REG(a0, char *args),
 			}
 			FreePort(&data);
 		}
-	}
 
 	FreeMemHandle(data.rhand);
 	RemoveTemp(&data);

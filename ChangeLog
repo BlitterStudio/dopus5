@@ -1,3 +1,28 @@
+[dopus5 next] XADOpus: open archives in the same lister
+XADOpus module change; version bump deferred.
+
+- New module function XADOpenInLister.  Instead of opening a fresh
+  lister, it takes over the source lister the archive was opened
+  from: the custom handler, archive path and tree browsing install on
+  the existing window.  It falls back to the XADOpen behaviour when
+  no source lister is known (desktop and AppMessage double-clicks pass
+  none) or the source buffer already belongs to another custom
+  handler (another archive, an FTP session).
+- The invoking function keeps the source lister busy for the whole
+  module call, so XADOpenInLister clears the visual busy state to keep
+  the lister usable while browsing, and skips the "lister wait" calls
+  that would block on that lock.  Any real directory read of the
+  lister (typing a path, Parent at the archive root) resets the
+  buffer, clears the handler and ends the browse; at the archive
+  root, Parent reads the real directory that contains the archive.
+- XADOpenInLister registers as a module command, so it appears in the
+  command list and can be bound to any filetype action (the editor
+  offers doubleclick, Ctrl+doubleclick and Alt+doubleclick slots),
+  button or hotkey.  The shipped defaults are unchanged: plain
+  doubleclick still opens a new lister and drag&drop still extracts
+  (issue #174); users who prefer same-lister opening rebind the
+  Archives_over_XAD doubleclick action themselves.
+
 [dopus5 next] XADOpus: stop duplicate lister on archive drag&drop
 Program and XADOpus module behaviour change.
 

@@ -31,6 +31,9 @@ Open XAD Archive
 MSG_XADEXTRACT_DESC (//)
 Extract XAD Archive
 ;
+MSG_XADOPENINLISTER_DESC (//)
+Open XAD Archive in this lister
+;
 MSG_ERROR (//)
 Error
 ;

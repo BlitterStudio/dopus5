@@ -25,10 +25,15 @@ ModuleInfo_2 module_info = {
 	"XADopus.module",	// Module name
 	"XADopus.catalog",	// Catalog name
 	0,					// Flags
-	2,					// Number of functions
+	3,					// Number of functions
 	{{0, "XADOpen", MSG_XADOPEN_DESC, FUNCF_NEED_SOURCE | FUNCF_NEED_FILES | FUNCF_SINGLE_SOURCE, 0},
 	 {1,
 	  "XADExtract",
 	  MSG_XADEXTRACT_DESC,
 	  FUNCF_NEED_SOURCE | FUNCF_NEED_DEST | FUNCF_NEED_FILES | FUNCF_SINGLE_SOURCE,
+	  0},
+	 {2,
+	  "XADOpenInLister",
+	  MSG_XADOPENINLISTER_DESC,
+	  FUNCF_NEED_SOURCE | FUNCF_NEED_FILES | FUNCF_SINGLE_SOURCE,
 	  0}}};
