@@ -1,3 +1,19 @@
+[dopus5 next] Lister toolbar: no minimum height from the scroll arrow
+Program and dopus5.library change; version bump deferred.
+
+- The lister toolbar reserved at least the height of
+  DOpus5:Images/ToolbarArrow.image (24 pixels in the shipped set) even
+  when no scroll arrow was shown, leaving a gap below toolbars built
+  from smaller images (issue #168).  The toolbar height now comes from
+  its buttons alone, and a taller arrow is fitted to the button row:
+  RenderImage crops it around its centre.
+- dopus5.library: RenderImage centred its crop window wrongly when an
+  image was larger than the IM_Rectangle area and IM_ClipBoundary was
+  non-zero.  The source offset was off by the clip boundary and could
+  go negative, blitting from outside the image (for example a 24 pixel
+  image in a 25 pixel bordered button).  The crop is now centred on
+  the image.
+
 [dopus5 next] XADOpus: open archives in the same lister
 XADOpus module change; version bump deferred.
 

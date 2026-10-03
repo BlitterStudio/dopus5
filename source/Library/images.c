@@ -473,13 +473,13 @@ short LIBFUNC L_RenderImage(REG(a0, struct RastPort *rp),
 				// Does source exceed this size?
 				if (s_w > width - clip_bound)
 				{
-					s_x = (s_w - width - clip_bound) >> 1;
+					s_x = (s_w - (width - clip_bound)) >> 1;
 					s_w = width - clip_bound;
 					left = rect->MinX + (clip_bound >> 1);
 				}
 				if (s_h > height - clip_bound)
 				{
-					s_y = (s_h - height - clip_bound) >> 1;
+					s_y = (s_h - (height - clip_bound)) >> 1;
 					s_h = height - clip_bound;
 					top = rect->MinY + (clip_bound >> 1);
 				}

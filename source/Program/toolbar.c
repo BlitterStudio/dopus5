@@ -255,12 +255,17 @@ BOOL GetToolBarCache(ToolBarInfo *toolbar, BOOL real)
 		toolbar->max_width += width;
 	}
 
-	// Get height of toolbar
-	for (num = 0, height = 0; num <= toolbar->count; num++)
+	// Get height of toolbar from the buttons alone; the scroll arrow is only
+	// shown on overflow and must not force a taller row than the buttons need
+	for (num = 0, height = 0; num < toolbar->count; num++)
 	{
 		if ((width = RECTHEIGHT(&toolbar->button_array[num])) > height)
 			height = width;
 	}
+
+	// Fit the arrow to the button row; RenderImage crops it to the rectangle
+	if (toolbar->button_array[toolbar->count].MaxY > height - 1)
+		toolbar->button_array[toolbar->count].MaxY = height - 1;
 
 	// Store toolbar height
 	toolbar->button_height = height;
