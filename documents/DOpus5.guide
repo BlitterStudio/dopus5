@@ -1,6 +1,6 @@
 @database dopus5
 @master dopus5.guide
-@$VER: Dopus5Guide 58.3 (14.5.2026)
+@$VER: Dopus5Guide 58.4 (3.10.2026)
 @author "Mark Anderson, Andrew Dunbar, Dr Greg Perry, Leo Davidson and Dave Clarke"
 @(c) "Directory Opus 5 Help Guide (c) GPSoftware 1999"
 @(c) "Directory Opus 5 Help Guide (c) DOPUS5 Open Source Team 2012-2026"
@@ -32,6 +32,8 @@
                 to support DOS\7 / LNFS.
 @remark v58.3 - ViewFont now documents the optional extended-character
                 preview and how Save Settings persists it.
+@remark v58.4 - Toolbar Arrow: the arrow no longer sets a minimum toolbar
+                height; it is fitted to the toolbar buttons.
 
 @node "Main" "dopus5.guide"
 Help Introduction for Directory Opus 5
@@ -2107,6 +2109,10 @@ press right-amiga 1, or hold the alt key down and click on the button.
 @node "Toolbar Arrow" "Toolbar Arrow"
 The Toolbar Arrow allows you to scroll through the buttons on the toolbar
 when the lister is not large enough to display them all at once.
+
+The arrow does not affect the height of the toolbar: the toolbar is as tall
+as its buttons, and an arrow image taller than the buttons is cropped
+around its centre to fit.
 @endnode
 
 @node "ListerMenu" "ListerMenu"
