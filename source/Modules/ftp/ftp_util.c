@@ -1403,14 +1403,10 @@ int ftpmod_request(struct opusftp_globals *og, IPCData *ipc, struct TagItem *tag
 	int i = 0;
 	int result = 1;
 	struct TagItem tags[] = {
-		TAG_IGNORE,
-		0,	// Default screen if needed
-		TAG_IGNORE,
-		0,	// Default button if needed
-		TAG_IGNORE,
-		0,	// String created by sprintf
-		TAG_MORE,
-		0,
+		{TAG_IGNORE, 0},  // Default screen if needed
+		{TAG_IGNORE, 0},  // Default button if needed
+		{TAG_IGNORE, 0},  // String created by sprintf
+		{TAG_MORE, 0},
 	};
 
 	// Called by non-owning process?

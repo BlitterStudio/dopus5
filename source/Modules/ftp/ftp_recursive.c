@@ -1431,7 +1431,7 @@ int recursive_copy(struct hook_rec_data *hc,
 		break;
 
 	default:  // This is not possible
-		D(bug("** (??) %s\n", entry->ei_name));
+		D(bug("** (?\?) %s\n", entry->ei_name));
 		retval = 0;
 		break;
 	}
@@ -2076,7 +2076,7 @@ int recursive_protect(struct hook_rec_data *hc, struct entry_info *entry, LONG s
 		break;
 
 	default:  // Shouldn't happen (Try to protect anyway)
-		D(bug("** (??) %s\n", entry->ei_name));
+		D(bug("** (?\?) %s\n", entry->ei_name));
 		retval = 0;
 		break;
 	}
@@ -2262,7 +2262,7 @@ int recursive_getsizes(struct hook_rec_data *hc, struct entry_info *entry)
 		break;
 
 	default:  // Shouldn't happen (and shouldn't matter)
-		D(bug("** (??) %s\n", entry->ei_name));
+		D(bug("** (?\?) %s\n", entry->ei_name));
 		hc->hc_misc_bytes += entry->ei_size;
 		// retval = 0;
 		break;
@@ -2561,7 +2561,7 @@ int recursive_findfile(struct hook_rec_data *hc, char *fulldirname, struct entry
 		break;
 
 	default:  // Shouldn't happen (and shouldn't matter)
-		D(bug("** (??) %s\n", entry->ei_name));
+		D(bug("** (?\?) %s\n", entry->ei_name));
 		hc->hc_misc_bytes += entry->ei_size;
 		// retval = 0;
 		break;
@@ -2669,8 +2669,9 @@ struct rec_updateinfo
 //	  1 success
 //	-10 out of memory
 //
-static int callback_func(struct rec_updateinfo *ui, char *line)
+static int callback_func(void *update_arg, const char *line)
 {
+	struct rec_updateinfo *ui = update_arg;
 	struct entry_info *entry;
 	int retval = 1;	 // <= 0 is an error
 

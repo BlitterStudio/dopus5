@@ -16,12 +16,12 @@ int stccpy(char *p, const char *q, int n)
 	return p - t;
 }
 
-char *stpblk(char *p)
+char *stpblk(const char *p)
 {
-	while (isspace(*p))
+	while (isspace((unsigned char)*p))
 		++p;
 
-	return p;
+	return (char *)p;
 }
 #endif
 
