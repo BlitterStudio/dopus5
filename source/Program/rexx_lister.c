@@ -270,7 +270,7 @@ BOOL rexx_lister_cmd(struct RexxMsg *msg, short command, char *args)
 
 	// See if variable or stem is specified
 	for (id = strlen(args), val = 0; id > 0 && val < 2; id--)
-		if (isspace(args[id]))
+		if (isspace((unsigned char)args[id]))
 			++val;
 
 	// Get two spaces?

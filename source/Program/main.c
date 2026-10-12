@@ -190,7 +190,7 @@ static struct Library *main_open_library(char *lib, short ver)
 
 /*************************** The startup functions ************************/
 
-#if !defined(__MORPHOS__)
+#if !defined(__MORPHOS__) && !defined(AFF_68060)
 	#define AFF_68060 (1L << 7)
 #endif
 
@@ -701,19 +701,27 @@ void startup_init_gui()
 	strcpy(GUI->ver_cpu, "i386");
 #else
 	if (SysBase->AttnFlags & AFF_68010)
+	{
 		if (SysBase->AttnFlags & AFF_68020)
+		{
 			if (SysBase->AttnFlags & AFF_68030)
+			{
 				if (SysBase->AttnFlags & AFF_68040)
+				{
 					if (SysBase->AttnFlags & AFF_68060)
 						proc = 60;
 					else
 						proc = 40;
+				}
 				else
 					proc = 30;
+			}
 			else
 				proc = 20;
+		}
 		else
 			proc = 10;
+	}
 	lsprintf(GUI->ver_cpu, "680%02ld", proc);
 #endif
 

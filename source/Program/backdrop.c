@@ -322,7 +322,7 @@ void backdrop_free_icon(BackdropInfo *info, struct DiskObject *icon)
 // Get icon for an object
 void backdrop_get_icon(BackdropInfo *info, BackdropObject *object, short flags)
 {
-	short x, y, border_x = 0, border_y_top = 0, border_y_bottom = 0;
+	short x, y, border_x = 0, border_y_top = 0;
 	BOOL new_icon = 1;
 	struct DiskObject *had_icon = object->icon;
 
@@ -480,7 +480,6 @@ void backdrop_get_icon(BackdropInfo *info, BackdropObject *object, short flags)
 					// Unix-style path, probably comes from ftp.module
 					else if (object->path[0] == '/')
 					{
-						struct DiskObject *deficon;
 						long type = WBPROJECT;
 
 						fake = 1;
@@ -607,13 +606,11 @@ void backdrop_get_icon(BackdropInfo *info, BackdropObject *object, short flags)
 		{
 			border_x = 0;
 			border_y_top = 0;
-			border_y_bottom = 0;
 		}
 		else
 		{
 			border_x = ICON_BORDER_X;
 			border_y_top = ICON_BORDER_Y_TOP;
-			border_y_bottom = ICON_BORDER_Y_BOTTOM;
 		}
 
 		// No label?
