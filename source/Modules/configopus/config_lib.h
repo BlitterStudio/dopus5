@@ -29,7 +29,7 @@ typedef struct _SubOptionHandle
 void init_locale_data(struct DOpusLocale *);
 void lsprintf __ARGS((char *, ...));
 
-Att_List *build_sub_options(SubOptionHandle *);
+Att_List *build_sub_options(const SubOptionHandle *);
 
 /*IPCData *SAVEDS Local_IPC_ProcStartup(
 	ULONG *data,

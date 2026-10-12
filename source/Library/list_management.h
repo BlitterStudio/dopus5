@@ -51,7 +51,7 @@ typedef struct _Att_Node
 
 // prototypes
 Att_List *Att_NewList(void);
-Att_Node *Att_NewNode(Att_List *list, char *name, IPTR data, ULONG flags);
+Att_Node *Att_NewNode(Att_List *list, const char *name, IPTR data, ULONG flags);
 void Att_RemNode(Att_Node *node);
 void Att_PosNode(Att_List *, Att_Node *, Att_Node *);
 void Att_RemList(Att_List *list, int);

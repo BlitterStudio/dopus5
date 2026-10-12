@@ -39,8 +39,8 @@ typedef struct
 	short height;
 	short depth;
 	short planesize;
-	UWORD *imagedata;
-	ULONG *palette;
+	const UWORD *imagedata;
+	const ULONG *palette;
 } image_data;
 #ifndef __amigaos3__
 	#pragma pack()
@@ -110,6 +110,6 @@ typedef struct
 	#pragma pack()
 #endif
 
-extern unsigned char about_message[];
+extern unsigned char about_message[];  // Decrypted in place at startup, so not const
 
 #endif

@@ -23,8 +23,7 @@ For more information on Directory Opus for Windows please see:
 #include <ctype.h>
 #include <string.h>
 
-#include <proto/exec.h>
-
+#include "dopus.h"
 #include "eliza.h"
 
 #define isws(x) ((x) == ' ' || (x) == '\t' || (x) == '\n')
@@ -34,7 +33,6 @@ static void reformat_input(struct eliza_data *);
 static char *find_keyword(struct eliza_data *);
 static char *conjugate(char *found, struct eliza_data *);
 static void response(char *tail, struct eliza_data *);
-char *strstri(const char *, const char *);
 
 static unsigned char keyword[][16] = {"thank",		  "opus",	  "dopus",		"directory opus",
 									  "fuck",		  "shit",	  "cunt",		"dick",

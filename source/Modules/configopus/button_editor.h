@@ -24,14 +24,14 @@ typedef struct
 	FunctionStartup func_startup;
 	ButtonReturn retdata;
 
-	ConfigWindow *win_text_def;
-	ConfigWindow *win_image_def;
-	ObjectDef *obj_def;
+	const ConfigWindow *win_text_def;
+	const ConfigWindow *win_image_def;
+	const ObjectDef *obj_def;
 
 	PaletteBoxData palette_data;
 
-	ObjectDef *obj_name;
-	ObjectDef *obj_image;
+	const ObjectDef *obj_name;
+	const ObjectDef *obj_image;
 
 	IPTR command_list;
 

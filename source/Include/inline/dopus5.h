@@ -189,11 +189,11 @@ typedef ULONG _sfdc_vararg;
       , DOPUS_BASE_NAME)
 
 #define CalcWindowDims(___screen, ___pos, ___dest, ___font, ___flags) \
-      LP5(0x11a, int, CalcWindowDims , struct Screen *, ___screen, a0, ConfigWindow *, ___pos, a1, struct IBox *, ___dest, a2, struct TextFont *, ___font, a3, ULONG, ___flags, d0,\
+      LP5(0x11a, int, CalcWindowDims , struct Screen *, ___screen, a0, const ConfigWindow *, ___pos, a1, struct IBox *, ___dest, a2, struct TextFont *, ___font, a3, ULONG, ___flags, d0,\
       , DOPUS_BASE_NAME)
 
 #define AddObjectList(___window, ___objects) \
-      LP2(0x120, ObjectList *, AddObjectList , struct Window *, ___window, a0, ObjectDef *, ___objects, a1,\
+      LP2(0x120, ObjectList *, AddObjectList , struct Window *, ___window, a0, const ObjectDef *, ___objects, a1,\
       , DOPUS_BASE_NAME)
 
 #define FreeObject(___objlist, ___object) \
@@ -253,7 +253,7 @@ typedef ULONG _sfdc_vararg;
       , DOPUS_BASE_NAME)
 
 #define AddWindowMenus(___window, ___data) \
-      LP2NR(0x17a, AddWindowMenus , struct Window *, ___window, a0, MenuData *, ___data, a1,\
+      LP2NR(0x17a, AddWindowMenus , struct Window *, ___window, a0, const MenuData *, ___data, a1,\
       , DOPUS_BASE_NAME)
 
 #define FreeWindowMenus(___window) \
@@ -297,7 +297,7 @@ typedef ULONG _sfdc_vararg;
       , DOPUS_BASE_NAME)
 
 #define Att_NewNode(___list, ___name, ___data, ___flags) \
-      LP4(0x1bc, Att_Node *, Att_NewNode , Att_List *, ___list, a0, char *, ___name, a1, IPTR, ___data, d0, ULONG, ___flags, d1,\
+      LP4(0x1bc, Att_Node *, Att_NewNode , Att_List *, ___list, a0, const char *, ___name, a1, IPTR, ___data, d0, ULONG, ___flags, d1,\
       , DOPUS_BASE_NAME)
 
 #define Att_RemNode(___node) \
@@ -349,7 +349,7 @@ typedef ULONG _sfdc_vararg;
       , DOPUS_BASE_NAME)
 
 #define BuildMenuStrip(___data, ___locale) \
-      LP2(0x20a, struct Menu *, BuildMenuStrip , MenuData *, ___data, a0, struct DOpusLocale *, ___locale, a1,\
+      LP2(0x20a, struct Menu *, BuildMenuStrip , const MenuData *, ___data, a0, struct DOpusLocale *, ___locale, a1,\
       , DOPUS_BASE_NAME)
 
 #define FindMenuItem(___menu, ___id) \
@@ -679,7 +679,7 @@ typedef ULONG _sfdc_vararg;
       , DOPUS_BASE_NAME)
 
 #define WriteBuf(___file, ___data, ___size) \
-      LP3(0x3ea, long, WriteBuf , APTR, ___file, a0, char *, ___data, a1, long, ___size, d0,\
+      LP3(0x3ea, long, WriteBuf , APTR, ___file, a0, const char *, ___data, a1, long, ___size, d0,\
       , DOPUS_BASE_NAME)
 
 #define FlushBuf(___file) \
@@ -1281,7 +1281,7 @@ typedef ULONG _sfdc_vararg;
       , DOPUS_BASE_NAME)
 
 #define SetConfigWindowLimits(___window, ___min, ___max) \
-      LP3NR(0x744, SetConfigWindowLimits , struct Window *, ___window, a0, ConfigWindow *, ___min, a1, ConfigWindow *, ___max, a2,\
+      LP3NR(0x744, SetConfigWindowLimits , struct Window *, ___window, a0, const ConfigWindow *, ___min, a1, const ConfigWindow *, ___max, a2,\
       , DOPUS_BASE_NAME)
 
 #define SetEnv(___name, ___data, ___save) \
