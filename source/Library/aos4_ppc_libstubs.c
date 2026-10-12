@@ -390,7 +390,7 @@ LIBSTUB(L_CalcWindowDims,
 LIBSTUB(L_AddObjectList,
 		ObjectList *,
 		REG(a0, struct Window *window),
-		REG(a1, ObjectDef *objects),
+		REG(a1, const ObjectDef *objects),
 		REG(a6, struct MyLibrary *libbase))
 {
 	return L_AddObjectList(window, objects, libbase);
@@ -456,7 +456,7 @@ LIBSTUB(L_DisplayObject,
 	return L_DisplayObject(window, object, fg, bg, txt);
 }
 
-LIBSTUB(L_AddWindowMenus, void, REG(a0, struct Window *window), REG(a1, MenuData *menudata))
+LIBSTUB(L_AddWindowMenus, void, REG(a0, struct Window *window), REG(a1, const MenuData *menudata))
 {
 	return L_AddWindowMenus(window, menudata);
 }
@@ -571,7 +571,7 @@ LIBSTUB(L_EndRefreshConfigWindow, void, REG(a0, struct Window *window))
 }
 
 // menu_routines.c
-LIBSTUB(L_BuildMenuStrip, struct Menu *, REG(a0, MenuData *menudata), REG(a1, struct DOpusLocale *locale))
+LIBSTUB(L_BuildMenuStrip, struct Menu *, REG(a0, const MenuData *menudata), REG(a1, struct DOpusLocale *locale))
 {
 	return L_BuildMenuStrip(menudata, locale);
 }
@@ -590,7 +590,7 @@ LIBSTUB(L_Att_NewList, Att_List *, REG(d0, ULONG flags))
 LIBSTUB(L_Att_NewNode,
 		Att_Node *,
 		REG(a0, Att_List *list),
-		REG(a1, char *name),
+		REG(a1, const char *name),
 		REG(d0, IPTR data),
 		REG(d1, ULONG flags))
 {
@@ -1214,7 +1214,7 @@ LIBSTUB(L_ReadBuf, long, REG(a0, APTR file), REG(a1, char *data), REG(d0, long s
 	return L_ReadBuf(file, data, size);
 }
 
-LIBSTUB(L_WriteBuf, long, REG(a0, APTR file), REG(a1, char *data), REG(d0, long size))
+LIBSTUB(L_WriteBuf, long, REG(a0, APTR file), REG(a1, const char *data), REG(d0, long size))
 {
 	return L_WriteBuf(file, data, size);
 }
@@ -1756,8 +1756,8 @@ LIBSTUB(L_LoadPos, BOOL, REG(a0, char *name), REG(a1, struct IBox *box), REG(d0,
 LIBSTUB(L_SetConfigWindowLimits,
 		void,
 		REG(a0, struct Window *window),
-		REG(a1, ConfigWindow *mindims),
-		REG(a2, ConfigWindow *maxdims))
+		REG(a1, const ConfigWindow *mindims),
+		REG(a2, const ConfigWindow *maxdims))
 {
 	return L_SetConfigWindowLimits(window, mindims, maxdims);
 }

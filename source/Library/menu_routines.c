@@ -28,7 +28,7 @@ For more information on Directory Opus for Windows please see:
 							  Build a menu strip
  ****************************************************************************/
 
-struct Menu *LIBFUNC L_BuildMenuStrip(REG(a0, MenuData *menudata), REG(a1, struct DOpusLocale *locale))
+struct Menu *LIBFUNC L_BuildMenuStrip(REG(a0, const MenuData *menudata), REG(a1, struct DOpusLocale *locale))
 {
 	short count;
 	short level;
@@ -36,7 +36,7 @@ struct Menu *LIBFUNC L_BuildMenuStrip(REG(a0, MenuData *menudata), REG(a1, struc
 	short level_start[2], level_value[2];
 	struct NewMenu *new_menu;
 	struct Menu *menustrip;
-	MenuData *data;
+	const MenuData *data;
 	APTR memory;
 
 	// Count menus
@@ -45,7 +45,7 @@ struct Menu *LIBFUNC L_BuildMenuStrip(REG(a0, MenuData *menudata), REG(a1, struc
 		// Next?
 		if (data->type == NM_NEXT)
 		{
-			data = (MenuData *)data->name;
+			data = (const MenuData *)data->name;
 		}
 		else
 		{
@@ -78,7 +78,7 @@ struct Menu *LIBFUNC L_BuildMenuStrip(REG(a0, MenuData *menudata), REG(a1, struc
 		// Next?
 		if (data->type == NM_NEXT)
 		{
-			data = (MenuData *)data->name;
+			data = (const MenuData *)data->name;
 			continue;
 		}
 

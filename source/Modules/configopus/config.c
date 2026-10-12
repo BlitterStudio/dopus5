@@ -1,7 +1,7 @@
 #include "config_lib.h"
 
 // Build a sub-option list
-Att_List *build_sub_options(SubOptionHandle *list)
+Att_List *build_sub_options(const SubOptionHandle *list)
 {
 	Att_List *options;
 

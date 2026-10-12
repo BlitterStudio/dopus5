@@ -66,7 +66,7 @@ char *get_our_pubscreen()
 }
 
 // Case-insensitive strstr() function
-const char *strstri(const char *string, const char *substring)
+char *strstri(const char *string, const char *substring)
 {
 	int a, len, sublen;
 
@@ -80,7 +80,7 @@ const char *strstri(const char *string, const char *substring)
 	{
 		// See if substring matches at this point
 		if (strnicmp(&string[a], substring, sublen) == 0)
-			return string + a;
+			return (char *)string + a;
 	}
 
 	// No match
