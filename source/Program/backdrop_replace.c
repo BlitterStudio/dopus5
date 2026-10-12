@@ -129,7 +129,7 @@ void backdrop_replace_icon_image(BackdropInfo *info, char *source_name, Backdrop
 
 					// preserve pointer data
 					do_DefaultTool = new->do_DefaultTool;
-					do_ToolTypes = new->do_ToolTypes;
+					do_ToolTypes = (char **)new->do_ToolTypes;
 					do_DrawerData = new->do_DrawerData;
 					do_ToolWindow = new->do_ToolWindow;
 
@@ -148,7 +148,7 @@ void backdrop_replace_icon_image(BackdropInfo *info, char *source_name, Backdrop
 
 					// recover old data
 					new->do_DefaultTool = do_DefaultTool;
-					new->do_ToolTypes = do_ToolTypes;
+					new->do_ToolTypes = (STRPTR *)do_ToolTypes;
 					new->do_DrawerData = do_DrawerData;
 					new->do_ToolWindow = do_ToolWindow;
 
