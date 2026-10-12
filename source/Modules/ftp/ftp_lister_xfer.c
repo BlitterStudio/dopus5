@@ -488,8 +488,9 @@ static int transfer_aborted(struct update_info *ui)
 //	The return value is interpreted as an error code if non-zero (see ftp.h)
 //	Always called at start and end of file (start may be 0% or resuming somewhere)
 //
-int xfer_update(struct update_info *ui, unsigned int total, unsigned int bytes)
+int xfer_update(void *update_arg, unsigned int total, unsigned int bytes)
 {
+	struct update_info *ui = update_arg;
 	char info_bytes[256];
 	char info_time[256];
 #if defined(__AROS__) || defined(__amigaos3__)
@@ -617,8 +618,9 @@ int xfer_update(struct update_info *ui, unsigned int total, unsigned int bytes)
 //	The return value is interpreted as an error code if non-zero (see ftp.h)
 //	Always called at start and end of file (start may be 0% or resuming somewhere)
 //
-int getput_update(struct update_info *ui, unsigned int total, unsigned int bytes)
+int getput_update(void *update_arg, unsigned int total, unsigned int bytes)
 {
+	struct update_info *ui = update_arg;
 #if defined(__AROS__) || defined(__amigaos3__)
 	struct Device *TimerBase = (struct Device *)GetTimerBase();
 #else
@@ -2084,8 +2086,6 @@ void lister_getput(struct ftp_node *thisnode, IPCMessage *msg)
 	if (thisnode->fn_ftp.fi_addr.sin_addr.s_addr == 0x7f000001 ||
 		xm->xm_rm_dest->fn_ftp.fi_addr.sin_addr.s_addr == 0x7f000001)
 	{
-		extern struct opusftp_globals og;
-
 		lister_request_tags(thisnode, FR_MsgNum, MSG_NO_LOCALHOST, TAG_DONE);
 
 		goto reply;
