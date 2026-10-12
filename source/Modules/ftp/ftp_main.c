@@ -1186,7 +1186,7 @@ static void opus_leaveout(struct opusftp_globals *og, struct ftp_node *node, cha
 
 				strcpy(command, "FTPConnect ");
 
-				if (node->fn_site.se_name && *node->fn_site.se_name)
+				if (*node->fn_site.se_name)
 				{
 					sprintf(command + strlen(command),
 							"SITE=\"%s\" DIR=\"%s",
@@ -2144,7 +2144,7 @@ static int trap_delete(struct opusftp_globals *og, struct RexxMsg *rxmsg, int ar
 	int i = 0;
 	struct entry_info ei = {0};
 	struct DateStamp ds = {0};
-	struct TagItem tags[] = {HFFS_NAME, 0, HFFS_SIZE, 0, HFFS_DATE, 0, HFFS_PROTECTION, 0, HFFS_COMMENT, 0, TAG_DONE};
+	struct TagItem tags[] = {{HFFS_NAME, 0}, {HFFS_SIZE, 0}, {HFFS_DATE, 0}, {HFFS_PROTECTION, 0}, {HFFS_COMMENT, 0}, {TAG_DONE}};
 
 	// Workaround weird jon-ism
 	if (!args || !*args)
@@ -2713,87 +2713,51 @@ struct rexx_func_info
 
 static struct rexx_func_info rexx_func_table[] = {
 	// Standard Opus Arexx Handler events
-	"active",
-	opus_active,
-	"doubleclick",
-	opus_doubleclick,
-	"drop",
-	opus_drop,
-	"dropfrom",
-	opus_dropfrom,
-	"edit",
-	opus_edit,
-	"inactive",
-	opus_inactive,
-	"parent",
-	opus_parent,
-	"path",
-	opus_path,
-	"reread",
-	opus_reread,
-	"root",
-	opus_root,
-	"snapshot",
-	opus_snapshot,
-	"unsnapshot",
-	opus_unsnapshot,
+	{"active", opus_active},
+	{"doubleclick", opus_doubleclick},
+	{"drop", opus_drop},
+	{"dropfrom", opus_dropfrom},
+	{"edit", opus_edit},
+	{"inactive", opus_inactive},
+	{"parent", opus_parent},
+	{"path", opus_path},
+	{"reread", opus_reread},
+	{"root", opus_root},
+	{"snapshot", opus_snapshot},
+	{"unsnapshot", opus_unsnapshot},
 
 	// Commands added to [source/dest] lister popup
-	"add",
-	popup_add,
-	"options",
-	popup_options,
+	{"add", popup_add},
+	{"options", popup_options},
 
 	// Specific trapped events
-	"abort",
-	trap_abort,
-	"configure",
-	trap_configure,	 // <no template>
-	"copy",
-	trap_copy,	// Done	// NAME,TO,QUIET/S,UPDATE/S,MOVEWHENSAME/S,NEWER/S
-	"copyas",
-	trap_copy,	// Done	// NAME,NEWNAME,TO,QUIET/S,MOVEWHENSAME/S
-	"delete",
-	trap_delete,  // Done	// NAME,QUIET/S
-	"findfile",
-	trap_findfile,	// Done	// <no template>
-	"getsizes",
-	trap_getsizes,	// Done	// FORCE/S
-	"makedir",
-	trap_makedir,  // Done	// NAME,NOICON/S,SELECT/S,NEW/S,READ/S
-	"move",
-	trap_copy,	// Done	// NAME,TO,QUIET/S
-	"moveas",
-	trap_copy,	// Done	// NAME,NEWNAME,TO,QUIET/S
-	"protect",
-	trap_protect,  // Done	// NAME,RECURSE/S,SET=+/K,CLEAR=-/K
-	"rename",
-	trap_rename,  // Done	// NAME,NEWNAME
+	{"abort", trap_abort},
+	{"configure", trap_configure},	 // <no template>
+	{"copy", trap_copy},	// Done	// NAME,TO,QUIET/S,UPDATE/S,MOVEWHENSAME/S,NEWER/S
+	{"copyas", trap_copy},	// Done	// NAME,NEWNAME,TO,QUIET/S,MOVEWHENSAME/S
+	{"delete", trap_delete},  // Done	// NAME,QUIET/S
+	{"findfile", trap_findfile},	// Done	// <no template>
+	{"getsizes", trap_getsizes},	// Done	// FORCE/S
+	{"makedir", trap_makedir},  // Done	// NAME,NOICON/S,SELECT/S,NEW/S,READ/S
+	{"move", trap_copy},	// Done	// NAME,TO,QUIET/S
+	{"moveas", trap_copy},	// Done	// NAME,NEWNAME,TO,QUIET/S
+	{"protect", trap_protect},  // Done	// NAME,RECURSE/S,SET=+/K,CLEAR=-/K
+	{"rename", trap_rename},  // Done	// NAME,NEWNAME
 
 	// Generic trapped events
-	"ansiread",
-	opus_traptemp,	// Done	// NAME/F,WAIT/S
-	"hexread",
-	opus_traptemp,	// NAME/F,WAIT/S
-	"play",
-	opus_traptemp,	// NAME,WAIT=SYNC/S,QUIET/S,ICON/S
-	"print",
-	opus_traptemp,	// NAME/F,WAIT/S
-	"read",
-	opus_traptemp,	// NAME/F,WAIT/S
-	"run",
-	opus_traptemp,	// NAME/F
-	"show",
-	opus_traptemp,	// NAME/F,WAIT/S
-	"smartread",
-	opus_traptemp,	// NAME/F,WAIT/S
+	{"ansiread", opus_traptemp},	// Done	// NAME/F,WAIT/S
+	{"hexread", opus_traptemp},	// NAME/F,WAIT/S
+	{"play", opus_traptemp},	// NAME,WAIT=SYNC/S,QUIET/S,ICON/S
+	{"print", opus_traptemp},	// NAME/F,WAIT/S
+	{"read", opus_traptemp},	// NAME/F,WAIT/S
+	{"run", opus_traptemp},	// NAME/F
+	{"show", opus_traptemp},	// NAME/F,WAIT/S
+	{"smartread", opus_traptemp},	// NAME/F,WAIT/S
 
 	// Trapped events which take over the lister
-	"devicelist",
-	opus_devicelist,  // NEW/S,FULL/S,BRIEF/S
-	"scandir",
-	opus_scandir,  // PATH,NEW/S,MODE/K,SHOWALL/S,CONTAINER/S
-	0};
+	{"devicelist", opus_devicelist},  // NEW/S,FULL/S,BRIEF/S
+	{"scandir", opus_scandir},  // PATH,NEW/S,MODE/K,SHOWALL/S,CONTAINER/S
+	{0}};
 
 //
 //	Handles incoming ARexx messages
