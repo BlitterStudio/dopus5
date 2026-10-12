@@ -2287,8 +2287,7 @@ void SAVEDS creator_editor_proc_code(void)
 		DisableObject(data->list, GAD_CREATE_ID, TRUE);
 		DisableObject(data->list, GAD_CREATE_BYTES, TRUE);
 
-		if (*data->filetype_name)
-			strcpy(data->filetype->type.name, data->filetype_name);
+		strcpy(data->filetype->type.name, data->filetype_name);
 
 		if ((edited_filetype = EditFiletype(data->filetype,
 											data->window,
