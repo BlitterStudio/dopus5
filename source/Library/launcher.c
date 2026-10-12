@@ -290,7 +290,7 @@ void do_mufs_logout(struct LoginPkt *);
 ENTRANCE_2(static void ASM, launch_exit_code, d0, LONG, return_code, d1, LaunchPacket *, packet)
 {
 	struct LibData *data;
-	char *name = packet->name;
+	char *name UNUSED = packet->name;  // Only used for debug output
 
 	// Get library data pointer
 	data = packet->data;
@@ -536,7 +536,7 @@ void SAVEDS launcher_proc(void)
 				// Does this match?
 				if (startup == &proc->startup)
 				{
-					char *procname = proc->name;
+					char *procname UNUSED = proc->name;  // Only used for debug output
 
 					// Remove from the list
 					Remove((struct Node *)proc);

@@ -130,7 +130,7 @@ char *LIBFUNC L_ParseDateStrings(REG(a0, char *string),
 	str_len = strlen(work_buffer);
 
 	// Strip leading spaces
-	for (str_pos = 0; str_pos < str_len && isspace(work_buffer[str_pos]); str_pos++)
+	for (str_pos = 0; str_pos < str_len && isspace((unsigned char)work_buffer[str_pos]); str_pos++)
 		;
 	if (str_pos == str_len)
 		goto getout;
@@ -149,7 +149,7 @@ char *LIBFUNC L_ParseDateStrings(REG(a0, char *string),
 	// Find first space; null-terminate there
 	for (++str_pos; str_pos < str_len; str_pos++)
 	{
-		if (isspace(work_buffer[str_pos]))
+		if (isspace((unsigned char)work_buffer[str_pos]))
 		{
 			work_buffer[str_pos] = 0;
 			break;
@@ -163,7 +163,7 @@ char *LIBFUNC L_ParseDateStrings(REG(a0, char *string),
 		goto getout;
 
 	// Strip leading spaces
-	for (++str_pos; str_pos < str_len && isspace(work_buffer[str_pos]); str_pos++)
+	for (++str_pos; str_pos < str_len && isspace((unsigned char)work_buffer[str_pos]); str_pos++)
 		;
 	if (str_pos >= str_len)
 		goto getout;
@@ -182,7 +182,7 @@ char *LIBFUNC L_ParseDateStrings(REG(a0, char *string),
 	// Find first space; null-terminate there
 	for (++str_pos; str_pos < str_len; str_pos++)
 	{
-		if (isspace(work_buffer[str_pos]))
+		if (isspace((unsigned char)work_buffer[str_pos]))
 		{
 			work_buffer[str_pos] = 0;
 			break;
