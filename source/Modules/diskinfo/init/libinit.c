@@ -53,6 +53,7 @@ USED int _start(void)  // must be first for 68k library
 __stdargs void exit(int status)
 {
 	Exit(status);
+	__builtin_unreachable();  // Exit() is not declared noreturn by the NDK
 }
 #endif
 #endif

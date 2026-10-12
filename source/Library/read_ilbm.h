@@ -28,19 +28,35 @@ For more information on Directory Opus for Windows please see:
 #endif
 
 /*  IFF types we may encounter  */
+#ifndef ID_ILBM
 #define ID_ILBM MAKE_ID('I', 'L', 'B', 'M')
+#endif
 
 /* ILBM Chunk ID's we may encounter
  * (see iffp/iff.h for some other generic chunks)
  */
+#ifndef ID_BMHD
 #define ID_BMHD MAKE_ID('B', 'M', 'H', 'D')
+#endif
+#ifndef ID_CMAP
 #define ID_CMAP MAKE_ID('C', 'M', 'A', 'P')
+#endif
+#ifndef ID_CRNG
 #define ID_CRNG MAKE_ID('C', 'R', 'N', 'G')
+#endif
 #define ID_CCRT MAKE_ID('C', 'C', 'R', 'T')
+#ifndef ID_GRAB
 #define ID_GRAB MAKE_ID('G', 'R', 'A', 'B')
+#endif
+#ifndef ID_SPRT
 #define ID_SPRT MAKE_ID('S', 'P', 'R', 'T')
+#endif
+#ifndef ID_DEST
 #define ID_DEST MAKE_ID('D', 'E', 'S', 'T')
+#endif
+#ifndef ID_CAMG
 #define ID_CAMG MAKE_ID('C', 'A', 'M', 'G')
+#endif
 
 /* Use this constant instead of sizeof(ColorRegister).
  * ONLY VALID FOR size of color register AS STORED in ILBM.CMAP
@@ -205,7 +221,9 @@ typedef struct
 #define putccrt(iff, ccrt) PutCk(iff, ID_CCRT, sizeof(CcrtChunk), (BYTE *)ccrt)
 
 #define ID_DPAN MAKE_ID('D', 'P', 'A', 'N')
+#ifndef ID_DLTA
 #define ID_DLTA MAKE_ID('D', 'L', 'T', 'A')
+#endif
 
 typedef struct
 {
