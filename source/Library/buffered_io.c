@@ -189,7 +189,7 @@ long LIBFUNC L_ReadBuf(REG(a0, APTR file), REG(a1, char *data), REG(d0, long siz
 }
 
 // Write data to a buffered file
-long LIBFUNC L_WriteBuf(REG(a0, APTR file), REG(a1, char *data), REG(d0, long size))
+long LIBFUNC L_WriteBuf(REG(a0, APTR file), REG(a1, const char *data), REG(d0, long size))
 {
 	long write_size;
 
@@ -212,7 +212,7 @@ long LIBFUNC L_WriteBuf(REG(a0, APTR file), REG(a1, char *data), REG(d0, long si
 		}
 
 		// Write data straight to disk
-		write_size = Write(((BufFile *)file)->file, data, size);
+		write_size = Write(((BufFile *)file)->file, (APTR)data, size);
 
 		// Success?
 		if (write_size > 0)

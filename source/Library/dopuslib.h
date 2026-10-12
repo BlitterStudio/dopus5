@@ -389,7 +389,7 @@ LIBPROTO(L_CloseBuf, long, REG(a0, APTR file));
 
 LIBPROTO(L_ReadBuf, long, REG(a0, APTR file), REG(a1, char *data), REG(d0, long size));
 
-LIBPROTO(L_WriteBuf, long, REG(a0, APTR file), REG(a1, char *data), REG(d0, long size));
+LIBPROTO(L_WriteBuf, long, REG(a0, APTR file), REG(a1, const char *data), REG(d0, long size));
 
 LIBPROTO(L_FlushBuf, long, REG(a0, APTR file));
 
@@ -930,8 +930,8 @@ LIBPROTO(L_LayoutResize, void, REG(a0, struct Window *window));
 LIBPROTO(L_SetConfigWindowLimits,
 		 void,
 		 REG(a0, struct Window *window),
-		 REG(a1, ConfigWindow *mindims),
-		 REG(a2, ConfigWindow *maxdims));
+		 REG(a1, const ConfigWindow *mindims),
+		 REG(a2, const ConfigWindow *maxdims));
 
 // layout_routines.c
 LIBPROTO(L_OpenConfigWindow, struct Window *, REG(a0, NewConfigWindow *newwindow), REG(a6, struct MyLibrary *libbase));
@@ -960,7 +960,7 @@ LIBPROTO(L_CalcWindowDims,
 LIBPROTO(L_AddObjectList,
 		 ObjectList *,
 		 REG(a0, struct Window *window),
-		 REG(a1, ObjectDef *objects),
+		 REG(a1, const ObjectDef *objects),
 		 REG(a6, struct MyLibrary *libbase));
 
 LIBPROTO(L_FreeObject, void, REG(a0, ObjectList *objlist), REG(a1, GL_Object *object));
@@ -977,7 +977,7 @@ LIBPROTO(L_DisplayObject,
 		 REG(d1, int bg),
 		 REG(a2, char *txt));
 
-LIBPROTO(L_AddWindowMenus, void, REG(a0, struct Window *window), REG(a1, MenuData *menudata));
+LIBPROTO(L_AddWindowMenus, void, REG(a0, struct Window *window), REG(a1, const MenuData *menudata));
 
 LIBPROTO(L_FreeWindowMenus, void, REG(a0, struct Window *window));
 
@@ -1072,7 +1072,7 @@ LIBPROTO(L_Att_NewList, Att_List *, REG(d0, ULONG flags));
 LIBPROTO(L_Att_NewNode,
 		 Att_Node *,
 		 REG(a0, Att_List *list),
-		 REG(a1, char *name),
+		 REG(a1, const char *name),
 		 REG(d0, IPTR data),
 		 REG(d1, ULONG flags));
 
@@ -1122,7 +1122,7 @@ LIBPROTO(L_AllocMemH, void *, REG(a0, MemHandle *handle), REG(d0, ULONG size));
 LIBPROTO(L_FreeMemH, void, REG(a0, void *memory));
 
 // menu_routines.c
-LIBPROTO(L_BuildMenuStrip, struct Menu *, REG(a0, MenuData *menudata), REG(a1, struct DOpusLocale *locale));
+LIBPROTO(L_BuildMenuStrip, struct Menu *, REG(a0, const MenuData *menudata), REG(a1, struct DOpusLocale *locale));
 
 LIBPROTO(L_FindMenuItem, struct MenuItem *, REG(a0, struct Menu *menu), REG(d0, UWORD id));
 

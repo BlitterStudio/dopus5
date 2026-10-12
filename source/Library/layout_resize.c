@@ -208,8 +208,8 @@ void LIBFUNC L_LayoutResize(REG(a0, struct Window *window))
 
 // Set window limits
 void LIBFUNC L_SetConfigWindowLimits(REG(a0, struct Window *window),
-									 REG(a1, ConfigWindow *mindims),
-									 REG(a2, ConfigWindow *maxdims))
+									 REG(a1, const ConfigWindow *mindims),
+									 REG(a2, const ConfigWindow *maxdims))
 {
 	short minwidth = 0, minheight = 0, maxwidth = 0, maxheight = 0;
 

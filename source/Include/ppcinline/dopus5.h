@@ -133,10 +133,10 @@
 		  struct Window *,                      \
 		  __p0,                                 \
 		  a0,                                   \
-		  ConfigWindow *,                       \
+		  const ConfigWindow *,                 \
 		  __p1,                                 \
 		  a1,                                   \
-		  ConfigWindow *,                       \
+		  const ConfigWindow *,                 \
 		  __p2,                                 \
 		  a2,                                   \
 		  ,                                     \
@@ -575,7 +575,7 @@
 	LP2(522,                       \
 		struct Menu *,             \
 		BuildMenuStrip,            \
-		MenuData *,                \
+		const MenuData *,          \
 		__p0,                      \
 		a0,                        \
 		struct DOpusLocale *,      \
@@ -745,7 +745,7 @@
 		Att_List *,                         \
 		__p0,                               \
 		a0,                                 \
-		char *,                             \
+		const char *,                       \
 		__p1,                               \
 		a1,                                 \
 		IPTR,                               \
@@ -1019,7 +1019,7 @@
 		struct Window *,          \
 		__p0,                     \
 		a0,                       \
-		ObjectDef *,              \
+		const ObjectDef *,        \
 		__p1,                     \
 		a1,                       \
 		,                         \
@@ -2137,7 +2137,7 @@
 	LP2(906, Cfg_Button *, ReadButton, APTR, __p0, a0, APTR, __p1, a1, , DOPUS_BASE_NAME, 0, 0, 0, 0, 0, 0)
 
 #define WriteBuf(__p0, __p1, __p2) \
-	LP3(1002, long, WriteBuf, APTR, __p0, a0, char *, __p1, a1, long, __p2, d0, , DOPUS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+	LP3(1002, long, WriteBuf, APTR, __p0, a0, const char *, __p1, a1, long, __p2, d0, , DOPUS_BASE_NAME, 0, 0, 0, 0, 0, 0)
 
 #define WB_FindAppWindow(__p0) \
 	LP1(1086, struct AppWindow *, WB_FindAppWindow, struct Window *, __p0, a0, , DOPUS_BASE_NAME, 0, 0, 0, 0, 0, 0)
@@ -2722,7 +2722,7 @@
 		  0)
 
 #define AddWindowMenus(__p0, __p1) \
-	LP2NR(378, AddWindowMenus, struct Window *, __p0, a0, MenuData *, __p1, a1, , DOPUS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+	LP2NR(378, AddWindowMenus, struct Window *, __p0, a0, const MenuData *, __p1, a1, , DOPUS_BASE_NAME, 0, 0, 0, 0, 0, 0)
 
 #define GetWindowMsg(__p0) \
 	LP1(252, struct IntuiMessage *, GetWindowMsg, struct MsgPort *, __p0, a0, , DOPUS_BASE_NAME, 0, 0, 0, 0, 0, 0)
