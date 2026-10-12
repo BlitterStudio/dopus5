@@ -48,7 +48,8 @@ ifeq ($(shell test "$(GCC_MAJOR)" -ge 16 2>/dev/null && echo yes),yes)
 	OPTIMIZE += -mlra
 endif
 
-OPTIONS  := $(CPUFLAGS) -flto -fshort-enums -D__amigaos3__ -D__USE_SYSBASE -D__NO_NET_API -DUSE_64BIT -DCOMPDATE=$(NEWDATE)
+# -fno-strict-aliasing: the code base casts between Exec list/node structures all over the place
+OPTIONS  := $(CPUFLAGS) -flto -fshort-enums -fno-strict-aliasing -D__amigaos3__ -D__USE_SYSBASE -D__NO_NET_API -DUSE_64BIT -DCOMPDATE=$(NEWDATE)
 INCLUDES := -I./../ -Iinit/../ -I$(SOURCE_TOP) -I$(SOURCE_TOP)/Include $(OS3_INCLUDE)
 LDFLAGS  := $(OPTIONS) $(DEBUGSYM) -noixemul
 #
@@ -57,7 +58,10 @@ ifneq ($(filter -flto%,$(OPTIONS)),)
 	LDFLAGS += $(OPTIMIZE)
 endif
 
-WARNINGS := -Wall -Wno-pointer-sign -Wno-attributes -Wno-int-conversion -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast
+WARNINGS := -Wall -Wno-pointer-sign -Wno-attributes -Wno-int-conversion -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast -Wno-error=incompatible-pointer-types -Wno-error=implicit-function-declaration -Wno-error=implicit-int
+
+# LTO runs code generation at link time, so the warning flags must be given to the linker, too
+LDFLAGS += $(WARNINGS)
 
 # Flag stack frames larger than half a process stack (STACK_DEFAULT is 8 KB on
 # OS3). With -flto, frames are only laid out at link time.
