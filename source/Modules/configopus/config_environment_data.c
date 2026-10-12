@@ -24,11 +24,8 @@ static void _palette_slider_callback_entry(struct TagItem *tag, struct Window *w
 static void ASM _palette_slider_callback(REG(a1, struct TagItem *tag), REG(a2, struct Window *window))
 #endif
 {
-	config_env_data *data;
 	// struct Library *GfxBase;
 
-	// Get data pointer
-	data = (config_env_data *)CFGDATA(window);
 	// GfxBase=data->GfxBase;
 
 	// Change tag to max pixel length
