@@ -39,7 +39,7 @@ typedef struct
 	short height;
 	short depth;
 	short planesize;
-	const UWORD *imagedata;
+	UWORD *imagedata;  // Byte-swapped in place on AROS, so not const
 	const ULONG *palette;
 } image_data;
 #ifndef __amigaos3__
