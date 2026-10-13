@@ -1190,7 +1190,7 @@ static VOID set_timeout(struct ftp_info *info, struct timeval *timer)
 unsigned int get(struct ftp_info *info,
 				 int (*updatefn)(void *, unsigned int, unsigned int),
 				 void *updateinfo,
-				 char *remote_path,
+				 const char *remote_path,
 				 char *local_path,
 				 BOOL restart)
 {

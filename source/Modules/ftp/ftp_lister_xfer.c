@@ -1706,11 +1706,11 @@ void lister_doubleclick(struct ftp_node *node, IPCMessage *msg)
 				else if (node->fn_ftp.fi_errno)
 					DisplayBeep(node->fn_og->og_screen);
 
-					rexx_lst_label(node->fn_opus,
-								   handle,
-								   node->fn_protocol == FTP_PROTOCOL_SFTP ? "SFTP:" : "FTP:",
-								   node->fn_site.se_host,
-								   NULL);
+				rexx_lst_label(node->fn_opus,
+							   handle,
+							   node->fn_protocol == FTP_PROTOCOL_SFTP ? "SFTP:" : "FTP:",
+							   node->fn_site.se_host,
+							   NULL);
 				lister_prog_clear(node);
 				rexx_lst_unlock(node->fn_opus, handle);
 			}
