@@ -321,7 +321,7 @@ int LIBFUNC L_Module_Entry(REG(a0, struct List *files),
 				logo.TopEdge = top;
 
 				// Show first frame
-				logo.ImageData = (UWORD *)logo_image[0];
+				logo.ImageData = logo_image[0];
 				DrawImage(data.window->RPort, &logo, 0, 0);
 			}
 		}
@@ -360,7 +360,7 @@ int LIBFUNC L_Module_Entry(REG(a0, struct List *files),
 				else
 				{
 					// Show next frame
-					logo.ImageData = (UWORD *)logo_image[frame];
+					logo.ImageData = logo_image[frame];
 					DrawImage(data.window->RPort, &logo, 0, 0);
 				}
 
@@ -529,7 +529,7 @@ void remap_logo(struct Screen *scr)
 	for (frame = 0; frame < logo_frames; frame++)
 	{
 		// Get data
-		info.oi_ImageData = (UWORD *)logo_image[frame];
+		info.oi_ImageData = logo_image[frame];
 
 		// Get image
 		if (!(im = OpenImage(0, &info)))
@@ -554,7 +554,7 @@ void about_show_image(struct Window *win, GL_Object *object, const image_data *i
 	short x, y;
 
 	// Fill out info
-	info.oi_ImageData = (UWORD *)image->imagedata;
+	info.oi_ImageData = image->imagedata;
 	info.oi_Palette = (ULONG *)image->palette;
 	info.oi_Width = image->width;
 	info.oi_Height = image->height;
