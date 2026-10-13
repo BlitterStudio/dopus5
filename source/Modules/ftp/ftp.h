@@ -261,7 +261,7 @@ int list(struct ftp_info *,
 unsigned int get(struct ftp_info *,
 				 int (*updatefn)(void *, unsigned int, unsigned int),
 				 void *updateinfo,
-				 char *remote,
+				 const char *remote,
 				 char *local,
 				 BOOL restart);
 unsigned int put(struct ftp_info *,
