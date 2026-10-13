@@ -59,5 +59,11 @@ endif
 
 WARNINGS := -Wall -Wno-pointer-sign -Wno-attributes -Wno-int-conversion -Wno-int-to-pointer-cast -Wno-pointer-to-int-cast
 
+# Flag stack frames larger than half a process stack (STACK_DEFAULT is 8 KB on
+# OS3). With -flto, frames are only laid out at link time.
+FRAME_WARNING := -Wframe-larger-than=4096
+WARNINGS += $(FRAME_WARNING)
+LDFLAGS  += $(FRAME_WARNING)
+
 CFLAGS   := $(OPTIONS) $(DEBUG) $(DEBUGSYM) $(OPTIMIZE) -noixemul
 LIBS  += -lamiga
