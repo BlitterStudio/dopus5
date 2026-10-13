@@ -272,7 +272,7 @@ CommandList commandlist_internal[] = {
 	 "MakeFile",
 	 MSG_FUNC_DESC_MAKEFILE,
 	 FUNCF_NEED_SOURCE | FUNCF_SINGLE_SOURCE,
-	 function_makefile,
+	 {function_makefile},
 	 "NAME,NOICON/S,SELECT/S",
 	 "S0"},
 
