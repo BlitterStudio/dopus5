@@ -255,7 +255,7 @@ static LIBSSH2_SEND_FUNC(ftp_sftp_libssh2_send)
 	ftp_sftp_libssh2_yield();
 	ftp_sftp_libssh2_force_nonblocking(socket);
 	errno = 0;
-	rc = send(socket, buffer, length, flags);
+	rc = send(socket, (APTR)buffer, length, flags);
 	if (rc > 0 || length == 0)
 		return rc;
 	if (rc == 0)
@@ -427,10 +427,12 @@ static int ftp_sftp_set_socket_nonblocking(int socket_fd, int enabled)
 #endif
 }
 
+#if !(defined(__amigaos3__) || defined(__amigaos4__) || defined(__MORPHOS__) || defined(__AROS__))
 static int ftp_sftp_socket_would_block(void)
 {
 	return errno == EINPROGRESS || errno == EWOULDBLOCK || errno == EAGAIN;
 }
+#endif
 
 static int ftp_sftp_wait_socket(int socket_fd,
 								LIBSSH2_SESSION *ssh,
@@ -533,12 +535,9 @@ static int ftp_sftp_wait_socket(int socket_fd,
 	}
 }
 
+#if !(defined(__amigaos3__) || defined(__amigaos4__) || defined(__MORPHOS__) || defined(__AROS__))
 static int ftp_sftp_socket_connected(int socket_fd)
 {
-#if defined(__amigaos3__) || defined(__amigaos4__) || defined(__MORPHOS__) || defined(__AROS__)
-	(void)socket_fd;
-	return 1;
-#else
 	int error = 0;
 	socklen_t error_len = sizeof(error);
 
@@ -552,8 +551,8 @@ static int ftp_sftp_socket_connected(int socket_fd)
 	}
 
 	return 1;
-#endif
 }
+#endif
 
 static int ftp_sftp_open_socket(const char *host, int port, const struct ftp_sftp_connect_options *options)
 {
@@ -729,8 +728,10 @@ static LIBSSH2_SFTP *ftp_sftp_init_subsystem(LIBSSH2_SESSION *ssh,
 {
 	LIBSSH2_SFTP *sftp;
 	time_t deadline;
+#if !(defined(__amigaos3__) || defined(__amigaos4__) || defined(__MORPHOS__) || defined(__AROS__))
 	time_t start;
 	time_t now;
+#endif
 	int timeout_secs;
 	int waits = 0;
 	int last_elapsed = -1;
@@ -745,7 +746,9 @@ static LIBSSH2_SFTP *ftp_sftp_init_subsystem(LIBSSH2_SESSION *ssh,
 	if (max_waits <= 0)
 		max_waits = FTP_SFTP_AMIGA_TICKS_PER_SECOND;
 #endif
+#if !(defined(__amigaos3__) || defined(__amigaos4__) || defined(__MORPHOS__) || defined(__AROS__))
 	start = ftp_sftp_now();
+#endif
 	deadline = ftp_sftp_deadline(options);
 	for (;;)
 	{
