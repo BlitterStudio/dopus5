@@ -1121,10 +1121,14 @@ LONG LIBFUNC L_OriginalWrite(REG(d1, BPTR file),
 struct FileInfoBlock *dospatch_fib(BPTR lock, struct MyLibrary *libbase, BOOL req)
 {
 	struct FileInfoBlock *fib = NULL;
+	struct LibData *data;
 	BPTR parent;
 	BOOL ok = FALSE;
 	APTR wsave = (APTR)-1;
 	struct Process *task = NULL;
+
+	// Get data pointer
+	data = (struct LibData *)libbase->ml_UserData;
 
 	// Find process
 	if (req && (task = (struct Process *)FindTask(NULL)))
