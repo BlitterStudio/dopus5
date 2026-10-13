@@ -208,18 +208,17 @@ static IPCData *launch(struct opusftp_globals *og,
 					   IPCData *ipc,
 					   struct ListLock *tasklist,
 					   char *name,
-					   void proc_code(void))
+					   void proc_code(void),
+					   int stack)
 {
 	struct subproc_data *data;
 	IPCData *ipcd = NULL;
 
 	if ((data = AllocVec(sizeof(struct subproc_data), MEMF_CLEAR)))
 	{
-		int stack = STACK_DEFAULT;
 		data->spd_ogp = og;
 		data->spd_owner_ipc = ipc;
 
-		// Listers now use STACK_DEFAULT stack size for recursive safety
 		if (!IPC_Launch(
 				tasklist, &ipcd, name, IPC_NATIVE(proc_code), stack, (IPTR)data, (struct Library *)DOSBase))
 			ipcd = NULL;
@@ -459,7 +458,7 @@ static IPCData *ensure_addrproc(struct opusftp_globals *og, struct main_event_da
 {
 	if (!og->og_addrproc || (og->og_addrproc->flags & IPCF_INVALID))
 	{
-		og->og_addrproc = launch(og, med->med_ipc, &med->med_tasklist, "dopus_ftp_address_book", addressbook);
+		og->og_addrproc = launch(og, med->med_ipc, &med->med_tasklist, "dopus_ftp_address_book", addressbook, STACK_DEFAULT);
 
 		if (og->og_addrproc)
 			IPC_Command(og->og_addrproc, IPC_HURRYUP, 0, 0, 0, REPLY_NO_PORT);
@@ -648,7 +647,8 @@ static int ipc_connect(struct opusftp_globals *og, IPCData *ipc, struct ListLock
 			if (check_socketlib(og, ipc))
 			{
 				// Launch FTP lister task
-				if ((listerproc = launch(og, ipc, tasklist, "dopus_ftp_lister", lister)))
+				// Listers run the FTP, TLS and SFTP code, which needs more than STACK_DEFAULT
+				if ((listerproc = launch(og, ipc, tasklist, "dopus_ftp_lister", lister, STACK_LARGE)))
 				{
 					// Send connect message
 					ipc_forward(listerproc, msg, 0);
@@ -3243,7 +3243,7 @@ void dopus_ftp(void)
 
 					// Spawn address book
 					og->og_addrproc =
-						launch(og, mldata->mld_ftp_ipc, &med.med_tasklist, "dopus_ftp_address_book", addressbook);
+						launch(og, mldata->mld_ftp_ipc, &med.med_tasklist, "dopus_ftp_address_book", addressbook, STACK_DEFAULT);
 
 					// Make sure address book has set up before continuing
 					if (og->og_addrproc)
