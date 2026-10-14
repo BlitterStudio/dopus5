@@ -255,6 +255,7 @@ typedef struct
 	ImageRemap remap;  // Remap data
 
 	struct SignalSemaphore pattern_lock;
+	volatile BOOL pattern_main_pending;	 // Pattern process has not settled the main backdrop yet
 
 	Att_List *icon_sel_list;  // List of selected icons
 
@@ -343,6 +344,7 @@ typedef struct
 #define GUIF2_NO_SCREENFRONT (1 << 5)  // Don't bring screen to front
 #define GUIF2_BACKFILL_SET (1 << 7)	   // Set backfill
 #define GUIF2_KEY_FINDER (1 << 9)	   // Key Finder active
+#define GUIF2_PATTERN_SHOWN (1 << 11)  // display_open drew the backdrop picture already
 
 // The following GUIF2 bits were retired in #49 - all four moved into the
 // CFG_ENVR struct so they can be persisted as part of the user's prefs:

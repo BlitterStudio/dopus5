@@ -197,9 +197,14 @@ void GetPattern(PatternData *pattern, struct Screen *screen, ULONG border_col)
 		APTR patchhandle = 0;
 #endif
 
-		// Check picture datatype version
-		if ((pdt = OpenLibrary("sys:classes/datatypes/picture.datatype", 0)) ||
-			(pdt = OpenLibrary("picture.datatype", 0)))
+		// Check picture datatype version; use the copy already in memory if there is one,
+		// since opening by path can mean a disk access for every pattern
+		Forbid();
+		if ((pdt = (struct Library *)FindName(&SysBase->LibList, "picture.datatype")))
+			ver = pdt->lib_Version;
+		Permit();
+		if (!pdt && ((pdt = OpenLibrary("sys:classes/datatypes/picture.datatype", 0)) ||
+					 (pdt = OpenLibrary("picture.datatype", 0))))
 		{
 			// Get version
 			ver = pdt->lib_Version;

@@ -126,6 +126,9 @@ short display_get_pattern(BOOL use_custom)
 	// Pattern disabled?
 	if (environment->env->display_options & DISPOPTF_NO_BACKDROP)
 	{
+		// No main backdrop to wait for
+		GUI->pattern_main_pending = FALSE;
+
 		// Check both patterns are invalid
 		for (a = 0; a < NUM_PATTERNS; a++)
 		{
@@ -523,6 +526,10 @@ short display_get_pattern(BOOL use_custom)
 		// If not, free data
 		else
 			FreeVec(data[a]);
+
+		// Main backdrop settled; display_open() can stop waiting for it
+		if (a == PATTERN_MAIN)
+			GUI->pattern_main_pending = FALSE;
 	}
 
 	return change;

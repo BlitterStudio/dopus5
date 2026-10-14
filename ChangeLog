@@ -1,3 +1,17 @@
+[dopus5 next] Desktop backdrop picture shown sooner at startup
+Program change; version bump deferred.
+
+- The backdrop picture used to start loading only after the icons,
+  button banks, listers and toolbar cache were set up, and the main
+  window was then cleared and redrawn once the startup script had run.
+  The picture now loads in its own process while the desktop icons are
+  read.  The first icon paint waits up to two seconds for it, so the
+  icons appear on the picture without a second redraw.  If the picture
+  takes longer, the old redraw happens when it arrives.
+- The picture.datatype version check uses the copy already in memory
+  and only opens SYS:Classes/DataTypes/picture.datatype when none is
+  loaded.
+
 [dopus5 next] Build: warn about large stack frames
 Program and FTP module change; version bump deferred.
 
