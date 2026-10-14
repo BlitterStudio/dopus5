@@ -429,9 +429,11 @@ void event_loop()
 					// Install appropriate hook
 					InstallLayerHook(GUI->window->WLayer, (ipc_msg->flags) ? &GUI->main_pattern.hook : LAYERS_BACKFILL);
 
-					// Refresh window
-					backdrop_show_objects(GUI->backdrop, BDSF_CLEAR);
+					// Refresh window, unless display_open already painted it with this picture
+					if (!(ipc_msg->flags && GUI->flags2 & GUIF2_PATTERN_SHOWN))
+						backdrop_show_objects(GUI->backdrop, BDSF_CLEAR);
 				}
+				GUI->flags2 &= ~GUIF2_PATTERN_SHOWN;
 				break;
 
 			// Save position list

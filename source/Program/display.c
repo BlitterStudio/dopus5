@@ -25,14 +25,39 @@ For more information on Directory Opus for Windows please see:
 
 #include "dopus.h"
 
+// How long display_open() holds the first icon paint for the backdrop picture (ticks)
+#define PATTERN_WAIT_TICKS 100
+
+// Give the pattern process a bounded chance to load the main backdrop picture.
+// Returns TRUE if the picture is ready, so the first paint of the window shows it.
+static BOOL display_wait_pattern(void)
+{
+	short ticks;
+
+	// display_get_pattern() clears pattern_main_pending once the main backdrop is settled,
+	// before it waits on listers or groups
+	for (ticks = 0; GUI->pattern_main_pending && !GUI->pattern[PATTERN_MAIN].valid && ticks < PATTERN_WAIT_TICKS;
+		 ticks++)
+	{
+		// Pattern process gone without getting that far?
+		if (!IPC_FindProc(&GUI->process_list, NAME_PATTERNS, FALSE, 0))
+			break;
+		Delay(1);
+	}
+
+	return GUI->pattern[PATTERN_MAIN].valid;
+}
+
 // Open the display
 BOOL display_open(long flags)
 {
 	struct Gadget *gadget = 0;
 	struct TextFont *font = 0;
+	BOOL pattern_started = FALSE;
 
 	// Clear "display-closed" flag
 	GUI->flags &= ~GUIF_CLOSED;
+	GUI->flags2 &= ~GUIF2_PATTERN_SHOWN;
 
 	// Kill "hidden" clock if it's open
 	IPC_QuitName(&GUI->process_list, NAME_HIDDEN_CLOCK, 0);
@@ -438,8 +463,27 @@ BOOL display_open(long flags)
 			// Get palette
 			get_colour_table();
 
+			// Start loading the backdrop pictures now, so decoding overlaps the icon scan below.
+			// A pattern process that is already running may be past the main backdrop and
+			// waiting on us, so leave that one to the launch at the end of display_open().
+			if (!GUI->pattern[PATTERN_MAIN].valid && !IPC_FindProc(&GUI->process_list, NAME_PATTERNS, FALSE, 0))
+			{
+				GUI->pattern_main_pending = TRUE;
+				pattern_started = misc_startup(NAME_PATTERNS, CMD_REMAP_PATTERNS, 0, 0, TRUE) != 0;
+			}
+
 			// Get all icons
-			backdrop_get_objects(GUI->backdrop, BGOF_ALL | BGOF_SHOW | BGOF_FIRST | (flags & BGOF_DESKTOP));
+			backdrop_get_objects(GUI->backdrop, BGOF_ALL | (flags & BGOF_DESKTOP));
+
+			// Paint the icons over the backdrop picture if it arrives in time; the event loop
+			// then skips the refresh the pattern process asks for
+			if (pattern_started && display_wait_pattern())
+				GUI->flags2 |= GUIF2_PATTERN_SHOWN;
+
+			// Show icons; the window was opened before the picture was ready, so clear it to
+			// the picture first if we have it
+			backdrop_get_objects(GUI->backdrop, BGOF_SHOW | ((GUI->flags2 & GUIF2_PATTERN_SHOWN) ? 0 : BGOF_FIRST));
+			backdrop_check_groups(GUI->backdrop);
 		}
 
 		// Unlock the screen if we'd locked it
@@ -508,8 +552,8 @@ BOOL display_open(long flags)
 	// Check source/destination
 	lister_smart_source(0);
 
-	// Get backdrop patterns
-	if (!GUI->pattern[PATTERN_MAIN].valid)
+	// Get backdrop patterns (window was already open, or the early launch failed)
+	if (!pattern_started && !GUI->pattern[PATTERN_MAIN].valid)
 	{
 		// Launch process to read pattern
 		misc_startup(NAME_PATTERNS, CMD_REMAP_PATTERNS, 0, 0, TRUE);
