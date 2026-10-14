@@ -2038,7 +2038,7 @@ void lister_getput(struct ftp_node *thisnode, IPCMessage *msg)
 	struct entry_info ei;			// Info on this entry
 	int confirm_commence;
 	int success;
-	struct hook_rec_data hc = {0};
+	struct hook_rec_data *hc = NULL;  // Too big for the lister stack
 	char startdirname[FILENAMELEN + 1] = {0};
 	char fulldirname[PATHLEN + 1];
 	TimerHandle *timer;
@@ -2063,6 +2063,9 @@ void lister_getput(struct ftp_node *thisnode, IPCMessage *msg)
 
 	// Only the source lister should process this
 	if (thisnode != xm->xm_rm_src)
+		goto reply;
+
+	if (!(hc = AllocVec(sizeof(*hc), MEMF_CLEAR)))
 		goto reply;
 
 	// Drag and drop in a single FTP lister?
@@ -2093,7 +2096,7 @@ void lister_getput(struct ftp_node *thisnode, IPCMessage *msg)
 	rexx_lst_lock(thisnode->fn_opus, xm->xm_rm_dest->fn_handle);
 
 	// -ve flag 0=TRUE
-	hc.hc_ui.ui_info_type = thisnode->fn_site.se_env->e_transfer_details;
+	hc->hc_ui.ui_info_type = thisnode->fn_site.se_env->e_transfer_details;
 
 	// Set up nodes and handles
 	{
@@ -2142,14 +2145,14 @@ void lister_getput(struct ftp_node *thisnode, IPCMessage *msg)
 			{
 				strcpy(fulldirname, path);
 				final_path(path, startdirname);
-				final_path(path, hc.hc_fromdirname);
+				final_path(path, hc->hc_fromdirname);
 				DeleteArgstring(path);
 			}
 
 			// Get 'To' path for progress bar
 			if ((path = rexx_lst_query_path(thisnode->fn_opus, desthandle)))
 			{
-				final_path(path, hc.hc_todirname);
+				final_path(path, hc->hc_todirname);
 				DeleteArgstring(path);
 			}
 
@@ -2232,36 +2235,36 @@ void lister_getput(struct ftp_node *thisnode, IPCMessage *msg)
 									   PROGRESS_BAR_ON);
 
 				// Set up copy hook data
-				hc.hc_og = thisnode->fn_og;
-				hc.hc_source = source;
-				hc.hc_dest = dest;
-				hc.hc_pre = hook_copy_pre;
-				hc.hc_need_dest = 1;  // Do we need to LIST the destination?
-				hc.hc_opus = thisnode->fn_opus;
-				hc.hc_prognode = prognode;
-				hc.hc_proghandle = proghandle;
-				hc.hc_env = srcnode->fn_site.se_env;
-				hc.hc_basedirname = startdirname;
-				hc.hc_copy_flags = xm->xm_flags;
-				hc.hc_ored_ftp_flags = srcnode->fn_ftp.fi_flags | destnode->fn_ftp.fi_flags;
-				hc.hc_anded_ftp_flags = srcnode->fn_ftp.fi_flags & destnode->fn_ftp.fi_flags;
+				hc->hc_og = thisnode->fn_og;
+				hc->hc_source = source;
+				hc->hc_dest = dest;
+				hc->hc_pre = hook_copy_pre;
+				hc->hc_need_dest = 1;  // Do we need to LIST the destination?
+				hc->hc_opus = thisnode->fn_opus;
+				hc->hc_prognode = prognode;
+				hc->hc_proghandle = proghandle;
+				hc->hc_env = srcnode->fn_site.se_env;
+				hc->hc_basedirname = startdirname;
+				hc->hc_copy_flags = xm->xm_flags;
+				hc->hc_ored_ftp_flags = srcnode->fn_ftp.fi_flags | destnode->fn_ftp.fi_flags;
+				hc->hc_anded_ftp_flags = srcnode->fn_ftp.fi_flags & destnode->fn_ftp.fi_flags;
 
 				// (Previously toggled via DOpus/ftp_broken_list env var; now a per-site flag.)
 				if (srcnode->fn_site.se_env->e_recursive_special)
-					hc.hc_recur_flags |= RECURF_BROKEN_LS;
+					hc->hc_recur_flags |= RECURF_BROKEN_LS;
 
 				if (confirm_commence == 2)
-					hc.hc_recur_flags |= RECURF_NORECUR;
+					hc->hc_recur_flags |= RECURF_NORECUR;
 
 				if (srcnode->fn_site.se_env->e_copy_replace == COPY_REPLACE_ALWAYS)
 				{
-					hc.hc_recur_flags |= RECURF_REPLACEALL;
-					// hc.hc_need_dest = 0;
+					hc->hc_recur_flags |= RECURF_REPLACEALL;
+					// hc->hc_need_dest = 0;
 				}
 				else if (srcnode->fn_site.se_env->e_copy_replace == COPY_REPLACE_NEVER)
-					hc.hc_recur_flags |= RECURF_SKIPALL;
+					hc->hc_recur_flags |= RECURF_SKIPALL;
 
-				hc.hc_options = lister_options(srcnode, OPTION_COPY);
+				hc->hc_options = lister_options(srcnode, OPTION_COPY);
 
 				// Should use callbacks to get entries
 				// (except drag'n'drop coz they won't be highlit)
@@ -2283,7 +2286,7 @@ void lister_getput(struct ftp_node *thisnode, IPCMessage *msg)
 						if (xm->xm_newname && xm->xm_flags & XFER_OPT_NAME)
 						{
 							strcpy(newname, xm->xm_newname);
-							hc.hc_newname = newname;
+							hc->hc_newname = newname;
 						}
 						else
 						{
@@ -2295,7 +2298,7 @@ void lister_getput(struct ftp_node *thisnode, IPCMessage *msg)
 								break;
 							case 1:
 							case 65535:
-								hc.hc_newname = newname;
+								hc->hc_newname = newname;
 								break;
 							case 2:
 								*newname = 0;
@@ -2330,7 +2333,7 @@ void lister_getput(struct ftp_node *thisnode, IPCMessage *msg)
 						// if	(confirm_entry == ?)
 						{
 							// Transfer entry (and contents if it's a dir)
-							if ((success = recursive_copy(&hc, startdirname, fulldirname, &ei, 0)))
+							if ((success = recursive_copy(hc, startdirname, fulldirname, &ei, 0)))
 							{
 								// Set ARexx result
 								if (success == 3 && xm->xm_flags & XFER_MOVE)
@@ -2347,8 +2350,8 @@ void lister_getput(struct ftp_node *thisnode, IPCMessage *msg)
 												 *newname ? newname : ei.ei_name,
 												 ei.ei_size,
 												 ei.ei_type < 0 ? -1 : 1,
-												 hc.hc_options & COPY_DATE ? ei.ei_seconds : 0,
-												 hc.hc_options & COPY_PROT ? ei.ei_prot : 0,
+												 hc->hc_options & COPY_DATE ? ei.ei_seconds : 0,
+												 hc->hc_options & COPY_PROT ? ei.ei_prot : 0,
 												 "");
 
 								// Deselect or remove entry from source
@@ -2430,6 +2433,9 @@ void lister_getput(struct ftp_node *thisnode, IPCMessage *msg)
 		FreeTimer(timer);
 
 reply:
+
+	if (hc)
+		FreeVec(hc);
 
 	// Reply to forwarded ARexx message
 	if (xm->xm_rxmsg)

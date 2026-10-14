@@ -25,6 +25,13 @@ For more information on Directory Opus for Windows please see:
 
 #define is_digit(c) ((c) >= '0' && (c) <= '9')
 
+// Buffers for reading Workbench .backdrop files, too big for the stack
+struct wbleftout_buffers
+{
+	char path[2048];
+	char line[2048];
+};
+
 // Get a new left-out object
 BackdropObject *backdrop_leftout_new(BackdropInfo *info, char *name, char *parent_dir, ULONG flags)
 {
@@ -477,6 +484,7 @@ void backdrop_add_leftouts(BackdropInfo *info)
 {
 	leftout_record *left;
 	BackdropObject *object;
+	struct wbleftout_buffers *wbl;
 
 	// Lock position list
 	lock_listlock(&GUI->positions, FALSE);
@@ -536,10 +544,11 @@ void backdrop_add_leftouts(BackdropInfo *info)
 	}
 
 	// added option to show workbench leftouts, set in config module
-	if (environment->env->display_options & DISPOPTF_SHOW_WBLEFTOUTS)
+	if ((environment->env->display_options & DISPOPTF_SHOW_WBLEFTOUTS) &&
+		(wbl = AllocVec(sizeof(*wbl), MEMF_ANY)))
 	{
 		BackdropObject *object, *newobject;
-		char buf[2048], leftout[2048];
+		char *buf = wbl->path, *leftout = wbl->line;
 		BPTR backdrop;
 		char *pos;
 
@@ -552,11 +561,11 @@ void backdrop_add_leftouts(BackdropInfo *info)
 			// Is this a disk?
 			if (object->type == BDO_DISK)
 			{
-				snprintf(buf, sizeof(buf), "%s:.backdrop", object->name);
+				snprintf(buf, sizeof(wbl->path), "%s:.backdrop", object->name);
 
 				if ((backdrop = Open(buf, MODE_OLDFILE)))
 				{
-					while (FGets(backdrop, leftout, sizeof(leftout) - 1))
+					while (FGets(backdrop, leftout, sizeof(wbl->line) - 1))
 					{
 						// clean any newlines from the string
 						if ((pos = strchr(leftout, '\r')) || (pos = strchr(leftout, '\n')))
@@ -564,7 +573,7 @@ void backdrop_add_leftouts(BackdropInfo *info)
 
 						if (*leftout)
 						{
-							snprintf(buf, sizeof(buf), "%s%s", object->name, leftout);
+							snprintf(buf, sizeof(wbl->path), "%s%s", object->name, leftout);
 #if 1
 							backdrop_leave_out(info, buf, BLOF_PERMANENT | BLOF_REFRESH, -1, -1);
 #else
@@ -584,6 +593,7 @@ void backdrop_add_leftouts(BackdropInfo *info)
 		}
 
 		((struct Process *)FindTask(0))->pr_WindowPtr = oldwin;
+		FreeVec(wbl);
 	}
 
 	// Lock position list

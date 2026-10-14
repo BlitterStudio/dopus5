@@ -1,3 +1,14 @@
+[dopus5 next] Build: warn about large stack frames
+Program and FTP module change; version bump deferred.
+
+- The OS3 build passes -Wframe-larger-than=4096 to the compiler and,
+  since -flto lays out frames at link time, to the linker, so frames
+  that take more than half of an 8 KB process stack are reported
+  (issue #182).
+- Program: backdrop_add_leftouts() allocates its two 2 KB .backdrop
+  line buffers instead of keeping them on the stack.
+- FTP: lister_getput() allocates its copy hook data (about 2.5 KB)
+  instead of keeping it on the lister stack.
 [dopus5 next] FTP: no stack overflow when connecting
 FTP module change; version bump deferred.
 
