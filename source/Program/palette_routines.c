@@ -22,8 +22,38 @@ For more information on Directory Opus for Windows please see:
 */
 
 #include "dopus.h"
+#ifdef __amigaos3__
+	#include <stddef.h>
+	#include <prefs/workbench.h>
+#endif
 
 #define PEN_MAX 8
+
+#ifdef __amigaos3__
+// Colours Workbench puts in pens 4-7 for "Set MagicWB colours"
+static const ULONG magicwb_colours[4][3] = {{0x79797979, 0x79797979, 0x79797979},
+											{0xaeaeaeae, 0xaeaeaeae, 0xaeaeaeae},
+											{0xaaaaaaaa, 0x92929292, 0x7d7d7d7d},
+											{0xffffffff, 0xaaaaaaaa, 0x96969696}};
+
+// Is "Set MagicWB colours" on in the Workbench preferences?
+static BOOL magicwb_pens_wanted(void)
+{
+	struct WorkbenchExtendedPrefs prefs;
+	APTR iff;
+	long size = 0;
+
+	if (!(iff = IFFOpen("ENV:Sys/Workbench.prefs", IFF_READ, ID_PREF)))
+		return FALSE;
+	if (IFFNextChunk(iff, ID_WBNC) == ID_WBNC)
+		size = IFFReadChunkBytes(iff, &prefs, sizeof(prefs));
+	IFFClose(iff);
+
+	// Older prefs files stop before wbe_LockPens
+	return (BOOL)(size >= (long)(offsetof(struct WorkbenchExtendedPrefs, wbe_LockPens) + sizeof(prefs.wbe_LockPens)) &&
+				  prefs.wbe_LockPens);
+}
+#endif
 
 // Load screen palette
 void load_screen_palette(void)
@@ -148,6 +178,26 @@ void get_colour_table()
 		}
 	}
 
+#ifdef __amigaos3__
+	// Workbench locks pens 4-7 to the MagicWB colours when its prefs ask for it.
+	// Do the same on its screen when we replace Workbench, before our own pens
+	// are allocated. While Workbench runs it holds these pens and ObtainPen() fails.
+	if (!GUI->screen && (GUI->screen_pointer->Flags & SCREENTYPE) == WBENCHSCREEN &&
+		GUI->screen_pointer->ViewPort.ColorMap->Count >= 8 && magicwb_pens_wanted())
+	{
+		for (pen = 0; pen < 4; pen++)
+		{
+			if (ObtainPen(GUI->screen_pointer->ViewPort.ColorMap,
+						  pen + 4,
+						  magicwb_colours[pen][0],
+						  magicwb_colours[pen][1],
+						  magicwb_colours[pen][2],
+						  0) != -1)
+				GUI->magicwb_pen_alloc |= 1 << pen;
+		}
+	}
+#endif
+
 	// Go through user pens
 	for (pen = 0; pen < environment->env->palette_count; pen++)
 	{
@@ -207,6 +257,16 @@ void free_colour_table()
 				ReleasePen(GUI->screen_pointer->ViewPort.ColorMap, GUI->pens[pen]);
 			}
 		}
+
+#ifdef __amigaos3__
+		// Free the MagicWB pens
+		for (pen = 0; pen < 4; pen++)
+		{
+			if (GUI->magicwb_pen_alloc & (1 << pen))
+				ReleasePen(GUI->screen_pointer->ViewPort.ColorMap, pen + 4);
+		}
+		GUI->magicwb_pen_alloc = 0;
+#endif
 	}
 
 	// Clear allocation flag

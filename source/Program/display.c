@@ -457,11 +457,11 @@ BOOL display_open(long flags)
 			// Set menu
 			display_reset_menus(1, 0);
 
+			// Get palette (before any icon remapping can take the MagicWB pens)
+			get_colour_table();
+
 			// Remap rexx icons
 			rexx_remap_icons(FALSE);
-
-			// Get palette
-			get_colour_table();
 
 			// Start loading the backdrop pictures now, so decoding overlaps the icon scan below.
 			// A pattern process that is already running may be past the main backdrop and
