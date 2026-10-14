@@ -59,6 +59,24 @@ modify it under the terms of the AROS Public License version 1.1.
 static int ftp_sftp_libssh2_ready = 0;
 static int ftp_sftp_libssh2_users = 0;
 
+static void *ftp_sftp_buffer_alloc(size_t size)
+{
+#if defined(__amigaos3__) || defined(__amigaos4__) || defined(__MORPHOS__) || defined(__AROS__)
+	return AllocVec(size, MEMF_ANY);
+#else
+	return malloc(size);
+#endif
+}
+
+static void ftp_sftp_buffer_free(void *buffer)
+{
+#if defined(__amigaos3__) || defined(__amigaos4__) || defined(__MORPHOS__) || defined(__AROS__)
+	FreeVec(buffer);
+#else
+	free(buffer);
+#endif
+}
+
 static void ftp_sftp_connect_update(const struct ftp_sftp_connect_options *options, const char *text);
 
 static int ftp_sftp_libssh2_acquire(const struct ftp_sftp_connect_options *options)
@@ -952,15 +970,16 @@ int ftp_sftp_test_known_hosts_check_line(char *line,
 }
 #endif
 
-static int ftp_sftp_known_hosts_check_file(struct ftp_sftp_session *session,
-										   const char *path,
-										   const char *host,
-										   int port,
-										   int key_type,
-										   const char *key_hex,
-										   int *matched)
+static int ftp_sftp_known_hosts_scan_file(struct ftp_sftp_session *session,
+										  const char *path,
+										  const char *host,
+										  int port,
+										  int key_type,
+										  const char *key_hex,
+										  int *matched,
+										  char *line,
+										  size_t line_size)
 {
-	char line[FTP_SFTP_KNOWN_HOSTS_LINE_BUFSIZE];
 	int line_match;
 
 	if (matched)
@@ -982,7 +1001,7 @@ static int ftp_sftp_known_hosts_check_file(struct ftp_sftp_session *session,
 			return 0;
 		}
 
-		while (FGets(file, line, sizeof(line)))
+		while (FGets(file, line, line_size))
 		{
 			line_match = ftp_sftp_known_hosts_check_line(line, host, port, key_type, key_hex);
 			if (line_match > 0)
@@ -1015,7 +1034,7 @@ static int ftp_sftp_known_hosts_check_file(struct ftp_sftp_session *session,
 			return 0;
 		}
 
-		while (fgets(line, sizeof(line), file))
+		while (fgets(line, (int)line_size, file))
 		{
 			line_match = ftp_sftp_known_hosts_check_line(line, host, port, key_type, key_hex);
 			if (line_match > 0)
@@ -1040,6 +1059,33 @@ static int ftp_sftp_known_hosts_check_file(struct ftp_sftp_session *session,
 	return 1;
 }
 
+static int ftp_sftp_known_hosts_check_file(struct ftp_sftp_session *session,
+										   const char *path,
+										   const char *host,
+										   int port,
+										   int key_type,
+										   const char *key_hex,
+										   int *matched)
+{
+	char *line;
+	int result;
+
+	if (matched)
+		*matched = 0;
+
+	line = ftp_sftp_buffer_alloc(FTP_SFTP_KNOWN_HOSTS_LINE_BUFSIZE);
+	if (!line)
+	{
+		ftp_sftp_set_detail(session, "Out of memory reading SFTP known-hosts file");
+		return 0;
+	}
+
+	result = ftp_sftp_known_hosts_scan_file(session, path, host, port, key_type, key_hex, matched,
+											line, FTP_SFTP_KNOWN_HOSTS_LINE_BUFSIZE);
+	ftp_sftp_buffer_free(line);
+	return result;
+}
+
 #if defined(FTP_SFTP_TESTING)
 int ftp_sftp_test_known_hosts_check_file(struct ftp_sftp_session *session, const char *path, int *matched)
 {
@@ -1047,18 +1093,8 @@ int ftp_sftp_test_known_hosts_check_file(struct ftp_sftp_session *session, const
 }
 #endif
 
-static int ftp_sftp_known_hosts_append(const char *path, const char *host, int port, int key_type, const char *key_hex)
+static int ftp_sftp_known_hosts_write_line(const char *path, const char *line)
 {
-	char line[FTP_SFTP_KNOWN_HOSTS_LINE_BUFSIZE];
-
-	if (!path || !*path || !host || !*host || !key_hex || !*key_hex)
-		return 0;
-
-	if (strlen(host) + strlen(key_hex) + 80 >= sizeof(line))
-		return 0;
-
-	sprintf(line, "%s\t%s\t%ld\t%ld\t%s\n", FTP_SFTP_KNOWN_HOSTS_MAGIC, host, (long)port, (long)key_type, key_hex);
-
 #if defined(__amigaos3__) || defined(__amigaos4__) || defined(__MORPHOS__) || defined(__AROS__)
 	{
 		BPTR file = Open((char *)path, MODE_READWRITE);
@@ -1070,7 +1106,7 @@ static int ftp_sftp_known_hosts_append(const char *path, const char *host, int p
 			return 0;
 
 		Seek(file, 0, OFFSET_END);
-		ok = FPuts(file, line);
+		ok = FPuts(file, (char *)line);
 		Close(file);
 		if (ok < 0)
 			return 0;
@@ -1091,6 +1127,27 @@ static int ftp_sftp_known_hosts_append(const char *path, const char *host, int p
 #endif
 
 	return 1;
+}
+
+static int ftp_sftp_known_hosts_append(const char *path, const char *host, int port, int key_type, const char *key_hex)
+{
+	char *line;
+	int result;
+
+	if (!path || !*path || !host || !*host || !key_hex || !*key_hex)
+		return 0;
+
+	if (strlen(host) + strlen(key_hex) + 80 >= FTP_SFTP_KNOWN_HOSTS_LINE_BUFSIZE)
+		return 0;
+
+	line = ftp_sftp_buffer_alloc(FTP_SFTP_KNOWN_HOSTS_LINE_BUFSIZE);
+	if (!line)
+		return 0;
+
+	sprintf(line, "%s\t%s\t%ld\t%ld\t%s\n", FTP_SFTP_KNOWN_HOSTS_MAGIC, host, (long)port, (long)key_type, key_hex);
+	result = ftp_sftp_known_hosts_write_line(path, line);
+	ftp_sftp_buffer_free(line);
+	return result;
 }
 
 static void ftp_sftp_format_fingerprint(char *out, int outsize, const char *prefix, const char *hash, int hash_len)
@@ -1142,10 +1199,12 @@ static void ftp_sftp_hostkey_fingerprint(LIBSSH2_SESSION *ssh, char *out, int ou
 		ftp_sftp_format_fingerprint(out, outsize, "SHA1:", hash, 20);
 }
 
-static int ftp_sftp_verify_hostkey(struct ftp_sftp_session *session,
-								   const char *host,
-								   int port,
-								   const struct ftp_sftp_connect_options *options)
+static int ftp_sftp_verify_hostkey_hex(struct ftp_sftp_session *session,
+									   const char *host,
+									   int port,
+									   const struct ftp_sftp_connect_options *options,
+									   char *key_hex,
+									   size_t key_hex_size)
 {
 	size_t len = 0;
 	int type = 0;
@@ -1154,7 +1213,6 @@ static int ftp_sftp_verify_hostkey(struct ftp_sftp_session *session,
 	const char *hostkey;
 	const char *path;
 	char fingerprint[80];
-	char key_hex[FTP_SFTP_HOSTKEY_HEX_BUFSIZE];
 
 	if (!session || !session->ssh)
 		return 0;
@@ -1176,7 +1234,7 @@ static int ftp_sftp_verify_hostkey(struct ftp_sftp_session *session,
 	if (port <= 0)
 		port = 22;
 
-	if (!ftp_sftp_hostkey_hex(key_hex, sizeof(key_hex), hostkey, len))
+	if (!ftp_sftp_hostkey_hex(key_hex, (int)key_hex_size, hostkey, len))
 	{
 		ftp_sftp_set_detail(session, "SFTP host key is too large to store");
 		return 0;
@@ -1210,6 +1268,26 @@ static int ftp_sftp_verify_hostkey(struct ftp_sftp_session *session,
 	}
 
 	return 1;
+}
+
+static int ftp_sftp_verify_hostkey(struct ftp_sftp_session *session,
+								   const char *host,
+								   int port,
+								   const struct ftp_sftp_connect_options *options)
+{
+	char *key_hex;
+	int result;
+
+	key_hex = ftp_sftp_buffer_alloc(FTP_SFTP_HOSTKEY_HEX_BUFSIZE);
+	if (!key_hex)
+	{
+		ftp_sftp_set_detail(session, "Out of memory checking the SFTP host key");
+		return 0;
+	}
+
+	result = ftp_sftp_verify_hostkey_hex(session, host, port, options, key_hex, FTP_SFTP_HOSTKEY_HEX_BUFSIZE);
+	ftp_sftp_buffer_free(key_hex);
+	return result;
 }
 
 static int ftp_sftp_auth_agent(LIBSSH2_SESSION *ssh, const char *user)
@@ -2077,7 +2155,7 @@ unsigned int ftp_sftp_get(struct ftp_sftp_session *session,
 {
 #if defined(FTP_SFTP_BACKEND_LIBSSH2)
 	char full[FTP_SFTP_PATH_BUFSIZE + 1];
-	char buffer[FTP_SFTP_XFER_BUFSIZE];
+	char *buffer;
 	LIBSSH2_SFTP_HANDLE *in;
 	ftp_sftp_local_file out;
 	long bytes = 0;
@@ -2108,6 +2186,15 @@ unsigned int ftp_sftp_get(struct ftp_sftp_session *session,
 		return 0;
 	}
 
+	buffer = ftp_sftp_buffer_alloc(FTP_SFTP_XFER_BUFSIZE);
+	if (!buffer)
+	{
+		ftp_sftp_local_close(out);
+		libssh2_sftp_close(in);
+		ftp_sftp_set_error(session, FTP_SFTP_ERROR_OP);
+		return 0;
+	}
+
 	if (restart)
 	{
 		done = ftp_sftp_local_seek_end(out);
@@ -2117,7 +2204,7 @@ unsigned int ftp_sftp_get(struct ftp_sftp_session *session,
 	if (callback && callback(userdata, total, done))
 		aborted = 1;
 
-	while (!aborted && (bytes = (long)libssh2_sftp_read(in, buffer, sizeof(buffer))) > 0)
+	while (!aborted && (bytes = (long)libssh2_sftp_read(in, buffer, FTP_SFTP_XFER_BUFSIZE)) > 0)
 	{
 		if (ftp_sftp_local_write(out, buffer, bytes) != bytes)
 		{
@@ -2129,6 +2216,7 @@ unsigned int ftp_sftp_get(struct ftp_sftp_session *session,
 			aborted = 1;
 	}
 
+	ftp_sftp_buffer_free(buffer);
 	ftp_sftp_local_close(out);
 	libssh2_sftp_close(in);
 
@@ -2167,7 +2255,7 @@ unsigned int ftp_sftp_put(struct ftp_sftp_session *session,
 {
 #if defined(FTP_SFTP_BACKEND_LIBSSH2)
 	char full[FTP_SFTP_PATH_BUFSIZE + 1];
-	char buffer[FTP_SFTP_XFER_BUFSIZE];
+	char *buffer;
 	char *outpos;
 	LIBSSH2_SFTP_HANDLE *out;
 	ftp_sftp_local_file in;
@@ -2201,6 +2289,15 @@ unsigned int ftp_sftp_put(struct ftp_sftp_session *session,
 		return 0;
 	}
 
+	buffer = ftp_sftp_buffer_alloc(FTP_SFTP_XFER_BUFSIZE);
+	if (!buffer)
+	{
+		ftp_sftp_local_close(in);
+		libssh2_sftp_close(out);
+		ftp_sftp_set_error(session, FTP_SFTP_ERROR_OP);
+		return 0;
+	}
+
 	if (restart)
 	{
 		ftp_sftp_local_seek_start(in, restart);
@@ -2210,7 +2307,7 @@ unsigned int ftp_sftp_put(struct ftp_sftp_session *session,
 	if (callback && callback(userdata, 0xffffffff, done))
 		aborted = 1;
 
-	while (!aborted && (bytes = ftp_sftp_local_read(in, buffer, sizeof(buffer))) > 0)
+	while (!aborted && (bytes = ftp_sftp_local_read(in, buffer, FTP_SFTP_XFER_BUFSIZE)) > 0)
 	{
 		outpos = buffer;
 		written_total = 0;
@@ -2234,6 +2331,7 @@ unsigned int ftp_sftp_put(struct ftp_sftp_session *session,
 			aborted = 1;
 	}
 
+	ftp_sftp_buffer_free(buffer);
 	ftp_sftp_local_close(in);
 	libssh2_sftp_close(out);
 
