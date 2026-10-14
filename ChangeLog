@@ -1,3 +1,16 @@
+[dopus5 next] MagicWB icon colours when Opus replaces Workbench
+Program change (OS3); version bump deferred.
+
+- With "Set MagicWB Colors" on in the Workbench preferences, Workbench
+  locks pens 4-7 of its screen to the MagicWB colours.  When Opus ran
+  as the Workbench replacement nobody did this, so 8-colour MagicWB
+  icons were drawn with whatever those pens held (issue #11).  Opus
+  now locks the same pens to the same colours when it opens on the
+  Workbench screen and releases them when it closes.  If Workbench
+  is running it already holds the pens and nothing changes.
+- The display palette is now allocated before the ARexx app icons are
+  remapped, so they cannot take pens 4-7 first.
+
 [dopus5 next] Desktop backdrop picture shown sooner at startup
 Program change; version bump deferred.
 
