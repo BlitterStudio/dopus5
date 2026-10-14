@@ -9,6 +9,16 @@ Program and FTP module change; version bump deferred.
   line buffers instead of keeping them on the stack.
 - FTP: lister_getput() allocates its copy hook data (about 2.5 KB)
   instead of keeping it on the lister stack.
+[dopus5 next] FTP: no stack overflow when connecting
+FTP module change; version bump deferred.
+
+- Connecting to any FTP or SFTP site hung the machine when the module
+  was built with GCC 16 (issue #182).  LTO inlined the SFTP host-key
+  check, with its 4 KB buffers, into the lister's connect code, whose
+  frame then exceeded the 8 KB lister stack.  The SFTP transfer and
+  host-key buffers are now allocated instead of living on the stack,
+  and FTP listers start with STACK_LARGE for the AmiSSL and libssh2
+  code they run.
 
 [dopus5 next] Lister toolbar: no minimum height from the scroll arrow
 Program and dopus5.library change; version bump deferred.
