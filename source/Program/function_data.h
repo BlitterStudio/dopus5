@@ -260,6 +260,8 @@ typedef struct _ModuleNode
 	struct Node node;
 	struct DateStamp date;
 	ULONG size;
+	char catalog[32];	  // Catalog the module opens, for the module cache
+	char catalog_id[40];  // What that catalog resolved to
 	short flags;
 } ModuleNode;
 

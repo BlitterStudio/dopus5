@@ -64,9 +64,10 @@ Cfg_Function *new_default_function(char *func, APTR memory)
 // xadopus.module xadmaster.library and its clients), so the first start after a
 // reboot spent seconds loading modules only to read their command lists. The
 // commands of each identified module are saved here and reused for as long as
-// the module file keeps its size and datestamp.
+// the module file keeps its size and datestamp and its catalog resolves to the
+// same language and version.
 #define MODULE_CACHE_FILE "DOpus5:System/module-cache"
-#define MODULE_CACHE_ID MAKE_ID('M', 'C', 'A', '1')
+#define MODULE_CACHE_ID MAKE_ID('M', 'C', 'A', '2')
 #define MODULE_CACHE_MAX 128
 
 typedef struct
@@ -74,9 +75,11 @@ typedef struct
 	char *name;
 	ULONG size;
 	struct DateStamp date;
-	ULONG count;	  // Number of commands
-	UBYTE *commands;  // Command records
-	BOOL seen;		  // Module file found by this scan
+	char *catalog;	   // Catalog the module opens
+	char *catalog_id;  // What it resolved to when the commands were read
+	ULONG count;	   // Number of commands
+	UBYTE *commands;   // Command records
+	BOOL seen;		   // Module file found by this scan
 } ModuleCacheEntry;
 
 typedef struct
@@ -127,17 +130,34 @@ static char *module_cache_get_string(ModuleCacheReader *reader)
 	return string;
 }
 
-// Module descriptions come from the module catalogs
-static char *module_cache_language(void)
+// Command descriptions come from the module's catalog, which modules open with
+// OpenCatalogA(NULL, name, NULL). Open it the same way and note which catalog the
+// locale preferences resolved to: none ("-", built-in strings) or a language and
+// version. An empty result means the module has no catalog.
+static void module_catalog_id(char *catalog, char *id, short size)
 {
-	if (locale.li_Locale)
+	struct Catalog *cat = 0;
+
+	id[0] = 0;
+	if (!catalog || !*catalog)
+		return;
+
+#define LocaleBase locale.li_LocaleBase
+	if (LocaleBase)
+		cat = OpenCatalogA(NULL, catalog, NULL);
+	if (cat)
 	{
-		if (locale.li_Locale->loc_PrefLanguages[0])
-			return (char *)locale.li_Locale->loc_PrefLanguages[0];
-		if (locale.li_Locale->loc_LanguageName)
-			return (char *)locale.li_Locale->loc_LanguageName;
+		snprintf(id,
+				 size,
+				 "%.24s %ld.%ld",
+				 (cat->cat_Language) ? (char *)cat->cat_Language : "",
+				 (long)cat->cat_Version,
+				 (long)cat->cat_Revision);
+		CloseCatalog(cat);
 	}
-	return "";
+	else
+		strcpy(id, "-");
+#undef LocaleBase
 }
 
 // Read one command record
@@ -177,7 +197,6 @@ static ModuleCache *module_cache_load(void)
 	APTR file;
 	D_S(struct FileInfoBlock, fib)
 	LONG size = 0;
-	char *language;
 
 	if (!(cache = AllocVec(sizeof(ModuleCache), MEMF_CLEAR)))
 		return 0;
@@ -204,10 +223,9 @@ static ModuleCache *module_cache_load(void)
 	reader.end = cache->end = cache->buffer + size;
 	reader.bad = FALSE;
 
-	// Written by this version for the current language?
+	// Written by this version?
 	if (module_cache_get(&reader, 4) != MODULE_CACHE_ID || module_cache_get(&reader, 2) != PROG_REVISION ||
-		module_cache_get(&reader, 2) != LIB_VERSION || module_cache_get(&reader, 2) != LIB_REVISION ||
-		!(language = module_cache_get_string(&reader)) || stricmp(language, module_cache_language()) != 0)
+		module_cache_get(&reader, 2) != LIB_VERSION || module_cache_get(&reader, 2) != LIB_REVISION)
 	{
 		module_cache_free(cache);
 		return 0;
@@ -228,6 +246,8 @@ static ModuleCache *module_cache_load(void)
 		entry->date.ds_Days = module_cache_get(&reader, 4);
 		entry->date.ds_Minute = module_cache_get(&reader, 4);
 		entry->date.ds_Tick = module_cache_get(&reader, 4);
+		entry->catalog = module_cache_get_string(&reader);
+		entry->catalog_id = module_cache_get_string(&reader);
 		entry->count = module_cache_get(&reader, 2);
 		entry->commands = reader.ptr;
 		for (num = 0; num < entry->count && !reader.bad; num++)
@@ -301,15 +321,37 @@ static BOOL module_cache_stale(ModuleCache *cache)
 	return FALSE;
 }
 
+// Note in a module node what its catalog resolved to; FALSE if the names do not fit,
+// in which case the module is left out of the cache
+static BOOL module_node_set_catalog(ModuleNode *node, char *catalog, char *catalog_id)
+{
+	if ((catalog && strlen(catalog) >= sizeof(node->catalog)) ||
+		(catalog_id && strlen(catalog_id) >= sizeof(node->catalog_id)))
+		return FALSE;
+
+	lock_listlock(&GUI->modules_list, TRUE);
+	strcpy(node->catalog, (catalog) ? catalog : "");
+	strcpy(node->catalog_id, (catalog_id) ? catalog_id : "");
+	node->flags |= MNF_CACHE;
+	unlock_listlock(&GUI->modules_list);
+	return TRUE;
+}
+
 // Add a module's commands from the cache; FALSE if the cache does not have this version of it
-static BOOL module_cache_add_commands(ModuleCache *cache, char *module, struct FileInfoBlock *fib)
+static BOOL module_cache_add_commands(ModuleCache *cache, ModuleNode *node, char *module, struct FileInfoBlock *fib)
 {
 	ModuleCacheEntry *entry;
 	ModuleCacheReader reader;
+	char catalog_id[40];
 	ULONG num;
 
 	if (!(entry = module_cache_find(cache, module)) || entry->size != (ULONG)fib->fib_Size ||
 		CompareDates(&entry->date, &fib->fib_Date) != 0)
+		return FALSE;
+
+	// Descriptions were read through a catalog that may resolve differently now
+	module_catalog_id(entry->catalog, catalog_id, sizeof(catalog_id));
+	if (strcmp(catalog_id, (entry->catalog_id) ? entry->catalog_id : "") != 0)
 		return FALSE;
 
 	reader.ptr = entry->commands;
@@ -324,6 +366,9 @@ static BOOL module_cache_add_commands(ModuleCache *cache, char *module, struct F
 		if (module_cache_get_command(&reader, &name, &desc, &template, &help, &flags, &id))
 			module_add_command(name, desc, template, module, flags, id, help);
 	}
+
+	if (node)
+		module_node_set_catalog(node, entry->catalog, entry->catalog_id);
 	return TRUE;
 }
 
@@ -361,7 +406,6 @@ static void module_cache_save(void)
 	module_cache_put(file, PROG_REVISION, 2);
 	module_cache_put(file, LIB_VERSION, 2);
 	module_cache_put(file, LIB_REVISION, 2);
-	module_cache_put_string(file, module_cache_language());
 
 	lock_listlock(&GUI->modules_list, FALSE);
 	lock_listlock(&GUI->command_list, FALSE);
@@ -387,6 +431,8 @@ static void module_cache_save(void)
 		module_cache_put(file, node->date.ds_Days, 4);
 		module_cache_put(file, node->date.ds_Minute, 4);
 		module_cache_put(file, node->date.ds_Tick, 4);
+		module_cache_put_string(file, (node->catalog[0]) ? node->catalog : 0);
+		module_cache_put_string(file, (node->catalog_id[0]) ? node->catalog_id : 0);
 		module_cache_put(file, num, 2);
 
 		for (cmd = (CommandList *)GUI->command_list.list.lh_Head; cmd->node.mln_Succ;
@@ -612,14 +658,9 @@ void init_commands_scan(short type)
 			}
 
 			// Commands already known from the cache?
-			else if (module_cache_add_commands(cache, anchor->ap_Info.fib_FileName, &anchor->ap_Info))
+			else if (module_cache_add_commands(cache, node, anchor->ap_Info.fib_FileName, &anchor->ap_Info))
 			{
-				if (node)
-				{
-					lock_listlock(&GUI->modules_list, TRUE);
-					node->flags |= MNF_CACHE;
-					unlock_listlock(&GUI->modules_list);
-				}
+				// No need to open it
 			}
 
 			// Otherwise
@@ -719,10 +760,11 @@ void init_commands_scan(short type)
 						// Commands are all we need from it next time
 						else if (node)
 						{
-							lock_listlock(&GUI->modules_list, TRUE);
-							node->flags |= MNF_CACHE;
-							unlock_listlock(&GUI->modules_list);
-							cache_changed = TRUE;
+							char catalog_id[40];
+
+							module_catalog_id(info->locale_name, catalog_id, sizeof(catalog_id));
+							if (module_node_set_catalog(node, info->locale_name, catalog_id))
+								cache_changed = TRUE;
 						}
 					}
 // Close module

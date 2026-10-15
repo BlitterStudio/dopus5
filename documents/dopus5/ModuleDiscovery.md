@@ -28,9 +28,9 @@ For each discovered module whose commands are not in the module cache (see below
 
 ### Module Command Cache
 Startup runs the same scan synchronously from `startup_init_commands()`. Opening a module loads it, and some modules open large libraries when they are opened (`ftp.module` opens `codesets.library`, `xadopus.module` opens `xadmaster.library`, which loads its clients), so identifying every module took seconds on the first start after a reboot.
-- **File**: `DOpus5:System/module-cache` holds, for each identified module, its file name, size, datestamp and command list (name, description, template, help file, flags and function ID).
-- **Use**: A module whose size and datestamp match its cache record is not opened; its commands are added from the record.
-- **Validity**: The whole file is ignored if it was written by another program or library revision, or for another catalog language. Modules that set `MODULEF_CALL_STARTUP` are never cached, because they have to be opened at startup anyway.
+- **File**: `DOpus5:System/module-cache` holds, for each identified module, its file name, size, datestamp, catalog name, what that catalog resolved to (language and catalog version, or `-` for the built-in strings), and command list (name, description, template, help file, flags and function ID).
+- **Use**: A module whose size and datestamp match its cache record is not opened; its commands are added from the record. The descriptions come from the module's catalog, so the scan first opens that catalog the way modules do (`OpenCatalogA(NULL, name, NULL)`) and uses the record only if it resolves to the same language and version, which catches changed locale preferences and catalogs installed or updated since.
+- **Validity**: The whole file is ignored if it was written by another program or library revision. Modules that set `MODULEF_CALL_STARTUP` are never cached, because they have to be opened at startup anyway.
 - **Updates**: The file is rewritten after a scan that identified a module or found a cached module removed or changed.
 
 ### 5. Registration

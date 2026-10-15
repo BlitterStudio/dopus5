@@ -20,10 +20,11 @@ Program change; version bump deferred.
   loads its clients, so the first start after a reboot spent about
   2.3 of 13 seconds identifying modules.  The commands are now saved
   in DOpus5:System/module-cache and taken from there while a module
-  keeps its size and datestamp.  The file is rebuilt when a module is
-  added, changed or removed, and ignored after an Opus update or a
-  change of catalog language.  Modules that ask to be called at
-  startup are still opened.
+  keeps its size and datestamp and its catalog resolves to the same
+  language and catalog version as when they were read.  The file is
+  rebuilt when a module is added, changed or removed, and ignored
+  after an Opus update.  Modules that ask to be called at startup are
+  still opened.
 
 [dopus5 next] Filetypes read in the background at startup
 Program change; version bump deferred.
