@@ -1,3 +1,12 @@
+[dopus5 next] Padlock gadget fill colour
+dopus5.library change; version bump deferred.
+
+- On AmigaOS 3 the body of the lister title bar padlock is filled with
+  the shine pen, as the iconify gadget's inner square is, instead of
+  the highlighted text pen.  With Palette prefs that set highlighted
+  text to another colour, the padlock took that colour, for example
+  blue or cyan (#148).
+
 [dopus5 next] Workbench outline and shadow label modes from Font prefs
 dopus5.library and Program change; version bump deferred.
 

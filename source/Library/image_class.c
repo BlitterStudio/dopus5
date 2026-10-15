@@ -552,11 +552,12 @@ void image_draw(Class *cl, struct Image *image, BoopsiImageData *data, struct im
 		else
 			Draw(rp, x + size - 2, y - size + 2);
 
-		// If active, fill inside of base
+		// If active, fill inside of base (shine pen, like the iconify gadget;
+		// HIGHLIGHTTEXTPEN is a text pen and may be any colour)
 		if (draw->imp_State == IDS_NORMAL || draw->imp_State == IDS_SELECTED)
 		{
 			// Fill inside of base
-			SetAPen(rp, pens[HIGHLIGHTTEXTPEN]);
+			SetAPen(rp, pens[SHINEPEN]);
 			RectFill(rp, x + 1, y - (size >> 1) + 2, x + size - 2, y - 1);
 		}
 
