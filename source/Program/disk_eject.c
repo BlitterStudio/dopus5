@@ -36,27 +36,89 @@ For more information on Directory Opus for Windows please see:
 #define SCSI_INQUIRY_LEN 36
 #define SCSI_SENSE_LEN 18
 
+#define EJECT_NAME_LEN 32
+
 typedef struct
 {
-	char dos_name[32];	// DOS device to inhibit, eg "CD0:"
-	char device[128];	// Exec device driving it
+	char device[128];	// Exec device driving the medium
 	ULONG unit;
 	ULONG flags;
+	char *names;		// Every mounted DOS device on the unit, eg "CD0:"
+	short count;
 } EjectTarget;
 
-// Find the DOS device and exec device behind a disk or volume name
+// Collect every mounted DOS device on the target's unit. Ejecting takes
+// the medium away from all partitions on it, so they must all be inhibited.
+static BOOL disk_eject_partitions(EjectTarget *target)
+{
+	struct DosList *list, *dos;
+	char device[128];
+	short pass, count = 0;
+
+	list = LockDosList(LDF_DEVICES | LDF_READ);
+
+	// Count them, then copy their names
+	for (pass = 0; pass < 2; pass++)
+	{
+		for (dos = list; (dos = NextDosEntry(dos, LDF_DEVICES));)
+		{
+			struct FileSysStartupMsg *fssm;
+			char *name;
+
+			// No running handler means nothing to write back
+			if (!dos->dol_Task || !GetDeviceUnit(dos->dol_misc.dol_handler.dol_Startup, 0, 0))
+				continue;
+
+			fssm = (struct FileSysStartupMsg *)BADDR(dos->dol_misc.dol_handler.dol_Startup);
+			if (fssm->fssm_Unit != target->unit)
+				continue;
+			BtoCStr(fssm->fssm_Device, device, sizeof(device));
+			if (stricmp(device, target->device) != 0)
+				continue;
+
+			if (pass)
+			{
+				name = target->names + count * EJECT_NAME_LEN;
+				BtoCStr(dos->dol_Name, name, EJECT_NAME_LEN - 1);
+				strcat(name, ":");
+			}
+			++count;
+		}
+
+		if (!pass)
+		{
+			if (!count || !(target->names = AllocVec(count * EJECT_NAME_LEN, MEMF_CLEAR)))
+				break;
+			count = 0;
+		}
+		else
+			target->count = count;
+	}
+
+	UnLockDosList(LDF_DEVICES | LDF_READ);
+	return (target->count > 0);
+}
+
+// Find the exec device behind a disk or volume name, and with a target,
+// every DOS device sharing its unit
 static BOOL disk_eject_target(char *name, EjectTarget *target)
 {
 	struct DevProc *proc;
 	struct DosList *dos;
 	BOOL ok = FALSE;
 
+	if (target)
+	{
+		target->names = 0;
+		target->count = 0;
+	}
+
 	if (!(proc = GetDeviceProc(name, 0)))
 		return FALSE;
 
 	// An assign doesn't own the medium it points into; RAM: and network
 	// handlers have no startup message naming an exec device
-	if (!(proc->dvp_Flags & DVPF_ASSIGN) && (dos = DeviceFromHandler(proc->dvp_Port, (target) ? target->dos_name : 0)) &&
+	if (!(proc->dvp_Flags & DVPF_ASSIGN) && (dos = DeviceFromHandler(proc->dvp_Port, 0)) &&
 		GetDeviceUnit(dos->dol_misc.dol_handler.dol_Startup, 0, 0))
 	{
 		if (target)
@@ -71,7 +133,31 @@ static BOOL disk_eject_target(char *name, EjectTarget *target)
 	}
 
 	FreeDeviceProc(proc);
+	if (ok && target)
+		ok = disk_eject_partitions(target);
 	return ok;
+}
+
+// Inhibit every partition on the unit, or release them again
+static BOOL disk_eject_inhibit(EjectTarget *target, BOOL inhibit)
+{
+	short num;
+	LONG error;
+
+	for (num = 0; num < target->count; num++)
+	{
+		if (!Inhibit(target->names + num * EJECT_NAME_LEN, (inhibit) ? DOSTRUE : DOSFALSE) && inhibit)
+		{
+			// Release the ones already inhibited, keeping the error
+			error = IoErr();
+			while (num-- > 0)
+				Inhibit(target->names + num * EJECT_NAME_LEN, DOSFALSE);
+			SetIoErr(error);
+			return FALSE;
+		}
+	}
+
+	return TRUE;
 }
 
 // Can this disk be offered for ejection?
@@ -138,8 +224,8 @@ static short disk_eject_unit(EjectTarget *target, struct IOStdReq *io, UBYTE *bu
 			return EJECT_UNSUPPORTED;
 	}
 
-	// Make the filesystem write back and release the medium
-	if (!Inhibit(target->dos_name, DOSTRUE))
+	// Make the filesystems write back and release the medium
+	if (!disk_eject_inhibit(target, TRUE))
 		return EJECT_FAILED;
 
 	if (scsi)
@@ -163,8 +249,8 @@ static short disk_eject_unit(EjectTarget *target, struct IOStdReq *io, UBYTE *bu
 	}
 	error = io->io_Error;
 
-	// Let the filesystem see the empty drive
-	Inhibit(target->dos_name, DOSFALSE);
+	// Let the filesystems see the empty drive
+	disk_eject_inhibit(target, FALSE);
 
 	if (ok)
 		return EJECT_DONE;
@@ -220,11 +306,14 @@ void disk_eject(struct Window *window, char *name)
 	{
 		if (!disk_eject_target(name, &target))
 		{
+			FreeVec(target.names);
 			ret = EJECT_UNSUPPORTED;
 			break;
 		}
 
-		if ((ret = disk_eject_media(&target)) != EJECT_FAILED)
+		ret = disk_eject_media(&target);
+		FreeVec(target.names);
+		if (ret != EJECT_FAILED)
 			break;
 
 		if (!(error_request(window, ERF_MOUSE, (IPTR)GetString(&locale, MSG_EJECTING), -1, (IPTR)name, 0)))

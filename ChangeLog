@@ -2,12 +2,12 @@
 Program change; version bump deferred.
 
 - The Icons menu and the pop-up menu of a disk now have Eject Disk.  Opus
-  inhibits the disk so that its filesystem writes back and releases the
-  medium, then ejects it with SCSI START STOP UNIT on removable SCSI, ATAPI
-  and USB media, or TD_EJECT on other drivers, such as DAControl's
-  trackfile.device on AmigaOS 3.2.  The item is ghosted for RAM:, assigns
-  and other volumes without a device; fixed disks and drives without an
-  eject command are reported as not ejectable (#163).
+  inhibits every partition on the medium so that their filesystems write
+  back and release it, then ejects it with SCSI START STOP UNIT on
+  removable SCSI, ATAPI and USB media, or TD_EJECT on other drivers, such
+  as DAControl's trackfile.device on AmigaOS 3.2.  The item is ghosted for
+  RAM:, assigns and other volumes without a device; fixed disks and drives
+  without an eject command are reported as not ejectable (#163).
 
 [dopus5 next] Padlock gadget fill colour
 dopus5.library change; version bump deferred.

@@ -2660,11 +2660,12 @@ if any.
 Ejects the medium from the selected disk icons.  The pop-up menu of a disk
 icon has the same item, Eject Disk.
 
-Opus first inhibits the disk, so that its filesystem writes back pending data
-and lets go of the medium, and then tells the drive to eject it.  This works
-with CD and DVD drives, other removable SCSI, ATAPI and USB media, and drives
-whose device driver supports the TD_EJECT command, such as disk images in
-trackfile.device units (DAControl) on AmigaOS 3.2.
+Opus first inhibits the disk, and any other partitions on the same medium, so
+that their filesystems write back pending data and let go of the medium, and
+then tells the drive to eject it.  This works with CD and DVD drives, other
+removable SCSI, ATAPI and USB media, and drives whose device driver supports
+the TD_EJECT command, such as disk images in trackfile.device units
+(DAControl) on AmigaOS 3.2.
 
 The item is ghosted for RAM:, assigns and other volumes that are not on a
 device.  A disk the drive reports as fixed is left alone, and a drive without
