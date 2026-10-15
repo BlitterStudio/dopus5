@@ -231,8 +231,11 @@ typedef struct
 typedef struct
 {
 	short cr_Pen[2];
-	short cr_Alloc;
+	short cr_Alloc;	 // COLRF_ flags for each pen
 } ColourRecord;
+
+#define COLRF_CUSTOM(num) (1 << (num))		   // Exclusive pen from GetCustomPen()
+#define COLRF_SHARED(num) (1 << ((num) + 2))  // Closest shared pen from ObtainBestPen()
 
 // Defines a directory lister
 typedef struct ListerWindow
@@ -834,6 +837,8 @@ BOOL lister_select_cache(Lister *, struct DirectoryBuffer *);
 void lister_set_gauge(Lister *, BOOL);
 
 void lister_init_colour(Lister *, short, short);
+void lister_init_display_colours(Lister *);
+short lister_colour_pen(Lister *, short, short);
 
 #define GETICONSF_CLEAN (1 << 0)
 #define GETICONSF_NO_REFRESH (1 << 1)

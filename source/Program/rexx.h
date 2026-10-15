@@ -457,7 +457,8 @@ enum {
 
 #define IEQUALIFIER_SUBDROP 0x400
 
-void rexx_dopus_get_pen(char **, UBYTE *);
+BOOL rexx_dopus_get_pen(char **, UBYTE *);
+void rexx_dopus_get_colour(char **, UBYTE *, short);
 short rexx_dopus_map_pen(short);
 void rexx_send_reset(ULONG, ULONG);
 

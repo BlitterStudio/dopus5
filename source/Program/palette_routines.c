@@ -273,7 +273,7 @@ void free_colour_table()
 	GUI->pen_alloc = 0;
 }
 
-// Retrieve custom pen
+// Retrieve custom pen; returns -1 if no exclusive pen is available
 short GetCustomPen(short pen, short num, ColourSpec32 *spec)
 {
 	short flag, bestpen;
@@ -302,43 +302,22 @@ short GetCustomPen(short pen, short num, ColourSpec32 *spec)
 		bestpen = GUI->custom_pens[pen][num];
 	}
 
-	// Not allocated yet
-	else
+	// Not allocated yet; try to allocate pen, in exclusive mode
+	else if ((bestpen = ObtainPen(GUI->screen_pointer->ViewPort.ColorMap,
+								  -1,
+								  (spec) ? spec->cs_Red : environment->env->env_Colours[pen][num][0],
+								  (spec) ? spec->cs_Green : environment->env->env_Colours[pen][num][1],
+								  (spec) ? spec->cs_Blue : environment->env->env_Colours[pen][num][2],
+								  PEN_EXCLUSIVE)) > -1)
 	{
-		// Try to allocate pen, in exclusive mode
-		if ((bestpen = ObtainPen(GUI->screen_pointer->ViewPort.ColorMap,
-								 -1,
-								 (spec) ? spec->cs_Red : environment->env->env_Colours[pen][num][0],
-								 (spec) ? spec->cs_Green : environment->env->env_Colours[pen][num][1],
-								 (spec) ? spec->cs_Blue : environment->env->env_Colours[pen][num][2],
-								 PEN_EXCLUSIVE)) == -1)
-		{
-			// If we wanted an editable pen, we have to fail, otherwise just find closest colour
-			if (!spec)
-			{
-				// Look for best pen
-				bestpen = ObtainBestPen(GUI->screen_pointer->ViewPort.ColorMap,
-										(spec) ? spec->cs_Red : environment->env->env_Colours[pen][num][0],
-										(spec) ? spec->cs_Green : environment->env->env_Colours[pen][num][1],
-										(spec) ? spec->cs_Blue : environment->env->env_Colours[pen][num][2],
-										OBP_Precision,
-										PRECISION_EXACT,
-										TAG_END);
-			}
-		}
+		// Mark pen as allocated
+		GUI->custom_pen_alloc |= (1 << flag);
 
-		// Got pen
-		else if (bestpen > -1)
-		{
-			// Mark pen as allocated
-			GUI->custom_pen_alloc |= (1 << flag);
+		// Set count to one
+		GUI->custom_pen_count[pen][num] = 1;
 
-			// Set count to one
-			GUI->custom_pen_count[pen][num] = 1;
-
-			// Store pen
-			GUI->custom_pens[pen][num] = bestpen;
-		}
+		// Store pen
+		GUI->custom_pens[pen][num] = bestpen;
 	}
 
 	// Unlock the custom pens
@@ -348,8 +327,8 @@ short GetCustomPen(short pen, short num, ColourSpec32 *spec)
 	return bestpen;
 }
 
-// Free a custom pen
-void FreeCustomPen(short pen, short num)
+// Free a custom pen; restore sets the configured colour again if listers still use the pen
+void FreeCustomPen(short pen, short num, BOOL restore)
 {
 	short flag;
 
@@ -378,6 +357,16 @@ void FreeCustomPen(short pen, short num)
 
 			// Clear allocation bit
 			GUI->custom_pen_alloc &= ~(1 << flag);
+		}
+
+		// The editor may have changed the colour; put back the configured one
+		else if (restore && GUI->screen_pointer)
+		{
+			SetRGB32(&GUI->screen_pointer->ViewPort,
+					 GUI->custom_pens[pen][num],
+					 environment->env->env_Colours[pen][num][0],
+					 environment->env->env_Colours[pen][num][1],
+					 environment->env->env_Colours[pen][num][2]);
 		}
 	}
 
@@ -422,6 +411,37 @@ void InitCustomPens(void)
 
 	// Clear allocation flags
 	GUI->custom_pen_alloc = 0;
+
+	// Unlock the custom pens
+	FreeSemaphore(&GUI->custom_pen_lock);
+}
+
+// Set the configured colours of the allocated custom pens
+void UpdateCustomPens(void)
+{
+	short pen, num;
+
+	// Doesn't work under 37
+	if (((struct Library *)GfxBase)->lib_Version < 39 || !GUI->screen_pointer)
+		return;
+
+	// Lock the custom pens
+	GetSemaphore(&GUI->custom_pen_lock, SEMF_EXCLUSIVE, 0);
+
+	// Go through pens, 2 for each
+	for (pen = 0; pen < CUST_PENS; pen++)
+		for (num = 0; num < 2; num++)
+		{
+			// Is this pen allocated?
+			if (GUI->custom_pen_alloc & (1 << (pen + (num * CUST_PENS))))
+			{
+				SetRGB32(&GUI->screen_pointer->ViewPort,
+						 GUI->custom_pens[pen][num],
+						 environment->env->env_Colours[pen][num][0],
+						 environment->env->env_Colours[pen][num][1],
+						 environment->env->env_Colours[pen][num][2]);
+			}
+		}
 
 	// Unlock the custom pens
 	FreeSemaphore(&GUI->custom_pen_lock);

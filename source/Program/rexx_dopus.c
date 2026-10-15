@@ -635,56 +635,29 @@ BOOL rexx_dopus_cmd(struct RexxMsg *msg, short command, char *args)
 
 				// Files/dirs
 				else if (val == 1)
-				{
-					rexx_dopus_get_pen(&args, &environment->env->list_format.files_unsel[0]);
-					rexx_dopus_get_pen(&args, &environment->env->list_format.files_unsel[1]);
-				}
+					rexx_dopus_get_colour(&args, environment->env->list_format.files_unsel, ENVCOL_FILES_UNSEL);
 				else if (val == 2)
-				{
-					rexx_dopus_get_pen(&args, &environment->env->list_format.dirs_unsel[0]);
-					rexx_dopus_get_pen(&args, &environment->env->list_format.dirs_unsel[1]);
-				}
+					rexx_dopus_get_colour(&args, environment->env->list_format.dirs_unsel, ENVCOL_DIRS_UNSEL);
 				else if (val == 3)
-				{
-					rexx_dopus_get_pen(&args, &environment->env->list_format.files_sel[0]);
-					rexx_dopus_get_pen(&args, &environment->env->list_format.files_sel[1]);
-				}
+					rexx_dopus_get_colour(&args, environment->env->list_format.files_sel, ENVCOL_FILES_SEL);
 				else if (val == 4)
-				{
-					rexx_dopus_get_pen(&args, &environment->env->list_format.dirs_sel[0]);
-					rexx_dopus_get_pen(&args, &environment->env->list_format.dirs_sel[1]);
-				}
+					rexx_dopus_get_colour(&args, environment->env->list_format.dirs_sel, ENVCOL_DIRS_SEL);
 
 				// Devices/assigns
 				else if (val == 5)
-				{
-					rexx_dopus_get_pen(&args, &environment->env->devices_col[0]);
-					rexx_dopus_get_pen(&args, &environment->env->devices_col[1]);
-				}
+					rexx_dopus_get_colour(&args, environment->env->devices_col, ENVCOL_DEVICES);
 				else if (val == 6)
-				{
-					rexx_dopus_get_pen(&args, &environment->env->volumes_col[0]);
-					rexx_dopus_get_pen(&args, &environment->env->volumes_col[1]);
-				}
+					rexx_dopus_get_colour(&args, environment->env->volumes_col, ENVCOL_VOLUMES);
 
 				// Source/dest
 				else if (val == 7)
-				{
-					rexx_dopus_get_pen(&args, &environment->env->source_col[0]);
-					rexx_dopus_get_pen(&args, &environment->env->source_col[1]);
-				}
+					rexx_dopus_get_colour(&args, environment->env->source_col, ENVCOL_SOURCE);
 				else if (val == 8)
-				{
-					rexx_dopus_get_pen(&args, &environment->env->dest_col[0]);
-					rexx_dopus_get_pen(&args, &environment->env->dest_col[1]);
-				}
+					rexx_dopus_get_colour(&args, environment->env->dest_col, ENVCOL_DEST);
 
 				// Gauge
 				else if (val == 9)
-				{
-					rexx_dopus_get_pen(&args, &environment->env->gauge_col[0]);
-					rexx_dopus_get_pen(&args, &environment->env->gauge_col[1]);
-				}
+					rexx_dopus_get_colour(&args, environment->env->gauge_col, ENVCOL_GAUGE);
 
 				// User pens
 				else if (val == 10)
@@ -1000,17 +973,28 @@ BOOL rexx_dopus_cmd(struct RexxMsg *msg, short command, char *args)
 }
 
 // Get a pen colour
-void rexx_dopus_get_pen(char **args, UBYTE *ptr)
+BOOL rexx_dopus_get_pen(char **args, UBYTE *ptr)
 {
 	// Get pen number
-	if (rexx_parse_number_byte(args, ptr))
-	{
-		// Map pen
-		if (*ptr >= 4 && *ptr < 8)
-			*ptr = 252 + (*ptr - 4);
-		else if (*ptr >= 8)
-			*ptr -= 4;
-	}
+	if (!rexx_parse_number_byte(args, ptr))
+		return FALSE;
+
+	// Map pen
+	if (*ptr >= 4 && *ptr < 8)
+		*ptr = 252 + (*ptr - 4);
+	else if (*ptr >= 8)
+		*ptr -= 4;
+	return TRUE;
+}
+
+// Get the two pens of a lister colour element; a pen given replaces its custom colour
+void rexx_dopus_get_colour(char **args, UBYTE *pens, short col)
+{
+	short num;
+
+	for (num = 0; num < 2; num++)
+		if (rexx_dopus_get_pen(args, &pens[num]))
+			environment->env->env_ColourFlag &= ~(1 << (col + num * CUST_PENS));
 }
 
 // Map pen colour back

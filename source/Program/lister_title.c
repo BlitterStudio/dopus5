@@ -390,30 +390,16 @@ void lister_title_pens(struct RastPort *rp, Lister *lister, int type)
 	else if (lister->flags & LISTERF_SOURCE || (lister->flags & LISTERF_STORED_SOURCE && lister->flags & LISTERF_BUSY &&
 												!(lister->flags & LISTERF_BUSY_VISUAL)))
 	{
-		// Get pens from configuration
-		fg = environment->env->source_col[0];
-		bg = environment->env->source_col[1];
-
-		// Fix pens
-		if (fg >= 4 && fg < 252)
-			fg = GUI->pens[fg - 4];
-		if (bg >= 4 && bg < 252)
-			bg = GUI->pens[bg - 4];
+		fg = lister_colour_pen(lister, ENVCOL_SOURCE, 0);
+		bg = lister_colour_pen(lister, ENVCOL_SOURCE, 1);
 	}
 
 	// Destination window
 	else if (lister->flags & LISTERF_DEST || (lister->flags & LISTERF_STORED_DEST && lister->flags & LISTERF_BUSY &&
 											  !(lister->flags & LISTERF_BUSY_VISUAL)))
 	{
-		// Get pens from configuration
-		fg = environment->env->dest_col[0];
-		bg = environment->env->dest_col[1];
-
-		// Fix pens
-		if (fg >= 4 && fg < 252)
-			fg = GUI->pens[fg - 4];
-		if (bg >= 4 && bg < 252)
-			bg = GUI->pens[bg - 4];
+		fg = lister_colour_pen(lister, ENVCOL_DEST, 0);
+		bg = lister_colour_pen(lister, ENVCOL_DEST, 1);
 	}
 
 	// Off

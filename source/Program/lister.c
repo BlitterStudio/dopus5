@@ -335,6 +335,8 @@ void listers_update(BOOL close, BOOL reopen)
 	// Just refresh
 	else
 	{
+		// Pens the listers keep still have the old custom colours
+		UpdateCustomPens();
 		IPC_ListCommand(
 			&GUI->lister_list, LISTER_REFRESH_WINDOW, REFRESHF_UPDATE_NAME | REFRESHF_STATUS | REFRESHF_COLOUR, 0, 0);
 	}

@@ -1,3 +1,25 @@
+[dopus5 next] Custom lister colours for every element
+Program and configopus.module change; version bump deferred.
+
+- Each lister element in Environment > Lister Colours has a custom
+  colour, the square after the user pens with its own RGB sliders.
+  Only the free space gauge and tooltips used it.  Files, directories,
+  selected entries, source and destination titles, devices and assigns
+  were drawn with a user pen that does not exist, so the chosen colour
+  was never shown (#144).  All elements now use their custom colour,
+  in the list, the title bar and the drag image.
+- The pen picked before the custom colour is kept and used if Opus
+  cannot get a pen for the custom colour.
+- Changing only the red, green or blue of a custom colour now refreshes
+  the listers, so the new colour also appears on RTG screens.
+- When no exclusive pen was free, a lister took the closest shared pen
+  for a custom colour and never released it.  It is now released when
+  the lister closes or its colours change.
+- Cancelling the Environment editor puts back the configured custom
+  colours in open listers.
+- ARexx 'dopus set pens' for a lister element turns off that pen's
+  custom colour, so the pen given is the one used.
+
 [dopus5 next] Buttons moved under Settings
 Program change; version bump deferred.
 

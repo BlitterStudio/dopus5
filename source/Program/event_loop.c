@@ -532,8 +532,8 @@ void event_loop()
 			// Free a custom pen
 			case MAINCMD_RELEASE_PEN:
 
-				// Free the pen
-				FreeCustomPen((ipc_msg->flags >> 16) & 0xffff, ipc_msg->flags & 0xffff);
+				// Free the pen; the editor may have changed its colour
+				FreeCustomPen((ipc_msg->flags >> 16) & 0xffff, ipc_msg->flags & 0xffff, TRUE);
 				break;
 
 			// Get an icon

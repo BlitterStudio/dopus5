@@ -644,10 +644,11 @@ unsigned long LIBFUNC L_Config_Environment(REG(a0, Cfg_Environment *env),
 						fgpen = data->colour_selection[0];
 						bgpen = data->colour_selection[1];
 
-						// Using custom colours?
-						if (data->config->env_ColourFlag & (1 << data->colour_number))
+						// Using custom colours? (shown as the extra pen after the user pens)
+						if (data->config->env_ColourFlag & (1 << data->colour_number) && data->custom_pen[0] > -1)
 							fgpen = data->palette_count - 4;
-						if (data->config->env_ColourFlag & (1 << (data->colour_number + CUST_PENS)))
+						if (data->config->env_ColourFlag & (1 << (data->colour_number + CUST_PENS)) &&
+							data->custom_pen[1] > -1)
 							bgpen = data->palette_count - 4;
 
                         // Bring up palette box
@@ -660,20 +661,22 @@ unsigned long LIBFUNC L_Config_Environment(REG(a0, Cfg_Environment *env),
 								 (ColourSpec32 *)data->config->env_Colours[data->colour_number],
 								 data->custom_pen)) > -1)
 						{
-							// Save colour selection
-							data->colour_selection[0] = (UBYTE)fgpen;
-							data->colour_selection[1] = (UBYTE)bgpen;
-
-							// Using custom colours?
+							// Custom colours keep the stored pen, used if no custom pen can be allocated
 							if (flags & (1 << 0))
 								data->config->env_ColourFlag |= 1 << data->colour_number;
 							else
+							{
 								data->config->env_ColourFlag &= ~(1 << data->colour_number);
+								data->colour_selection[0] = (UBYTE)fgpen;
+							}
 
 							if (flags & (1 << 1))
 								data->config->env_ColourFlag |= 1 << (data->colour_number + CUST_PENS);
 							else
+							{
 								data->config->env_ColourFlag &= ~(1 << (data->colour_number + CUST_PENS));
+								data->colour_selection[1] = (UBYTE)bgpen;
+							}
 						}
 
 						// Update "Example" area
@@ -1304,6 +1307,24 @@ unsigned long LIBFUNC L_Config_Environment(REG(a0, Cfg_Environment *env),
 				{
 					change_flags[0] |= CONFIG_CHANGE_LIST_DISPLAY;
 					break;
+				}
+			}
+
+			// Custom colours changed?
+			if (data->config->env_ColourFlag != env->env->env_ColourFlag)
+				change_flags[0] |= CONFIG_CHANGE_LIST_DISPLAY;
+			else
+			{
+				ULONG *new_col = &data->config->env_Colours[0][0][0];
+				ULONG *old_col = &env->env->env_Colours[0][0][0];
+
+				for (a = 0; a < CUST_PENS * 2 * 3; a++)
+				{
+					if (new_col[a] != old_col[a])
+					{
+						change_flags[0] |= CONFIG_CHANGE_LIST_DISPLAY;
+						break;
+					}
 				}
 			}
 		}
