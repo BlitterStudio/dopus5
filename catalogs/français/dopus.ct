@@ -990,25 +990,21 @@ MSG_UNKNOWN_3000
 Boutons
 ; 
 ;
-MSG_UNKNOWN_3001
-Nouveau...
-; 
-;
 MSG_UNKNOWN_3002
 Fermer
 ; 
 ;
-MSG_UNKNOWN_3003
-Boutons graphiques...
-; 
+MSG_BUTTONS_NEW_GFX_MENU
+Nouveaux boutons graphiques...
+; New Graphic Buttons...
 ;
-MSG_UNKNOWN_3004
-Boutons textuels...
-; 
+MSG_BUTTONS_NEW_TEXT_MENU
+Nouveaux boutons textuels...
+; New Text Buttons...
 ;
-MSG_UNKNOWN_3005
-Menu démarrer...\x00
-; 
+MSG_BUTTONS_NEW_STARTMENU_MENU
+Nouveau menu Démarrer...
+; New Start Menu...
 ;
 MSG_UNKNOWN_3100
 Réglages\x00

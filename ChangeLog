@@ -1,3 +1,9 @@
+[dopus5 next] Buttons moved under Settings
+Program change; version bump deferred.
+
+- The standalone Buttons menu is now a Buttons submenu under Settings,
+  freeing menu-bar space for user-defined menus (#111).
+
 [dopus5 next] Palette presets and visible Reset in the Environment editor
 configopus.module change; version bump deferred.
 

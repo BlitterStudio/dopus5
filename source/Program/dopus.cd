@@ -865,20 +865,17 @@ File...
 MSG_BUTTONS_MENU (3000//)
 Buttons
 ;
-MSG_NEW_BUTTONS_MENU (//)
-New
-;
-MSG_CLOSE_BUTTONS_MENU (//)
+MSG_CLOSE_BUTTONS_MENU (3002//)
 Close
 ;
-MSG_NEW_BUTTONS_GFX_MENU (//)
-Graphic Buttons...
+MSG_BUTTONS_NEW_GFX_MENU (3006//)
+New Graphic Buttons...
 ;
-MSG_NEW_BUTTONS_TEXT_MENU (//)
-Text Buttons...
+MSG_BUTTONS_NEW_TEXT_MENU (//)
+New Text Buttons...
 ;
-MSG_NEW_STARTMENU_MENU (//)
-Start Menu...
+MSG_BUTTONS_NEW_STARTMENU_MENU (//)
+New Start Menu...
 ;
 ;
 ; Settings menu
