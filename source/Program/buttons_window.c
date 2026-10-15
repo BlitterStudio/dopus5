@@ -488,7 +488,7 @@ BOOL buttons_iconify(Buttons *buttons)
 		return 0;
 
 	// Check there's an icon to use
-	if (!(icon = GUI->button_icon))
+	if (!(icon = get_iconify_icon(TRUE)))
 		return 0;
 
 	// Have we got a distinct position?

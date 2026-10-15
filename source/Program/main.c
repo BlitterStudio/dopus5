@@ -547,6 +547,7 @@ void startup_init_gui()
 	InitSemaphore(&GUI->scripts_lock);
 	InitSemaphore(&GUI->user_menu_lock);
 	InitSemaphore(&GUI->custom_pen_lock);
+	InitSemaphore(&GUI->iconify_icon_lock);
 
 	// Signal for getting screen close
 	GUI->screen_signal = AllocSignal(-1);
@@ -1203,8 +1204,8 @@ void startup_init_filetypes()
 	// Get default filetypes
 	filetype_default_list(GUI->filetype_memory, &GUI->filetypes);
 
-	// Read filetypes
-	filetype_read_list(GUI->filetype_memory, &GUI->filetypes);
+	// Read filetypes in the background
+	filetype_read_list_async(GUI->filetype_memory);
 }
 
 // Initialise file notifications
@@ -1290,12 +1291,6 @@ void startup_init_icons()
 
 	// Get arrow image for toolbars
 	GUI->toolbar_arrow_image = OpenImage("DOpus5:Images/ToolbarArrow.image", 0);
-
-	// Get icon for listers
-	GUI->lister_icon = GetCachedDiskObject("DOpus5:Icons/Lister", GCDOF_NOCACHE);
-
-	// Get icon for buttons
-	GUI->button_icon = GetCachedDiskObject("DOpus5:Icons/Buttons", GCDOF_NOCACHE);
 }
 
 // Run pre-startup script
