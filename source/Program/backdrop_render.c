@@ -869,42 +869,21 @@ void backdrop_draw_object(BackdropInfo *info,
 				// Outline
 				else
 				{
-					Move(rp, textx + 1, texty + 1);
-					for (loop = 0; loop < 5; loop++)
+					static const BYTE outline_offset[8][2] = {
+						{-1, -1}, {0, -1}, {1, -1}, {-1, 0}, {1, 0}, {-1, 1}, {0, 1}, {1, 1}};
+
+					// Draw the outline at all eight neighbouring positions; diagonals alone
+					// leave gaps around thin (1 pixel) strokes
+					for (loop = 0; loop < 8; loop++)
 					{
-						// Render text
+						Move(rp, textx + outline_offset[loop][0], texty + outline_offset[loop][1]);
 						TextMultiLine(rp, name, len, max_width, TMLF_CENTER, 0);
-
-						// Doing shadow?
-						if (loop < 4)
-						{
-							short s_x = 0, s_y = 0;
-
-							// Switch to other pen?
-							if (loop == 3)
-								SetAPen(rp, bpen);
-
-							// Get the new offsets
-							else if (loop == 0)
-							{
-								s_x = -1;
-								s_y = 1;
-							}
-							else if (loop == 1)
-							{
-								s_x = -1;
-								s_y = -1;
-							}
-							else if (loop == 2)
-							{
-								s_x = 1;
-								s_y = -1;
-							}
-
-							// Position for text
-							Move(rp, textx + s_x, texty + s_y);
-						}
 					}
+
+					// Draw text on top
+					SetAPen(rp, bpen);
+					Move(rp, textx, texty);
+					TextMultiLine(rp, name, len, max_width, TMLF_CENTER, 0);
 				}
 
 				// Reset draw mode if necessary
