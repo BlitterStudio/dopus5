@@ -73,6 +73,9 @@ typedef struct
 #define IMAGEF_DEFICON (1 << 5)		// Cached default icon
 #define IMAGEF_ICON_IMAGE (1 << 6)	// Image is from an icon
 #define IMAGEF_NEWICON (1 << 7)		// Icon is a NewIcon
+#define IMAGEF_REMAP_FAST (1 << 8)	// Remapped planes in fast memory (RTG screen)
+#define IMAGEF_FAST (1 << 9)		// Image moved from chip to fast memory (RTG screen)
+#define IMAGEF_ALT_FAST (1 << 10)	// Alternate image moved from chip to fast memory
 
 Image_Data *read_image(char *, OpenImageInfo *);
 Image_Data *new_image(short, short, short);

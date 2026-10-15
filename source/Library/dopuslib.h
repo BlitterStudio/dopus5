@@ -291,6 +291,8 @@ char *strstri(char *, char *);
 
 void draw_field_box(struct RastPort *rp, struct Rectangle *rect, struct DrawInfo *info, struct Library *GfxBase);
 
+BOOL rtg_bitmap(struct BitMap *bm);
+
 void launcher_proc(void);
 
 // datatypes

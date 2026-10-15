@@ -33,6 +33,115 @@ static void aros_image_debug_log(char *);
 static Image_Data *aros_read_image_fallback(char *, OpenImageInfo *);
 #endif
 
+// Can image planes be drawn into this bitmap from any memory? Native bitmaps
+// are drawn by the blitter, which needs chip memory; RTG bitmaps are drawn by
+// the RTG driver. Only AmigaOS 3 keeps image data out of chip memory.
+static BOOL image_rtg_bitmap(struct BitMap *bm)
+{
+#ifdef __amigaos3__
+	return rtg_bitmap(bm);
+#else
+	return FALSE;
+#endif
+}
+
+// Move an image's own planes between chip and fast memory. A remap for an RTG
+// screen moves them to fast memory; a remap for a native screen moves back
+// what was moved. The old planes stay if memory runs out.
+static void image_move_planes(Image_Data *image, BOOL to_chip)
+{
+	unsigned short *moved[8];
+	short state, plane;
+	long size;
+
+	// Bytes per plane
+	size = RASSIZE(image->width, image->height);
+
+	for (state = 0; state < 2 && image->depth <= 8; state++)
+	{
+		unsigned short chip_flag = (state) ? IMAGEF_ALT_CHIP : IMAGEF_CHIP;
+		unsigned short fast_flag = (state) ? IMAGEF_ALT_FAST : IMAGEF_FAST;
+
+		// No planes, or already in the right memory?
+		if (!image->planes[state][0] || !(image->flags & ((to_chip) ? fast_flag : chip_flag)))
+			continue;
+
+		// Copy planes
+		for (plane = 0; plane < image->depth; plane++)
+		{
+			if (!(moved[plane] = AllocVec(size, (to_chip) ? MEMF_CHIP : MEMF_ANY)))
+				break;
+			CopyMem((char *)image->planes[state][plane], (char *)moved[plane], size);
+		}
+
+		// Failed?
+		if (plane < image->depth)
+		{
+			while (--plane >= 0)
+				FreeVec(moved[plane]);
+			continue;
+		}
+
+		// Replace old planes
+		for (plane = 0; plane < image->depth; plane++)
+		{
+			FreeVec(image->planes[state][plane]);
+			image->planes[state][plane] = moved[plane];
+
+			// Primary ILBM planes belong to the ILBM handle, which frees them
+			if (state == 0 && image->flags & IMAGEF_ILBM)
+				image->ilbm->image.planes.planes[plane] = moved[plane];
+		}
+
+		// Update flags
+		if (to_chip)
+			image->flags = (image->flags | chip_flag) & ~fast_flag;
+		else
+			image->flags = (image->flags | fast_flag) & ~chip_flag;
+	}
+}
+
+// Read a row of planar pixels with the CPU (planes may be in any memory)
+static void planar_read_row(struct BitMap *bm, short y, short width, UBYTE *pens)
+{
+	long offset = (long)y * bm->BytesPerRow;
+	short x, plane;
+
+	for (x = 0; x < width; x++)
+	{
+		UBYTE bit = 0x80 >> (x & 7), pen = 0;
+
+		for (plane = 0; plane < bm->Depth; plane++)
+		{
+			if (bm->Planes[plane] && (bm->Planes[plane][offset + (x >> 3)] & bit))
+				pen |= 1 << plane;
+		}
+		pens[x] = pen;
+	}
+}
+
+// Write a row of pens into planar pixels with the CPU (planes may be in any memory)
+static void planar_write_row(struct BitMap *bm, short y, short width, UBYTE *pens)
+{
+	long offset = (long)y * bm->BytesPerRow;
+	short x, plane;
+
+	for (x = 0; x < width; x++)
+	{
+		UBYTE bit = 0x80 >> (x & 7);
+
+		for (plane = 0; plane < bm->Depth; plane++)
+		{
+			if (!bm->Planes[plane])
+				continue;
+			if (pens[x] & (1 << plane))
+				bm->Planes[plane][offset + (x >> 3)] |= bit;
+			else
+				bm->Planes[plane][offset + (x >> 3)] &= ~bit;
+		}
+	}
+}
+
 // Open an image
 APTR LIBFUNC L_OpenImage(REG(a0, char *name), REG(a1, OpenImageInfo *info))
 {
@@ -198,7 +307,8 @@ short LIBFUNC L_RenderImage(REG(a0, struct RastPort *rp),
 	short clip_bound, erase = -1, backfill;
 	Image_Data *image = (Image_Data *)imptr;
 	struct BitMap bitmap, *scale_bm = 0;
-	BOOL in_chip = 0, plane_ok = 0, no_remap = 0, scale = 0;
+	BOOL in_chip = 0, plane_ok = 0, no_remap = 0, scale = 0, rtg, direct;
+	PLANEPTR fake_plane = 0, chip_copy = 0;
 	short width = 0, height = 0, mask_depth;
 	short ret = 1;
 
@@ -323,21 +433,10 @@ short LIBFUNC L_RenderImage(REG(a0, struct RastPort *rp),
 			planeptrs = image->remap_planes[state];
 		}
 
-		// Set flags so we won't try to copy to chip memory
-		in_chip = 1;
+		// Remapped icon images are in chip memory, remapped planes unless
+		// they were remapped for an RTG screen
+		in_chip = (image->remap_image[state] || !(image->flags & IMAGEF_REMAP_FAST)) ? 1 : 0;
 		plane_ok = 1;
-	}
-
-	// Is image not in chip memory?
-	else if (!in_chip)
-	{
-		// Allocate fake plane
-		if ((bitmap.Planes[0] = AllocVec(planesize << 1, MEMF_CHIP)))
-		{
-			// Set fake plane pointers
-			for (plane = 1; plane < bitmap.Depth; plane++)
-				bitmap.Planes[plane] = bitmap.Planes[0];
-		}
 	}
 
 	// Otherwise
@@ -348,6 +447,42 @@ short LIBFUNC L_RenderImage(REG(a0, struct RastPort *rp),
 			bitmap.Planes[plane] = (PLANEPTR)image->planes[state][plane];
 		for (; plane < bitmap.Depth; plane++)
 			bitmap.Planes[plane] = 0;
+	}
+
+	// Draw straight from the planes if they're in chip memory, or if an RTG
+	// driver (not the blitter) draws into the destination
+	rtg = image_rtg_bitmap(rp->BitMap);
+	direct = (in_chip || rtg) ? 1 : 0;
+
+	// Otherwise copy them plane by plane through a chip plane
+	if (!direct)
+	{
+		// Allocate fake plane
+		if ((fake_plane = AllocVec(planesize << 1, MEMF_CHIP)))
+		{
+			// Set fake plane pointers
+			for (plane = 0; plane < bitmap.Depth; plane++)
+				bitmap.Planes[plane] = fake_plane;
+		}
+		else
+		{
+			bitmap.Planes[0] = 0;
+			plane_ok = 0;
+		}
+	}
+
+	// Scaling needs the blitter, so give it the planes in chip memory
+	else if (scale && rect && !in_chip && (chip_copy = AllocVec((planesize << 1) * bitmap.Depth, MEMF_CHIP)))
+	{
+		for (plane = 0; plane < bitmap.Depth; plane++)
+		{
+			if (bitmap.Planes[plane])
+			{
+				CopyMem((char *)bitmap.Planes[plane], (char *)chip_copy + (planesize << 1) * plane, planesize << 1);
+				bitmap.Planes[plane] = chip_copy + (planesize << 1) * plane;
+			}
+		}
+		in_chip = 1;
 	}
 
 	// Got a valid plane?
@@ -487,7 +622,7 @@ short LIBFUNC L_RenderImage(REG(a0, struct RastPort *rp),
 		}
 
 		// Need a mask?
-		if (mask && (mask_plane = AllocVec(planesize << 1, MEMF_CHIP | MEMF_CLEAR)))
+		if (mask && (mask_plane = AllocVec(planesize << 1, ((rtg) ? MEMF_ANY : MEMF_CHIP) | MEMF_CLEAR)))
 		{
 			register long word;
 			register short plane;
@@ -548,8 +683,8 @@ short LIBFUNC L_RenderImage(REG(a0, struct RastPort *rp),
 			}
 		}
 
-		// Was image in chip memory?
-		if (in_chip)
+		// Can the image be drawn straight from its planes?
+		if (direct)
 		{
 			// Got a mask?
 			if (mask_plane)
@@ -586,9 +721,11 @@ short LIBFUNC L_RenderImage(REG(a0, struct RastPort *rp),
 					else
 						ptr = planeptrs[plane];
 
-					// Copy plane data to bitmap
+					// Copy plane data to bitmap (remapped images can have empty planes)
 					if (ptr)
 						CopyMem((char *)ptr, (char *)bitmap.Planes[0], planesize << 1);
+					else
+						BltClear(bitmap.Planes[0], planesize << 1, 1);
 				}
 
 				// Otherwise, clear plane
@@ -622,10 +759,12 @@ short LIBFUNC L_RenderImage(REG(a0, struct RastPort *rp),
 		// Free mask
 		if (mask_plane)
 			FreeVec(mask_plane);
-		if (!in_chip)
-			FreeVec(bitmap.Planes[0]);
 		L_DisposeBitMap(scale_bm);
 	}
+
+	// Free temporary chip planes
+	FreeVec(fake_plane);
+	FreeVec(chip_copy);
 
 	// Unlock image
 	L_FreeSemaphore(&image->lock);
@@ -1477,13 +1616,14 @@ void LIBFUNC L_FreeImageRemap(REG(a0, ImageRemap *remap))
 // Remap an image to a screen
 BOOL LIBFUNC L_RemapImage(REG(a0, Image_Data *image), REG(a1, struct Screen *screen), REG(a2, ImageRemap *remap))
 {
-	struct BitMap source, dest, *readbm, *writebm = 0;
+	struct BitMap source, dest, *readbm = 0, *writebm = 0;
 	struct RastPort srp, drp, readrp, writerp;
 	short plane, loop, colours, start;
 	long wordcount;
 	register short *pen_lookup;
 	ULONG *palette;
 	UBYTE *buffer = 0;
+	BOOL rtg;
 	long precision = PRECISION_IMAGE;
 
 	// Only works under OS39
@@ -1598,6 +1738,11 @@ BOOL LIBFUNC L_RemapImage(REG(a0, Image_Data *image), REG(a1, struct Screen *scr
 		return 1;
 	}
 
+	// Only the blitter needs image planes in chip memory, and it does not
+	// draw on an RTG screen
+	rtg = image_rtg_bitmap(screen->RastPort.BitMap);
+	image_move_planes(image, (BOOL)!rtg);
+
 	// Remapping colour 0?
 	start = (remap->ir_Flags & IRF_REMAP_COL0) ? 0 : 1;
 
@@ -1635,19 +1780,24 @@ BOOL LIBFUNC L_RemapImage(REG(a0, Image_Data *image), REG(a1, struct Screen *scr
 	if (dest.Depth > 8)
 		dest.Depth = 8;
 
-	// Temporary bitmaps
-	if ((readbm = AllocBitMap(image->width, 1, image->depth, 0, 0)) &&
-		(writebm = AllocBitMap(image->width, 1, dest.Depth, 0, 0)))
-	{
-		// Allocate buffer
-		buffer = AllocVec(((image->width + 15) >> 4) << 4, 0);
+	// Temporary bitmaps for the blitter (native screens only)
+	if (!rtg && (readbm = AllocBitMap(image->width, 1, image->depth, 0, 0)))
+		writebm = AllocBitMap(image->width, 1, dest.Depth, 0, 0);
 
-		// Initialise rastports
-		InitRastPort(&readrp);
-		InitRastPort(&writerp);
-		readrp.BitMap = readbm;
-		writerp.BitMap = writebm;
-	}
+	// Allocate line buffer
+	buffer = AllocVec(((image->width + 15) >> 4) << 4, 0);
+
+	// Initialise rastports
+	InitRastPort(&readrp);
+	InitRastPort(&writerp);
+	readrp.BitMap = readbm;
+	writerp.BitMap = writebm;
+
+	// Remapped planes go in fast memory for an RTG screen
+	if (rtg)
+		image->flags |= IMAGEF_REMAP_FAST;
+	else
+		image->flags &= ~IMAGEF_REMAP_FAST;
 
 	// Get words per plane
 	wordcount = (((image->width + 15) >> 4) * image->height) << 1;
@@ -1676,7 +1826,7 @@ BOOL LIBFUNC L_RemapImage(REG(a0, Image_Data *image), REG(a1, struct Screen *scr
 		for (plane = 0; plane < dest.Depth; plane++)
 		{
 			// Allocate plane
-			if ((dest.Planes[plane] = AllocVec(wordcount, MEMF_CHIP | MEMF_CLEAR)))
+			if ((dest.Planes[plane] = AllocVec(wordcount, ((rtg) ? MEMF_ANY : MEMF_CHIP) | MEMF_CLEAR)))
 			{
 				// Save pointer
 				image->remap_planes[loop][plane] = (unsigned short *)dest.Planes[plane];
@@ -1698,8 +1848,11 @@ BOOL LIBFUNC L_RemapImage(REG(a0, Image_Data *image), REG(a1, struct Screen *scr
 			// Got buffer?
 			if (buffer)
 			{
-				// Read pixel line
-				ReadPixelLine8(&srp, 0, y, image->width, buffer, &readrp);
+				// Read pixel line (the blitter can only read chip memory)
+				if (readbm && writebm && image->flags & ((loop) ? IMAGEF_ALT_CHIP : IMAGEF_CHIP))
+					ReadPixelLine8(&srp, 0, y, image->width, buffer, &readrp);
+				else
+					planar_read_row(&source, y, image->width, buffer);
 			}
 
 			// Go through columns
@@ -1766,7 +1919,10 @@ BOOL LIBFUNC L_RemapImage(REG(a0, Image_Data *image), REG(a1, struct Screen *scr
 			if (buffer)
 			{
 				// Write data
-				WritePixelLine8(&drp, 0, y, image->width, buffer, &writerp);
+				if (readbm && writebm)
+					WritePixelLine8(&drp, 0, y, image->width, buffer, &writerp);
+				else
+					planar_write_row(&dest, y, image->width, buffer);
 			}
 		}
 
@@ -1855,6 +2011,7 @@ void LIBFUNC L_FreeRemapImage(REG(a0, Image_Data *image), REG(a1, ImageRemap *re
 				if (!(image->flags & IMAGEF_SEL_IMAGE))
 					break;
 			}
+			image->flags &= ~IMAGEF_REMAP_FAST;
 
 			// Free Images
 			for (loop = 0; loop < 2; loop++)
