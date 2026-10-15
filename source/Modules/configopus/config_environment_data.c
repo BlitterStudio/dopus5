@@ -503,21 +503,31 @@ const ObjectDef _config_environment_objects[] =
 						// Restore
 						{OD_GADGET,
 						 BUTTON_KIND,
-						 {11, 11, 15, 1},
-						 {6, 38, 6, 6},
+						 {11, 11, 10, 1},
+						 {6, 38, 4, 6},
 						 MSG_ENVIRONMENT_PALETTE_RESET,
 						 0,
 						 GAD_ENVIRONMENT_PALETTE_RESET,
 						 _environment_relative_taglist},
 
-						// Workbench
+						// Presets
 						{OD_GADGET,
 						 BUTTON_KIND,
-						 {27, 11, 15, 1},
-						 {12, 38, 6, 6},
+						 {21, 11, 11, 1},
+						 {10, 38, 4, 6},
+						 MSG_ENVIRONMENT_PALETTE_PRESETS,
+						 BUTTONFLAG_IMMEDIATE,
+						 GAD_ENVIRONMENT_PALETTE_PRESETS,
+						 _environment_relative_taglist},
+
+						// Load
+						{OD_GADGET,
+						 BUTTON_KIND,
+						 {32, 11, 10, 1},
+						 {14, 38, 4, 6},
 						 MSG_ENVIRONMENT_PALETTE_LOAD,
 						 0,
-						 GAD_ENVIRONMENT_PALETTE_GRABWB,
+						 GAD_ENVIRONMENT_PALETTE_LOAD,
 						 _environment_relative_taglist},
 
 						{OD_END}},

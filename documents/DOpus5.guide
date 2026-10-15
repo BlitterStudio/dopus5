@@ -1,6 +1,6 @@
 @database dopus5
 @master dopus5.guide
-@$VER: Dopus5Guide 58.4 (3.10.2026)
+@$VER: Dopus5Guide 58.5 (15.10.2026)
 @author "Mark Anderson, Andrew Dunbar, Dr Greg Perry, Leo Davidson and Dave Clarke"
 @(c) "Directory Opus 5 Help Guide (c) GPSoftware 1999"
 @(c) "Directory Opus 5 Help Guide (c) DOPUS5 Open Source Team 2012-2026"
@@ -3954,9 +3954,19 @@ layer.
 
 This displays the current colours used on screen plus any user colours
 available.  The number of pens is limited by the display mode.  You can then
-modify the colours of the pens by using the sliders.  You can also reset the
-palette or load a standard palette preferences file as used by the Workbench
-'Palette' program.
+modify the colours of the pens by using the sliders.
+
+Reset returns the colours to the settings in use when you opened the
+Environment editor.
+
+When Opus has its own screen, the Presets button sets its eight system
+colours.  'Workbench Screen' copies them from the Workbench screen;
+'Workbench 3.1' and 'MagicWB' use those standard palettes.  MagicWB icons
+need the MagicWB palette, and on a screen with more than eight colours also
+'Remap icon images' in Icon Settings.  Load reads the colours from a palette
+preferences file as used by the Workbench 'Palette' program, or from the
+colour map of an IFF picture.  On the Workbench screen only the user pens can
+be edited, so these two buttons are disabled there.
 @endnode
 
 @node "Environment - Path List" "Environment - Path List"
