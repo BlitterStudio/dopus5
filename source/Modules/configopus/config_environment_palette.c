@@ -125,36 +125,45 @@ static void _config_env_palette_grab_workbench(config_env_data *data)
 {
 	struct Screen *screen;
 	ULONG rgb[24];
-	short a;
+	short depth, num, count, a, gun;
 
 	// Get Workbench
 	if (!(screen = LockPubScreen("Workbench")))
 		return;
 
-	// Get first four and last four
+	// RTG screens can report more than 8 planes; the OS pens are within 256
+	if ((depth = screen->RastPort.BitMap->Depth) > 8)
+		depth = 8;
+
+	// A one-plane screen has only two colours
+	num = 1 << depth;
+	count = (num < 4) ? num : 4;
+
+	// Get the first four
 	if (((struct Library *)GfxBase)->lib_Version >= 39)
-	{
-		short depth;
-
-		// RTG screens can report more than 8 planes; the OS pens are within 256
-		if ((depth = screen->RastPort.BitMap->Depth) > 8)
-			depth = 8;
-		GetRGB32(screen->ViewPort.ColorMap, 0, 4, rgb);
-		GetRGB32(screen->ViewPort.ColorMap, (1 << depth) - 4, 4, rgb + 12);
-	}
-
-	// Under 39 there are only four; use them for the top four too
+		GetRGB32(screen->ViewPort.ColorMap, 0, count, rgb);
 	else
 	{
-		for (a = 0; a < 4; a++)
+		for (a = 0; a < count; a++)
 		{
 			UWORD val = GetRGB4(screen->ViewPort.ColorMap, a);
 
-			rgb[a * 3] = rgb[12 + a * 3] = ((val >> 8) & 0xf) * 0x11111111;
-			rgb[a * 3 + 1] = rgb[12 + a * 3 + 1] = ((val >> 4) & 0xf) * 0x11111111;
-			rgb[a * 3 + 2] = rgb[12 + a * 3 + 2] = (val & 0xf) * 0x11111111;
+			rgb[a * 3] = ((val >> 8) & 0xf) * 0x11111111;
+			rgb[a * 3 + 1] = ((val >> 4) & 0xf) * 0x11111111;
+			rgb[a * 3 + 2] = (val & 0xf) * 0x11111111;
 		}
 	}
+
+	// Fewer than four colours; repeat the last one
+	for (a = count; a < 4; a++)
+		for (gun = 0; gun < 3; gun++)
+			rgb[a * 3 + gun] = rgb[(count - 1) * 3 + gun];
+
+	// Get the last four; under 39, or with no more than four colours, use the first four
+	if (((struct Library *)GfxBase)->lib_Version >= 39 && num > 4)
+		GetRGB32(screen->ViewPort.ColorMap, num - 4, 4, rgb + 12);
+	else
+		CopyMem((char *)rgb, (char *)(rgb + 12), sizeof(ULONG) * 12);
 
 	// Unlock Workbench
 	UnlockPubScreen(0, screen);
