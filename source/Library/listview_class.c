@@ -208,6 +208,15 @@ IPTR LIBFUNC listview_dispatch(REG(a0, Class *cl), REG(a2, Object *obj), REG(a1,
 			// Scroller needed?
 			if (!(data->flags & LVF_NO_SCROLLER))
 			{
+				APTR knob;
+
+				// System knob imagery, if Intuition provides it
+				if ((knob = DOPUS_NEW_PROP_KNOB(TRUE)))
+				{
+					// Add to boopsi list
+					DoMethod((Object *)knob, OM_ADDTAIL, &data->boopsi_list);
+				}
+
 				// Create scroller
 				if ((data->scroller =
 						 (struct Gadget *)NewObject(0,
@@ -238,6 +247,8 @@ IPTR LIBFUNC listview_dispatch(REG(a0, Class *cl), REG(a2, Object *obj), REG(a1,
 													1,
 													PGA_Total,
 													1,
+													DOPUS_PROP_KNOB_TAG(knob),
+													(IPTR)knob,
 													ICA_TARGET,
 													gadget,
 													ICA_MAP,

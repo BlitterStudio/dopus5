@@ -142,6 +142,34 @@
 #define DOPUS_NATIVE_WHEEL_SUPPORTED() \
 	((BOOL)(((struct Library *)IntuitionBase)->lib_Version >= DOPUS_NATIVE_WHEEL_MIN_VERSION))
 
+/* Intuition 47.44+ (AmigaOS 3.2) draws a propgclass knob with a BOOPSI image
+ * passed as PGA_KnobImage. GadTools 47 gives its scrollers a frameiclass
+ * FRAME_PROPKNOB image (vertical orientation = 1) under the same version
+ * check, so this knob follows the system look. Intuition sizes the image
+ * through IM_DRAWFRAME; the caller disposes it after the gadget.
+ * Only for scrollers inside the window: Intuition also honours the image
+ * on border scrollers, where it replaces the system border knob. */
+#ifdef __amigaos3__
+	#define DOPUS_PROP_KNOB_SUPPORTED()                                       \
+		((BOOL)(((struct Library *)IntuitionBase)->lib_Version > 47 ||        \
+				(((struct Library *)IntuitionBase)->lib_Version == 47 &&      \
+				 ((struct Library *)IntuitionBase)->lib_Revision >= 44)))
+	#define DOPUS_NEW_PROP_KNOB(vertical)                                     \
+		((APTR)(DOPUS_PROP_KNOB_SUPPORTED()                                   \
+					? NewObject(0,                                            \
+								"frameiclass",                                \
+								IA_FrameType,                                 \
+								FRAME_PROPKNOB,                               \
+								IA_Orientation,                               \
+								(vertical) ? 1 : 0,                           \
+								TAG_END)                                      \
+					: 0))
+	#define DOPUS_PROP_KNOB_TAG(knob) ((knob) ? PGA_KnobImage : TAG_IGNORE)
+#else
+	#define DOPUS_NEW_PROP_KNOB(vertical) ((APTR)0)
+	#define DOPUS_PROP_KNOB_TAG(knob) TAG_IGNORE
+#endif
+
 /* Long word alignement (mainly used to get
  * FIB or DISK_INFO as auto variables)
  */
