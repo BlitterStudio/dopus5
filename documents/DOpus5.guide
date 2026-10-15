@@ -1,6 +1,6 @@
 @database dopus5
 @master dopus5.guide
-@$VER: Dopus5Guide 58.9 (15.10.2026)
+@$VER: Dopus5Guide 58.10 (15.10.2026)
 @author "Mark Anderson, Andrew Dunbar, Dr Greg Perry, Leo Davidson and Dave Clarke"
 @(c) "Directory Opus 5 Help Guide (c) GPSoftware 1999"
 @(c) "Directory Opus 5 Help Guide (c) DOPUS5 Open Source Team 2012-2026"
@@ -129,6 +129,7 @@ that item and then press the help key before selecting it.
   @{" Icons, Arrange Icons           " link "Icons - Arrange Icons"}  @{" Icons, Cleanup                 " link "Icons - CleanUp"}
   @{" Icons, Copy                    " link "Icons - Copy"}  @{" Icons, Delete                  " link "Icons - Delete"}
   @{" Icons, Disk Information        " link "Icons - Disk Information"}  @{" Icons, Edit Command            " link "Icons - Edit Command"}
+  @{" Icons, Eject                   " link "Icons - Eject"}
   @{" Icons, Format                  " link "Icons - Format"}  @{" Icons, Information             " link "Icons - Information"}
   @{" Icons, Leave Out               " link "Icons - Leave Out"}  @{" Icons, New Command             " link "Icons - New Command"}
   @{" Icons, New Drawer              " link "Icons - New Drawer"}  @{" Icons, New Group               " link "Icons - New Group"}
@@ -2650,6 +2651,27 @@ This brings up the Opus @{" Format Requester " link "Format Requester"} and allo
 Displays some information about the disk the active directory resides on,
 including space used and free, @{" DateStamp " link "DateStamp"} and number of errors on the disk,
 if any.
+
+@endnode
+
+@node "Icons - Eject" "Icons - Eject"
+ Icons - Eject
+
+Ejects the medium from the selected disk icons.  The pop-up menu of a disk
+icon has the same item, Eject Disk.
+
+Opus first inhibits the disk, so that its filesystem writes back pending data
+and lets go of the medium, and then tells the drive to eject it.  This works
+with CD and DVD drives, other removable SCSI, ATAPI and USB media, and drives
+whose device driver supports the TD_EJECT command, such as disk images in
+trackfile.device units (DAControl) on AmigaOS 3.2.
+
+The item is ghosted for RAM:, assigns and other volumes that are not on a
+device.  A disk the drive reports as fixed is left alone, and a drive without
+an eject command, such as the Amiga floppy drive, does nothing; in both cases
+Opus tells you that the disk cannot be ejected.
+
+Close any files that are open on the disk before you eject it.
 
 @endnode
 

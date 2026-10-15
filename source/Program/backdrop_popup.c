@@ -34,6 +34,7 @@ For more information on Directory Opus for Windows please see:
 #define BPF_WRITEPROT (1 << 8)
 #define BPF_NOFORMAT (1 << 9)
 #define BPF_DIRECTORY (1 << 10)
+#define BPF_NOEJECT (1 << 11)
 
 BOOL backdrop_test_rmb(BackdropInfo *info, struct IntuiMessage *msg, struct IntuiMessage *msg_copy, ULONG mode)
 {
@@ -221,7 +222,13 @@ BOOL backdrop_popup(BackdropInfo *info, short x, short y, UWORD qual, long bpfla
 
 		// Get disk information
 		if (!(object->flags & (BDOF_ASSIGN | BDOF_CACHE)))
+		{
 			diskinfo = GetDiskInfo(object->device_name, infodata);
+
+			// Can it be ejected?
+			if (!disk_eject_available(object->device_name))
+				flags |= BPF_NOEJECT;
+		}
 	}
 
 	// Trashcan?
@@ -600,6 +607,11 @@ BOOL backdrop_popup(BackdropInfo *info, short x, short y, UWORD qual, long bpfla
 			// DiskInfo
 			case MENU_ICON_DISKINFO:
 				backdrop_info(info, 1, object);
+				break;
+
+			// Eject
+			case MENU_ICON_EJECT:
+				backdrop_eject(info, object);
 				break;
 
 			// Delete
@@ -1718,6 +1730,9 @@ MatchHandle *popup_build_icon_menu(BackdropInfo *info,
 
 		// Disk information
 		PopUpNewItem(menu, MSG_ICON_DISKINFO, MENU_ICON_DISKINFO, bad);
+
+		// Eject
+		PopUpNewItem(menu, MSG_ICON_EJECT, MENU_ICON_EJECT, (flags & BPF_NOEJECT) ? POPUPF_DISABLED : assign);
 	}
 
 	// Not an AppIcon or a Group?

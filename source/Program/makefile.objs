@@ -33,6 +33,7 @@ COMMON_OBJS =	data.o \
 	backdrop_snapshot.o \
 	backdrop_popup.o \
 	backdrop_format.o \
+	disk_eject.o \
 	backdrop_select.o \
 	backdrop_info.o \
 	backdrop_leftout.o \

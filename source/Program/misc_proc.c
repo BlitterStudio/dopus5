@@ -623,6 +623,12 @@ IPC_EntryCode(misc_proc)
 		}
 		break;
 
+		// Eject a disk
+		case MENU_ICON_EJECT:
+			disk_eject(startup->window, (char *)startup->data);
+			FreeVec(startup->data);
+			break;
+
 		// Rename objects
 		case MENU_ICON_RENAME: {
 			iconopen_packet *packet;

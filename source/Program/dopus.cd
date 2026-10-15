@@ -856,6 +856,15 @@ Snapshot Window
 MSG_ICONS_MAKEFILE_MENU (//)
 File...
 ;
+MSG_ICON_EJECT (//)
+Eject Disk
+;
+MSG_EJECTING (//)
+ejecting
+;
+MSG_EJECT_UNSUPPORTED (//)
+%s cannot be ejected.
+;
 ;
 ;
 ;
