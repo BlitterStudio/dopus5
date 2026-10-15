@@ -59,10 +59,10 @@ DOPUS_FUNC(function_loadfonts)
 						// Store colours/style
 						environment->env->icon_fpen = fonts.fp_FrontPen;
 						environment->env->icon_bpen = fonts.fp_BackPen;
-						environment->env->icon_style = fonts.fp_DrawMode;
+						environment->env->icon_style = DOPUS_FONTPREFS_ICON_STYLE(&fonts);
 						environment->env->iconw_fpen = fonts.fp_FrontPen;
 						environment->env->iconw_bpen = fonts.fp_BackPen;
-						environment->env->iconw_style = fonts.fp_DrawMode;
+						environment->env->iconw_style = DOPUS_FONTPREFS_ICON_STYLE(&fonts);
 						change |= CONFIG_CHANGE_ICON_FONT | CONFIG_CHANGE_ICON_FONT_WINDOWS;
 					}
 

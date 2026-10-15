@@ -1,6 +1,6 @@
 @database dopus5
 @master dopus5.guide
-@$VER: Dopus5Guide 58.8 (15.10.2026)
+@$VER: Dopus5Guide 58.9 (15.10.2026)
 @author "Mark Anderson, Andrew Dunbar, Dr Greg Perry, Leo Davidson and Dave Clarke"
 @(c) "Directory Opus 5 Help Guide (c) GPSoftware 1999"
 @(c) "Directory Opus 5 Help Guide (c) DOPUS5 Open Source Team 2012-2026"
@@ -1179,6 +1179,10 @@ LoadFonts             NAME/F
 
 This command takes a System fonts preferences file and loads the specified
 fonts as Opus settings.
+
+The Workbench icon text font sets the label font, colours and draw mode of
+icons on the desktop and in windows.  On AmigaOS 3.2 and AmigaOS 4 that
+includes the Text+Outline and Text+Shadow modes chosen in Font prefs.
 @endnode
 
 @node "LoadEnvironment" "LoadEnvironment"

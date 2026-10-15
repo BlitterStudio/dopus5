@@ -1,3 +1,12 @@
+[dopus5 next] Workbench outline and shadow label modes from Font prefs
+dopus5.library and Program change; version bump deferred.
+
+- LoadFonts now takes the Text+Outline and Text+Shadow icon text modes
+  of AmigaOS 3.2 and AmigaOS 4 Font prefs, as does the upgrade of a very
+  old (pre-version 2) environment.  Those systems keep the mode in a
+  separate field of font.prefs that Opus did not read, so the labels came
+  out as plain text (#126).
+
 [dopus5 next] Closed outline for icon labels
 Program and configopus.module change; version bump deferred.
 

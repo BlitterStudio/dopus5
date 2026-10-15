@@ -423,7 +423,7 @@ void LIBFUNC L_UpdateEnvironment(REG(a0, CFG_ENVR *env))
 					// Get icon text colours
 					env->icon_fpen = font.fp_FrontPen;
 					env->icon_bpen = font.fp_BackPen;
-					env->icon_style = font.fp_DrawMode;
+					env->icon_style = DOPUS_FONTPREFS_ICON_STYLE(&font);
 					break;
 				}
 			}
