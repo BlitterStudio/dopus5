@@ -368,6 +368,7 @@ void backdrop_appicon_message(BackdropObject *object, unsigned short flags);
 
 ULONG backdrop_image_checksum(BackdropObject *object, short which);
 void backdrop_get_masks(BackdropObject *object);
+BOOL backdrop_masks_misplaced(BackdropObject *object);
 
 short backdrop_get_devices(BackdropInfo *info);
 void backdrop_do_leftouts(BackdropInfo *info, BackdropObject *onlyone);

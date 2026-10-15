@@ -23,6 +23,13 @@ For more information on Directory Opus for Windows please see:
 
 #include "dopus.h"
 
+// CYBRMATTR_ISCYBERGFX for the RTG probe (the OS3 SDK keeps it under cybergraphics/)
+#ifdef __amigaos3__
+	#include <cybergraphics/cybergraphics.h>
+#else
+	#include <cybergraphx/cybergraphics.h>
+#endif
+
 #if defined(__MORPHOS__)
 	/* MOS-only alpha blit / tint API lives in cybergraphics.library; P96 has no equivalent. */
 	#include <proto/cybergraphics.h>
@@ -52,6 +59,78 @@ struct OwnDiskObject
 };
 
 	#define ISOWN(x) (((struct OwnDiskObject *)x)->ownmagic == OWN_MAGIC && ((struct OwnDiskObject *)x)->ownptr == x)
+#endif
+
+// Is this an RTG bitmap? The blitter only reads masks when it draws into a
+// native planar bitmap; RTG drivers blit with the CPU (or their own hardware)
+// and can read masks from any memory. Probe P96/CGX directly, BMF_STANDARD
+// is not reliable before graphics.library V45.
+static BOOL backdrop_rtg_bitmap(struct BitMap *bm)
+{
+#if !defined(__AROS__)
+	if (P96Base && p96GetBitMapAttr(bm, P96BMA_ISP96))
+		return TRUE;
+#endif
+	if (CyberGfxBase && GetCyberMapAttr(bm, CYBRMATTR_ISCYBERGFX))
+		return TRUE;
+	return FALSE;
+}
+
+// Can this mask be used to draw into this bitmap?
+static BOOL backdrop_mask_blittable(struct BitMap *bm, APTR mask)
+{
+	return (BOOL)(backdrop_rtg_bitmap(bm) || (TypeOfMem(mask) & MEMF_CHIP));
+}
+
+// Memory type for icon masks on the current screen
+static ULONG backdrop_mask_memory(void)
+{
+#ifdef USE_DRAWICONSTATE
+	// Icons are drawn by DrawIconState(); masks are only used for hit-testing
+	return MEMF_ANY;
+#else
+	// No screen yet; stay with chip, backdrop_init_info() checks again
+	if (!GUI->screen_pointer)
+		return MEMF_CHIP;
+	return backdrop_rtg_bitmap(GUI->screen_pointer->RastPort.BitMap) ? MEMF_ANY : MEMF_CHIP;
+#endif
+}
+
+#ifndef USE_DRAWICONSTATE
+// Draw an icon image through its mask. Returns FALSE if the mask could not
+// be used, so the caller draws the image without it.
+static BOOL backdrop_blit_icon_mask(struct BitMap *bitmap,
+									struct RastPort *rp,
+									short left,
+									short top,
+									struct Image *image,
+									UWORD *mask)
+{
+	UWORD *chip_mask = 0;
+	long size;
+
+	// Mask is in fast memory (RTG screen) but the blitter draws into this
+	// native bitmap (eg a BOB drag image); give it a chip copy
+	if (!backdrop_mask_blittable(rp->BitMap, mask))
+	{
+		size = RASSIZE(image->Width, image->Height);
+		if (!(chip_mask = AllocVec(size, MEMF_CHIP)))
+			return FALSE;
+		CopyMem((char *)mask, (char *)chip_mask, size);
+		mask = chip_mask;
+	}
+
+	// Draw using the mask
+	BltMaskBitMapRastPort(bitmap, 0, 0, rp, left, top, image->Width, image->Height, 0xe0, (PLANEPTR)mask);
+
+	// Free temporary copy once the blitter is done with it
+	if (chip_mask)
+	{
+		WaitBlit();
+		FreeVec(chip_mask);
+	}
+	return TRUE;
+}
 #endif
 
 // Scroll the icons
@@ -610,19 +689,9 @@ void backdrop_draw_object(BackdropInfo *info,
 				backdrop_image_bitmap(info, image, imagedata, &bitmap);
 
 				// Using a mask (no border)?
-				if (!has_border && object->image_mask[state])
+				if (!has_border && object->image_mask[state] &&
+					backdrop_blit_icon_mask(&bitmap, rp, left, top, image, object->image_mask[state]))
 				{
-					// Draw using a mask
-					BltMaskBitMapRastPort(&bitmap,
-										  0,
-										  0,
-										  rp,
-										  left,
-										  top,
-										  image->Width,
-										  image->Height,
-										  0xe0,
-										  (PLANEPTR)object->image_mask[state]);
 					use_mask = 1;
 				}
 
@@ -939,6 +1008,23 @@ void backdrop_image_bitmap(BackdropInfo *info, struct Image *image, UWORD *image
 		bitmap->Planes[plane] = 0;
 }
 
+// Are the icon's masks in the wrong memory type for the current screen?
+BOOL backdrop_masks_misplaced(BackdropObject *object)
+{
+#ifdef USE_DRAWICONSTATE
+	// Masks are never blitted; any memory will do
+	return FALSE;
+#else
+	BOOL in_chip, want_chip;
+
+	if (!object->image_mask[0])
+		return FALSE;
+	in_chip = (TypeOfMem(object->image_mask[0]) & MEMF_CHIP) ? TRUE : FALSE;
+	want_chip = (backdrop_mask_memory() & MEMF_CHIP) ? TRUE : FALSE;
+	return (BOOL)(in_chip != want_chip);
+#endif
+}
+
 // Get image mask for an icon
 void backdrop_get_masks(BackdropObject *object)
 {
@@ -961,9 +1047,9 @@ void backdrop_get_masks(BackdropObject *object)
 		// Do two images
 		for (a = 0; a < 2; a++)
 		{
-			// Allocate mask
-			if (!(object->image_mask[a] =
-					  AllocVec(((image->Width + 15) >> 4) * image->Height * sizeof(UWORD), MEMF_CHIP | MEMF_CLEAR)))
+			// Allocate mask (chip only if the blitter will read it)
+			if (!(object->image_mask[a] = AllocVec(((image->Width + 15) >> 4) * image->Height * sizeof(UWORD),
+												   backdrop_mask_memory() | MEMF_CLEAR)))
 				break;
 
 			// Full transparency? (quicker)
@@ -1100,8 +1186,54 @@ void backdrop_draw_icon_ghost(struct RastPort *rp, struct Rectangle *rect, PLANE
 {
 	struct BitMap *ghost_bm;
 	struct RastPort ghost_rp;
-	UWORD *new_mask;
+	UWORD *new_mask = 0;
 	unsigned short width, height, words;
+
+	// Get image size
+	width = RECTWIDTH(rect);
+	height = RECTHEIGHT(rect);
+
+	// Get image size in words
+	words = ((width + 15) >> 4) * height;
+
+	// Got a mask?
+	if (mask)
+	{
+		// Allocate a copy of the mask (the blitter needs chip memory for a native bitmap)
+		if ((new_mask = AllocVec(words * sizeof(UWORD), backdrop_rtg_bitmap(rp->BitMap) ? MEMF_ANY : MEMF_CHIP)))
+		{
+			short word, line, count;
+			unsigned short mask_word = 0xaaaa;
+
+			// Copy mask
+			CopyMem((char *)mask, (char *)new_mask, words * sizeof(UWORD));
+
+			// Words per line
+			line = (width + 15) >> 4;
+
+			// Stipple mask
+			for (word = 0, count = 0; word < words; word++)
+			{
+				// Mask off
+				new_mask[word] &= ~mask_word;
+
+				// New line?
+				if (++count == line)
+				{
+					// Switch mask value to create alternating dotted lines
+					mask_word = (mask_word == 0xaaaa) ? 0x5555 : 0xaaaa;
+					count = 0;
+				}
+			}
+
+			// Use new mask as mask
+			mask = (PLANEPTR)new_mask;
+		}
+
+		// Original mask is in fast memory and the blitter would read it
+		else if (!backdrop_mask_blittable(rp->BitMap, mask))
+			mask = 0;
+	}
 
 	// No mask?
 	if (!mask)
@@ -1123,46 +1255,11 @@ void backdrop_draw_icon_ghost(struct RastPort *rp, struct Rectangle *rect, PLANE
 		return;
 	}
 
-	// Get image size
-	width = RECTWIDTH(rect);
-	height = RECTHEIGHT(rect);
-
 	// Create ghost bitmap
 	if (!(ghost_bm = NewBitMap(width, height, 1, 0, rp->BitMap)))
-		return;
-
-	// Get image size in words
-	words = ((width + 15) >> 4) * height;
-
-	// Allocate a copy of the mask
-	if ((new_mask = AllocVec(words * sizeof(UWORD), MEMF_CHIP)))
 	{
-		short word, line, count;
-		unsigned short mask_word = 0xaaaa;
-
-		// Copy mask
-		CopyMem((char *)mask, (char *)new_mask, words * sizeof(UWORD));
-
-		// Words per line
-		line = (width + 15) >> 4;
-
-		// Stipple mask
-		for (word = 0, count = 0; word < words; word++)
-		{
-			// Mask off
-			new_mask[word] &= ~mask_word;
-
-			// New line?
-			if (++count == line)
-			{
-				// Switch mask value to create alternating dotted lines
-				mask_word = (mask_word == 0xaaaa) ? 0x5555 : 0xaaaa;
-				count = 0;
-			}
-		}
-
-		// Use new mask as mask
-		mask = (PLANEPTR)new_mask;
+		FreeVec(new_mask);
+		return;
 	}
 
 	// Initialise ghost rastport
