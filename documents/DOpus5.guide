@@ -1,6 +1,6 @@
 @database dopus5
 @master dopus5.guide
-@$VER: Dopus5Guide 58.5 (15.10.2026)
+@$VER: Dopus5Guide 58.6 (15.10.2026)
 @author "Mark Anderson, Andrew Dunbar, Dr Greg Perry, Leo Davidson and Dave Clarke"
 @(c) "Directory Opus 5 Help Guide (c) GPSoftware 1999"
 @(c) "Directory Opus 5 Help Guide (c) DOPUS5 Open Source Team 2012-2026"
@@ -2092,8 +2092,8 @@ Configuration...
 This is a user-editable button.  It currently has either no function set or
 has a custom function calling external programs.
 
-To edit this button, select @{" Edit " link "Button Bank Editor"} from the Buttons menu and double-click on
-the button.
+To edit this button, select @{" Edit " link "Button Bank Editor"} from the
+Settings menu's Buttons submenu and double-click on the button.
 
 @endnode
 
@@ -2727,7 +2727,10 @@ To edit this button you must use the @{" Filetype Editor " link "File Type Edito
 @endnode
 
 @node "Buttons - New Gfx Buttons" "Buttons - New Gfx Buttons"
- Buttons - New Gfx Buttons
+ Settings - Buttons - New Graphic Buttons
+
+The button-bank commands are in the Settings menu's Buttons submenu.  Save,
+Save As and Close are enabled when the active window is a button bank.
 
 Creates a new Button bank of Graphic buttons.  When first opened, the
 button bank will have only one button.  The size of the button bank and
@@ -2737,7 +2740,7 @@ the definitions for each button may be changed by calling the
 @endnode
 
 @node "Buttons - New Text Buttons" "Buttons - New Text Buttons"
- Buttons - New Text Buttons
+ Settings - Buttons - New Text Buttons
 
 Creates a new Button bank of Text buttons.  When first opened, the
 button bank will have only one button.  The size of the button bank and
@@ -2747,7 +2750,7 @@ the definitions for each button may be changed by calling the
 @endnode
 
 @node "Buttons - New Start Menu" "Buttons - New Start Menu"
- Buttons - New Start Menu
+ Settings - Buttons - New Start Menu
 
 Creates a new Start Menu button. After defining the entries you
 want using the @{" Menu Editor " LINK "Menu Editor"} and saving to a file, you can edit how the
@@ -2757,7 +2760,7 @@ button.
 @endnode
 
 @node "Buttons - Open" "Buttons - Load"
- Buttons - Load
+ Settings - Buttons - Load
 
 Loads an old Button Bank from disk.  The loaded bank will appear on the
 screen in the position last saved with the button bank, or in the position
@@ -2766,7 +2769,7 @@ it was in when you saved the environment settings.
 @endnode
 
 @node "Buttons - Open Start Menu" "Buttons - Load Start Menu"
- Buttons - Load Start Menu
+ Settings - Buttons - Load Start Menu
 
 Loads an old Start Menu from disk.  The loaded Start Menu will appear on
 the screen in the position it was last saved in, or in the position
@@ -2775,7 +2778,7 @@ it was in when you saved the environment settings.
 @endnode
 
 @node "Buttons - Save" "Buttons - Save"
- Buttons - Save
+ Settings - Buttons - Save
 
 Saves the selected Button Bank to disk using the name under which it was
 loaded.
@@ -2783,21 +2786,21 @@ loaded.
 @endnode
 
 @node "Buttons - Save As" "Buttons - Save As"
- Buttons - Save As
+ Settings - Buttons - Save As
 
 This command saves the selected Button Bank to disk under the name you
 specify.
 @endnode
 
 @node "Buttons - Close" "Buttons - Close"
- Buttons - Close
+ Settings - Buttons - Close
 
 This command closes an open Button Bank.
 
 @endnode
 
 @node "Buttons - Edit" "Buttons - Edit"
- Buttons - Edit
+ Settings - Buttons - Edit
 
 This command brings up the @{" Button Editor " link "Button Bank Editor"} and allows you to edit the
 definitions of all buttons in all Button Banks currently open.  You can
