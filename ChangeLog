@@ -1,3 +1,15 @@
+[dopus5 next] Icon masks in fast memory on RTG screens
+Program change; version bump deferred.
+
+- On a Picasso96 or CyberGraphX screen the transparency masks of
+  borderless icons are now kept in fast memory instead of chip memory.
+  Only the blitter needs them in chip memory, and on an RTG screen it
+  does not draw icons.  Opening six icon-mode listers on an RTG Workbench
+  took about 85 KB of chip memory and now takes about 19 KB.  Icons
+  dragged as BOBs ("custom drag" off) draw through a temporary chip copy
+  of the mask, and the masks move to the right kind of memory when Opus
+  reopens on a native or RTG screen.
+
 [dopus5 next] Eject Disk
 Program change; version bump deferred.
 

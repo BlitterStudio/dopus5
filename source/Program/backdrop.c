@@ -139,6 +139,10 @@ void backdrop_init_info(BackdropInfo *info, struct Window *window, short no_icon
 				}
 			}
 
+			// Masks in the wrong memory for this screen (native vs RTG)?
+			if (backdrop_masks_misplaced(icon))
+				backdrop_get_masks(icon);
+
 			// Set flag to say we've been remapped
 			icon->flags |= BDOF_REMAPPED;
 		}
