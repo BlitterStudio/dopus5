@@ -1,3 +1,16 @@
+[dopus5 next] Closed outline for icon labels
+Program and configopus.module change; version bump deferred.
+
+- Outlined icon labels draw the outline at all eight neighbouring
+  positions instead of only the four diagonals.  Thin fonts such as
+  XEN, XHelvetica or thinpaz were left with gaps at stroke ends and
+  around single pixels (#126).
+- On AmigaOS 3.2 and AmigaOS 4 the icon label font requester uses the
+  system's own Text+Outline and Text+Shadow modes, so its sample shows
+  the outline or shadow.  The Opus mode list was previewed as
+  complement drawing, and Outline as a solid bar.  Older systems keep
+  the Opus mode list.
+
 [dopus5 next] System scroller knobs on AmigaOS 3.2
 dopus5.library and Program change; version bump deferred.
 

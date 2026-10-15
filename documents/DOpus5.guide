@@ -1,6 +1,6 @@
 @database dopus5
 @master dopus5.guide
-@$VER: Dopus5Guide 58.7 (15.10.2026)
+@$VER: Dopus5Guide 58.8 (15.10.2026)
 @author "Mark Anderson, Andrew Dunbar, Dr Greg Perry, Leo Davidson and Dave Clarke"
 @(c) "Directory Opus 5 Help Guide (c) GPSoftware 1999"
 @(c) "Directory Opus 5 Help Guide (c) DOPUS5 Open Source Team 2012-2026"
@@ -3503,6 +3503,14 @@ This section allows you to configure how icons are displayed within Opus.
     The Desktop and Windows buttons allow you to edit the font settings
     for icons on the desktop and in windows, respectively. You can change
     which font is used and how it is coloured.
+
+    The draw mode can be Text, Text with a Field behind it, Shadow or
+    Outline.  Shadow draws the text over a copy in the Field colour,
+    one pixel down and right.  Outline surrounds every pixel of the
+    text with the Field colour, so thin fonts get a closed outline too.
+    On AmigaOS 3.2 and AmigaOS 4 the font requester offers these as
+    Text, Text+Field (or Text+Background), Text+Outline and Text+Shadow
+    and its sample shows the label as it will look.
 
 @endnode
 
