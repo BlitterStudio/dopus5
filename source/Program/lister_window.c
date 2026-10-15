@@ -427,6 +427,9 @@ struct Window *lister_open_window(Lister *lister, struct Screen *screen)
 	lister->cursor_line = -1;
 	lister->edit_type = -1;
 
+	// Get custom pens for the file list and title
+	lister_init_display_colours(lister);
+
 	// Setup lister display
 	lister_init_display(lister);
 	lister_refresh(lister, LREFRESH_FULL);
@@ -987,89 +990,116 @@ void lister_set_gauge(Lister *lister, BOOL refresh)
 	}
 }
 
+// Get the configured pen of a lister colour element
+static short lister_config_pen(short col, short num)
+{
+	// Different entries in the structure :-(
+	switch (col)
+	{
+	case ENVCOL_FILES_UNSEL:
+		return environment->env->list_format.files_unsel[num];
+
+	case ENVCOL_DIRS_UNSEL:
+		return environment->env->list_format.dirs_unsel[num];
+
+	case ENVCOL_FILES_SEL:
+		return environment->env->list_format.files_sel[num];
+
+	case ENVCOL_DIRS_SEL:
+		return environment->env->list_format.dirs_sel[num];
+
+	case ENVCOL_SOURCE:
+		return environment->env->source_col[num];
+
+	case ENVCOL_DEST:
+		return environment->env->dest_col[num];
+
+	case ENVCOL_DEVICES:
+		return environment->env->devices_col[num];
+
+	case ENVCOL_VOLUMES:
+		return environment->env->volumes_col[num];
+
+	case ENVCOL_GAUGE:
+		return environment->env->gauge_col[num];
+
+	case ENVCOL_TOOLTIP:
+		return environment->env->tooltip_col[num];
+	}
+
+	return 0;
+}
+
+// Get the screen pen of a lister colour element
+short lister_colour_pen(Lister *lister, short col, short num)
+{
+	short pen;
+
+	// Holding a custom pen?
+	if (lister->lst_Colours[col].cr_Alloc & (COLRF_CUSTOM(num) | COLRF_SHARED(num)))
+		return lister->lst_Colours[col].cr_Pen[num];
+
+	// Map user pens
+	pen = lister_config_pen(col, num);
+	if (pen >= 4 && pen < 252)
+		pen = GUI->pens[pen - 4];
+	return pen;
+}
+
 // Initialise or free a lister colour
 void lister_init_colour(Lister *lister, short col, short free)
 {
-	// See if colour is allocated
-	if (lister->lst_Colours[col].cr_Alloc & (1 << 0))
-		FreeCustomPen(col, 0);
-	if (lister->lst_Colours[col].cr_Alloc & (1 << 1))
-		FreeCustomPen(col, 1);
+	ColourRecord *colour = &lister->lst_Colours[col];
+	short a;
 
-	// Clear allocation flag
-	lister->lst_Colours[col].cr_Alloc = 0;
-
-	// Want to get pen?
-	if (!free)
+	// Free the pens we hold
+	for (a = 0; a < 2; a++)
 	{
-		short a;
-
-		// Initalise allocation flag
-		lister->lst_Colours[col].cr_Alloc = 0;
-
-		// Do two pens
-		for (a = 0; a < 2; a++)
-		{
-			// See if there's a custom pen
-			if ((lister->lst_Colours[col].cr_Pen[a] = GetCustomPen(col, a, 0)) > -1)
-			{
-				// Set allocation flag
-				lister->lst_Colours[col].cr_Alloc |= (1 << a);
-			}
-
-			// No custom pen, use default
-			else
-			{
-				// Different entries in the structure :-(
-				switch (col)
-				{
-				case ENVCOL_FILES_UNSEL:
-					lister->lst_Colours[col].cr_Pen[a] = environment->env->list_format.files_unsel[a];
-					break;
-
-				case ENVCOL_DIRS_UNSEL:
-					lister->lst_Colours[col].cr_Pen[a] = environment->env->list_format.dirs_unsel[a];
-					break;
-
-				case ENVCOL_FILES_SEL:
-					lister->lst_Colours[col].cr_Pen[a] = environment->env->list_format.files_sel[a];
-					break;
-
-				case ENVCOL_DIRS_SEL:
-					lister->lst_Colours[col].cr_Pen[a] = environment->env->list_format.dirs_sel[a];
-					break;
-
-				case ENVCOL_SOURCE:
-					lister->lst_Colours[col].cr_Pen[a] = environment->env->source_col[a];
-					break;
-
-				case ENVCOL_DEST:
-					lister->lst_Colours[col].cr_Pen[a] = environment->env->dest_col[a];
-					break;
-
-				case ENVCOL_DEVICES:
-					lister->lst_Colours[col].cr_Pen[a] = environment->env->devices_col[a];
-					break;
-
-				case ENVCOL_VOLUMES:
-					lister->lst_Colours[col].cr_Pen[a] = environment->env->volumes_col[a];
-					break;
-
-				case ENVCOL_GAUGE:
-					lister->lst_Colours[col].cr_Pen[a] = environment->env->gauge_col[a];
-					break;
-
-				case ENVCOL_TOOLTIP:
-					lister->lst_Colours[col].cr_Pen[a] = environment->env->tooltip_col[a];
-					break;
-				}
-
-				// Fix pen
-				if (lister->lst_Colours[col].cr_Pen[a] >= 4 && lister->lst_Colours[col].cr_Pen[a] < 252)
-					lister->lst_Colours[col].cr_Pen[a] = GUI->pens[lister->lst_Colours[col].cr_Pen[a] - 4];
-			}
-		}
+		if (colour->cr_Alloc & COLRF_CUSTOM(a))
+			FreeCustomPen(col, a, FALSE);
+		else if (colour->cr_Alloc & COLRF_SHARED(a) && GUI->screen_pointer)
+			ReleasePen(GUI->screen_pointer->ViewPort.ColorMap, colour->cr_Pen[a]);
 	}
+
+	// Clear allocation flags
+	colour->cr_Alloc = 0;
+
+	// Only freeing?
+	if (free)
+		return;
+
+	// Do two pens
+	for (a = 0; a < 2; a++)
+	{
+		// See if there's a custom pen
+		if ((colour->cr_Pen[a] = GetCustomPen(col, a, 0)) > -1)
+			colour->cr_Alloc |= COLRF_CUSTOM(a);
+
+		// Custom colour but no free pen; use the closest shared colour
+		else if (((struct Library *)GfxBase)->lib_Version >= 39 && GUI->screen_pointer &&
+				 environment->env->env_ColourFlag & (1 << (col + a * CUST_PENS)) &&
+				 (colour->cr_Pen[a] = ObtainBestPen(GUI->screen_pointer->ViewPort.ColorMap,
+													environment->env->env_Colours[col][a][0],
+													environment->env->env_Colours[col][a][1],
+													environment->env->env_Colours[col][a][2],
+													OBP_Precision,
+													PRECISION_EXACT,
+													TAG_END)) > -1)
+			colour->cr_Alloc |= COLRF_SHARED(a);
+
+		// No custom pen, use default
+		else
+			colour->cr_Pen[a] = lister_colour_pen(lister, col, a);
+	}
+}
+
+// Initialise the colours of the file list and title elements
+void lister_init_display_colours(Lister *lister)
+{
+	short col;
+
+	for (col = ENVCOL_FILES_UNSEL; col <= ENVCOL_VOLUMES; col++)
+		lister_init_colour(lister, col, FALSE);
 }
 
 // See if the lister wants a gauge

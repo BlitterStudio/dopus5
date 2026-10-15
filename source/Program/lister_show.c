@@ -181,7 +181,7 @@ void lister_display_dir(Lister *lister)
 		else
 		{
 			// Set correct pen for background fill
-			SetBPen(&lister->text_area.rast, environment->env->list_format.files_unsel[1]);
+			SetBPen(&lister->text_area.rast, lister_colour_pen(lister, ENVCOL_FILES_UNSEL, 1));
 
 			// Scroll display
 			ScrollRaster(&lister->text_area.rast,
@@ -482,11 +482,7 @@ void setdispcol(DirEntry *entry, Lister *lister)
 
 void getdispcol(DirEntry *entry, Lister *lister, short *fpen, short *bpen)
 {
-	ListFormat *format = &environment->env->list_format;
-
-	// Initialise
-	*fpen = 1;
-	*bpen = 0;
+	short col = ENVCOL_FILES_UNSEL;
 
 	// Valid entry?
 	if (entry->de_Node.dn_Succ)
@@ -499,24 +495,15 @@ void getdispcol(DirEntry *entry, Lister *lister, short *fpen, short *bpen)
 
 			// Is file selected?
 			if (entry->de_Flags & ENTF_SELECTED)
-			{
-				*fpen = format->files_sel[0];
-				*bpen = format->files_sel[1];
-			}
+				col = ENVCOL_FILES_SEL;
 
 			// Device colour?
 			else if (entry->de_Flags & ENTF_COLOUR_DEVICE)
-			{
-				*fpen = environment->env->devices_col[0];
-				*bpen = environment->env->devices_col[1];
-			}
+				col = ENVCOL_DEVICES;
 
 			// Not selected
 			else
-			{
-				*fpen = format->files_unsel[0];
-				*bpen = format->files_unsel[1];
-			}
+				col = ENVCOL_FILES_UNSEL;
 			break;
 
 		// Device
@@ -524,24 +511,15 @@ void getdispcol(DirEntry *entry, Lister *lister, short *fpen, short *bpen)
 
 			// Selected?
 			if (entry->de_Flags & ENTF_SELECTED)
-			{
-				*fpen = format->files_sel[0];
-				*bpen = format->files_sel[1];
-			}
+				col = ENVCOL_FILES_SEL;
 
 			// Is entry a device or a volume (ie not an assign)
 			else if (entry->de_Size == DLT_DEVICE)
-			{
-				*fpen = environment->env->devices_col[0];
-				*bpen = environment->env->devices_col[1];
-			}
+				col = ENVCOL_DEVICES;
 
 			// Assign
 			else
-			{
-				*fpen = environment->env->volumes_col[0];
-				*bpen = environment->env->volumes_col[1];
-			}
+				col = ENVCOL_VOLUMES;
 			break;
 
 		// Directory
@@ -549,40 +527,28 @@ void getdispcol(DirEntry *entry, Lister *lister, short *fpen, short *bpen)
 
 			// Selected?
 			if (entry->de_Flags & ENTF_SELECTED)
-			{
-				*fpen = format->dirs_sel[0];
-				*bpen = format->dirs_sel[1];
-			}
+				col = ENVCOL_DIRS_SEL;
 
 			// Assign colour?
 			else if (entry->de_Flags & ENTF_COLOUR_ASSIGN)
-			{
-				*fpen = environment->env->volumes_col[0];
-				*bpen = environment->env->volumes_col[1];
-			}
+				col = ENVCOL_VOLUMES;
 
 			// Not selected
 			else
-			{
-				*fpen = format->dirs_unsel[0];
-				*bpen = format->dirs_unsel[1];
-			}
+				col = ENVCOL_DIRS_UNSEL;
 			break;
+
+		// Unknown type
+		default:
+			*fpen = 1;
+			*bpen = 0;
+			return;
 		}
 	}
 
-	// Invalid entry
-	else
-	{
-		*fpen = format->files_unsel[0];
-		*bpen = format->files_unsel[1];
-	}
-
-	// Fix pens
-	if (*fpen >= 4 && *fpen < 252)
-		*fpen = GUI->pens[*fpen - 4];
-	if (*bpen >= 4 && *bpen < 252)
-		*bpen = GUI->pens[*bpen - 4];
+	// Get pens, custom or configured
+	*fpen = lister_colour_pen(lister, col, 0);
+	*bpen = lister_colour_pen(lister, col, 1);
 }
 
 // Build the string to display an entry
@@ -1067,6 +1033,10 @@ void lister_update_name(Lister *lister)
 void lister_refresh_display(Lister *lister, ULONG flags)
 {
 	DirBuffer *buffer;
+
+	// Colours changed; get the custom pens again
+	if (flags & REFRESHF_COLOUR && lister->window)
+		lister_init_display_colours(lister);
 
 	if (lister_dual_one_window(lister))
 	{

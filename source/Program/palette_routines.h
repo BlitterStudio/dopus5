@@ -30,7 +30,8 @@ void get_colour_table(void);
 void free_colour_table(void);
 
 short GetCustomPen(short, short, ColourSpec32 *);
-void FreeCustomPen(short, short);
+void FreeCustomPen(short, short, BOOL);
 void InitCustomPens(void);
+void UpdateCustomPens(void);
 
 #endif

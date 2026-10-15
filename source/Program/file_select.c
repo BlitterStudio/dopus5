@@ -49,7 +49,6 @@ short select_select_files(Lister *lister, UWORD qual, short mouse_x, short mouse
 	unsigned long oldidcmp;
 	BOOL edit_active = 0;
 	short retval = 0;
-	ListFormat *def_format;
 	Lister *over_lister = 0;
 	DirEntry *over_entry = 0;
 
@@ -72,9 +71,6 @@ short select_select_files(Lister *lister, UWORD qual, short mouse_x, short mouse
 
 	// Get buffer pointer
 	buffer = lister->cur_buffer;
-
-	// Get default format
-	def_format = &environment->env->list_format;
 
 	// Update selection information
 	select_show_info(lister, 1);
@@ -713,14 +709,11 @@ short select_select_files(Lister *lister, UWORD qual, short mouse_x, short mouse
 									// Set pen for background
 									if (name_ptr)
 									{
-										short fg;
-
 										// Get background of drag image
-										fg =
-											(type <= ENTRY_DEVICE) ? def_format->files_sel[1] : def_format->dirs_sel[1];
-										if (fg >= 4 && fg < 252)
-											fg = GUI->pens[fg - 4];
-										SetAPen(&drag_info->drag_rp, fg);
+										SetAPen(&drag_info->drag_rp,
+												lister_colour_pen(lister,
+																  (type <= ENTRY_DEVICE) ? ENVCOL_FILES_SEL : ENVCOL_DIRS_SEL,
+																  1));
 									}
 
 									// No name, clear area
@@ -737,14 +730,11 @@ short select_select_files(Lister *lister, UWORD qual, short mouse_x, short mouse
 									// Draw text
 									if (name_ptr)
 									{
-										short fg;
-
 										// Get pen to display file with
-										fg =
-											(type <= ENTRY_DEVICE) ? def_format->files_sel[0] : def_format->dirs_sel[0];
-										if (fg >= 4 && fg < 252)
-											fg = GUI->pens[fg - 4];
-										SetAPen(&drag_info->drag_rp, fg);
+										SetAPen(&drag_info->drag_rp,
+												lister_colour_pen(lister,
+																  (type <= ENTRY_DEVICE) ? ENVCOL_FILES_SEL : ENVCOL_DIRS_SEL,
+																  0));
 
 										// Display text
 										Move(&drag_info->drag_rp, 1, y);

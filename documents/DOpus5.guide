@@ -1,6 +1,6 @@
 @database dopus5
 @master dopus5.guide
-@$VER: Dopus5Guide 58.6 (15.10.2026)
+@$VER: Dopus5Guide 58.7 (15.10.2026)
 @author "Mark Anderson, Andrew Dunbar, Dr Greg Perry, Leo Davidson and Dave Clarke"
 @(c) "Directory Opus 5 Help Guide (c) GPSoftware 1999"
 @(c) "Directory Opus 5 Help Guide (c) DOPUS5 Open Source Team 2012-2026"
@@ -3642,14 +3642,20 @@ This section controls various aspects of Opus's icon display routines.
 @node "Environment - Lister Colours" "Environment - Lister Colours"
  Lister Colours
 
-This section lets you adjust lister colour settings. Each elements has an
-additional custom pen which is completely separate from the standard
-user/system pens. It can be configured individually for each element,
-providing there are free pens available.
+This section lets you adjust lister colour settings. Select an element and
+press Modify to choose its foreground and background colours.
 
-At the moment, the custom pen is only implemented by the free space
-gauge and lister toolbar tooltips, but the other elements will be using it
-in the next version.
+Besides the system and user pens, each element can have a custom colour
+of its own. In the Select Colours requester it is the square after the
+user pens: select it and set its colour with the red, green and blue
+sliders below the palette. Custom colours apply to every element: file
+and directory entries, selected entries, the source and destination
+title bars, devices, assigns, the free space gauge and tooltips.
+
+Each custom colour takes a free pen on the screen. If no pen is free when
+a lister opens, the closest existing colour is used. If no pen is free
+when the requester opens, the custom square and the sliders are not
+shown.
 
 When setting the colours for the free space gauge, the foreground colour
 is used when the bar shows less than 90% full, and the background colour

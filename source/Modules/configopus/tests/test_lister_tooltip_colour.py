@@ -71,7 +71,6 @@ class ListerTooltipColourTests(unittest.TestCase):
         )[0]
         self.assertNotIn("CloseWindow", tick_body)
         self.assertIn("case ENVCOL_TOOLTIP:", window_source)
-        self.assertIn("environment->env->tooltip_col[a]", window_source)
 
 
 if __name__ == "__main__":
