@@ -616,7 +616,7 @@ BOOL lister_iconify(Lister *lister)
 	struct DiskObject *icon;
 
 	// Check there's an icon to use
-	if (!(icon = GUI->lister_icon))
+	if (!(icon = get_iconify_icon(FALSE)))
 		return 0;
 
 	// Have we got a distinct position?

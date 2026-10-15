@@ -218,8 +218,11 @@ typedef struct
 
 	short startup_pic_delay;
 
+	// Icons for iconified listers and button banks, loaded by get_iconify_icon()
 	struct DiskObject *lister_icon;
 	struct DiskObject *button_icon;
+	struct Screen *iconify_icon_screen;	 // Screen they are remapped for
+	struct SignalSemaphore iconify_icon_lock;
 
 	struct ListLock function_traps;	 // Function trap list
 
@@ -376,6 +379,7 @@ extern GUI_Glue *GUI;
 
 // Prototypes
 BOOL display_open(long);
+struct DiskObject *get_iconify_icon(BOOL buttons);
 void close_display(int, BOOL);
 void display_box_to_rect(struct IBox *, struct Rectangle *);
 void display_gui_complete(GUI_Element *, struct RastPort *);

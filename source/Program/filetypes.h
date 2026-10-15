@@ -167,6 +167,7 @@ typedef struct
 
 // Prototypes
 void filetype_read_list(APTR, struct ListLock *);
+void filetype_read_list_async(APTR);
 void filetype_default_list(APTR, struct ListLock *);
 Cfg_Filetype *filetype_default_new(APTR, Cfg_FiletypeList *, char *, char *, short, char *, char *);
 void filetype_default_menu(APTR, Cfg_Filetype *, char *, char *);

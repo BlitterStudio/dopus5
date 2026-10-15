@@ -26,8 +26,8 @@ For more information on Directory Opus for Windows please see:
 
 #define is_digit(c) ((c) >= '0' && (c) <= '9')
 
-// Read filetype list
-void filetype_read_list(APTR memory, struct ListLock *main_list)
+// Read the filetype files into the list; the list must be locked exclusively
+static void filetype_read_files(APTR memory, struct ListLock *main_list)
 {
 	Cfg_FiletypeList *list;
 	struct AnchorPath *anchor;
@@ -39,9 +39,6 @@ void filetype_read_list(APTR memory, struct ListLock *main_list)
 
 	// Flush the filetype cache
 	ClearFiletypeCache();
-
-	// Lock list
-	lock_listlock(main_list, TRUE);
 
 	// Initially mark all existing filetype lists as "not found"
 	for (list = (Cfg_FiletypeList *)main_list->list.lh_Head; list->node.ln_Succ;
@@ -108,11 +105,67 @@ void filetype_read_list(APTR memory, struct ListLock *main_list)
 		list = next;
 	}
 
-	// Unlock list
-	unlock_listlock(main_list);
-
 	// Free anchor
 	FreeMemH(anchor);
+}
+
+// Read filetype list
+void filetype_read_list(APTR memory, struct ListLock *main_list)
+{
+	lock_listlock(main_list, TRUE);
+	filetype_read_files(memory, main_list);
+	unlock_listlock(main_list);
+}
+
+static BOOL filetype_reader_locked;
+
+// Lock the list before IPC_Launch() returns, so nothing sees it half read
+IPC_StartupCode(filetype_reader_init, APTR, memory, static)
+{
+	lock_listlock(&GUI->filetypes, TRUE);
+	filetype_reader_locked = TRUE;
+	return 1;
+}
+
+// Reads the filetype files while startup carries on
+IPC_EntryCode(filetype_reader)
+{
+	IPCData *ipc;
+	APTR memory = 0;
+
+	ipc = IPC_ProcStartup((IPTR *)&memory, (ULONG (*)(IPCData *, APTR))&filetype_reader_init);
+
+	// The list is locked even if the rest of the startup failed
+	if (filetype_reader_locked)
+	{
+		if (ipc)
+			filetype_read_files(memory, &GUI->filetypes);
+		filetype_reader_locked = FALSE;
+		unlock_listlock(&GUI->filetypes);
+	}
+
+	if (ipc)
+	{
+		IPC_Flush(ipc);
+		IPC_Goodbye(ipc, &main_ipc, 0);
+	}
+	IPC_Free(ipc);
+}
+
+// Read the filetype list in the background; anything that locks the list waits for it.
+// Opening 70-odd small files is mostly disk seeks, which the rest of startup can overlap.
+// The name differs from the "dopus_filetypes" rescan process that file notification
+// starts: misc_startup() would find this reader under that name and skip the rescan.
+void filetype_read_list_async(APTR memory)
+{
+	if (!IPC_Launch(&GUI->process_list,
+					0,
+					"dopus_filetype_reader",
+					(IPTR)&filetype_reader,
+					STACK_DEFAULT,
+					(IPTR)memory,
+					(struct Library *)DOSBase))
+		filetype_read_list(memory, &GUI->filetypes);
 }
 
 // Create default filetype list

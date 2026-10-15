@@ -21,10 +21,17 @@ The background process (`source/Program/misc_proc.c`) executes the sniffing logi
 - **Scanning**: `init_commands_scan` uses `MatchFirst`/`MatchNext` to find all `#?.module` files in `dopus5:modules/`.
 
 ### 4. Identification (`Module_Identify`)
-For each discovered module:
+For each discovered module whose commands are not in the module cache (see below):
 - **Library Open**: The module is opened as a standard Amiga shared library.
 - **Module Metadata**: The system calls `Module_Identify(-1)` to retrieve a `ModuleInfo` structure. This contains the module's descriptive name, the number of functions it exports, and capability flags.
 - **Function Metadata**: For each function index (`0` to `function_count - 1`), `Module_Identify(num)` is called to retrieve the descriptive name/string for that specific command.
+
+### Module Command Cache
+Startup runs the same scan synchronously from `startup_init_commands()`. Opening a module loads it, and some modules open large libraries when they are opened (`ftp.module` opens `codesets.library`, `xadopus.module` opens `xadmaster.library`, which loads its clients), so identifying every module took seconds on the first start after a reboot.
+- **File**: `DOpus5:System/module-cache` holds, for each identified module, its file name, size, datestamp, catalog name, what that catalog resolved to (language and catalog version, or `-` for the built-in strings), and the command list the module reported (name, description, template, help file, flags and function ID). The list is taken at identification, not from `GUI->command_list`, so a command that a later module's command of the same name replaces is still recorded and comes back if that later module is removed.
+- **Use**: A module whose size and datestamp match its cache record is not opened; its commands are added from the record. The descriptions come from the module's catalog, so the scan first opens that catalog the way modules do (`OpenCatalogA(NULL, name, NULL)`) and uses the record only if it resolves to the same language and version, which catches changed locale preferences and catalogs installed or updated since.
+- **Validity**: The whole file is ignored if it was written by another program or library revision. Modules that set `MODULEF_CALL_STARTUP` are never cached, because they have to be opened at startup anyway.
+- **Updates**: The file is rewritten after a scan that identified a module or found a cached module removed or changed.
 
 ### 5. Registration
 Once identified, the module's functions are registered as commands.

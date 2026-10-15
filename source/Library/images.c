@@ -1325,6 +1325,89 @@ ULONG *LIBFUNC L_GetImagePalette(REG(a0, APTR ptr))
 	return 0;
 }
 
+// The pen array is private to the library: a (pen, count) pair for each pen the
+// remap holds, followed by a cache of the colours it has already resolved.
+// ObtainBestPen() searches the whole 256-entry colour map on every call, also on
+// RTG true-colour screens, and the default toolbar images use 64-250 colours
+// each, so remapping the toolbar used to take seconds. Colours that agree in the
+// top five bits of each gun share a cache entry and thus a pen; the remapped
+// images are limited to 256 pens anyway, and the difference does not show.
+#define REMAP_MAX_PENS 256
+#define REMAP_CACHE_SIZE 1024  // Power of two
+#define REMAP_CACHE_LIMIT 768  // Keep free slots so probes stay short
+#define REMAP_CACHE_USED 0x8000
+
+typedef struct
+{
+	struct Screen *screen;			// Screen and precision the cached pens were obtained for
+	long precision;
+	short count;					// Cached colours
+	UWORD key[REMAP_CACHE_SIZE];	// REMAP_CACHE_USED | RGB 5:5:5
+	UBYTE pen[REMAP_CACHE_SIZE];	// Pen obtained for that colour
+} RemapCache;
+
+#define REMAP_CACHE(remap) ((RemapCache *)((remap)->ir_PenArray + (REMAP_MAX_PENS << 1)))
+
+static UWORD remap_cache_key(ULONG *palette, short pen)
+{
+	return (UWORD)(REMAP_CACHE_USED | ((palette[1 + (pen * 3)] >> 17) & 0x7c00) |
+				   ((palette[2 + (pen * 3)] >> 22) & 0x03e0) | (palette[3 + (pen * 3)] >> 27));
+}
+
+static short remap_cache_slot(UWORD key)
+{
+	return (short)((((ULONG)key * 40503UL) >> 6) & (REMAP_CACHE_SIZE - 1));
+}
+
+// Pen this remap already obtained for a colour, or -1
+static short remap_cache_find(ImageRemap *remap, UWORD key, struct Screen *screen, long precision)
+{
+	RemapCache *cache;
+	short slot;
+
+	if (!remap->ir_PenArray || precision == PRECISION_EXACT)
+		return -1;
+	cache = REMAP_CACHE(remap);
+	if (cache->screen != screen || cache->precision != precision)
+		return -1;
+
+	for (slot = remap_cache_slot(key); cache->key[slot]; slot = (slot + 1) & (REMAP_CACHE_SIZE - 1))
+	{
+		if (cache->key[slot] == key)
+			return cache->pen[slot];
+	}
+
+	return -1;
+}
+
+static void remap_cache_add(ImageRemap *remap, UWORD key, struct Screen *screen, long precision, short pen)
+{
+	RemapCache *cache;
+	short slot;
+
+	if (!remap->ir_PenArray || precision == PRECISION_EXACT)
+		return;
+	cache = REMAP_CACHE(remap);
+
+	// Pens from another screen or precision do not apply
+	if (cache->screen != screen || cache->precision != precision)
+	{
+		memset(cache->key, 0, sizeof(cache->key));
+		cache->count = 0;
+		cache->screen = screen;
+		cache->precision = precision;
+	}
+
+	if (cache->count >= REMAP_CACHE_LIMIT)
+		return;
+
+	for (slot = remap_cache_slot(key); cache->key[slot]; slot = (slot + 1) & (REMAP_CACHE_SIZE - 1))
+		;
+	cache->key[slot] = key;
+	cache->pen[slot] = pen;
+	++cache->count;
+}
+
 // Add a pen to pen array
 BOOL add_remap_pen(struct Screen *screen, ImageRemap *remap, unsigned short pen)
 {
@@ -1333,17 +1416,9 @@ BOOL add_remap_pen(struct Screen *screen, ImageRemap *remap, unsigned short pen)
 	// Don't have pen array?
 	if (!remap->ir_PenArray)
 	{
-		short depth;
-
 		// The remap code stores planar pen values and only supports up to
-		// 8 destination planes. True-colour screens can report 24/32-bit
-		// depths, so cap the bookkeeping array to the same range.
-		depth = screen->RastPort.BitMap->Depth;
-		if (depth > 8)
-			depth = 8;
-
-		// Allocate two UWORDs for every possible remapped pen.
-		if (!(remap->ir_PenArray = AllocVec((sizeof(UWORD) * 2) << depth, MEMF_CLEAR)))
+		// 8 destination planes, so 256 pens is the most a remap can hold.
+		if (!(remap->ir_PenArray = AllocVec((sizeof(UWORD) * 2 * REMAP_MAX_PENS) + sizeof(RemapCache), MEMF_CLEAR)))
 			return 0;
 	}
 
@@ -1638,22 +1713,28 @@ BOOL LIBFUNC L_RemapImage(REG(a0, Image_Data *image), REG(a1, struct Screen *scr
 				// Has this pen not been mapped yet?
 				if (pen_lookup[pen] == -1)
 				{
+					UWORD key = remap_cache_key(palette, pen);
 					long alloc;
 
+					// Already holding a pen for this colour?
+					if ((alloc = remap_cache_find(remap, key, screen, precision)) != -1)
+						pen_lookup[pen] = alloc;
+
 					// Try for pen
-					if ((alloc = ObtainBestPen(screen->ViewPort.ColorMap,
-											   palette[1 + (pen * 3)],
-											   palette[2 + (pen * 3)],
-											   palette[3 + (pen * 3)],
-											   OBP_Precision,
-											   precision,
-											   TAG_END)) != -1)
+					else if ((alloc = ObtainBestPen(screen->ViewPort.ColorMap,
+													palette[1 + (pen * 3)],
+													palette[2 + (pen * 3)],
+													palette[3 + (pen * 3)],
+													OBP_Precision,
+													precision,
+													TAG_END)) != -1)
 					{
 						// Save pen
 						pen_lookup[pen] = alloc;
 
 						// Add to pen array
-						add_remap_pen(screen, remap, alloc);
+						if (add_remap_pen(screen, remap, alloc))
+							remap_cache_add(remap, key, screen, precision, alloc);
 					}
 
 					// Couldn't allocate one, just grab nearest

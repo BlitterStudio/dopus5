@@ -259,6 +259,11 @@ typedef struct _ModuleNode
 {
 	struct Node node;
 	struct DateStamp date;
+	ULONG size;
+	char catalog[32];		// Catalog the module opens, for the module cache
+	char catalog_id[40];	// What that catalog resolved to
+	UBYTE *commands;		// Its command records as identified, for the module cache
+	ULONG commands_size;
 	short flags;
 } ModuleNode;
 
@@ -267,5 +272,6 @@ typedef struct _ModuleNode
 #endif
 
 #define MNF_TEMP (1 << 0)
+#define MNF_CACHE (1 << 1)	// Commands known, can go in the module cache
 
 #endif

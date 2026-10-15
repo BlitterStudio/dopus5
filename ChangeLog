@@ -1,3 +1,47 @@
+[dopus5 next] Faster toolbar image remapping
+dopus5.library change; version bump deferred.
+
+- RemapImage() called ObtainBestPen() for every colour of every image.
+  Each call searches the screen's whole 256-entry colour map, also on
+  RTG true-colour screens, and the 24 images of the default lister
+  toolbar use 1600 different colours, so building the toolbar took
+  about 8 seconds at startup in Amiberry (68060, JIT off, 32-bit
+  Workbench).  The pens a remap obtains are now cached by colour, with
+  colours that agree in the top five bits of each gun sharing a pen.
+  The toolbar takes 740 ObtainBestPen() calls instead of 3800 and is
+  built in under 2 seconds; screenshots of the toolbar show no visible
+  difference.
+
+[dopus5 next] Module commands cached between starts
+Program change; version bump deferred.
+
+- To learn the commands of a module, Opus opens it.  ftp.module opens
+  codesets.library and xadopus.module opens xadmaster.library, which
+  loads its clients, so the first start after a reboot spent about
+  2.3 of 13 seconds identifying modules.  The commands are now saved
+  in DOpus5:System/module-cache and taken from there while a module
+  keeps its size and datestamp and its catalog resolves to the same
+  language and catalog version as when they were read.  The file is
+  rebuilt when a module is added, changed or removed, and ignored
+  after an Opus update.  Modules that ask to be called at startup are
+  still opened.
+
+[dopus5 next] Filetypes read in the background at startup
+Program change; version bump deferred.
+
+- The filetype files in DOpus5:Filetypes are read by a separate
+  process while startup carries on.  It holds the filetype list
+  locked until it is done, so anything that needs a filetype waits
+  for the complete list.
+
+[dopus5 next] Iconify icons loaded when first needed
+Program change; version bump deferred.
+
+- DOpus5:Icons/Lister and DOpus5:Icons/Buttons are only used to
+  iconify listers and button banks.  They are now read the first time
+  one is iconified instead of at startup, where the two colour icons
+  took about 0.4 seconds to load.
+
 [dopus5 next] MagicWB icon colours when Opus replaces Workbench
 Program change (OS3); version bump deferred.
 

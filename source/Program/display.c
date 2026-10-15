@@ -48,6 +48,22 @@ static BOOL display_wait_pattern(void)
 	return GUI->pattern[PATTERN_MAIN].valid;
 }
 
+// Icon for iconified listers or button banks. Loaded the first time one is iconified:
+// reading the shipped OS 3.5 colour icons was a noticeable part of startup.
+struct DiskObject *get_iconify_icon(BOOL buttons)
+{
+	struct DiskObject **icon = (buttons) ? &GUI->button_icon : &GUI->lister_icon;
+
+	ObtainSemaphore(&GUI->iconify_icon_lock);
+	if (!*icon &&
+		(*icon = GetCachedDiskObject((buttons) ? "DOpus5:Icons/Buttons" : "DOpus5:Icons/Lister", GCDOF_NOCACHE)) &&
+		GUI->iconify_icon_screen)
+		RemapIcon(*icon, GUI->iconify_icon_screen, FALSE);
+	ReleaseSemaphore(&GUI->iconify_icon_lock);
+
+	return *icon;
+}
+
 // Open the display
 BOOL display_open(long flags)
 {
@@ -519,8 +535,11 @@ BOOL display_open(long flags)
 	}
 
 	// Remap lister and button icons
-	RemapIcon(GUI->lister_icon, GUI->window->WScreen, FALSE);
-	RemapIcon(GUI->button_icon, GUI->window->WScreen, FALSE);
+	ObtainSemaphore(&GUI->iconify_icon_lock);
+	GUI->iconify_icon_screen = GUI->window->WScreen;
+	RemapIcon(GUI->lister_icon, GUI->iconify_icon_screen, FALSE);
+	RemapIcon(GUI->button_icon, GUI->iconify_icon_screen, FALSE);
+	ReleaseSemaphore(&GUI->iconify_icon_lock);
 
 	// Open buttons
 	IPC_ListCommand(&GUI->buttons_list, BUTTONS_OPEN, 0, (IPTR)GUI->screen_pointer, 0);
@@ -667,8 +686,11 @@ void close_display(int close_flags, BOOL quit_all)
 			backdrop_free_remap(GUI->backdrop, GUI->window);
 
 			// Free lister and button remapping
+			ObtainSemaphore(&GUI->iconify_icon_lock);
 			RemapIcon(GUI->lister_icon, GUI->window->WScreen, TRUE);
 			RemapIcon(GUI->button_icon, GUI->window->WScreen, TRUE);
+			GUI->iconify_icon_screen = 0;
+			ReleaseSemaphore(&GUI->iconify_icon_lock);
 
 			// Free rexx icon remapping
 			rexx_remap_icons(TRUE);
