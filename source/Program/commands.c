@@ -59,6 +59,373 @@ Cfg_Function *new_default_function(char *func, APTR memory)
 	return function;
 }
 
+// Module command cache. Identifying a module means opening it, and some modules
+// open big libraries when they are opened (ftp.module codesets.library,
+// xadopus.module xadmaster.library and its clients), so the first start after a
+// reboot spent seconds loading modules only to read their command lists. The
+// commands of each identified module are saved here and reused for as long as
+// the module file keeps its size and datestamp.
+#define MODULE_CACHE_FILE "DOpus5:System/module-cache"
+#define MODULE_CACHE_ID MAKE_ID('M', 'C', 'A', '1')
+#define MODULE_CACHE_MAX 128
+
+typedef struct
+{
+	char *name;
+	ULONG size;
+	struct DateStamp date;
+	ULONG count;	  // Number of commands
+	UBYTE *commands;  // Command records
+	BOOL seen;		  // Module file found by this scan
+} ModuleCacheEntry;
+
+typedef struct
+{
+	UBYTE *buffer;
+	UBYTE *end;
+	short count;
+	ModuleCacheEntry entry[MODULE_CACHE_MAX];
+} ModuleCache;
+
+typedef struct
+{
+	UBYTE *ptr;
+	UBYTE *end;
+	BOOL bad;
+} ModuleCacheReader;
+
+// Values are stored big-endian byte by byte, so records need no alignment
+static ULONG module_cache_get(ModuleCacheReader *reader, short bytes)
+{
+	ULONG value = 0;
+
+	if (reader->bad || reader->end - reader->ptr < bytes)
+	{
+		reader->bad = TRUE;
+		return 0;
+	}
+	while (bytes--)
+		value = (value << 8) | *reader->ptr++;
+	return value;
+}
+
+// Strings are stored with their length including the null, 0 for no string
+static char *module_cache_get_string(ModuleCacheReader *reader)
+{
+	ULONG len;
+	char *string;
+
+	if (!(len = module_cache_get(reader, 2)))
+		return 0;
+	if (reader->bad || reader->end - reader->ptr < len || reader->ptr[len - 1])
+	{
+		reader->bad = TRUE;
+		return 0;
+	}
+	string = (char *)reader->ptr;
+	reader->ptr += len;
+	return string;
+}
+
+// Module descriptions come from the module catalogs
+static char *module_cache_language(void)
+{
+	if (locale.li_Locale)
+	{
+		if (locale.li_Locale->loc_PrefLanguages[0])
+			return (char *)locale.li_Locale->loc_PrefLanguages[0];
+		if (locale.li_Locale->loc_LanguageName)
+			return (char *)locale.li_Locale->loc_LanguageName;
+	}
+	return "";
+}
+
+// Read one command record
+static BOOL module_cache_get_command(ModuleCacheReader *reader,
+									 char **name,
+									 char **desc,
+									 char **template,
+									 char **help,
+									 ULONG *flags,
+									 UWORD *id)
+{
+	*name = module_cache_get_string(reader);
+	*desc = module_cache_get_string(reader);
+	*template = module_cache_get_string(reader);
+	*help = module_cache_get_string(reader);
+	*flags = module_cache_get(reader, 4);
+	*id = (UWORD)module_cache_get(reader, 2);
+	if (!*name)
+		reader->bad = TRUE;
+	return (BOOL)!reader->bad;
+}
+
+static void module_cache_free(ModuleCache *cache)
+{
+	if (cache)
+	{
+		FreeVec(cache->buffer);
+		FreeVec(cache);
+	}
+}
+
+// Load and check the cache; returns 0 if there is none or it does not apply
+static ModuleCache *module_cache_load(void)
+{
+	ModuleCache *cache;
+	ModuleCacheReader reader;
+	APTR file;
+	D_S(struct FileInfoBlock, fib)
+	LONG size = 0;
+	char *language;
+
+	if (!(cache = AllocVec(sizeof(ModuleCache), MEMF_CLEAR)))
+		return 0;
+
+	if (!(file = OpenBuf(MODULE_CACHE_FILE, MODE_OLDFILE, 512)))
+	{
+		FreeVec(cache);
+		return 0;
+	}
+	if (ExamineBuf(file, fib) && (size = fib->fib_Size) > 0 && size < 0x10000 &&
+		(cache->buffer = AllocVec(size, 0)) && ReadBuf(file, (char *)cache->buffer, size) != size)
+	{
+		FreeVec(cache->buffer);
+		cache->buffer = 0;
+	}
+	CloseBuf(file);
+	if (!cache->buffer)
+	{
+		FreeVec(cache);
+		return 0;
+	}
+
+	reader.ptr = cache->buffer;
+	reader.end = cache->end = cache->buffer + size;
+	reader.bad = FALSE;
+
+	// Written by this version for the current language?
+	if (module_cache_get(&reader, 4) != MODULE_CACHE_ID || module_cache_get(&reader, 2) != PROG_REVISION ||
+		module_cache_get(&reader, 2) != LIB_VERSION || module_cache_get(&reader, 2) != LIB_REVISION ||
+		!(language = module_cache_get_string(&reader)) || stricmp(language, module_cache_language()) != 0)
+	{
+		module_cache_free(cache);
+		return 0;
+	}
+
+	// Index the module records, checking them as we go
+	while (reader.ptr < reader.end && !reader.bad && cache->count < MODULE_CACHE_MAX)
+	{
+		ModuleCacheEntry *entry = &cache->entry[cache->count++];
+		ULONG num;
+		char *name, *desc, *template, *help;
+		ULONG flags;
+		UWORD id;
+
+		if (!(entry->name = module_cache_get_string(&reader)))
+			reader.bad = TRUE;
+		entry->size = module_cache_get(&reader, 4);
+		entry->date.ds_Days = module_cache_get(&reader, 4);
+		entry->date.ds_Minute = module_cache_get(&reader, 4);
+		entry->date.ds_Tick = module_cache_get(&reader, 4);
+		entry->count = module_cache_get(&reader, 2);
+		entry->commands = reader.ptr;
+		for (num = 0; num < entry->count && !reader.bad; num++)
+			module_cache_get_command(&reader, &name, &desc, &template, &help, &flags, &id);
+	}
+
+	if (reader.bad || reader.ptr != reader.end)
+	{
+		module_cache_free(cache);
+		return 0;
+	}
+
+	return cache;
+}
+
+// Add a module command, splitting the template from its key
+static void module_add_command(char *name, char *desc, char *template, char *module, ULONG flags, UWORD id, char *help)
+{
+	CommandList *command;
+	char *ptr;
+
+	if ((command = add_command(name, desc, template, module, flags, 0, 0, help, 0)))
+	{
+		// Set function ID
+		command->function = id;
+
+		// Newline marks template key
+		if (command->template && (ptr = strchr(command->template, '\n')))
+		{
+			// Set template key pointer, and clear join
+			command->template_key = ptr + 1;
+			*ptr = 0;
+		}
+	}
+}
+
+// Find a module's cache record and note that the module still exists
+static ModuleCacheEntry *module_cache_find(ModuleCache *cache, char *module)
+{
+	short a;
+
+	if (cache)
+	{
+		for (a = 0; a < cache->count; a++)
+		{
+			if (stricmp(cache->entry[a].name, module) == 0)
+			{
+				cache->entry[a].seen = TRUE;
+				return &cache->entry[a];
+			}
+		}
+	}
+
+	return 0;
+}
+
+// Records for modules that have gone should be dropped from the file
+static BOOL module_cache_stale(ModuleCache *cache)
+{
+	short a;
+
+	if (cache)
+	{
+		for (a = 0; a < cache->count; a++)
+		{
+			if (!cache->entry[a].seen)
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+// Add a module's commands from the cache; FALSE if the cache does not have this version of it
+static BOOL module_cache_add_commands(ModuleCache *cache, char *module, struct FileInfoBlock *fib)
+{
+	ModuleCacheEntry *entry;
+	ModuleCacheReader reader;
+	ULONG num;
+
+	if (!(entry = module_cache_find(cache, module)) || entry->size != (ULONG)fib->fib_Size ||
+		CompareDates(&entry->date, &fib->fib_Date) != 0)
+		return FALSE;
+
+	reader.ptr = entry->commands;
+	reader.end = cache->end;
+	reader.bad = FALSE;
+	for (num = 0; num < entry->count; num++)
+	{
+		char *name, *desc, *template, *help;
+		ULONG flags;
+		UWORD id;
+
+		if (module_cache_get_command(&reader, &name, &desc, &template, &help, &flags, &id))
+			module_add_command(name, desc, template, module, flags, id, help);
+	}
+	return TRUE;
+}
+
+static void module_cache_put(APTR file, ULONG value, short bytes)
+{
+	UBYTE buf[4];
+	short a;
+
+	for (a = bytes - 1; a >= 0; a--, value >>= 8)
+		buf[a] = (UBYTE)value;
+	WriteBuf(file, (char *)buf, bytes);
+}
+
+static void module_cache_put_string(APTR file, char *string)
+{
+	ULONG len = (string) ? strlen(string) + 1 : 0;
+
+	module_cache_put(file, len, 2);
+	if (len)
+		WriteBuf(file, string, len);
+}
+
+// Save the commands of every module whose commands are known
+static void module_cache_save(void)
+{
+	APTR file;
+	ModuleNode *node;
+	CommandList *cmd;
+	short count = 0;
+
+	if (!(file = OpenBuf(MODULE_CACHE_FILE, MODE_NEWFILE, 4096)))
+		return;
+
+	module_cache_put(file, MODULE_CACHE_ID, 4);
+	module_cache_put(file, PROG_REVISION, 2);
+	module_cache_put(file, LIB_VERSION, 2);
+	module_cache_put(file, LIB_REVISION, 2);
+	module_cache_put_string(file, module_cache_language());
+
+	lock_listlock(&GUI->modules_list, FALSE);
+	lock_listlock(&GUI->command_list, FALSE);
+
+	for (node = (ModuleNode *)GUI->modules_list.list.lh_Head; node->node.ln_Succ && count < MODULE_CACHE_MAX;
+		 node = (ModuleNode *)node->node.ln_Succ)
+	{
+		ULONG num = 0;
+
+		if (!(node->flags & MNF_CACHE))
+			continue;
+
+		for (cmd = (CommandList *)GUI->command_list.list.lh_Head; cmd->node.mln_Succ;
+			 cmd = (CommandList *)cmd->node.mln_Succ)
+		{
+			if (cmd->flags & FUNCF_EXTERNAL_FUNCTION && cmd->stuff.module_name &&
+				stricmp(cmd->stuff.module_name, node->node.ln_Name) == 0)
+				++num;
+		}
+
+		module_cache_put_string(file, node->node.ln_Name);
+		module_cache_put(file, node->size, 4);
+		module_cache_put(file, node->date.ds_Days, 4);
+		module_cache_put(file, node->date.ds_Minute, 4);
+		module_cache_put(file, node->date.ds_Tick, 4);
+		module_cache_put(file, num, 2);
+
+		for (cmd = (CommandList *)GUI->command_list.list.lh_Head; cmd->node.mln_Succ;
+			 cmd = (CommandList *)cmd->node.mln_Succ)
+		{
+			if (!(cmd->flags & FUNCF_EXTERNAL_FUNCTION) || !cmd->stuff.module_name ||
+				stricmp(cmd->stuff.module_name, node->node.ln_Name) != 0)
+				continue;
+
+			module_cache_put_string(file, cmd->name);
+			module_cache_put_string(file, (char *)cmd->desc);
+
+			// Rejoin the template and its key
+			if (cmd->template && cmd->template_key)
+			{
+				ULONG len = strlen(cmd->template) + strlen(cmd->template_key) + 2;
+
+				module_cache_put(file, len, 2);
+				WriteBuf(file, cmd->template, strlen(cmd->template));
+				WriteBuf(file, "\n", 1);
+				WriteBuf(file, cmd->template_key, strlen(cmd->template_key) + 1);
+			}
+			else
+				module_cache_put_string(file, cmd->template);
+
+			module_cache_put_string(file, cmd->help_name);
+			module_cache_put(file, cmd->flags & ~FUNCF_EXTERNAL_FUNCTION, 4);
+			module_cache_put(file, cmd->function, 2);
+		}
+
+		++count;
+	}
+
+	unlock_listlock(&GUI->command_list);
+	unlock_listlock(&GUI->modules_list);
+
+	CloseBuf(file);
+}
+
 // Update disk-based commands
 void update_commands(ULONG flag)
 {
@@ -80,7 +447,9 @@ void update_commands(ULONG flag)
 void init_commands_scan(short type)
 {
 	struct AnchorPath *anchor;
-	ModuleNode *node;
+	ModuleNode *node = 0;
+	ModuleCache *cache = 0;
+	BOOL cache_changed = FALSE;
 	long error;
 	short a, pat;
 	char *ptr;
@@ -112,6 +481,10 @@ void init_commands_scan(short type)
 		patterns[0] = "PROGDIR:Modules/#?.dopus5";
 		patterns[1] = "DOpus5:Modules/#?.dopus5";
 	}
+
+	// Commands of unchanged modules can come from the cache
+	if (type & SCAN_MODULES)
+		cache = module_cache_load();
 
 	for (pat = 0; patterns[pat]; pat++)
 	{
@@ -157,6 +530,10 @@ void init_commands_scan(short type)
 						break;
 					}
 				}
+
+				// Keep its cache record
+				if (ok)
+					module_cache_find(cache, anchor->ap_Info.fib_FileName);
 			}
 
 			// Not an excluded module?
@@ -175,8 +552,12 @@ void init_commands_scan(short type)
 					// Check datestamp
 					if (CompareDates(&node->date, &anchor->ap_Info.fib_Date) != 0)
 					{
-						// Update datestamp, ok to reread
+						// Update datestamp and size, ok to reread
 						node->date = anchor->ap_Info.fib_Date;
+						node->size = anchor->ap_Info.fib_Size;
+						if (node->flags & MNF_CACHE)
+							cache_changed = TRUE;
+						node->flags &= ~MNF_CACHE;
 
 						// Expunge functions for this module
 						command_expunge(name_ptr);
@@ -197,6 +578,7 @@ void init_commands_scan(short type)
 					node->node.ln_Name = (char *)(node + 1);
 					strcpy(node->node.ln_Name, name_ptr);
 					node->date = anchor->ap_Info.fib_Date;
+					node->size = anchor->ap_Info.fib_Size;
 					AddTail(&GUI->modules_list.list, &node->node);
 
 					// Set 'temp' flag
@@ -227,6 +609,17 @@ void init_commands_scan(short type)
 
 				// Run rexx thing
 				rexx_send_command(anchor->ap_Buf, FALSE);
+			}
+
+			// Commands already known from the cache?
+			else if (module_cache_add_commands(cache, anchor->ap_Info.fib_FileName, &anchor->ap_Info))
+			{
+				if (node)
+				{
+					lock_listlock(&GUI->modules_list, TRUE);
+					node->flags |= MNF_CACHE;
+					unlock_listlock(&GUI->modules_list);
+				}
 			}
 
 			// Otherwise
@@ -271,7 +664,6 @@ void init_commands_scan(short type)
 					if ((info = Module_Identify(-1)))
 					{
 						short num;
-						CommandList *command;
 						char helpname[256], *helpptr = 0;
 
 						// Help available?
@@ -295,34 +687,13 @@ void init_commands_scan(short type)
 						// Go through module's functions
 						for (num = 0; num < info->function_count; num++)
 						{
-							// Add command
-							if ((command = add_command(info->function[num].name,
-													   (char *)Module_Identify(num),
-													   info->function[num].template,
-													   anchor->ap_Info.fib_FileName,
-													   info->function[num].flags,
-													   0,
-													   0,
-													   helpptr,
-													   0)))
-							{
-								// Set function ID
-								command->function = info->function[num].id;
-
-								// Got template?
-								if (command->template && *command->template)
-								{
-									char *ptr;
-
-									// Newline marks template key
-									if ((ptr = strchr(command->template, '\n')))
-									{
-										// Set template key pointer, and clear join
-										command->template_key = ptr + 1;
-										*ptr = 0;
-									}
-								}
-							}
+							module_add_command(info->function[num].name,
+											   (char *)Module_Identify(num),
+											   info->function[num].template,
+											   anchor->ap_Info.fib_FileName,
+											   info->function[num].flags,
+											   info->function[num].id,
+											   helpptr);
 						}
 
 						// Does module want to be called?
@@ -344,6 +715,15 @@ void init_commands_scan(short type)
 							else if (misc_startup("dopus_module_init", MODULE_STARTUP, 0, ModuleBase, 0))
 								ModuleBase = 0;
 						}
+
+						// Commands are all we need from it next time
+						else if (node)
+						{
+							lock_listlock(&GUI->modules_list, TRUE);
+							node->flags |= MNF_CACHE;
+							unlock_listlock(&GUI->modules_list);
+							cache_changed = TRUE;
+						}
 					}
 // Close module
 #ifdef __amigaos4__
@@ -362,6 +742,9 @@ void init_commands_scan(short type)
 	}
 
 	FreeVec(anchor);
+	if (module_cache_stale(cache))
+		cache_changed = TRUE;
+	module_cache_free(cache);
 
 	// Lock modules list
 	lock_listlock(&GUI->modules_list, TRUE);
@@ -380,6 +763,8 @@ void init_commands_scan(short type)
 			{
 				// Remove node
 				Remove((struct Node *)node);
+				if (node->flags & MNF_CACHE)
+					cache_changed = TRUE;
 
 				// Expunge the module
 				command_expunge(node->node.ln_Name);
@@ -399,6 +784,10 @@ void init_commands_scan(short type)
 
 	// Unlock modules list
 	unlock_listlock(&GUI->modules_list);
+
+	// Save the module commands if they changed
+	if (cache_changed)
+		module_cache_save();
 }
 
 // Expunge functions
