@@ -80,6 +80,8 @@ void abort_io(struct IORequest *ioreq);
 #endif
 LONG GetDiskInfo(char *device, struct InfoData *info);
 BOOL VolumePresent(DirBuffer *buffer);
+BOOL disk_eject_available(char *name);
+void disk_eject(struct Window *window, char *names);
 char *find_public_screen(struct Screen *screen, BOOL lock);
 Cfg_Function *match_function_key(UWORD, UWORD, Cfg_ButtonBank *, Lister *, ULONG, ULONG *);
 Cfg_Function *match_function_key_list(UWORD, UWORD, Cfg_ButtonBank *, BOOL);

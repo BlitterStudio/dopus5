@@ -224,6 +224,8 @@ typedef struct
 	struct Screen *iconify_icon_screen;	 // Screen they are remapped for
 	struct SignalSemaphore iconify_icon_lock;
 
+	struct SignalSemaphore eject_lock;	// One disk eject at a time
+
 	struct ListLock function_traps;	 // Function trap list
 
 	struct ListLock positions;	// Position list

@@ -312,6 +312,7 @@ void backdrop_pos_slider(BackdropInfo *, short);
 BackdropObject *backdrop_find_disk(BackdropInfo *, char *);
 void backdrop_update_leftouts(BackdropInfo *);
 void backdrop_format(BackdropInfo *, BackdropObject *);
+void backdrop_eject(BackdropInfo *, BackdropObject *);
 void backdrop_drop_object(BackdropInfo *, BackdropObject *);
 
 BOOL backdrop_idcmp(BackdropInfo *, struct IntuiMessage *, unsigned short flags);

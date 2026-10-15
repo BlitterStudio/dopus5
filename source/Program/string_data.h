@@ -314,6 +314,9 @@ For more information on Directory Opus for Windows please see:
 	#define MSG_ICON_SNAPSHOT_ALL 2932
 	#define MSG_ICON_SNAPSHOT_WINDOW 2933
 	#define MSG_ICONS_MAKEFILE_MENU 2934
+	#define MSG_ICON_EJECT 2935
+	#define MSG_EJECTING 2936
+	#define MSG_EJECT_UNSUPPORTED 2937
 	#define MSG_BUTTONS_MENU 3000
 	#define MSG_CLOSE_BUTTONS_MENU 3002
 	#define MSG_BUTTONS_NEW_GFX_MENU 3006
@@ -854,6 +857,9 @@ For more information on Directory Opus for Windows please see:
 	#define MSG_ICON_SNAPSHOT_ALL_STR "Snapshot All"
 	#define MSG_ICON_SNAPSHOT_WINDOW_STR "Snapshot Window"
 	#define MSG_ICONS_MAKEFILE_MENU_STR "File..."
+	#define MSG_ICON_EJECT_STR "Eject Disk"
+	#define MSG_EJECTING_STR "ejecting"
+	#define MSG_EJECT_UNSUPPORTED_STR "%s cannot be ejected."
 	#define MSG_BUTTONS_MENU_STR "Buttons"
 	#define MSG_CLOSE_BUTTONS_MENU_STR "Close"
 	#define MSG_BUTTONS_NEW_GFX_MENU_STR "New Graphic Buttons..."
@@ -1411,6 +1417,9 @@ static const struct CatCompArrayType CatCompArray[] = {
 	{MSG_ICON_SNAPSHOT_ALL, (STRPTR)MSG_ICON_SNAPSHOT_ALL_STR},
 	{MSG_ICON_SNAPSHOT_WINDOW, (STRPTR)MSG_ICON_SNAPSHOT_WINDOW_STR},
 	{MSG_ICONS_MAKEFILE_MENU, (STRPTR)MSG_ICONS_MAKEFILE_MENU_STR},
+	{MSG_ICON_EJECT, (STRPTR)MSG_ICON_EJECT_STR},
+	{MSG_EJECTING, (STRPTR)MSG_EJECTING_STR},
+	{MSG_EJECT_UNSUPPORTED, (STRPTR)MSG_EJECT_UNSUPPORTED_STR},
 	{MSG_BUTTONS_MENU, (STRPTR)MSG_BUTTONS_MENU_STR},
 	{MSG_CLOSE_BUTTONS_MENU, (STRPTR)MSG_CLOSE_BUTTONS_MENU_STR},
 	{MSG_BUTTONS_NEW_GFX_MENU, (STRPTR)MSG_BUTTONS_NEW_GFX_MENU_STR},
@@ -2213,6 +2222,12 @@ static const char CatCompBlock[] = {"\x00\x00\x00\x00\x00\x0C" MSG_ABORTED_STR
 									"\x00\x00\x0B\x75\x00\x10" MSG_ICON_SNAPSHOT_WINDOW_STR
 									"\x00"
 									"\x00\x00\x0B\x76\x00\x08" MSG_ICONS_MAKEFILE_MENU_STR
+									"\x00"
+									"\x00\x00\x0B\x77\x00\x0C" MSG_ICON_EJECT_STR
+									"\x00\x00"
+									"\x00\x00\x0B\x78\x00\x0A" MSG_EJECTING_STR
+									"\x00\x00"
+									"\x00\x00\x0B\x79\x00\x16" MSG_EJECT_UNSUPPORTED_STR
 									"\x00"
 									"\x00\x00\x0B\xB8\x00\x08" MSG_BUTTONS_MENU_STR
 									"\x00"

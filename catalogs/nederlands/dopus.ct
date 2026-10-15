@@ -1046,6 +1046,18 @@ MSG_ICON_SNAPSHOT_WINDOW
 blokken
 ; Snapshot Window
 ;
+MSG_ICON_EJECT
+Eject Disk
+; Eject Disk
+;
+MSG_EJECTING
+ejecting
+; ejecting
+;
+MSG_EJECT_UNSUPPORTED
+%s cannot be ejected.
+; %s cannot be ejected.
+;
 MSG_BUTTONS_MENU
 Knoppen
 ; Buttons

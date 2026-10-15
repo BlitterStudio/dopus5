@@ -1469,6 +1469,11 @@ BOOL menu_process_event(IPTR id, struct MenuItem *item, struct Window *window)
 		backdrop_format(GUI->backdrop, 0);
 		break;
 
+	// Eject disks
+	case MENU_ICON_EJECT:
+		backdrop_eject(GUI->backdrop, 0);
+		break;
+
 	// Rename/delete icons
 	case MENU_ICON_RENAME:
 	case MENU_ICON_DELETE: {

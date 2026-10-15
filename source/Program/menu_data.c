@@ -126,6 +126,7 @@ MenuData dopus_menus[] = {
 	{NM_ITEM, MENU_ICON_DELETE, MSG_DELETE, 0},
 	{NM_ITEM, MENU_ICON_FORMAT, MSG_ICON_FORMAT, 0},
 	{NM_ITEM, MENU_ICON_DISKINFO, MSG_ICON_DISKINFO, 0},
+	{NM_ITEM, MENU_ICON_EJECT, MSG_ICON_EJECT, 0},
 
 	// Settings
 	{NM_TITLE, 0, MSG_SETTINGS_MENU, 0},
@@ -229,6 +230,7 @@ MenuHelp menu_help_data[] = {
 	{MENU_ICON_DELETE, "Delete"},
 	{MENU_ICON_FORMAT, "Format"},
 	{MENU_ICON_DISKINFO, "Disk Information"},
+	{MENU_ICON_EJECT, "Eject"},
 	{MENU_ICON_COPY, "Copy"},
 	{MENU_ICON_COPY_RAM, "Copy"},
 	{MENU_ICON_COPY_DF0, "Copy"},
