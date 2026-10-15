@@ -170,6 +170,19 @@
 	#define DOPUS_PROP_KNOB_TAG(knob) TAG_IGNORE
 #endif
 
+/* Icon label style for a font prefs FP_WBFONT entry. AmigaOS 3.2 and OS4 keep
+ * Workbench's outline/shadow choice in fp_SpecialDrawMode (asl.library's
+ * FO_SPECIALMODE_* values); Opus stores them as label styles 3 (outline) and
+ * 2 (shadow). Headers without the field only have fp_DrawMode. */
+#ifdef FO_SPECIALMODE_OUTLINE
+	#define DOPUS_FONTPREFS_ICON_STYLE(fp)                                   \
+		((UBYTE)(((fp)->fp_SpecialDrawMode == FO_SPECIALMODE_OUTLINE)  ? 3  \
+				 : ((fp)->fp_SpecialDrawMode == FO_SPECIALMODE_SHADOW) ? 2  \
+																		: (fp)->fp_DrawMode))
+#else
+	#define DOPUS_FONTPREFS_ICON_STYLE(fp) ((UBYTE)(fp)->fp_DrawMode)
+#endif
+
 /* Long word alignement (mainly used to get
  * FIB or DISK_INFO as auto variables)
  */
