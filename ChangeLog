@@ -1,3 +1,15 @@
+[dopus5 next] System scroller knobs on AmigaOS 3.2
+dopus5.library and Program change; version bump deferred.
+
+- On AmigaOS 3.2 (Intuition 47.44 or newer) the scrollers inside
+  windows draw their knob with the system's prop knob imagery, the
+  same raised knob in the background colour that GadTools and ASL
+  scrollers use, instead of the white knob (#153).  This covers the
+  list views in the editors and requesters and the panel scrollers
+  of a Dual Lister.  Window border scrollers already looked like
+  those of Workbench windows and are unchanged.  Older systems keep
+  the previous look.
+
 [dopus5 next] Custom lister colours for every element
 Program and configopus.module change; version bump deferred.
 

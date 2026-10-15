@@ -65,6 +65,7 @@ typedef struct ListerDualState
 	struct Gadget *horiz_arrow_left[LISTER_DUAL_SIDES];
 	struct Gadget *horiz_arrow_right[LISTER_DUAL_SIDES];
 	APTR scroll_image[LISTER_DUAL_SIDES][4];
+	APTR scroll_knob[LISTER_DUAL_SIDES];
 	struct Gadget *system_scroller;
 	struct Gadget *system_horiz_scroller;
 	ULONG frame_screen_flags;
@@ -914,6 +915,10 @@ static void lister_dual_dispose_scrollbar_side(Lister *lister, ListerDualState *
 			DisposeObject((Object *)state->scroll_image[side][a]);
 		state->scroll_image[side][a] = 0;
 	}
+
+	if (state->scroll_knob[side])
+		DisposeObject((Object *)state->scroll_knob[side]);
+	state->scroll_knob[side] = 0;
 }
 
 static BOOL lister_dual_create_scrollbar_side(Lister *lister, ListerDualState *state, short side)
@@ -943,6 +948,8 @@ static BOOL lister_dual_create_scrollbar_side(Lister *lister, ListerDualState *s
 			goto fail;
 	}
 
+	state->scroll_knob[side] = DOPUS_NEW_PROP_KNOB(TRUE);
+
 	if (!(state->vert_scroller[side] = (struct Gadget *)NewObject(0,
 																 "propgclass",
 																 GA_ID,
@@ -963,6 +970,8 @@ static BOOL lister_dual_create_scrollbar_side(Lister *lister, ListerDualState *s
 																 1,
 																 PGA_Total,
 																 1,
+																 DOPUS_PROP_KNOB_TAG(state->scroll_knob[side]),
+																 (IPTR)state->scroll_knob[side],
 																 ICA_TARGET,
 																 ICTARGET_IDCMP,
 																 ICA_MAP,
