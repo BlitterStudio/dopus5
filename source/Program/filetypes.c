@@ -154,11 +154,13 @@ IPC_EntryCode(filetype_reader)
 
 // Read the filetype list in the background; anything that locks the list waits for it.
 // Opening 70-odd small files is mostly disk seeks, which the rest of startup can overlap.
+// The name differs from the "dopus_filetypes" rescan process that file notification
+// starts: misc_startup() would find this reader under that name and skip the rescan.
 void filetype_read_list_async(APTR memory)
 {
 	if (!IPC_Launch(&GUI->process_list,
 					0,
-					"dopus_filetypes",
+					"dopus_filetype_reader",
 					(IPTR)&filetype_reader,
 					STACK_DEFAULT,
 					(IPTR)memory,
