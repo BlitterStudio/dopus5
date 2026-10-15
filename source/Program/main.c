@@ -548,6 +548,7 @@ void startup_init_gui()
 	InitSemaphore(&GUI->user_menu_lock);
 	InitSemaphore(&GUI->custom_pen_lock);
 	InitSemaphore(&GUI->iconify_icon_lock);
+	InitSemaphore(&GUI->eject_lock);
 
 	// Signal for getting screen close
 	GUI->screen_signal = AllocSignal(-1);

@@ -47,6 +47,12 @@ typedef struct
 	short count;
 } EjectTarget;
 
+typedef struct
+{
+	char device[128];
+	ULONG unit;
+} EjectUnit;
+
 // Collect every mounted DOS device on the target's unit. Ejecting takes
 // the medium away from all partitions on it, so they must all be inhibited.
 static BOOL disk_eject_partitions(EjectTarget *target)
@@ -224,6 +230,13 @@ static short disk_eject_unit(EjectTarget *target, struct IOStdReq *io, UBYTE *bu
 			return EJECT_UNSUPPORTED;
 	}
 
+	// Nothing to do if the medium has gone already; an empty tray stays shut
+	io->io_Command = TD_CHANGESTATE;
+	io->io_Data = 0;
+	io->io_Length = 0;
+	if (DoIO((struct IORequest *)io) == 0 && io->io_Actual)
+		return EJECT_DONE;
+
 	// Make the filesystems write back and release the medium
 	if (!disk_eject_inhibit(target, TRUE))
 		return EJECT_FAILED;
@@ -296,11 +309,13 @@ static short disk_eject_media(EjectTarget *target)
 	return ret;
 }
 
-// Eject a disk, reporting failures (runs in its own process)
-void disk_eject(struct Window *window, char *name)
+// Eject one disk, reporting failures. Units already in done[] are skipped:
+// selecting two partitions of one medium ejects it once.
+static void disk_eject_one(struct Window *window, char *name, EjectUnit *done, short *done_count)
 {
 	EjectTarget target;
-	short ret;
+	BOOL resolved = FALSE;
+	short ret, num;
 
 	FOREVER
 	{
@@ -311,6 +326,19 @@ void disk_eject(struct Window *window, char *name)
 			break;
 		}
 
+		// Same unit as an earlier disk in this request?
+		for (num = 0; num < *done_count; num++)
+		{
+			if (done[num].unit == target.unit && stricmp(done[num].device, target.device) == 0)
+				break;
+		}
+		if (num < *done_count)
+		{
+			FreeVec(target.names);
+			return;
+		}
+		resolved = TRUE;
+
 		ret = disk_eject_media(&target);
 		FreeVec(target.names);
 		if (ret != EJECT_FAILED)
@@ -318,6 +346,14 @@ void disk_eject(struct Window *window, char *name)
 
 		if (!(error_request(window, ERF_MOUSE, (IPTR)GetString(&locale, MSG_EJECTING), -1, (IPTR)name, 0)))
 			break;
+	}
+
+	// Don't ask about this unit again
+	if (resolved)
+	{
+		strcpy(done[*done_count].device, target.device);
+		done[*done_count].unit = target.unit;
+		++*done_count;
 	}
 
 	if (ret == EJECT_UNSUPPORTED)
@@ -329,49 +365,86 @@ void disk_eject(struct Window *window, char *name)
 	}
 }
 
-// Start ejecting a disk
-static void disk_eject_launch(struct Window *window, char *name)
+// Eject a list of disks (runs in its own process). The names are
+// null-terminated strings, ended by an empty one.
+void disk_eject(struct Window *window, char *names)
 {
-	char *copy;
+	EjectUnit *done;
+	short count = 0, done_count = 0;
+	char *name;
 
-	if ((copy = AllocVec(strlen(name) + 1, 0)))
+	// Another eject would release our inhibited partitions, or eject
+	// the same medium twice; only one runs at a time
+	if (!AttemptSemaphore(&GUI->eject_lock))
 	{
-		strcpy(copy, name);
-		if (!(misc_startup("dopus_disk_eject", MENU_ICON_EJECT, window, copy, 0)))
-			FreeVec(copy);
+		DisplayBeep((window) ? window->WScreen : 0);
+		return;
 	}
+
+	for (name = names; *name; name += strlen(name) + 1)
+		++count;
+
+	if ((done = AllocVec(count * sizeof(EjectUnit), MEMF_CLEAR)))
+	{
+		for (name = names; *name; name += strlen(name) + 1)
+			disk_eject_one(window, name, done, &done_count);
+		FreeVec(done);
+	}
+
+	ReleaseSemaphore(&GUI->eject_lock);
 }
 
 // Eject the selected disks, or the one supplied
 void backdrop_eject(BackdropInfo *info, BackdropObject *icon)
 {
 	BackdropObject *object;
-	short count = 0;
+	char *names = 0, *ptr = 0;
+	long size = 1;
+	short pass;
 
 	lock_listlock(&info->objects, 0);
 
-	for (object = (BackdropObject *)info->objects.list.lh_Head; object->node.ln_Succ;
-		 object = (BackdropObject *)object->node.ln_Succ)
+	// Measure the names, then copy them into one list
+	for (pass = 0; pass < 2; pass++)
 	{
-		if (object->type != BDO_DISK && object->type != BDO_BAD_DISK)
-			continue;
-
-		if ((!icon && object->state) || icon == object)
+		for (object = (BackdropObject *)info->objects.list.lh_Head; object->node.ln_Succ;
+			 object = (BackdropObject *)object->node.ln_Succ)
 		{
-			if (object->device_name && !(object->flags & (BDOF_ASSIGN | BDOF_CACHE)))
-			{
-				disk_eject_launch(info->window, object->device_name);
-				++count;
-			}
+			if (object->type != BDO_DISK && object->type != BDO_BAD_DISK)
+				continue;
 
-			if (icon)
-				break;
+			if ((!icon && object->state) || icon == object)
+			{
+				if (object->device_name && !(object->flags & (BDOF_ASSIGN | BDOF_CACHE)))
+				{
+					if (pass)
+					{
+						strcpy(ptr, object->device_name);
+						ptr += strlen(ptr) + 1;
+					}
+					else
+						size += strlen(object->device_name) + 1;
+				}
+
+				if (icon)
+					break;
+			}
 		}
+
+		if (!pass && (size == 1 || !(names = ptr = AllocVec(size, MEMF_CLEAR))))
+			break;
 	}
 
 	unlock_listlock(&info->objects);
 
 	// Nothing to eject
-	if (!count)
+	if (!names)
+	{
 		DisplayBeep(info->window->WScreen);
+		return;
+	}
+
+	// One process for the lot, so partitions of one medium are ejected once
+	if (!(misc_startup("dopus_disk_eject", MENU_ICON_EJECT, info->window, names, 0)))
+		FreeVec(names);
 }
