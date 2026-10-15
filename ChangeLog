@@ -1,3 +1,16 @@
+[dopus5 next] Palette presets and visible Reset in the Environment editor
+configopus.module change; version bump deferred.
+
+- Environment > Palette has a Presets button for the eight system
+  colours of Opus's own screen: 'Workbench Screen' copies the
+  Workbench screen's colours, 'Workbench 3.1' and 'MagicWB' set those
+  palettes.  Like Load, it is disabled when Opus is on the Workbench
+  screen, where only the user pens can be edited (#154).
+- On an RTG screen the palette squares kept their old colour after a
+  slider change, Reset or Load, so Reset seemed to do nothing.  The
+  squares are now redrawn.
+- The Load button opens a file requester and is now labelled "Load...".
+
 [dopus5 next] Faster toolbar image remapping
 dopus5.library change; version bump deferred.
 

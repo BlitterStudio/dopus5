@@ -3,6 +3,20 @@
 #include <proto/module.h>
 #include <prefs/palette.h>
 
+enum
+{
+	PALMENU_WORKBENCH,
+	PALMENU_WB31,
+	PALMENU_MAGICWB,
+};
+
+// Preset colours as 0xRRGGBB in screen pen order; 4-7 are the last four pens
+static const ULONG palette_presets[2][8] = {
+	// Workbench 3.1
+	{0xaaaaaa, 0x000000, 0xffffff, 0x6688bb, 0xee4444, 0x55dd55, 0x0044dd, 0xee9900},
+	// MagicWB
+	{0x959595, 0x000000, 0xffffff, 0x3b67a2, 0x7b7b7b, 0xafafaf, 0xaa907c, 0xffa997}};
+
 // Update palette sliders
 void _config_env_palette_update_sliders(config_env_data *data)
 {
@@ -58,13 +72,149 @@ void _config_env_palette_change_colour(config_env_data *data, int gun, ULONG val
 	// Load colour register
 	set_rgb32(data, data->sel_colour, data->config->palette + (data->sel_colour * 3) + 1);
 
-	/*
-		// On a cybergfx screen we need to redraw the colour square
-		if (data->cyber_flag)
-			SetGadgetAttrs(GADGET(data->palette_gadget),data->window,0,
-				DPG_Redraw,data->orig_colour_sel,
-				TAG_END);
-	*/
+	// A truecolour screen doesn't show the new colour until the square is redrawn
+	_config_env_palette_redraw(data, data->orig_colour_sel);
+}
+
+// Redraw one palette square, or all of them if pen is -1
+void _config_env_palette_redraw(config_env_data *data, short pen)
+{
+	// Changing a pen only shows by itself on a colour-mapped screen
+	if (!data->cyber_flag || !data->palette_gadget)
+		return;
+
+	if (pen > -1)
+		SetGadgetAttrs(GADGET(data->palette_gadget), data->window, 0, DPG_Redraw, pen, TAG_END);
+	else
+		RefreshGList(GADGET(data->palette_gadget), data->window, 0, 1);
+}
+
+// Set the eight OS colours from 32-bit RGB triplets in screen pen order
+static void _config_env_palette_os_colours(config_env_data *data, const ULONG *rgb)
+{
+	ULONG *palette;
+	short pen;
+
+	// Get palette pointer
+	palette = data->config->palette + 1;
+
+	// Go through pens
+	for (pen = 0; pen < 8; pen++, palette += 3)
+	{
+		const ULONG *col;
+
+		// The config stores the top four in reverse order
+		col = rgb + ((pen < 4) ? pen : (11 - pen)) * 3;
+
+		// Store in config
+		palette[0] = col[0];
+		palette[1] = col[1];
+		palette[2] = col[2];
+
+		// On own screen and deep enough, set colour
+		if (data->own_screen && (pen < 4 || data->own_screen > 4))
+			set_rgb32(data, pen, palette);
+	}
+
+	// Show the new colours
+	_config_env_palette_redraw(data, -1);
+}
+
+// Copy the Workbench screen's OS colours
+static void _config_env_palette_grab_workbench(config_env_data *data)
+{
+	struct Screen *screen;
+	ULONG rgb[24];
+	short depth, num, count, a, gun;
+
+	// Get Workbench
+	if (!(screen = LockPubScreen("Workbench")))
+		return;
+
+	// RTG screens can report more than 8 planes; the OS pens are within 256
+	if ((depth = screen->RastPort.BitMap->Depth) > 8)
+		depth = 8;
+
+	// A one-plane screen has only two colours
+	num = 1 << depth;
+	count = (num < 4) ? num : 4;
+
+	// Get the first four
+	if (((struct Library *)GfxBase)->lib_Version >= 39)
+		GetRGB32(screen->ViewPort.ColorMap, 0, count, rgb);
+	else
+	{
+		for (a = 0; a < count; a++)
+		{
+			UWORD val = GetRGB4(screen->ViewPort.ColorMap, a);
+
+			rgb[a * 3] = ((val >> 8) & 0xf) * 0x11111111;
+			rgb[a * 3 + 1] = ((val >> 4) & 0xf) * 0x11111111;
+			rgb[a * 3 + 2] = (val & 0xf) * 0x11111111;
+		}
+	}
+
+	// Fewer than four colours; repeat the last one
+	for (a = count; a < 4; a++)
+		for (gun = 0; gun < 3; gun++)
+			rgb[a * 3 + gun] = rgb[(count - 1) * 3 + gun];
+
+	// Get the last four; under 39, or with no more than four colours, use the first four
+	if (((struct Library *)GfxBase)->lib_Version >= 39 && num > 4)
+		GetRGB32(screen->ViewPort.ColorMap, num - 4, 4, rgb + 12);
+	else
+		CopyMem((char *)rgb, (char *)(rgb + 12), sizeof(ULONG) * 12);
+
+	// Unlock Workbench
+	UnlockPubScreen(0, screen);
+
+	// Use the colours
+	_config_env_palette_os_colours(data, rgb);
+}
+
+// Set the OS colours to a preset
+static void _config_env_palette_set_preset(config_env_data *data, const ULONG *preset)
+{
+	ULONG rgb[24];
+	short a;
+
+	// Expand to 32 bits per gun
+	for (a = 0; a < 8; a++)
+	{
+		rgb[a * 3] = ((preset[a] >> 16) & 0xff) * 0x01010101;
+		rgb[a * 3 + 1] = ((preset[a] >> 8) & 0xff) * 0x01010101;
+		rgb[a * 3 + 2] = (preset[a] & 0xff) * 0x01010101;
+	}
+
+	_config_env_palette_os_colours(data, rgb);
+}
+
+// Show the palette presets menu
+void _config_env_palette_presets(config_env_data *data)
+{
+	PopUpHandle *menu;
+	short res;
+
+	// Create menu
+	if (!(menu = PopUpNewHandle(0, 0, locale)))
+		return;
+
+	PopUpNewItem(menu, MSG_ENVIRONMENT_PALETTE_WORKBENCH, PALMENU_WORKBENCH, 0);
+	PopUpSeparator(menu);
+	PopUpNewItem(menu, MSG_ENVIRONMENT_PALETTE_WB31, PALMENU_WB31, 0);
+	PopUpNewItem(menu, MSG_ENVIRONMENT_PALETTE_MAGICWB, PALMENU_MAGICWB, 0);
+
+	// Do popup menu
+	if ((res = DoPopUpMenu(data->window, &menu->ph_Menu, 0, SELECTDOWN)) >= 0)
+	{
+		if (res == PALMENU_WORKBENCH)
+			_config_env_palette_grab_workbench(data);
+		else
+			_config_env_palette_set_preset(data, palette_presets[res - PALMENU_WB31]);
+	}
+
+	// Free menu
+	PopUpFreeHandle(menu);
 }
 
 void set_rgb32(config_env_data *data, short col, ULONG *palette)
@@ -306,63 +456,8 @@ void _config_env_reset_palette(config_env_data *data)
 		set_rgb32(data, col, data->env->env->palette + ((num + 8) * 3) + 1);
 }
 
-/*
-// Grab Workbench palette
-void _config_env_grabwb(config_env_data *data)
-{
-	struct Screen *screen;
-	ULONG palette[12];
-	short num;
-
-	// Get Workbench
-	if (!(screen=LockPubScreen("Workbench")))
-		return;
-
-	// Get first four
-	GetPalette32(&screen->ViewPort,palette,4,0);
-
-	// Load first four
-	for (num=0;num<4;num++)
-		set_rgb32(data,num,palette+(num*3));
-
-	// Copy palette
-	CopyMem((char *)palette,(char *)(data->config->palette+1),sizeof(palette));
-
-	// Under 39 we have top four colours
-	if (GfxBase->LibNode.lib_Version>=39)
-	{
-		ULONG palette2[12];
-
-		// Workbench that deep?
-		if (screen->RastPort.BitMap->Depth>2)
-		{
-			// Get top four
-			GetPalette32(&screen->ViewPort,palette,4,(1<<screen->RastPort.BitMap->Depth)-4);
-		}
-
-		// Reverse the order
-		for (num=0;num<4;num++)
-		{
-			palette2[(3-num)*3+0]=palette[num*3+0];
-			palette2[(3-num)*3+1]=palette[num*3+1];
-			palette2[(3-num)*3+2]=palette[num*3+2];
-		}
-
-		// Load top four
-		for (num=4;num<8;num++)
-			set_rgb32(data,num,palette2+((num-4)*3));
-
-		// Copy palette
-		CopyMem((char *)palette2,(char *)(data->config->palette+13),sizeof(palette));
-	}
-
-	// Unlock Workbench
-	UnlockPubScreen(0,screen);
-}
-*/
-
 // Load palette file
-void _config_env_grabwb(config_env_data *data)
+void _config_env_load_palette(config_env_data *data)
 {
 	char buf[256];
 	struct FileRequester *req;
@@ -433,7 +528,7 @@ BOOL get_palette_file(config_env_data *data, char *name)
 	BOOL ret = 0;
 	short pen;
 	struct PalettePrefs prefs;
-	ULONG *palette;
+	ULONG rgb[24];
 	APTR iff;
 
 	// Open as IFF PREF file
@@ -513,33 +608,16 @@ BOOL get_palette_file(config_env_data *data, char *name)
 	if (!ret)
 		return 0;
 
-	// Get palette pointer
-	palette = data->config->palette + 1;
-
-	// Go through pens
+	// Convert to 32 bits per gun
 	for (pen = 0; pen < 8; pen++)
 	{
-		short index_pen;
-
-		// Get index pen number (top 4 are reversed order)
-		index_pen = (pen < 4) ? pen : (11 - pen);
-
-		// Store in config
-		*palette++ = (prefs.pap_Colors[index_pen].Red << 16) | prefs.pap_Colors[index_pen].Red;
-		*palette++ = (prefs.pap_Colors[index_pen].Green << 16) | prefs.pap_Colors[index_pen].Green;
-		*palette++ = (prefs.pap_Colors[index_pen].Blue << 16) | prefs.pap_Colors[index_pen].Blue;
-
-		// On own screen?
-		if (data->own_screen)
-		{
-			// Deep enough?
-			if (pen < 4 || data->own_screen > 4)
-			{
-				// Set colour
-				set_rgb32(data, pen, palette - 3);
-			}
-		}
+		rgb[pen * 3] = (prefs.pap_Colors[pen].Red << 16) | prefs.pap_Colors[pen].Red;
+		rgb[pen * 3 + 1] = (prefs.pap_Colors[pen].Green << 16) | prefs.pap_Colors[pen].Green;
+		rgb[pen * 3 + 2] = (prefs.pap_Colors[pen].Blue << 16) | prefs.pap_Colors[pen].Blue;
 	}
+
+	// Use the colours
+	_config_env_palette_os_colours(data, rgb);
 
 	return 1;
 }

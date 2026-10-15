@@ -743,14 +743,35 @@ unsigned long LIBFUNC L_Config_Environment(REG(a0, Cfg_Environment *env),
 
 						// Reset palette
 						_config_env_reset_palette(data);
+
+						// Show the restored colours
+						_config_env_palette_redraw(data, -1);
 					}
 					break;
 
-					// Grab Workbench palette
-					case GAD_ENVIRONMENT_PALETTE_GRABWB:
+					// Palette presets
+					case GAD_ENVIRONMENT_PALETTE_PRESETS:
+
+						// Only do this on gadget down
+						if (msg_copy.Class == IDCMP_GADGETDOWN)
+						{
+							// Do popup menu
+							_config_env_palette_presets(data);
+
+							// Make sure gadget is deselected
+							gadget->Flags &= ~GFLG_SELECTED;
+							RefreshGList(gadget, data->window, 0, 1);
+
+							// Update sliders
+							_config_env_palette_update_sliders(data);
+						}
+						break;
+
+					// Load palette file
+					case GAD_ENVIRONMENT_PALETTE_LOAD:
 
 						// Do it
-						_config_env_grabwb(data);
+						_config_env_load_palette(data);
 
 						// Update sliders
 						_config_env_palette_update_sliders(data);
@@ -1593,15 +1614,9 @@ BOOL _config_env_open(config_env_data *data, struct Screen *screen)
 	if (!(data->window = OpenConfigWindow(&data->newwin)))
 		return 0;
 
-	/*
-		// Under 39?
-		if (GfxBase->LibNode.lib_Version>=39)
-		{
-			// See if we're on a cyber screen
-			if (!(GetBitMapAttr(data->window->WScreen->RastPort.BitMap,BMA_FLAGS)&BMF_STANDARD))
-				data->cyber_flag=1;
-		}
-	*/
+	// Pen changes don't show by themselves on a non-planar (RTG) screen
+	data->cyber_flag = ((struct Library *)GfxBase)->lib_Version >= 39 &&
+					   !(GetBitMapAttr(data->window->WScreen->RastPort.BitMap, BMA_FLAGS) & BMF_STANDARD);
 
 	// Add menus
 	AddWindowMenus(data->window, button_toolbar_menu);
@@ -1862,9 +1877,12 @@ void _config_env_set(config_env_data *data, short option)
 		// Number of allocated colours
 		SetGadgetValue(data->option_list, GAD_ENVIRONMENT_PALETTE_COUNT, data->palette_colours);
 
-		// If not on own screen, can't grab workbench
+		// OS colours can only be set on our own screen
 		if (!data->own_screen)
-			DisableObject(data->option_list, GAD_ENVIRONMENT_PALETTE_GRABWB, 1);
+		{
+			DisableObject(data->option_list, GAD_ENVIRONMENT_PALETTE_PRESETS, 1);
+			DisableObject(data->option_list, GAD_ENVIRONMENT_PALETTE_LOAD, 1);
+		}
 		break;
 
 	// Lister display
