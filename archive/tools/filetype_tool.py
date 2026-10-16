@@ -397,10 +397,14 @@ def shell_commands(text):
     """Return (commands, open delimiters) for a piece of shell text.
 
     commands are (line number, words) pairs: one per line and per side of
-    each "|", "||" or "&&".  Lines of a "<<" here-document, up to its
-    delimiter line, are input to the command, not commands, so they are
-    skipped; delimiters still open at the end are returned."""
+    each "|", "||" or "&&".  A line ending in an unquoted "+" continues on
+    the next line, which joins the same command, except for "run", which
+    starts the next line as another background command.  Lines of a "<<"
+    here-document, up to its delimiter line, are input to the command, not
+    commands, so they are skipped; delimiters still open at the end are
+    returned."""
     commands, delimiters = [], []
+    current, start, continued = [], 0, False
     for number, line in enumerate(text.replace("\r", "\n").split("\n")):
         if delimiters:
             # The shell ends a here-document at a line starting with the
@@ -408,12 +412,16 @@ def shell_commands(text):
             if line.startswith(delimiters[0]):
                 delimiters.pop(0)
             continue
-        current = []
+        if not continued:
+            current, start = [], number
         tokens = shell_lex(line)
+        continued = bool(tokens) and tokens[-1] == "+" and not isinstance(tokens[-1], Quoted)
+        if continued:
+            tokens = tokens[:-1]
         for index, token in enumerate(tokens):
             if token is PIPE:
-                commands.append((number, current))
-                current = []
+                commands.append((start, current))
+                current, start = [], number
                 continue
             current.append(token)
             found = redirection(token)
@@ -423,7 +431,14 @@ def shell_commands(text):
                     delimiter = tokens[index + 1]
                 if delimiter:
                     delimiters.append(delimiter)
-        commands.append((number, current))
+        plain = [word for word in current if not redirection(word)]
+        if continued and plain and plain[0].lower() == "run":
+            # Run takes the next line as another command of its own
+            continued = False
+        if not continued:
+            commands.append((start, current))
+    if continued:
+        commands.append((start, current))
     return commands, delimiters
 
 
@@ -473,6 +488,9 @@ def parse_command(kind, words):
     # ">NIL: run BOOT:tool" still finds BOOT:tool; "run run X" runs X
     while kind == 1 and rest and rest[0].lower() == "run":
         rest = rest[1:]
+    # A trailing unquoted "&" is the Shell's run-back operator, not an argument
+    if kind == 1 and rest and rest[-1] == "&" and not isinstance(rest[-1], Quoted):
+        rest = rest[:-1]
     return (rest[0] if rest else ""), rest[1:], targets
 
 
@@ -715,8 +733,9 @@ def lint(path, types):
                     # Only a single shell command (no second line or operator;
                     # a comment is fine) with no arguments is a plain Copy
                     commands = instruction_commands(inst, text)
-                    plain = inst == 1 and len(commands) == 1 and commands[0][0].lower() == "copy" \
-                        and not commands[0][1]
+                    # The stock Copy, by name or path (C:Copy, SYS:C/Copy)
+                    plain = inst == 1 and len(commands) == 1 and not commands[0][1] \
+                        and re.split(r"[:/]", commands[0][0])[-1].lower() == "copy"
                 if plain:
                     problems.append("%s: drag'n'drop runs a plain Copy, overriding the default "
                                     "Copy MOVEWHENSAME" % ftype.name)
