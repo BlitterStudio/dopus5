@@ -966,8 +966,7 @@ void backdrop_image_bitmap(BackdropInfo *info, struct Image *image, UWORD *image
 		bitmap->Planes[plane++] = (PLANEPTR)(imagedata + planesize);
 
 		// If it's 3 planes, under 39, we can remap it
-		if (image->Depth == 3 && ((struct Library *)GfxBase)->lib_Version >= 39 &&
-			!(environment->env->desktop_flags & DESKTOPF_NO_REMAP))
+		if (image->Depth == 3 && ((struct Library *)GfxBase)->lib_Version >= 39 && remap_icon_images())
 		{
 			for (plane = 2; plane < depth; plane++)
 				bitmap->Planes[plane] = (PLANEPTR)(imagedata + (planesize << 1));

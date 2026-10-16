@@ -329,7 +329,7 @@ BOOL GetToolBarCache(ToolBarInfo *toolbar, BOOL real)
 	tags[1].ti_Tag = IM_ClipBoundary;
 	tags[1].ti_Data = (toolbar->buttons->window.flags & BTNWF_BORDERLESS) ? 0 : 2;
 	tags[2].ti_Tag = IM_NoIconRemap;
-	tags[2].ti_Data = (environment->env->desktop_flags & DESKTOPF_NO_REMAP) ? TRUE : FALSE;
+	tags[2].ti_Data = !remap_icon_images();
 	tags[3].ti_Tag = TAG_DONE;
 
 	// Go through buttons
