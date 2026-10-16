@@ -50,15 +50,19 @@ FUNC_FLAGS = [
 # FUNCF_ORIGINAL_FLAGS: the only function flags the editor saves
 STORED_FUNC_FLAGS = sum(bit for bit, _name in FUNC_FLAGS)
 FUNCF2_LABEL_FUNC = 1 << 3
-# Used internally by Opus and never stored; FUNCF2_FREE_FUNCTION makes Opus
-# free a function that is still linked into the filetype list.
-FUNCF2_INTERNAL = (1 << 30) | (1 << 31)
+# FUNCF2_HOTKEY_FUNC .. FUNCF2_LABEL_FUNC: the flags2 bits that are stored
+STORED_FUNC_FLAGS2 = 0x0000000F
+# Transient state, never meant to be stored: FUNCF2_PLACEHOLDER (bit 29, the
+# Filetype Manager deletes such functions when its editor closes),
+# FUNCF2_ORIGINAL and FUNCF2_FREE_FUNCTION (Opus frees a function that is
+# still linked into the filetype list).
+FUNCF2_INTERNAL = (1 << 29) | (1 << 30) | (1 << 31)
 
 # Path prefixes that exist on a stock system or in DOpus5:.  PROGDIR: is
-# provided by AmigaDOS for every program.
+# provided by AmigaDOS for every program; Opus assigns D5THEMES: itself.
 STOCK_ASSIGNS = ("SYS:", "C:", "S:", "L:", "LIBS:", "DEVS:", "FONTS:", "ENV:",
                  "ENVARC:", "T:", "RAM:", "DOPUS5:", "REXX:", "HELP:", "LOCALE:",
-                 "PROGDIR:")
+                 "PROGDIR:", "D5THEMES:")
 
 
 class Filetype:
@@ -154,8 +158,8 @@ def parse(data):
                 rest = rest[end + 3:]
             flags2 = struct.unpack(">I", body[4:8])[0]
             if flags2 & FUNCF2_INTERNAL:
-                raise ValueError("FUNC sets internal flags2 bits 0x%08x (FUNCF2_ORIGINAL/FREE_FUNCTION)"
-                                 % (flags2 & FUNCF2_INTERNAL))
+                raise ValueError("FUNC sets transient flags2 bits 0x%08x "
+                                 "(FUNCF2_PLACEHOLDER/ORIGINAL/FREE_FUNCTION)" % (flags2 & FUNCF2_INTERNAL))
             types[-1].functions.append(Function(body[:22], instructions))
         else:
             raise ValueError("unexpected chunk %r" % chunk)
@@ -355,6 +359,10 @@ def lint(path, types):
             if func.flags & ~STORED_FUNC_FLAGS:
                 problems.append("%s: %s sets function flags 0x%08x that the editor never saves"
                                 % (ftype.name, function_text(func), func.flags & ~STORED_FUNC_FLAGS))
+            flags2 = struct.unpack(">I", func.header[4:8])[0]
+            if flags2 & ~STORED_FUNC_FLAGS2:
+                problems.append("%s: %s sets unknown flags2 bits 0x%08x"
+                                % (ftype.name, function_text(func), flags2 & ~STORED_FUNC_FLAGS2))
 
             # Opus skips empty instructions, so they do not count as commands
             commands = [(inst, command_text(text.decode("latin-1")))
