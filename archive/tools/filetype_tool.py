@@ -244,11 +244,13 @@ def function_text(func):
 
 
 def emit(line=""):
-    """Print a line with control characters escaped, so a contributed file
-    cannot send escape sequences to the reviewer's terminal."""
-    print("".join(char if " " <= char < "\x7f" or char >= "\xa0" else "\\x%02x" % ord(char)
+    """Print a line with every non-printable character escaped (C0 and C1
+    controls, Unicode format controls such as U+202E, surrogates from
+    undecodable file names), so a contributed file or its name cannot send
+    escape sequences to the reviewer's terminal or reorder the output."""
+    print("".join(char if char.isprintable() else
+                  ("\\x%02x" % ord(char) if ord(char) < 0x100 else "\\u%04x" % ord(char))
                   for char in line))
-
 
 def dump(path, types):
     emit("== %s" % path)
