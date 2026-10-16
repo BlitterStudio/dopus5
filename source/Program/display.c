@@ -25,6 +25,26 @@ For more information on Directory Opus for Windows please see:
 
 #include "dopus.h"
 
+// CYBRMATTR_ISCYBERGFX for the RTG probe (the OS3 SDK keeps it under cybergraphics/)
+#ifdef __amigaos3__
+	#include <cybergraphics/cybergraphics.h>
+#else
+	#include <cybergraphx/cybergraphics.h>
+#endif
+
+// Is this an RTG bitmap? Probe P96/CGX directly, BMF_STANDARD is not
+// reliable before graphics.library V45. Native bitmaps answer no.
+BOOL display_rtg_bitmap(struct BitMap *bm)
+{
+#if !defined(__AROS__)
+	if (P96Base && p96GetBitMapAttr(bm, P96BMA_ISP96))
+		return TRUE;
+#endif
+	if (CyberGfxBase && GetCyberMapAttr(bm, CYBRMATTR_ISCYBERGFX))
+		return TRUE;
+	return FALSE;
+}
+
 // How long display_open() holds the first icon paint for the backdrop picture (ticks)
 #define PATTERN_WAIT_TICKS 100
 
@@ -464,6 +484,25 @@ BOOL display_open(long flags)
 			// Turn on appicon notification
 			SetNotifyRequest(GUI->notify_req, DN_APP_ICON_LIST, DN_APP_ICON_LIST);
 
+#ifdef __amigaos3__
+			// Once Opus has used IconLib (icon.library 51) on an RTG screen, IconLib
+			// lays out colour icons for a native screen as two-colour images, until the
+			// library is opened again while that screen is open. Open it once more
+			// before any icon is laid out on a native screen of an RTG system.
+			if (IconBase->lib_Version >= 44 && (P96Base || CyberGfxBase) &&
+				!display_rtg_bitmap(GUI->screen_pointer->RastPort.BitMap))
+			{
+				struct Library *lib;
+
+				if ((lib = OpenLibrary("icon.library", 44)))
+					CloseLibrary(lib);
+			}
+#endif
+
+			// Get palette before any icon remapping can take its pens. Reopening on
+			// another screen remaps the existing desktop icons right below.
+			get_colour_table();
+
 			// Initialise backdrop
 			backdrop_init_info(GUI->backdrop, GUI->window, 0);
 
@@ -472,9 +511,6 @@ BOOL display_open(long flags)
 
 			// Set menu
 			display_reset_menus(1, 0);
-
-			// Get palette (before any icon remapping can take the MagicWB pens)
-			get_colour_table();
 
 			// Remap rexx icons
 			rexx_remap_icons(FALSE);
