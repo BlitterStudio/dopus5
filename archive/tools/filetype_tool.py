@@ -479,15 +479,15 @@ def parse_command(kind, words):
 def instruction_analysis(inst, text):
     """Return (commands, open here-document delimiters) for an external
     instruction.  commands are (program, arguments, redirection targets,
-    line number, words).  The once-only marker is removed once, and for
-    Workbench instructions a literal "run " in the first byte, as
-    function_script.c does.  The first command follows the instruction's
-    own rules; the others are AmigaDOS commands."""
+    line number).  The once-only marker is removed once, and for Workbench
+    instructions a literal "run " in the first byte, as function_script.c
+    does.  The first command follows the instruction's own rules; the
+    others are AmigaDOS commands."""
     text = command_text(text)
     if inst == 2 and text[:4].lower() == "run ":
         text = text[4:]
     commands, delimiters = shell_commands(text)
-    return ([parse_command(inst if index == 0 else 1, words) + (number, words)
+    return ([parse_command(inst if index == 0 else 1, words) + (number,)
              for index, (number, words) in enumerate(commands)], delimiters)
 
 
@@ -685,7 +685,9 @@ def lint(path, types):
                     usable.append((inst, text))
                 # Any word may name a path the command needs: the program,
                 # its arguments, redirection targets, nested commands
-                for assign in assign_references([word for command in commands for word in command[4]]):
+                # (here-document delimiters are not paths and are left out)
+                words = [word for command in commands for word in [command[0]] + command[1] + command[2]]
+                for assign in assign_references(words):
                     if assign not in STOCK_ASSIGNS:
                         problems.append("%s: needs %s for %r" % (ftype.name, assign, text))
                 # function_script.c strips only a literal "run " in the first
