@@ -286,8 +286,8 @@ def shell_words(text):
     return words
 
 
-def program_word(inst, text):
-    """Return the program or script an instruction runs.
+def command_words(inst, text):
+    """Return the words of an instruction from the program it runs onward.
 
     AmigaDOS instructions are shell command lines: skip a leading "run".
     For Workbench instructions function_script.c strips "run " only when it
@@ -304,6 +304,12 @@ def program_word(inst, text):
     if inst in (1, 2):
         while words and words[0].startswith(("<", ">", "*>")):
             words = words[1:]
+    return words
+
+
+def program_word(inst, text):
+    """Return the program or script an instruction runs (see command_words)."""
+    words = command_words(inst, text)
     return words[0] if words else ""
 
 
@@ -429,10 +435,14 @@ def lint(path, types):
             if func.is_menu and label == b"---":
                 problems.append("%s: %s is a separator, so its commands never run"
                                 % (ftype.name, function_text(func)))
-            if not func.is_menu and func.event == DRAG_DROP and \
-                    [(i, command_text(t).strip().lower()) for i, t in usable] in ([(0, "copy")], [(1, "copy")]):
-                problems.append("%s: drag'n'drop runs a plain Copy, overriding the default "
-                                "Copy MOVEWHENSAME" % ftype.name)
+            # A drag'n'drop action that is only a plain Copy (internal, or an
+            # AmigaDOS Copy after run/redirections) replaces the default
+            if not func.is_menu and func.event == DRAG_DROP and len(usable) == 1:
+                inst, text = usable[0]
+                words = text.split() if inst == 0 else command_words(inst, text)
+                if inst in (0, 1) and [word.lower() for word in words] == ["copy"]:
+                    problems.append("%s: drag'n'drop runs a plain Copy, overriding the default "
+                                    "Copy MOVEWHENSAME" % ftype.name)
 
     for problem in problems:
         emit("%s: %s" % (path, problem))
