@@ -1420,11 +1420,25 @@ void LIBFUNC L_RemoveDragImage(REG(a0, DragInfo *drag))
 	drag->sprite.NextVSprite->PrevVSprite = drag->sprite.PrevVSprite;
 }
 
+// Is this an RTG bitmap?
+// Prefer P96's P96BMA_ISP96 probe - it's the reliable RTG check on
+// OS3.1+ (BMF_STANDARD is a graphics.library V45+ flag and missing
+// from OS3.1). Fall back to CyberGraphX's ISCYBERGFX probe on
+// installs that only have CGX resident.
+BOOL rtg_bitmap(struct BitMap *bm)
+{
+#if !defined(__AROS__)
+	if (P96Base && p96GetBitMapAttr(bm, P96BMA_ISP96))
+		return TRUE;
+#endif
+	if (CyberGfxBase && GetCyberMapAttr(bm, CYBRMATTR_ISCYBERGFX))
+		return TRUE;
+	return FALSE;
+}
+
 // See if custom dragging is OK
 BOOL LIBFUNC L_DragCustomOk(REG(a0, struct BitMap *bm), REG(a6, struct MyLibrary *libbase))
 {
-	BOOL ok = 0;
-
 	struct LibData *data;
 
 #if defined(__amigaos4__) || defined(__AROS__)
@@ -1435,21 +1449,6 @@ BOOL LIBFUNC L_DragCustomOk(REG(a0, struct BitMap *bm), REG(a6, struct MyLibrary
 	data = (struct LibData *)libbase->ml_UserData;
 
 	// Ok to custom drag?
-	// Prefer P96's P96BMA_ISP96 probe - it's the reliable RTG check on
-	// OS3.1+ (BMF_STANDARD is a graphics.library V45+ flag and missing
-	// from OS3.1). Fall back to CyberGraphX's ISCYBERGFX probe on
-	// installs that only have CGX resident, so custom drag still gets
-	// enabled there.
-	if (!(data->flags & LIBDF_NO_CUSTOM_DRAG) && ((struct Library *)GfxBase)->lib_Version >= 39)
-	{
-#if !defined(__AROS__)
-		if (P96Base && p96GetBitMapAttr(bm, P96BMA_ISP96))
-			ok = 1;
-		else
-#endif
-		if (CyberGfxBase && GetCyberMapAttr(bm, CYBRMATTR_ISCYBERGFX))
-			ok = 1;
-	}
-
-	return ok;
+	return (BOOL)(!(data->flags & LIBDF_NO_CUSTOM_DRAG) && ((struct Library *)GfxBase)->lib_Version >= 39 &&
+				  rtg_bitmap(bm));
 }

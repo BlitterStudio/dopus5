@@ -1,3 +1,15 @@
+[dopus5 next] Image planes in fast memory on RTG screens
+dopus5.library change; version bump deferred.
+
+- On AmigaOS 3, button and toolbar images remapped for a Picasso96 or
+  CyberGraphX screen now keep their remapped and original planes in fast
+  memory instead of chip memory, and the remap no longer uses temporary
+  chip bitmaps.  Images drawn into a native bitmap, or scaled, use a
+  temporary chip copy.  When Opus moves to a native screen, the planes
+  move back to chip memory.  Starting Opus on an RTG Workbench took about
+  47 KB of chip memory and now takes about 4 KB; on a native screen the
+  chip memory use is unchanged.
+
 [dopus5 next] Icon masks in fast memory on RTG screens
 Program change; version bump deferred.
 
