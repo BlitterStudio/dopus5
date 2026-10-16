@@ -140,17 +140,18 @@ def parse(data):
         pos += 8 + size + (size & 1)
 
         if chunk == b"TYPE":
-            if len(body) < 46:
-                raise ValueError("TYPE chunk is shorter than CFG_TYPE (46 bytes)")
+            # Opus reads up to 46 header bytes into cleared memory, so a
+            # shorter chunk leaves the rest of CFG_TYPE zero
+            header = body[:46].ljust(46, b"\0")
             # Opus uses name[32] and id[8] as C strings
-            if b"\0" not in body[:32]:
+            if b"\0" not in header[:32]:
                 raise ValueError("filetype name fills all 32 bytes without a NUL")
-            if b"\0" not in body[32:40]:
+            if b"\0" not in header[32:40]:
                 raise ValueError("filetype ID fills all 8 bytes without a NUL")
             # L_SaveFiletypeList() writes 16 actions and fails if count is higher
-            if struct.unpack(">H", body[44:46])[0] > 16:
+            if struct.unpack(">H", header[44:46])[0] > 16:
                 raise ValueError("CFG_TYPE count %d is above 16, so Opus cannot save the filetype again"
-                                 % struct.unpack(">H", body[44:46])[0])
+                                 % struct.unpack(">H", header[44:46])[0])
             # read_config_string(): recognition, icon and 16 actions in turn;
             # a last string may lack its NUL, missing ones read as empty,
             # anything after the 18th is ignored
@@ -163,13 +164,13 @@ def parse(data):
                 else:
                     strings.append(rest[:end])
                     rest = rest[end + 1:]
-            name = body[:32].split(b"\0", 1)[0].decode("latin-1")
+            name = header[:32].split(b"\0", 1)[0].decode("latin-1")
             if len(strings) < 18:
                 types.notes.append("Opus reads the missing strings of TYPE %r as empty" % name)
             if rest:
                 types.notes.append("Opus ignores the data after the 16 action strings of TYPE %r" % name)
             strings += [b""] * (18 - len(strings))
-            types.append(Filetype(body[:46], strings[0], strings[1], strings[2:18]))
+            types.append(Filetype(header, strings[0], strings[1], strings[2:18]))
         elif chunk == b"FUNC":
             if not types:
                 types.notes.append("Opus ignores a FUNC chunk before the first TYPE")
@@ -209,9 +210,10 @@ def parse(data):
         else:
             types.notes.append("Opus ignores the %r chunk" % chunk.decode("latin-1"))
 
-    if pos != len(data):
-        raise ValueError("missing pad byte after the last chunk" if pos > len(data)
-                         else "trailing data after the last chunk")
+    # A last odd-sized chunk without its pad byte is still read by Opus;
+    # re-encoding adds the pad, which check reports
+    if pos != len(data) and pos != len(data) + 1:
+        raise ValueError("trailing data after the last chunk")
     if not types:
         raise ValueError("no TYPE chunk, so Opus loads no filetype from it")
     return types
@@ -510,6 +512,36 @@ def program_word(inst, text):
     return commands[0][0] if commands else ""
 
 
+_STOCK_COMMANDS = []
+
+
+def stock_commands():
+    """Return the lower-cased names of Opus's internal commands
+    (commandlist_internal in source/Program/function_data.c) and of the
+    commands its modules register (module_info in source/Modules), read
+    from the repository this tool lives in, or None without the sources."""
+    if not _STOCK_COMMANDS:
+        source = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir, os.pardir, "source")
+        try:
+            with open(os.path.join(source, "Program", "function_data.c"), encoding="latin-1") as handle:
+                text = handle.read()
+        except OSError:
+            _STOCK_COMMANDS.append(None)
+            return None
+        names = set(re.findall(r'\{\{[^}]*\},\s*FUNC_\w+,\s*"([^"]+)"', text))
+        modules = os.path.join(source, "Modules")
+        for drawer in sorted(os.listdir(modules)) if os.path.isdir(modules) else []:
+            folder = os.path.join(modules, drawer)
+            for name in sorted(os.listdir(folder)) if os.path.isdir(folder) else []:
+                if name.endswith(".c"):
+                    with open(os.path.join(folder, name), encoding="latin-1") as handle:
+                        match = re.search(r"module_info\s*=\s*\{(.*?)\}\s*\}\s*;", handle.read(), re.S)
+                    if match:
+                        names.update(re.findall(r'\{\s*\d+,\s*"([^"]+)"', match.group(1)))
+        _STOCK_COMMANDS.append({name.lower() for name in names})
+    return _STOCK_COMMANDS[0]
+
+
 def path_prefix(text):
     """Return the device or assign a path starts with, or None."""
     if ":" in text:
@@ -598,11 +630,17 @@ def lint(path, types):
                     # first space; other whitespace, a '#' or a control
                     # character in it means no command is found.
                     name = text.split(" ", 1)[0]
-                    if name and name.isprintable() and not any(c.isspace() for c in name) and name[0] != "#":
+                    commands = stock_commands()
+                    if not (name and name.isprintable() and not any(c.isspace() for c in name) and name[0] != "#"):
+                        if text.strip():
+                            problems.append("%s: internal command %r is looked up as %r, so Opus finds no "
+                                            "command to run" % (ftype.name, text, name))
+                    elif commands is not None and name.lower() not in commands:
+                        # function_find_internal() only finds registered commands
+                        problems.append("%s: %r is not an Opus or module command; it only runs if an "
+                                        "ARexx module or a user command adds it" % (ftype.name, name))
+                    else:
                         usable.append((inst, text))
-                    elif text.strip():
-                        problems.append("%s: internal command %r is looked up as %r, so Opus finds no "
-                                        "command to run" % (ftype.name, text, name))
                     continue
 
                 # External instructions go into a script verbatim, so a line
