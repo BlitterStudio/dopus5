@@ -325,10 +325,12 @@ def shell_lex(line):
 
 
 def shell_commands(text):
-    """Return the commands a piece of shell text makes, as (line number,
-    words) pairs: one per line and per side of each "|", "||" or "&&".
-    Lines of a "<<" here-document, up to its delimiter line, are input to
-    the command, not commands, so they are skipped."""
+    """Return (commands, open delimiters) for a piece of shell text.
+
+    commands are (line number, words) pairs: one per line and per side of
+    each "|", "||" or "&&".  Lines of a "<<" here-document, up to its
+    delimiter line, are input to the command, not commands, so they are
+    skipped; delimiters still open at the end are returned."""
     commands, delimiters = [], []
     for number, line in enumerate(text.replace("\r", "\n").split("\n")):
         if delimiters:
@@ -351,7 +353,7 @@ def shell_commands(text):
                 if delimiter:
                     delimiters.append(delimiter)
         commands.append((number, current))
-    return commands
+    return commands, delimiters
 
 
 # AmigaDOS Shell redirection operators, longest first, and what follows
@@ -403,17 +405,24 @@ def parse_command(kind, words):
     return (rest[0] if rest else ""), rest[1:], targets
 
 
-def instruction_commands(inst, text):
-    """Return (program, arguments, redirection targets, line number) for
-    every command an external instruction makes.  The once-only marker is
-    removed once, and for Workbench instructions a literal "run " in the
-    first byte, as function_script.c does.  The first command follows the
-    instruction's own rules; the others are AmigaDOS commands."""
+def instruction_analysis(inst, text):
+    """Return (commands, open here-document delimiters) for an external
+    instruction.  commands are (program, arguments, redirection targets,
+    line number).  The once-only marker is removed once, and for Workbench
+    instructions a literal "run " in the first byte, as function_script.c
+    does.  The first command follows the instruction's own rules; the
+    others are AmigaDOS commands."""
     text = command_text(text)
     if inst == 2 and text[:4].lower() == "run ":
         text = text[4:]
-    return [parse_command(inst if index == 0 else 1, words) + (number,)
-            for index, (number, words) in enumerate(shell_commands(text))]
+    commands, delimiters = shell_commands(text)
+    return ([parse_command(inst if index == 0 else 1, words) + (number,)
+             for index, (number, words) in enumerate(commands)], delimiters)
+
+
+def instruction_commands(inst, text):
+    """Return the commands of an external instruction (see instruction_analysis)."""
+    return instruction_analysis(inst, text)[0]
 
 
 def program_word(inst, text):
@@ -519,7 +528,13 @@ def lint(path, types):
                 # break or a "|", "||" or "&&" starts another command (except
                 # inside a "<<" here-document).  The first command follows the
                 # instruction's own rules, the others are AmigaDOS commands.
-                commands = instruction_commands(inst, text)
+                commands, open_delimiters = instruction_analysis(inst, text)
+                # Opus writes consecutive instructions into one script, so an
+                # open here-document would swallow the instructions after it
+                if open_delimiters:
+                    problems.append("%s: instruction %r leaves the here-document %r open, so the "
+                                    "shell reads the following script lines as its input"
+                                    % (ftype.name, text, open_delimiters[0]))
                 # Tabs are ordinary shell whitespace, line breaks are judged
                 # by the commands they start; other control characters are
                 # suspicious anywhere
