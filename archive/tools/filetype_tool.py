@@ -164,7 +164,7 @@ def parse(data):
                     strings.append(rest[:end])
                     rest = rest[end + 1:]
             name = body[:32].split(b"\0", 1)[0].decode("latin-1")
-            if len(strings) < 18 or (not rest and not body.endswith(b"\0")):
+            if len(strings) < 18:
                 types.notes.append("Opus reads the missing strings of TYPE %r as empty" % name)
             if rest:
                 types.notes.append("Opus ignores the data after the 16 action strings of TYPE %r" % name)
@@ -176,19 +176,31 @@ def parse(data):
                 continue
             if len(body) < 22:
                 raise ValueError("FUNC chunk is shorter than CFG_FUNC (22 bytes)")
-            rest = body[22:]
-            instructions = []
-            while rest:
-                end = rest.find(b"\0")
-                if end < 0 or len(rest) < end + 3:
-                    raise ValueError("truncated instruction in FUNC chunk")
-                kind = struct.unpack(">h", rest[end + 1:end + 3])[0]
+            # Instructions as config_open.c reads them: read_config_string()
+            # takes text up to a NUL or the end, read_config_short() then
+            # takes two bytes, or yields 0 (INST_COMMAND) when fewer are
+            # left.  It computes (p[0] << 16) | p[1] into a short, so only
+            # the second byte counts (a signed char on m68k).
+            buffer, offset, size, instructions = body[22:], 0, len(body) - 22, []
+            while size >= 1:
+                length = 0
+                while length < size and buffer[offset + length] != 0:
+                    length += 1
+                text = buffer[offset:offset + length]
+                offset += length + 1
+                size -= length + 1
+                if size >= 2:
+                    low = buffer[offset + 1]
+                    kind = low - 256 if low >= 0x80 else low
+                    offset += 2
+                    size -= 2
+                else:
+                    kind = 0
                 # Opus treats any other type as an external command and
                 # indexes its script prefix table with it, unchecked.
                 if kind not in INSTRUCTIONS:
                     raise ValueError("instruction type %d is not one of INST_COMMAND..INST_LABEL" % kind)
-                instructions.append((kind, rest[:end]))
-                rest = rest[end + 3:]
+                instructions.append((kind, text))
             flags2 = struct.unpack(">I", body[4:8])[0]
             if flags2 & FUNCF2_INTERNAL:
                 raise ValueError("FUNC sets transient flags2 bits 0x%08x "
