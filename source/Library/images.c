@@ -333,10 +333,6 @@ short LIBFUNC L_RenderImage(REG(a0, struct RastPort *rp),
 				state = 0;
 				ret = 0;
 			}
-
-			// Otherwise, is it in chip memory?
-			else if (image->flags & IMAGEF_ALT_CHIP)
-				in_chip = 1;
 		}
 	}
 
@@ -370,10 +366,6 @@ short LIBFUNC L_RenderImage(REG(a0, struct RastPort *rp),
 	if (GetTagData(IM_Scale, 0, tags))
 		scale = 1;
 
-	// Image in chip memory?
-	if (state == 0 && image->flags & IMAGEF_CHIP)
-		in_chip = 1;
-
 	// Initialise bitmap
 	InitBitMap(&bitmap, rp->BitMap->Depth, image->width, image->height);
 	if (bitmap.Depth > 8)
@@ -391,6 +383,10 @@ short LIBFUNC L_RenderImage(REG(a0, struct RastPort *rp),
 
 	// Get image lock
 	L_GetSemaphore(&image->lock, SEMF_SHARED, 0);
+
+	// Image in chip memory? (a remap moves planes under the exclusive lock)
+	if (image->flags & ((state) ? IMAGEF_ALT_CHIP : IMAGEF_CHIP))
+		in_chip = 1;
 
 	// Got remap planes?
 	if (image->remap_count)
@@ -449,6 +445,20 @@ short LIBFUNC L_RenderImage(REG(a0, struct RastPort *rp),
 			bitmap.Planes[plane] = 0;
 	}
 
+	// Scaling needs the blitter, so give it the planes in chip memory
+	if (scale && rect && !in_chip && (chip_copy = AllocVec((planesize << 1) * bitmap.Depth, MEMF_CHIP)))
+	{
+		for (plane = 0; plane < bitmap.Depth; plane++)
+		{
+			if (bitmap.Planes[plane])
+			{
+				CopyMem((char *)bitmap.Planes[plane], (char *)chip_copy + (planesize << 1) * plane, planesize << 1);
+				bitmap.Planes[plane] = chip_copy + (planesize << 1) * plane;
+			}
+		}
+		in_chip = 1;
+	}
+
 	// Draw straight from the planes if they're in chip memory, or if an RTG
 	// driver (not the blitter) draws into the destination
 	rtg = image_rtg_bitmap(rp->BitMap);
@@ -469,20 +479,6 @@ short LIBFUNC L_RenderImage(REG(a0, struct RastPort *rp),
 			bitmap.Planes[0] = 0;
 			plane_ok = 0;
 		}
-	}
-
-	// Scaling needs the blitter, so give it the planes in chip memory
-	else if (scale && rect && !in_chip && (chip_copy = AllocVec((planesize << 1) * bitmap.Depth, MEMF_CHIP)))
-	{
-		for (plane = 0; plane < bitmap.Depth; plane++)
-		{
-			if (bitmap.Planes[plane])
-			{
-				CopyMem((char *)bitmap.Planes[plane], (char *)chip_copy + (planesize << 1) * plane, planesize << 1);
-				bitmap.Planes[plane] = chip_copy + (planesize << 1) * plane;
-			}
-		}
-		in_chip = 1;
 	}
 
 	// Got a valid plane?
