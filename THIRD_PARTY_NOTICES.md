@@ -101,3 +101,16 @@ Copyright notice:
   Jean-loup Gailly        Mark Adler
   jloup@gzip.org          madler@alumni.caltech.edu
 ```
+
+## MWB_DOpus 8
+
+Source: https://aminet.net/package/pix/mwb/MWB_DOpus8c
+
+The MagicWB images and icons in `IconSets/MagicWB` of the release archives
+come from MWB_DOpus 8.0, MagicWorkbench toolbar icons for Directory Opus 5.5
+by Trevor Morris and Leo Davidson (1996), which was also on the Directory
+Opus 5.5 Extras disk. `archive/tools/magicwb_iconset.py` builds the set from
+`MWB_DOpus8c.lha`: the toolbar images and their icons are copied unchanged;
+the program icons use MWB_DOpus 8 images with the tool types and settings of
+the standard icons, and the Command, FTP and print icons and `Toggle.small`
+are made from MWB_DOpus 8 images.

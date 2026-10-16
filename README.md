@@ -66,6 +66,15 @@ each supported system.
   (`Buttons`, `Environment`, `Settings`, `Filetypes`, `Commands`,
   `Desktop`, `Groups`, `Themes`, `Sounds`, `System`) only receive files
   they do not have yet.
+- **Images and icons:** the standard set for RTG and other screens with
+  many colours, or the 8 colour MagicWB set (MWB_DOpus 8 by Trevor
+  Morris and Leo Davidson) for 8 and 16 colour screens, with borderless
+  lister toolbar and FTP bank buttons and "Remap icon images" off in new
+  installations. Suggested for AmigaOS 3 without RTG; remembered in
+  `ENVARC:DOpus5Icons`. An upgrade that changes the set offers to replace
+  `Buttons/Toolbar` and `Buttons/FTP_image` (keeping the old ones as
+  `.old`). The MagicWB files are also in `IconSets/MagicWB` of the
+  archive, laid out like the archive root.
 - **Start mode:** manually, from an `Opus5_Startup` icon in
   `SYS:WBStartup` when Workbench starts, or (AmigaOS 3) instead of
   Workbench. Workbench replacement makes `DOpus5:C/LoadDB` resident as
@@ -220,6 +229,24 @@ system lacks, internal commands that neither Opus nor its modules provide
 name alone, upper-case datatype IDs and drag'n'drop actions that replace the
 default `Copy MOVEWHENSAME` with a plain `Copy`. Use it to review
 contributed filetypes before adding them to `basedata.lha`.
+
+### MagicWB icon set
+
+`archive/tools/magicwb_iconset.py` builds `IconSets/MagicWB` of
+`basedata.lha` from
+[MWB_DOpus8c.lha](https://aminet.net/package/pix/mwb/MWB_DOpus8c) and the
+standard files in `basedata.lha`. Run it after changing a default button
+bank or an icon the set replaces; it needs LHa for UNIX, so run it in one of
+the build images:
+
+```sh
+docker run --rm -v "$PWD:/work" -v "$HOME/Downloads:/mwb" \
+  sacredbanana/amiga-compiler:m68k-amigaos \
+  sh -c 'cd /work && python3 archive/tools/magicwb_iconset.py /mwb/MWB_DOpus8c.lha /tmp/out --update'
+```
+
+The basedata tests fail when the set's banks or environments no longer match
+the standard ones, or a default bank uses an image the set lacks.
 
 ## Project status
 

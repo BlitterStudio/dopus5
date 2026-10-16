@@ -1,6 +1,6 @@
 @database dopus5
 @master dopus5.guide
-@$VER: Dopus5Guide 58.13 (16.10.2026)
+@$VER: Dopus5Guide 58.14 (16.10.2026)
 @author "Mark Anderson, Andrew Dunbar, Dr Greg Perry, Leo Davidson and Dave Clarke"
 @(c) "Directory Opus 5 Help Guide (c) GPSoftware 1999"
 @(c) "Directory Opus 5 Help Guide (c) DOPUS5 Open Source Team 2012-2026"
@@ -89,6 +89,32 @@ Upgrade:
   hold your configuration; they only receive files they do not have yet.
   The installer also offers to remove the outdated stored filetypes that
   older releases left in DOpus5:Storage/Filetypes.
+
+Images and icons:
+  The installer asks which toolbar images and icons to use, and offers
+  the answer you gave last time.  The standard set is made for RTG and
+  other screens with many colours.  The MagicWB set (MWB_DOpus 8 by
+  Trevor Morris and Leo Davidson) has 8 colour images and icons for 8 and
+  16 colour screens with the MagicWB palette.  Its lister toolbar and FTP
+  button bank have borderless buttons, because the MagicWB images draw
+  their own border.  Without an earlier answer the installer suggests
+  MagicWB on AmigaOS 3 when neither Picasso96 nor CyberGraphX is
+  installed.
+
+  The MagicWB icons use colours 0 to 7 of the screen, and on the
+  Workbench screen colours 4 to 7 hold the MagicWB colours.  With 'Remap
+  icon images' (Icon Settings) on, Directory Opus draws those colours in
+  the last four pens instead, which are other colours on a screen with
+  more than 8, so a new MagicWB installation has the option off.
+
+  An upgrade keeps your environment and the images of the DirectoryOpus,
+  Help and DOpus5 drawer icons, because they hold your settings, tool
+  types and window positions.  When an upgrade changes the set, the
+  installer offers to replace Buttons/Toolbar and Buttons/FTP_image, and
+  keeps your banks as Toolbar.old and FTP_image.old; after a change to
+  MagicWB, turn off 'Remap icon images' yourself.  The archive has the
+  MagicWB files in IconSets/MagicWB, laid out like the archive itself,
+  for installing by hand.
 
 How Directory Opus starts:
   The installer asks how Directory Opus should start, and offers the
