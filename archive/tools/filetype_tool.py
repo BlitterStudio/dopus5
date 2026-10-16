@@ -409,9 +409,17 @@ def lint(path, types):
                 problems.append("%s: %s is a separator, so its commands never run"
                                 % (ftype.name, function_text(func)))
             for inst, text in commands:
-                prefix = path_prefix(program_word(inst, text))
-                if inst in (1, 2, 3, 4) and prefix and prefix not in STOCK_ASSIGNS:
-                    problems.append("%s: needs %s for %r" % (ftype.name, prefix, text))
+                # External instructions go into a script verbatim, so a line
+                # break starts another command; check every line it makes
+                if inst != 0 and not text.isprintable():
+                    problems.append("%s: instruction %r contains control characters; a line break in "
+                                    "it starts another command in the script Opus writes" % (ftype.name, text))
+                lines = text.replace("\r", "\n").split("\n") if inst != 0 else [text]
+                for index, line in enumerate(lines):
+                    # Only the first line keeps the instruction's own prefix rules
+                    prefix = path_prefix(program_word(inst if index == 0 else 1, line))
+                    if inst in (1, 2, 3, 4) and prefix and prefix not in STOCK_ASSIGNS:
+                        problems.append("%s: needs %s for %r" % (ftype.name, prefix, text))
                 # function_script.c strips only a literal "run " in the first
                 # byte; any other form of run reaches dopusrt5 as the program
                 if inst == 2 and program_word(inst, text).lower() == "run":
