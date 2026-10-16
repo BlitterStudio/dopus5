@@ -1,3 +1,16 @@
+[dopus5 next] Colours after moving to a native screen
+Program change; version bump deferred.
+
+- Two things went wrong when Opus moved from an RTG screen to a native
+  one, for example by loading an environment with a native screen mode.
+  The palette was allocated after the desktop icons had been remapped, so
+  icon.library had taken the pens Opus wanted for its colours; the lister
+  status bar and other elements drew in black.  The palette is now
+  allocated first.  And IconLib laid out colour icons for the native
+  screen as two-colour images; opening icon.library once more while the
+  screen is open fixes that, so Opus does that on a native screen of an
+  RTG system.  Starting on an RTG screen is unchanged.
+
 [dopus5 next] Image planes in fast memory on RTG screens
 dopus5.library change; version bump deferred.
 

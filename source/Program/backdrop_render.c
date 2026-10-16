@@ -23,13 +23,6 @@ For more information on Directory Opus for Windows please see:
 
 #include "dopus.h"
 
-// CYBRMATTR_ISCYBERGFX for the RTG probe (the OS3 SDK keeps it under cybergraphics/)
-#ifdef __amigaos3__
-	#include <cybergraphics/cybergraphics.h>
-#else
-	#include <cybergraphx/cybergraphics.h>
-#endif
-
 #if defined(__MORPHOS__)
 	/* MOS-only alpha blit / tint API lives in cybergraphics.library; P96 has no equivalent. */
 	#include <proto/cybergraphics.h>
@@ -61,25 +54,10 @@ struct OwnDiskObject
 	#define ISOWN(x) (((struct OwnDiskObject *)x)->ownmagic == OWN_MAGIC && ((struct OwnDiskObject *)x)->ownptr == x)
 #endif
 
-// Is this an RTG bitmap? The blitter only reads masks when it draws into a
-// native planar bitmap; RTG drivers blit with the CPU (or their own hardware)
-// and can read masks from any memory. Probe P96/CGX directly, BMF_STANDARD
-// is not reliable before graphics.library V45.
-static BOOL backdrop_rtg_bitmap(struct BitMap *bm)
-{
-#if !defined(__AROS__)
-	if (P96Base && p96GetBitMapAttr(bm, P96BMA_ISP96))
-		return TRUE;
-#endif
-	if (CyberGfxBase && GetCyberMapAttr(bm, CYBRMATTR_ISCYBERGFX))
-		return TRUE;
-	return FALSE;
-}
-
 // Can this mask be used to draw into this bitmap?
 static BOOL backdrop_mask_blittable(struct BitMap *bm, APTR mask)
 {
-	return (BOOL)(backdrop_rtg_bitmap(bm) || (TypeOfMem(mask) & MEMF_CHIP));
+	return (BOOL)(display_rtg_bitmap(bm) || (TypeOfMem(mask) & MEMF_CHIP));
 }
 
 // Memory type for icon masks on the current screen
@@ -92,7 +70,7 @@ static ULONG backdrop_mask_memory(void)
 	// No screen yet; stay with chip, backdrop_init_info() checks again
 	if (!GUI->screen_pointer)
 		return MEMF_CHIP;
-	return backdrop_rtg_bitmap(GUI->screen_pointer->RastPort.BitMap) ? MEMF_ANY : MEMF_CHIP;
+	return display_rtg_bitmap(GUI->screen_pointer->RastPort.BitMap) ? MEMF_ANY : MEMF_CHIP;
 #endif
 }
 
@@ -1200,7 +1178,7 @@ void backdrop_draw_icon_ghost(struct RastPort *rp, struct Rectangle *rect, PLANE
 	if (mask)
 	{
 		// Allocate a copy of the mask (the blitter needs chip memory for a native bitmap)
-		if ((new_mask = AllocVec(words * sizeof(UWORD), backdrop_rtg_bitmap(rp->BitMap) ? MEMF_ANY : MEMF_CHIP)))
+		if ((new_mask = AllocVec(words * sizeof(UWORD), display_rtg_bitmap(rp->BitMap) ? MEMF_ANY : MEMF_CHIP)))
 		{
 			short word, line, count;
 			unsigned short mask_word = 0xaaaa;

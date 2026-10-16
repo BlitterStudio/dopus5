@@ -381,6 +381,7 @@ extern GUI_Glue *GUI;
 
 // Prototypes
 BOOL display_open(long);
+BOOL display_rtg_bitmap(struct BitMap *bm);
 struct DiskObject *get_iconify_icon(BOOL buttons);
 void close_display(int, BOOL);
 void display_box_to_rect(struct IBox *, struct Rectangle *);
