@@ -1,6 +1,6 @@
 @database dopus5
 @master dopus5.guide
-@$VER: Dopus5Guide 58.12 (16.10.2026)
+@$VER: Dopus5Guide 58.13 (16.10.2026)
 @author "Mark Anderson, Andrew Dunbar, Dr Greg Perry, Leo Davidson and Dave Clarke"
 @(c) "Directory Opus 5 Help Guide (c) GPSoftware 1999"
 @(c) "Directory Opus 5 Help Guide (c) DOPUS5 Open Source Team 2012-2026"
@@ -4202,8 +4202,13 @@ when one of these actions occur or when a popup menu item is selected, just
 click on the action and the @{" Function Editor " link "Function Editor"} will be brought up.  A default
 icon can be established for this filetype by simply either dragging and
 dropping the icon into the icon box or selecting the icon file using select
-icon.  The manner in which Opus 5 identifies a file to be of this filetype
-can be edited with the @{" Edit Class " link "File Class Editor"} button.
+icon.  An icon chosen through an assign, such as ENVARC:Sys, keeps that
+assign in its path.  An icon inside DOpus5:, ENVARC: or SYS: that is
+chosen by its volume or device name, or dropped from Workbench, is stored
+relative to that assign (the deepest one holding it).  Filetypes therefore
+keep their icons on systems whose boot volume has a different name.  The
+manner in which Opus 5 identifies a file to be of this filetype can be
+edited with the @{" Edit Class " link "File Class Editor"} button.
 
   Reordering icon menu entries:
     The Up and Down buttons next to the icon menu list move the

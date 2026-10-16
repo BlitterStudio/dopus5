@@ -15,6 +15,91 @@
 #define LayersBase		(data->func_startup.layers_base)
 */
 
+// Icon paths inside one of these are stored relative to it, so a filetype
+// also works on a system whose boot volume has another name
+static char *filetypeed_icon_assigns[] = {"DOpus5:", "ENVARC:", "SYS:", 0};
+
+// See if the device part of a path is an assign
+static BOOL filetypeed_path_is_assign(char *path)
+{
+	struct DosList *dos;
+	char name[32];
+	short len;
+	BOOL ret = 0;
+
+	for (len = 0; path[len] && path[len] != ':'; len++)
+		;
+	if (path[len] != ':' || len == 0 || len >= (short)sizeof(name))
+		return 0;
+	stccpy(name, path, len + 1);
+
+	dos = LockDosList(LDF_ASSIGNS | LDF_READ);
+	if (FindDosEntry(dos, name, LDF_ASSIGNS))
+		ret = 1;
+	UnLockDosList(LDF_ASSIGNS | LDF_READ);
+
+	return ret;
+}
+
+// Get the path to store for an icon drawer. A given path that starts with an
+// assign is kept as it is; otherwise the full name of the lock is moved onto
+// the deepest of filetypeed_icon_assigns that holds it. path is empty on failure.
+static void filetypeed_drawer_path(BPTR lock, char *given, char *path, short size)
+{
+	char assign_path[256];
+	char *rest;
+	short a, len, best = -1, best_len = 0;
+	long rest_len;
+
+	// Keep a given assign path unless it walks up to a parent
+	if (given && filetypeed_path_is_assign(given) && !strstr(given, ":/") && !strstr(given, "//") &&
+		(long)strlen(given) < size)
+	{
+		strcpy(path, given);
+		return;
+	}
+
+	// Get full name
+	if (!(NameFromLock(lock, path, size)))
+	{
+		path[0] = 0;
+		return;
+	}
+
+	// Find the deepest assign holding this drawer
+	for (a = 0; filetypeed_icon_assigns[a]; a++)
+	{
+		BPTR assign_lock;
+
+		if (!(assign_lock = Lock(filetypeed_icon_assigns[a], ACCESS_READ)))
+			continue;
+		len = (NameFromLock(assign_lock, assign_path, sizeof(assign_path))) ? strlen(assign_path) : 0;
+		UnLock(assign_lock);
+
+		if (len > best_len && strnicmp(path, assign_path, len) == 0 &&
+			(assign_path[len - 1] == ':' || path[len] == 0 || path[len] == '/'))
+		{
+			best = a;
+			best_len = len;
+		}
+	}
+
+	// Replace the drawer's name of the assign with the assign
+	if (best >= 0)
+	{
+		rest = path + best_len;
+		if (*rest == '/')
+			rest++;
+		rest_len = strlen(rest);
+		len = strlen(filetypeed_icon_assigns[best]);
+		if (len + rest_len < size)
+		{
+			memmove(path + len, rest, rest_len + 1);
+			memcpy(path, filetypeed_icon_assigns[best], len);
+		}
+	}
+}
+
 // Editor init
 //#ifdef __amigaos4__
 // ULONG ASM _filetypeed_init(REG(a0, IPCData *ipc), REG(a2, int skip), REG(a1, filetype_ed_data *data))
@@ -519,7 +604,7 @@ void FiletypeEditor(void)
 					APTR image;
 
 					// Get full name
-					NameFromLock(msg->am_ArgList[0].wa_Lock, name, 256);
+					filetypeed_drawer_path(msg->am_ArgList[0].wa_Lock, 0, name, 256);
 					if (msg->am_ArgList[0].wa_Name && *msg->am_ArgList[0].wa_Name)
 						AddPart(name, (STRPTR)msg->am_ArgList[0].wa_Name, 256);
 
@@ -1030,13 +1115,8 @@ BOOL filetypeed_pick_icon(filetype_ed_data *data)
 		BPTR lock = Lock("ENVARC:Sys", ACCESS_READ);
 		if (lock)
 		{
-			if (!(NameFromLock(lock, path, sizeof(path))))
-				path[0] = 0;
+			strcpy(path, "ENVARC:Sys");
 			UnLock(lock);
-		}
-		else
-		{
-			path[0] = 0;
 		}
 	}
 
@@ -1077,13 +1157,7 @@ BOOL filetypeed_pick_icon(filetype_ed_data *data)
 		// Build new path
 		if (reqpath[0] && (lock = Lock(reqpath, ACCESS_READ)))
 		{
-			// Copy drawer path if it's in DOpus5: tree (case-insensitive,
-			// since the assign is registered as "DOPUS5")
-			if (strnicmp(reqpath, "DOpus5:", 7) == 0 && !strstr(reqpath, ":/"))
-				strcpy(path, reqpath);
-			// Get absolute path to avoid relative paths
-			else if (!(NameFromLock(lock, path, sizeof(path))))
-				path[0] = 0;
+			filetypeed_drawer_path(lock, reqpath, path, sizeof(path));
 			UnLock(lock);
 		}
 		else
