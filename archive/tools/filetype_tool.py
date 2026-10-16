@@ -341,6 +341,10 @@ def lint(path, types):
                 if not func.is_menu or label != b"---":
                     problems.append("%s: %s has no commands" % (ftype.name, function_text(func)))
                 continue
+            # A "---" label only adds a separator; the commands are unreachable
+            if func.is_menu and label == b"---":
+                problems.append("%s: %s is a separator, so its commands never run"
+                                % (ftype.name, function_text(func)))
             for inst, text in commands:
                 prefix = path_prefix(program_word(inst, text))
                 if inst in (1, 2, 3, 4) and prefix and prefix not in STOCK_ASSIGNS:
