@@ -325,18 +325,32 @@ def shell_lex(line):
 
 
 def shell_commands(text):
-    """Return the commands a piece of shell text makes, as word lists: one
-    per line and per side of each "|", "||" or "&&"."""
-    commands = []
-    for line in text.replace("\r", "\n").split("\n"):
+    """Return the commands a piece of shell text makes, as (line number,
+    words) pairs: one per line and per side of each "|", "||" or "&&".
+    Lines of a "<<" here-document, up to its delimiter line, are input to
+    the command, not commands, so they are skipped."""
+    commands, delimiters = [], []
+    for number, line in enumerate(text.replace("\r", "\n").split("\n")):
+        if delimiters:
+            if line.strip() == delimiters[0]:
+                delimiters.pop(0)
+            continue
         current = []
-        for token in shell_lex(line):
+        tokens = shell_lex(line)
+        for index, token in enumerate(tokens):
             if token is PIPE:
-                commands.append(current)
+                commands.append((number, current))
                 current = []
-            else:
-                current.append(token)
-        commands.append(current)
+                continue
+            current.append(token)
+            found = redirection(token)
+            if found and found[1] == "delimiter":
+                delimiter = token[len(found[0]):]
+                if not delimiter and index + 1 < len(tokens) and tokens[index + 1] is not PIPE:
+                    delimiter = tokens[index + 1]
+                if delimiter:
+                    delimiters.append(delimiter)
+        commands.append((number, current))
     return commands
 
 
@@ -390,16 +404,16 @@ def parse_command(kind, words):
 
 
 def instruction_commands(inst, text):
-    """Return (program, arguments, redirection targets) for every command an
-    external instruction makes.  The once-only marker is removed once, and
-    for Workbench instructions a literal "run " in the first byte, as
-    function_script.c does.  The first command follows the instruction's
-    own rules; the others are AmigaDOS commands."""
+    """Return (program, arguments, redirection targets, line number) for
+    every command an external instruction makes.  The once-only marker is
+    removed once, and for Workbench instructions a literal "run " in the
+    first byte, as function_script.c does.  The first command follows the
+    instruction's own rules; the others are AmigaDOS commands."""
     text = command_text(text)
     if inst == 2 and text[:4].lower() == "run ":
         text = text[4:]
-    return [parse_command(inst if index == 0 else 1, words)
-            for index, words in enumerate(shell_commands(text))]
+    return [parse_command(inst if index == 0 else 1, words) + (number,)
+            for index, (number, words) in enumerate(shell_commands(text))]
 
 
 def program_word(inst, text):
@@ -502,18 +516,21 @@ def lint(path, types):
                     continue
 
                 # External instructions go into a script verbatim, so a line
-                # break or a "|", "||" or "&&" starts another command.  The
-                # first follows the instruction's own rules, the others are
-                # AmigaDOS commands.
-                # Tabs are ordinary shell whitespace; other control
-                # characters (line breaks above all) are not
-                if any(char != "\t" and not char.isprintable() for char in text):
-                    problems.append("%s: instruction %r contains control characters; a line break in "
-                                    "it starts another command in the script Opus writes" % (ftype.name, text))
+                # break or a "|", "||" or "&&" starts another command (except
+                # inside a "<<" here-document).  The first command follows the
+                # instruction's own rules, the others are AmigaDOS commands.
                 commands = instruction_commands(inst, text)
-                if any(program for program, _arguments, _targets in commands):
+                # Tabs are ordinary shell whitespace, line breaks are judged
+                # by the commands they start; other control characters are
+                # suspicious anywhere
+                if any(char not in "\t\n\r" and not char.isprintable() for char in text):
+                    problems.append("%s: instruction %r contains control characters" % (ftype.name, text))
+                if any(number > 0 for _program, _arguments, _targets, number in commands):
+                    problems.append("%s: instruction %r has a line break, which starts another command "
+                                    "in the script Opus writes" % (ftype.name, text))
+                if any(program for program, _arguments, _targets, _number in commands):
                     usable.append((inst, text))
-                for program, _arguments, targets in commands:
+                for program, _arguments, targets, _number in commands:
                     # The shell also has to open redirection targets
                     for used in [program] + targets:
                         prefix = path_prefix(used)
