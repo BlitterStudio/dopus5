@@ -108,10 +108,14 @@ def parse(data):
     while pos + 8 <= len(data):
         chunk = data[pos:pos + 4]
         size = struct.unpack(">I", data[pos + 4:pos + 8])[0]
+        if pos + 8 + size > len(data):
+            raise ValueError("%r chunk runs past the end of the file" % chunk)
         body = data[pos + 8:pos + 8 + size]
         pos += 8 + size + (size & 1)
 
         if chunk == b"TYPE":
+            if len(body) < 46:
+                raise ValueError("TYPE chunk is shorter than CFG_TYPE (46 bytes)")
             strings = body[46:].split(b"\0")
             if len(strings) != 19 or strings[-1] != b"":
                 raise ValueError("TYPE chunk does not hold recognition, icon and 16 actions")
@@ -119,6 +123,8 @@ def parse(data):
         elif chunk == b"FUNC":
             if not types:
                 raise ValueError("FUNC chunk before any TYPE chunk")
+            if len(body) < 22:
+                raise ValueError("FUNC chunk is shorter than CFG_FUNC (22 bytes)")
             rest = body[22:]
             instructions = []
             while rest:
@@ -132,7 +138,8 @@ def parse(data):
             raise ValueError("unexpected chunk %r" % chunk)
 
     if pos != len(data):
-        raise ValueError("trailing data after the last chunk")
+        raise ValueError("missing pad byte after the last chunk" if pos > len(data)
+                         else "trailing data after the last chunk")
     if not types:
         raise ValueError("no TYPE chunk, so Opus loads no filetype from it")
     return types
