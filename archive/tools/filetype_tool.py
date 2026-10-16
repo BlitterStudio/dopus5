@@ -313,11 +313,12 @@ def lint(path, types):
 
         seen_events = set()
         for func in ftype.functions:
-            labels = [text for inst, text in func.instructions if inst == INST_LABEL and text.strip()]
+            # backdrop_popup.c uses the first INST_LABEL and ignores the rest
+            label = next((text for inst, text in func.instructions if inst == INST_LABEL), b"")
             if func.is_menu:
                 # backdrop_popup.c only adds a menu item for an INST_LABEL
-                if not labels:
-                    problems.append("%s: %s has no label, so it never appears in the menu"
+                if not label.strip():
+                    problems.append("%s: %s has no usable menu label (first label missing or blank)"
                                     % (ftype.name, function_text(func)))
             elif func.event >= len(EVENTS):
                 problems.append("%s: %s is not an Opus filetype event, so it never runs"
@@ -334,7 +335,7 @@ def lint(path, types):
                         for inst, text in func.instructions if inst != INST_LABEL]
             commands = [(inst, text) for inst, text in commands if text]
             if not commands:
-                if not func.is_menu or labels != [b"---"]:
+                if not func.is_menu or label != b"---":
                     problems.append("%s: %s has no commands" % (ftype.name, function_text(func)))
                 continue
             for inst, text in commands:
