@@ -311,13 +311,30 @@ def lint(path, types):
                 problems.append("%s: MATCHDTID %r is lower-cased before the comparison, so it "
                                 "only matches datatypes with a lower-case ID" % (ftype.name, arg))
 
+        seen_events = set()
         for func in ftype.functions:
+            labels = [text for inst, text in func.instructions if inst == INST_LABEL and text.strip()]
+            if func.is_menu:
+                # backdrop_popup.c only adds a menu item for an INST_LABEL
+                if not labels:
+                    problems.append("%s: %s has no label, so it never appears in the menu"
+                                    % (ftype.name, function_text(func)))
+            elif func.event >= len(EVENTS):
+                problems.append("%s: %s is not an Opus filetype event, so it never runs"
+                                % (ftype.name, function_text(func)))
+            elif func.event in seen_events:
+                # FindFunctionType() returns the first function for an event
+                problems.append("%s: %s repeats an event, so only the first one runs"
+                                % (ftype.name, function_text(func)))
+            else:
+                seen_events.add(func.event)
+
             # Opus skips empty instructions, so they do not count as commands
             commands = [(inst, command_text(text.decode("latin-1")))
                         for inst, text in func.instructions if inst != INST_LABEL]
             commands = [(inst, text) for inst, text in commands if text]
             if not commands:
-                if not func.is_menu or not any(inst == INST_LABEL and text == b"---" for inst, text in func.instructions):
+                if not func.is_menu or labels != [b"---"]:
                     problems.append("%s: %s has no commands" % (ftype.name, function_text(func)))
                 continue
             for inst, text in commands:
