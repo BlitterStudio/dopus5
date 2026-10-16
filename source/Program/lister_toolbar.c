@@ -73,7 +73,7 @@ void lister_show_toolbar(Lister *lister)
 	draw_tags[1].ti_Tag = IM_ClipBoundary;
 	draw_tags[1].ti_Data = (toolbar->buttons->window.flags & BTNWF_BORDERLESS) ? 0 : 2;
 	draw_tags[2].ti_Tag = IM_NoIconRemap;
-	draw_tags[2].ti_Data = (environment->env->desktop_flags & DESKTOPF_NO_REMAP) ? TRUE : FALSE;
+	draw_tags[2].ti_Data = !remap_icon_images();
 	draw_tags[3].ti_Tag = TAG_DONE;
 
 	// Get offset of first button, and width we can show
@@ -344,7 +344,7 @@ void lister_toolbar_click(Lister *lister, short x, short y, unsigned short code,
 	draw_tags[3].ti_Tag = IM_ClipBoundary;
 	draw_tags[3].ti_Data = (toolbar->buttons->window.flags & BTNWF_BORDERLESS) ? 0 : 2;
 	draw_tags[4].ti_Tag = IM_NoIconRemap;
-	draw_tags[4].ti_Data = (environment->env->desktop_flags & DESKTOPF_NO_REMAP) ? TRUE : FALSE;
+	draw_tags[4].ti_Data = !remap_icon_images();
 	draw_tags[5].ti_Tag = TAG_DONE;
 
 	// Button release?

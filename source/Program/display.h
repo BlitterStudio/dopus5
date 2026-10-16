@@ -354,6 +354,7 @@ typedef struct
 #define GUIF2_BACKFILL_SET (1 << 7)	   // Set backfill
 #define GUIF2_KEY_FINDER (1 << 9)	   // Key Finder active
 #define GUIF2_PATTERN_SHOWN (1 << 11)  // display_open drew the backdrop picture already
+#define GUIF2_MAGICWB_PENS (1 << 12)   // Workbench screen has the MagicWB colours in pens 4-7
 
 // The following GUIF2 bits were retired in #49 - all four moved into the
 // CFG_ENVR struct so they can be persisted as part of the user's prefs:

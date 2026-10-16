@@ -185,6 +185,9 @@ void get_colour_table()
 	if (!GUI->screen && (GUI->screen_pointer->Flags & SCREENTYPE) == WBENCHSCREEN &&
 		GUI->screen_pointer->ViewPort.ColorMap->Count >= 8 && magicwb_pens_wanted())
 	{
+		// Whether we or Workbench hold them, pens 4-7 have the MagicWB colours; draw icons in them
+		GUI->flags2 |= GUIF2_MAGICWB_PENS;
+
 		for (pen = 0; pen < 4; pen++)
 		{
 			if (ObtainPen(GUI->screen_pointer->ViewPort.ColorMap,
@@ -269,8 +272,16 @@ void free_colour_table()
 #endif
 	}
 
-	// Clear allocation flag
+	// Clear allocation flags
 	GUI->pen_alloc = 0;
+	GUI->flags2 &= ~GUIF2_MAGICWB_PENS;
+}
+
+// Should 8 colour icons draw colours 4-7 in the last four pens? Not when the
+// Workbench screen keeps the MagicWB colours in pens 4-7, as Workbench draws them there
+BOOL remap_icon_images(void)
+{
+	return (BOOL)(!(environment->env->desktop_flags & DESKTOPF_NO_REMAP) && !(GUI->flags2 & GUIF2_MAGICWB_PENS));
 }
 
 // Retrieve custom pen; returns -1 if no exclusive pen is available

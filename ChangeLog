@@ -1,3 +1,18 @@
+[dopus5 next] No icon remapping with "Set MagicWB Colors" on
+Program change (OS3); version bump deferred.
+
+- With "Set MagicWB Colors" on in the Workbench preferences, pens 4-7
+  of the Workbench screen hold the MagicWB colours and Workbench draws
+  8 colour icons in them.  With "Remap icon images" on, Opus drew
+  colours 4-7 in the last four pens instead, so MagicWB icons had the
+  wrong colours when Opus ran on the Workbench screen, for example as
+  the Workbench replacement with an environment that predates the
+  MagicWB set.  With that preference on, Opus no longer remaps icons on
+  the Workbench screen: desktop, listers, toolbars, button banks and
+  Icon Information.
+- The guide says where the Workbench screen gets its colours when Opus
+  replaces Workbench, and what MagicWB icons need there.
+
 [dopus5 next] MagicWB images and icons (#122)
 Release archive change.
 

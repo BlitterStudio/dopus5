@@ -1,6 +1,6 @@
 @database dopus5
 @master dopus5.guide
-@$VER: Dopus5Guide 58.14 (16.10.2026)
+@$VER: Dopus5Guide 58.15 (16.10.2026)
 @author "Mark Anderson, Andrew Dunbar, Dr Greg Perry, Leo Davidson and Dave Clarke"
 @(c) "Directory Opus 5 Help Guide (c) GPSoftware 1999"
 @(c) "Directory Opus 5 Help Guide (c) DOPUS5 Open Source Team 2012-2026"
@@ -105,7 +105,9 @@ Images and icons:
   Workbench screen colours 4 to 7 hold the MagicWB colours.  With 'Remap
   icon images' (Icon Settings) on, Directory Opus draws those colours in
   the last four pens instead, which are other colours on a screen with
-  more than 8, so a new MagicWB installation has the option off.
+  more than 8, so a new MagicWB installation has the option off.  On
+  AmigaOS 3 with "Set MagicWB Colors" on in the Workbench preferences,
+  Directory Opus never remaps icons on the Workbench screen.
 
   An upgrade keeps your environment and the images of the DirectoryOpus,
   Help and DOpus5 drawer icons, because they hold your settings, tool
@@ -3705,9 +3707,12 @@ This section controls various aspects of Opus's icon display routines.
      scrollable.
 
   Remap icon images:
-    Directory Opus will, by default, remap 8 colour icons to the top and
-    bottom 4 colours in the palette. This option allows you to override
-    this behaviour.
+    Directory Opus will, by default, draw colours 4 to 7 of 8 colour icons
+    in the last four pens of the screen, which hold the system colours on
+    its own screen.  Turn this off to draw them in pens 4 to 7, as
+    Workbench does.  On AmigaOS 3 with "Set MagicWB Colors" on in the
+    Workbench preferences, icons on the Workbench screen are never
+    remapped, because pens 4 to 7 hold the MagicWB colours there.
 
   Remove Opus icon positions:
     Setting this option along with the Use Workbench Icon Positions flag
@@ -4090,10 +4095,16 @@ When Opus has its own screen, the Presets button sets its eight system
 colours.  'Workbench Screen' copies them from the Workbench screen;
 'Workbench 3.1' and 'MagicWB' use those standard palettes.  MagicWB icons
 need the MagicWB palette, and on a screen with more than eight colours also
-'Remap icon images' in Icon Settings.  Load reads the colours from a palette
-preferences file as used by the Workbench 'Palette' program, or from the
-colour map of an IFF picture.  On the Workbench screen only the user pens can
-be edited, so these two buttons are disabled there.
+'Remap icon images' on in Icon Settings.  Load reads the colours from a
+palette preferences file as used by the Workbench 'Palette' program, or from
+the colour map of an IFF picture.  On the Workbench screen only the user pens
+can be edited, so these two buttons are disabled there.
+
+This is also the case when Opus replaces Workbench: the Workbench screen
+takes its colours from the 'Palette' preferences.  For MagicWB icons there,
+turn on "Set MagicWB Colors" in the Workbench preferences (AmigaOS 3.1.4 and
+later), or set pens 4 to 7 to the MagicWB colours in 'Palette' and turn off
+'Remap icon images'.
 @endnode
 
 @node "Environment - Path List" "Environment - Path List"

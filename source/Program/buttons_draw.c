@@ -383,7 +383,7 @@ short buttons_draw_button(Buttons *buttons,
 			draw_tags[4].ti_Tag = IM_Erase;
 			draw_tags[4].ti_Data = bg;
 			draw_tags[5].ti_Tag = IM_NoIconRemap;
-			draw_tags[5].ti_Data = (environment->env->desktop_flags & DESKTOPF_NO_REMAP) ? TRUE : FALSE;
+			draw_tags[5].ti_Data = !remap_icon_images();
 			draw_tags[6].ti_Tag = IM_Backfill;
 			draw_tags[6].ti_Data = (buttons->pattern_data.valid && bg == GUI->draw_info->dri_Pens[BACKGROUNDPEN]);
 			draw_tags[7].ti_Tag = TAG_END;

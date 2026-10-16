@@ -603,7 +603,7 @@ IPC_EntryCode(misc_proc)
 				AddTail(&list, &node);
 
 				// Icon, not remapping
-				if (startup->command == MENU_ICON_INFO && environment->env->desktop_flags & DESKTOPF_NO_REMAP)
+				if (startup->command == MENU_ICON_INFO && !remap_icon_images())
 					flags = 1;
 
 				// Pass UseWBInfo preference to icon.module (ignored by diskinfo.module)
@@ -1000,7 +1000,7 @@ IPC_EntryCode(misc_proc)
 				// Or flags for icon module
 				else if (startup->command == FUNC_ICONINFO)
 				{
-					flags = (environment->env->desktop_flags & DESKTOPF_NO_REMAP) ? 1 : 0;
+					flags = remap_icon_images() ? 0 : 1;
 					if (environment->env->display_options & DISPOPTF_USE_WBINFO)
 						flags |= ICON_USE_WBINFO_FLAG;
 				}

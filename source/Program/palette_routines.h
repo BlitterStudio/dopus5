@@ -28,6 +28,7 @@ For more information on Directory Opus for Windows please see:
 void load_screen_palette(void);
 void get_colour_table(void);
 void free_colour_table(void);
+BOOL remap_icon_images(void);
 
 short GetCustomPen(short, short, ColourSpec32 *);
 void FreeCustomPen(short, short, BOOL);
