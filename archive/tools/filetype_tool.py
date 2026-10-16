@@ -371,10 +371,12 @@ def lint(path, types):
                 problems.append("%s: %s sets unknown flags2 bits 0x%08x"
                                 % (ftype.name, function_text(func), flags2 & ~STORED_FUNC_FLAGS2))
 
-            # Opus skips empty instructions, so they do not count as commands
+            # Opus skips empty instructions, so they do not count as commands;
+            # neither does a command line with nothing to run ("run >NIL:")
             commands = [(inst, command_text(text.decode("latin-1")))
                         for inst, text in func.instructions if inst != INST_LABEL]
-            commands = [(inst, text) for inst, text in commands if text]
+            commands = [(inst, text) for inst, text in commands
+                        if (text if inst == 0 else program_word(inst, text))]
             if not commands:
                 if not func.is_menu or label != b"---":
                     problems.append("%s: %s has no commands" % (ftype.name, function_text(func)))
