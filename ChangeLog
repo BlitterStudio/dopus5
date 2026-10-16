@@ -407,6 +407,8 @@ XADOpus module change; version bump deferred.
   for full-length paths, and "lister read" now parses paths up to the
   buffer's full 512-byte capacity, so directories with spaces or very
   long names work.
+- The guide now has XADOpen, XADExtract and XADOpenInLister pages, with
+  the steps to make double-clicking an archive open it in place.
 
 [dopus5 next] XADOpus: stop duplicate lister on archive drag&drop
 Program and XADOpus module behaviour change.
