@@ -433,8 +433,8 @@ def shell_commands(text):
                     delimiter = tokens[index + 1]
                 if delimiter:
                     delimiters.append(delimiter)
-        plain = [word for word in current if not redirection(word)]
-        if continued and plain and plain[0].lower() == "run":
+        # (kind 0 only drops the redirections and their operands)
+        if continued and parse_command(0, current)[0].lower() == "run":
             # Run takes the next line as another command of its own
             continued = False
         if not continued:
