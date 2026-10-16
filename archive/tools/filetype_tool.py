@@ -289,18 +289,19 @@ def shell_words(text):
 def program_word(inst, text):
     """Return the program or script an instruction runs.
 
-    AmigaDOS instructions are shell command lines: skip a leading "run" and
-    I/O redirections.  For Workbench instructions function_script.c strips
-    "run " only when it starts in the first byte and passes the rest to
-    dopusrt5.  Script and ARexx instructions get "execute " or "rx "
-    prepended, so their first word is the script."""
+    AmigaDOS instructions are shell command lines: skip a leading "run".
+    For Workbench instructions function_script.c strips "run " only when it
+    starts in the first byte and puts the rest after "dopusrt5".  In both
+    cases the shell consumes redirections that follow, so skip them.
+    Script and ARexx instructions get "execute " or "rx " prepended, so
+    their first word is the script."""
     text = command_text(text)
     if inst == 2 and text[:4].lower() == "run ":
         text = text[4:]
     words = shell_words(text)
-    if inst == 1:
-        if words and words[0].lower() == "run":
-            words = words[1:]
+    if inst == 1 and words and words[0].lower() == "run":
+        words = words[1:]
+    if inst in (1, 2):
         while words and words[0].startswith(("<", ">", "*>")):
             words = words[1:]
     return words[0] if words else ""
@@ -379,8 +380,15 @@ def lint(path, types):
             # once-only marker themselves, exactly once, like Opus.
             commands = [(inst, text.decode("latin-1")) for inst, text in func.instructions
                         if inst != INST_LABEL]
+            # function_find_internal() matches the command name from the first
+            # byte, so an internal command after leading spaces is never found
+            for inst, text in commands:
+                if inst == 0 and command_text(text)[:1].isspace() and command_text(text).strip():
+                    problems.append("%s: internal command %r starts with a space, so Opus finds no "
+                                    "command to run" % (ftype.name, text))
             commands = [(inst, text) for inst, text in commands
-                        if (command_text(text).strip() if inst == 0 else program_word(inst, text))]
+                        if (command_text(text)[:1] not in ("", " ", "\t") if inst == 0
+                            else program_word(inst, text))]
             if not commands:
                 if not func.is_menu or label != b"---":
                     problems.append("%s: %s has no commands" % (ftype.name, function_text(func)))
