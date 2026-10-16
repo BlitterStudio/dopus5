@@ -239,6 +239,17 @@ def dump(path, types):
     print()
 
 
+def command_text(text):
+    """Return an instruction as Opus runs it: without the once-only '#'
+    marker (function_parse.c) or a leading "run " (function_script.c)."""
+    text = text.strip()
+    if text.startswith("#"):
+        text = text[1:].lstrip()
+    if text[:4].lower() == "run ":
+        text = text[4:].lstrip()
+    return text
+
+
 def path_prefix(text):
     """Return the device or assign a command or path starts with, or None."""
     word = text.strip().split(" ", 1)[0].strip('"')
@@ -273,7 +284,10 @@ def lint(path, types):
                                 "only matches datatypes with a lower-case ID" % (ftype.name, arg))
 
         for func in ftype.functions:
-            commands = [(inst, text.decode("latin-1")) for inst, text in func.instructions if inst != INST_LABEL]
+            # Opus skips empty instructions, so they do not count as commands
+            commands = [(inst, command_text(text.decode("latin-1")))
+                        for inst, text in func.instructions if inst != INST_LABEL]
+            commands = [(inst, text) for inst, text in commands if text]
             if not commands:
                 if not func.is_menu or not any(inst == INST_LABEL and text == b"---" for inst, text in func.instructions):
                     problems.append("%s: %s has no commands" % (ftype.name, function_text(func)))
@@ -283,7 +297,7 @@ def lint(path, types):
                 if inst in (1, 2, 3, 4) and prefix and prefix not in STOCK_ASSIGNS:
                     problems.append("%s: needs %s for %r" % (ftype.name, prefix, text))
             if not func.is_menu and func.event == DRAG_DROP and \
-                    [(i, t.strip().lower()) for i, t in commands] in ([(0, "copy")], [(1, "copy")]):
+                    [(i, t.lower()) for i, t in commands] in ([(0, "copy")], [(1, "copy")]):
                 problems.append("%s: drag'n'drop runs a plain Copy, overriding the default "
                                 "Copy MOVEWHENSAME" % ftype.name)
 
