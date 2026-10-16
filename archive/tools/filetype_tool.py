@@ -378,29 +378,50 @@ def lint(path, types):
             # neither does a command line with nothing to run ("run >NIL:").
             # Keep the raw text: program_word() and command_text() remove the
             # once-only marker themselves, exactly once, like Opus.
-            commands = [(inst, text.decode("latin-1")) for inst, text in func.instructions
-                        if inst != INST_LABEL]
-            # function_parse.c looks internal commands up by their raw text,
-            # before the once-only marker is handled: function_find_internal()
-            # compares a command name from the first byte and needs a space or
-            # the end of the string after it.  The name Opus looks up is the
-            # text up to the first space; any other whitespace, a '#' or a
-            # control character in it means no command is found and the
-            # instruction is skipped.
             usable = []
-            for inst, text in commands:
-                if inst != 0:
-                    if program_word(inst, text):
-                        usable.append((inst, text))
+            for inst, raw in func.instructions:
+                if inst == INST_LABEL:
                     continue
-                name = text.split(" ", 1)[0]
-                if name and name.isprintable() and not any(c.isspace() for c in name) and name[0] != "#":
+                text = raw.decode("latin-1")
+
+                if inst == 0:
+                    # function_parse.c looks internal commands up by their raw
+                    # text, before the once-only marker is handled:
+                    # function_find_internal() compares a command name from the
+                    # first byte and needs a space or the end of the string
+                    # after it.  The name Opus looks up is the text up to the
+                    # first space; other whitespace, a '#' or a control
+                    # character in it means no command is found.
+                    name = text.split(" ", 1)[0]
+                    if name and name.isprintable() and not any(c.isspace() for c in name) and name[0] != "#":
+                        usable.append((inst, text))
+                    elif text.strip():
+                        problems.append("%s: internal command %r is looked up as %r, so Opus finds no "
+                                        "command to run" % (ftype.name, text, name))
+                    continue
+
+                # External instructions go into a script verbatim, so a line
+                # break starts another command.  The first line follows the
+                # instruction's own rules, later lines are AmigaDOS commands.
+                if not text.isprintable():
+                    problems.append("%s: instruction %r contains control characters; a line break in "
+                                    "it starts another command in the script Opus writes" % (ftype.name, text))
+                lines = text.replace("\r", "\n").split("\n")
+                programs = [program_word(inst if index == 0 else 1, line) for index, line in enumerate(lines)]
+                if any(programs):
                     usable.append((inst, text))
-                elif text.strip():
-                    problems.append("%s: internal command %r is looked up as %r, so Opus finds no "
-                                    "command to run" % (ftype.name, text, name))
-            commands = usable
-            if not commands:
+                for program in programs:
+                    prefix = path_prefix(program)
+                    if prefix and prefix not in STOCK_ASSIGNS:
+                        problems.append("%s: needs %s for %r" % (ftype.name, prefix, text))
+                # function_script.c strips only a literal "run " in the first
+                # byte; any other form of run reaches dopusrt5 as the program
+                if inst == 2 and programs[0].lower() == "run":
+                    problems.append("%s: Workbench instruction %r keeps \"run\" (Opus only removes a "
+                                    "leading \"run \"), so dopusrt5 is asked to start a program called run"
+                                    % (ftype.name, text))
+
+            if not usable:
                 if not func.is_menu or label != b"---":
                     problems.append("%s: %s has no commands" % (ftype.name, function_text(func)))
                 continue
@@ -408,26 +429,8 @@ def lint(path, types):
             if func.is_menu and label == b"---":
                 problems.append("%s: %s is a separator, so its commands never run"
                                 % (ftype.name, function_text(func)))
-            for inst, text in commands:
-                # External instructions go into a script verbatim, so a line
-                # break starts another command; check every line it makes
-                if inst != 0 and not text.isprintable():
-                    problems.append("%s: instruction %r contains control characters; a line break in "
-                                    "it starts another command in the script Opus writes" % (ftype.name, text))
-                lines = text.replace("\r", "\n").split("\n") if inst != 0 else [text]
-                for index, line in enumerate(lines):
-                    # Only the first line keeps the instruction's own prefix rules
-                    prefix = path_prefix(program_word(inst if index == 0 else 1, line))
-                    if inst in (1, 2, 3, 4) and prefix and prefix not in STOCK_ASSIGNS:
-                        problems.append("%s: needs %s for %r" % (ftype.name, prefix, text))
-                # function_script.c strips only a literal "run " in the first
-                # byte; any other form of run reaches dopusrt5 as the program
-                if inst == 2 and program_word(inst, text).lower() == "run":
-                    problems.append("%s: Workbench instruction %r keeps \"run\" (Opus only removes a "
-                                    "leading \"run \"), so dopusrt5 is asked to start a program called run"
-                                    % (ftype.name, text))
             if not func.is_menu and func.event == DRAG_DROP and \
-                    [(i, command_text(t).strip().lower()) for i, t in commands] in ([(0, "copy")], [(1, "copy")]):
+                    [(i, command_text(t).strip().lower()) for i, t in usable] in ([(0, "copy")], [(1, "copy")]):
                 problems.append("%s: drag'n'drop runs a plain Copy, overriding the default "
                                 "Copy MOVEWHENSAME" % ftype.name)
 
