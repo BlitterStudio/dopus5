@@ -134,14 +134,28 @@ def parse(data):
         raise ValueError("not an Opus IFF file")
 
     types = FiletypeList()
+    # Chunks as L_IFFNextChunk() walks them: an 8-byte header (stop when it
+    # cannot be read), a nested "FORM" only skips its type and continues
+    # with the chunks inside, a body is whatever of its declared size the
+    # file holds, then the walk skips to the declared end and pad byte.
     pos = 12
-    while pos + 8 <= len(data):
+    while True:
+        if pos + 8 > len(data):
+            if pos < len(data):
+                types.notes.append("Opus ignores %d bytes at the end that are too short for a chunk"
+                                   % (len(data) - pos))
+            break
         chunk = data[pos:pos + 4]
         size = struct.unpack(">I", data[pos + 4:pos + 8])[0]
-        if pos + 8 + size > len(data):
-            raise ValueError("%r chunk runs past the end of the file" % chunk)
-        body = data[pos + 8:pos + 8 + size]
-        pos += 8 + size + (size & 1)
+        pos += 8
+        if chunk == b"FORM":
+            pos += 4
+            continue
+        body = data[pos:pos + size]
+        if len(body) < size:
+            types.notes.append("the %r chunk is cut short (%d of %d bytes); Opus reads what is there"
+                               % (chunk.decode("latin-1"), len(body), size))
+        pos += size + (size & 1)
 
         if chunk == b"TYPE":
             # Opus reads up to 46 header bytes into cleared memory, so a
@@ -215,10 +229,6 @@ def parse(data):
         else:
             types.notes.append("Opus ignores the %r chunk" % chunk.decode("latin-1"))
 
-    # A last odd-sized chunk without its pad byte is still read by Opus;
-    # re-encoding adds the pad, which check reports
-    if pos != len(data) and pos != len(data) + 1:
-        raise ValueError("trailing data after the last chunk")
     if not types:
         raise ValueError("no TYPE chunk, so Opus loads no filetype from it")
     return types
