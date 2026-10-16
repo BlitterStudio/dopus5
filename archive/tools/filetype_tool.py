@@ -49,9 +49,11 @@ FUNC_FLAGS = [
 ]
 FUNCF2_LABEL_FUNC = 1 << 3
 
-# Path prefixes that exist on a stock system or in DOpus5:
+# Path prefixes that exist on a stock system or in DOpus5:.  PROGDIR: is
+# provided by AmigaDOS for every program.
 STOCK_ASSIGNS = ("SYS:", "C:", "S:", "L:", "LIBS:", "DEVS:", "FONTS:", "ENV:",
-                 "ENVARC:", "T:", "RAM:", "DOPUS5:", "REXX:", "HELP:", "LOCALE:")
+                 "ENVARC:", "T:", "RAM:", "DOPUS5:", "REXX:", "HELP:", "LOCALE:",
+                 "PROGDIR:")
 
 
 class Filetype:
@@ -131,6 +133,8 @@ def parse(data):
 
     if pos != len(data):
         raise ValueError("trailing data after the last chunk")
+    if not types:
+        raise ValueError("no TYPE chunk, so Opus loads no filetype from it")
     return types
 
 
