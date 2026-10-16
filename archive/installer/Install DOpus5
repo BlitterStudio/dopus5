@@ -340,26 +340,35 @@
 ; assign is only needed by things that run without it: ARexx scripts and
 ; the commands in DOpus5:C started from a Shell, LoadDB, and other
 ; programs that look for DOpus5:.  Workbench replacement needs it.
+;
+; ENVARC:DOpus5Assign records whether the block holds the assign.  When
+; the assign is declined and an earlier run wrote it, the block is
+; replaced by a comment so the old lines, which may point at another
+; drawer, stop running.  The Installer cannot read S:User-Startup, so
+; without the record it would either leave such a block behind or add an
+; empty block for users who never had one.
+
+(set #oldassign (getenv "DOpus5Assign"))
 
 (set #assign 1)
 (if (<> #mode 2)
     (set #assign
        (askbool
-          (prompt "Add the DOpus5: assign and the DOpus5:C command path to S:User-Startup?")
+          (prompt "Put the DOpus5: assign and the DOpus5:C command path in S:User-Startup?")
           (help "Directory Opus assigns DOpus5: to its own drawer when it starts. The assign in S:User-Startup is needed by ARexx scripts and the commands in DOpus5:C started from a Shell, and by other programs that look for DOpus5: before Directory Opus has started."
-                "\n\nThe lines are written in a ;BEGIN DOpus5 / ;END DOpus5 block, which running this installer again replaces. They take effect after the next reboot.")
-          (default 1))))
+                "\n\nThe lines are written in a ;BEGIN DOpus5 / ;END DOpus5 block, which running this installer again replaces. Answering No empties a block written by an earlier run. The change takes effect after the next reboot.")
+          (default (<> #oldassign "no")))))
 
 (set #lines (cat "Assign DOpus5: \"" #dest "\"\nPath DOpus5:C ADD"))
 (if (= #mode 2)
     (set #lines (cat #lines "\nResident LoadWB DOpus5:C/LoadDB PURE")))
 
 ; Leaving Workbench replacement must take the Resident line out again,
-; even when the assign is declined.
+; and declining the assign must take out an assign written earlier.
 (if (not #assign)
-    (set #lines "; Directory Opus 5 is started manually"))
+    (set #lines "; Directory Opus 5 needs no commands here"))
 
-(if (or #assign (= #oldmode "workbench"))
+(if (or #assign (or (= #oldmode "workbench") (= #oldassign "yes")))
     (startup "DOpus5"
        (prompt "Write these lines to S:User-Startup:\n\n" #lines)
        (help "The lines are written in a ;BEGIN DOpus5 / ;END DOpus5 block, which running this installer again replaces. They take effect after the next reboot.")
@@ -420,6 +429,19 @@
    (help "")
    (dest "ENV:DOpus5Startup")
    (append #modename))
+
+(set #assignname "no")
+(if #assign (set #assignname "yes"))
+(textfile
+   (prompt "Remember the assign choice in ENVARC:DOpus5Assign")
+   (help "")
+   (dest "ENVARC:DOpus5Assign")
+   (append #assignname))
+(textfile
+   (prompt "Remember the assign choice in ENV:DOpus5Assign")
+   (help "")
+   (dest "ENV:DOpus5Assign")
+   (append #assignname))
 
 (complete 100)
 

@@ -24,7 +24,10 @@ Release archive change.
   WBStartup icon out again.  The choice is kept in ENVARC:DOpus5Startup.
 - The ;BEGIN DOpus5 block also holds the DOpus5: assign and Path
   DOpus5:C ADD (optional, except for Workbench replacement); running the
-  installer again replaces it.
+  installer again replaces it.  Declining the assign empties a block an
+  earlier run wrote, so an old assign that may point at another drawer
+  stops running.  Whether the block holds the assign is kept in
+  ENVARC:DOpus5Assign.
 - The AmigaOS 3 68020 archive refuses to install on a 68000 or 68010 and
   points to the os3-68000 archive; the 68000 archive suggests the faster
   build on 68020 and newer processors.

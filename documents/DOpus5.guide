@@ -120,7 +120,7 @@ S:User-Startup:
   assign is only needed by ARexx scripts and the commands in DOpus5:C
   started from a Shell, by Workbench replacement, and by other programs
   that look for DOpus5:.  Running the installer again replaces the
-  block.
+  block; answering No to the assign empties a block written earlier.
 
 The AmigaOS 3 archive for 68020 and newer processors does not install on
 a 68000 or 68010; use the os3-68000 archive there.

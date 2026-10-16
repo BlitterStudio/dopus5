@@ -74,7 +74,7 @@ each supported system.
   choice in `ENVARC:DOpus5Startup`.
 - **Optional:** a `;BEGIN DOpus5` block in `S:User-Startup` with the
   `DOpus5:` assign and `Path DOpus5:C ADD` (always written for
-  Workbench replacement).
+  Workbench replacement). Declining it later empties the block.
 
 Directory Opus assigns `DOpus5:` to its own drawer when it starts, so
 copying the `DOpus5` drawer by hand also works for a new installation.
