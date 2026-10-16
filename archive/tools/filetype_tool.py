@@ -340,13 +340,19 @@ def shell_commands(text):
     return commands
 
 
+# AmigaDOS Shell redirection operators, longest first, and what follows
+# them: a path, a here-document delimiter, or nothing.
+REDIRECTIONS = (("*<>", None), ("*>>", "path"), ("<<", "delimiter"), ("<>", "path"),
+                ("*>", "path"), (">>", "path"), (">", "path"), ("<", "path"))
+
+
 def redirection(word):
-    """Return the redirection operator a word starts with, or None."""
+    """Return (operator, operand kind) for a redirection word, or None."""
     if isinstance(word, Quoted):
         return None
-    for operator in ("*>", ">>", ">", "<"):
+    for operator, operand in REDIRECTIONS:
         if word.startswith(operator):
-            return operator
+            return operator, operand
     return None
 
 
@@ -366,14 +372,18 @@ def parse_command(kind, words):
     rest, targets = [], []
     while words:
         word = words.pop(0)
-        operator = redirection(word)
-        if operator:
-            target = word[len(operator):]
-            if not target and words:
-                target = words.pop(0)
-            targets.append(target)
-        else:
+        found = redirection(word)
+        if not found:
             rest.append(word)
+            continue
+        operator, operand = found
+        if operand is None:
+            continue
+        target = word[len(operator):]
+        if not target and words:
+            target = words.pop(0)
+        if operand == "path":
+            targets.append(target)
     return (rest[0] if rest else ""), rest[1:], targets
 
 
