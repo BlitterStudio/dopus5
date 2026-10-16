@@ -240,20 +240,27 @@ def function_text(func):
     return "%s%s: %s" % (kind, flag_text(func.flags), "; ".join(steps) if steps else "(empty)")
 
 
+def emit(line=""):
+    """Print a line with control characters escaped, so a contributed file
+    cannot send escape sequences to the reviewer's terminal."""
+    print("".join(char if " " <= char < "\x7f" or char >= "\xa0" else "\\x%02x" % ord(char)
+                  for char in line))
+
+
 def dump(path, types):
-    print("== %s" % path)
+    emit("== %s" % path)
     for ftype in types:
-        print("  Name:     %s" % ftype.name)
-        print("  ID:       %s   priority %d   flags 0x%04x" % (ftype.id, ftype.priority, ftype.flags))
-        print("  Icon:     %s" % (ftype.icon.decode("latin-1") or "-"))
-        print("  Matches:  %s" % recognition_text(ftype.recognition))
+        emit("  Name:     %s" % ftype.name)
+        emit("  ID:       %s   priority %d   flags 0x%04x" % (ftype.id, ftype.priority, ftype.flags))
+        emit("  Icon:     %s" % (ftype.icon.decode("latin-1") or "-"))
+        emit("  Matches:  %s" % recognition_text(ftype.recognition))
         for index, action in enumerate(ftype.actions):
             if action:
                 event = EVENTS[index] if index < len(EVENTS) else str(index)
-                print("  Status:   %s: %s" % (event, action.decode("latin-1")))
+                emit("  Status:   %s: %s" % (event, action.decode("latin-1")))
         for func in ftype.functions:
-            print("  Action:   %s" % function_text(func))
-    print()
+            emit("  Action:   %s" % function_text(func))
+    emit()
 
 
 def command_text(text):
@@ -386,7 +393,7 @@ def lint(path, types):
                                 "Copy MOVEWHENSAME" % ftype.name)
 
     for problem in problems:
-        print("%s: %s" % (path, problem))
+        emit("%s: %s" % (path, problem))
     return problems
 
 
@@ -402,7 +409,7 @@ def main(argv):
                 data = handle.read()
             types = parse(data)
         except (OSError, ValueError) as error:
-            print("%s: %s" % (path, error))
+            emit("%s: %s" % (path, error))
             status = 1
             continue
 
@@ -410,7 +417,7 @@ def main(argv):
             dump(path, types)
         elif argv[1] == "check":
             if encode(types) != data:
-                print("%s: re-encoded file differs" % path)
+                emit("%s: re-encoded file differs" % path)
                 status = 1
         elif lint(path, types):
             status = 1
