@@ -116,7 +116,8 @@
           (help "Replaces the files of this drawer with the ones from this release. Files you added yourself are kept.")
           (source (tackon #src #pdir))
           (dest (tackon #dest #pdir))
-          (all))))
+          (all)
+          (infos))))
 
 ; Copies #src/#pfile to #dest unless it is already there.
 (procedure P_ADD_FILE
@@ -128,13 +129,16 @@
           (source (tackon #src #pfile))
           (dest #dest))))
 
+; The OS 3.2 Installer copies icons with (all) alone; (infos) asks for
+; them explicitly for Installer versions that read the options strictly.
 (if (not #upgrade)
     (copyfiles
        (prompt "Install Directory Opus 5 into " #dest)
        (help "Copies the complete DOpus5 drawer.")
        (source #src)
        (dest #dest)
-       (all))
+       (all)
+       (infos))
     (
        (copyfiles
           (prompt "Install the Directory Opus program")
