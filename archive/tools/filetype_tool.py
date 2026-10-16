@@ -468,8 +468,8 @@ def parse_command(kind, words):
         if operand == "path":
             targets.append(target)
     # "run" is looked at once the redirections are out of the way, so
-    # ">NIL: run BOOT:tool" still finds BOOT:tool
-    if kind == 1 and rest and rest[0].lower() == "run":
+    # ">NIL: run BOOT:tool" still finds BOOT:tool; "run run X" runs X
+    while kind == 1 and rest and rest[0].lower() == "run":
         rest = rest[1:]
     return (rest[0] if rest else ""), rest[1:], targets
 
