@@ -13,6 +13,7 @@ source/Library/config_save.c.
 """
 
 import os
+import re
 import struct
 import sys
 
@@ -282,8 +283,9 @@ def shell_lex(line):
     """Split one line into words and command separators the way the AmigaDOS
     shell does.  A quote starts quoting only at the start of a word; inside
     quotes "*" escapes ("*"" is a quote, "*N" a newline, "**" a star) and a
-    closing quote ends the word.  "|", "||" and "&&" outside quotes separate
-    commands (shell V45+); an unquoted ";" starts a comment."""
+    closing quote ends the word.  "|", "||" and "&&" outside quotes, with
+    whitespace or the line's ends on both sides, separate commands (shell
+    V45+); an unquoted ";" starts a comment."""
     escapes = {'"': '"', "n": "\n", "N": "\n", "e": "\x1b", "E": "\x1b", "*": "*"}
     tokens, word, in_word, quoted, index = [], "", False, False, 0
     while index < len(line):
@@ -306,13 +308,14 @@ def shell_lex(line):
                 word, in_word = "", False
         elif char == ";":
             break
-        elif char == "|" or line.startswith("&&", index):
-            if in_word:
-                tokens.append(word)
-                word, in_word = "", False
-            tokens.append(PIPE)
-            index += 2 if line.startswith(("||", "&&"), index) else 1
-            continue
+        elif not in_word and line.startswith(("||", "&&", "|"), index):
+            length = 2 if line.startswith(("||", "&&"), index) else 1
+            if index + length == len(line) or line[index + length] in " \t":
+                tokens.append(PIPE)
+                index += length
+                continue
+            word += char
+            in_word = True
         elif char == '"' and not in_word:
             quoted = in_word = True
         else:
@@ -334,7 +337,9 @@ def shell_commands(text):
     commands, delimiters = [], []
     for number, line in enumerate(text.replace("\r", "\n").split("\n")):
         if delimiters:
-            if line.strip() == delimiters[0]:
+            # The shell ends a here-document at a line starting with the
+            # delimiter in the first column
+            if line.startswith(delimiters[0]):
                 delimiters.pop(0)
             continue
         current = []
@@ -408,16 +413,34 @@ def parse_command(kind, words):
 def instruction_analysis(inst, text):
     """Return (commands, open here-document delimiters) for an external
     instruction.  commands are (program, arguments, redirection targets,
-    line number).  The once-only marker is removed once, and for Workbench
-    instructions a literal "run " in the first byte, as function_script.c
-    does.  The first command follows the instruction's own rules; the
-    others are AmigaDOS commands."""
+    line number, words).  The once-only marker is removed once, and for
+    Workbench instructions a literal "run " in the first byte, as
+    function_script.c does.  The first command follows the instruction's
+    own rules; the others are AmigaDOS commands."""
     text = command_text(text)
     if inst == 2 and text[:4].lower() == "run ":
         text = text[4:]
     commands, delimiters = shell_commands(text)
-    return ([parse_command(inst if index == 0 else 1, words) + (number,)
+    return ([parse_command(inst if index == 0 else 1, words) + (number, words)
              for index, (number, words) in enumerate(commands)], delimiters)
+
+
+# A device or assign name followed by ":", not part of a longer word or a
+# URL scheme ("file://")
+ASSIGN_REFERENCE = re.compile(r"(?:^|[^\w:/.])([A-Za-z][\w.-]*:)(?!//)")
+
+
+def assign_references(words):
+    """Return every device or assign the words refer to.  This looks at all
+    words, not only the program: arguments and redirection targets are paths
+    too, and words of nested constructs ("run run ...", "( ... )", backtick
+    substitutions) are covered without modelling each of them."""
+    found = []
+    for word in words:
+        for match in ASSIGN_REFERENCE.finditer(word):
+            if match.group(1).upper() not in found:
+                found.append(match.group(1).upper())
+    return found
 
 
 def instruction_commands(inst, text):
@@ -540,17 +563,16 @@ def lint(path, types):
                 # suspicious anywhere
                 if any(char not in "\t\n\r" and not char.isprintable() for char in text):
                     problems.append("%s: instruction %r contains control characters" % (ftype.name, text))
-                if any(number > 0 for _program, _arguments, _targets, number in commands):
+                if any(command[3] > 0 for command in commands):
                     problems.append("%s: instruction %r has a line break, which starts another command "
                                     "in the script Opus writes" % (ftype.name, text))
-                if any(program for program, _arguments, _targets, _number in commands):
+                if any(command[0] for command in commands):
                     usable.append((inst, text))
-                for program, _arguments, targets, _number in commands:
-                    # The shell also has to open redirection targets
-                    for used in [program] + targets:
-                        prefix = path_prefix(used)
-                        if prefix and prefix not in STOCK_ASSIGNS:
-                            problems.append("%s: needs %s for %r" % (ftype.name, prefix, text))
+                # Any word may name a path the command needs: the program,
+                # its arguments, redirection targets, nested commands
+                for assign in assign_references([word for command in commands for word in command[4]]):
+                    if assign not in STOCK_ASSIGNS:
+                        problems.append("%s: needs %s for %r" % (ftype.name, assign, text))
                 # function_script.c strips only a literal "run " in the first
                 # byte; any other form of run reaches dopusrt5 as the program
                 if inst == 2 and commands and commands[0][0].lower() == "run":
