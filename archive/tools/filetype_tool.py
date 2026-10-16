@@ -264,12 +264,9 @@ def dump(path, types):
 
 
 def command_text(text):
-    """Return an instruction without the once-only '#' marker, which
-    function_parse.c strips before running it."""
-    text = text.strip()
-    if text.startswith("#"):
-        text = text[1:].lstrip()
-    return text
+    """Return an instruction as Opus passes it on: function_parse.c drops a
+    once-only '#' marker, but only in the first byte."""
+    return text[1:] if text.startswith("#") else text
 
 
 def shell_words(text):
@@ -290,13 +287,18 @@ def shell_words(text):
 
 
 def program_word(inst, text):
-    """Return the program or script an instruction runs.  AmigaDOS and
-    Workbench instructions are command lines: skip a leading "run"
-    (function_script.c strips it for Workbench, AmigaDOS runs it) and
-    I/O redirections.  Script and ARexx instructions get "execute " or
-    "rx " prepended, so their first word is the script."""
-    words = shell_words(command_text(text))
-    if inst in (1, 2):
+    """Return the program or script an instruction runs.
+
+    AmigaDOS instructions are shell command lines: skip a leading "run" and
+    I/O redirections.  For Workbench instructions function_script.c strips
+    "run " only when it starts in the first byte and passes the rest to
+    dopusrt5.  Script and ARexx instructions get "execute " or "rx "
+    prepended, so their first word is the script."""
+    text = command_text(text)
+    if inst == 2 and text[:4].lower() == "run ":
+        text = text[4:]
+    words = shell_words(text)
+    if inst == 1:
         if words and words[0].lower() == "run":
             words = words[1:]
         while words and words[0].startswith(("<", ">", "*>")):
@@ -376,7 +378,7 @@ def lint(path, types):
             commands = [(inst, command_text(text.decode("latin-1")))
                         for inst, text in func.instructions if inst != INST_LABEL]
             commands = [(inst, text) for inst, text in commands
-                        if (text if inst == 0 else program_word(inst, text))]
+                        if (text.strip() if inst == 0 else program_word(inst, text))]
             if not commands:
                 if not func.is_menu or label != b"---":
                     problems.append("%s: %s has no commands" % (ftype.name, function_text(func)))
@@ -389,8 +391,12 @@ def lint(path, types):
                 prefix = path_prefix(program_word(inst, text))
                 if inst in (1, 2, 3, 4) and prefix and prefix not in STOCK_ASSIGNS:
                     problems.append("%s: needs %s for %r" % (ftype.name, prefix, text))
+                # function_script.c only strips "run " from the first byte
+                if inst == 2 and text[:4].lower() != "run " and text.lstrip()[:4].lower() == "run ":
+                    problems.append("%s: Workbench instruction %r has \"run\" after leading spaces, "
+                                    "so dopusrt5 is asked to start a program called run" % (ftype.name, text))
             if not func.is_menu and func.event == DRAG_DROP and \
-                    [(i, t.lower()) for i, t in commands] in ([(0, "copy")], [(1, "copy")]):
+                    [(i, t.strip().lower()) for i, t in commands] in ([(0, "copy")], [(1, "copy")]):
                 problems.append("%s: drag'n'drop runs a plain Copy, overriding the default "
                                 "Copy MOVEWHENSAME" % ftype.name)
 
