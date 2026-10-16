@@ -131,7 +131,12 @@ def parse(data):
                 end = rest.find(b"\0")
                 if end < 0 or len(rest) < end + 3:
                     raise ValueError("truncated instruction in FUNC chunk")
-                instructions.append((struct.unpack(">h", rest[end + 1:end + 3])[0], rest[:end]))
+                kind = struct.unpack(">h", rest[end + 1:end + 3])[0]
+                # Opus treats any other type as an external command and
+                # indexes its script prefix table with it, unchecked.
+                if kind not in INSTRUCTIONS:
+                    raise ValueError("instruction type %d is not one of INST_COMMAND..INST_LABEL" % kind)
+                instructions.append((kind, rest[:end]))
                 rest = rest[end + 3:]
             types[-1].functions.append(Function(body[:22], instructions))
         else:
