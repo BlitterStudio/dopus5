@@ -380,17 +380,26 @@ def lint(path, types):
             # once-only marker themselves, exactly once, like Opus.
             commands = [(inst, text.decode("latin-1")) for inst, text in func.instructions
                         if inst != INST_LABEL]
-            # function_parse.c looks internal commands up by their raw text
-            # (function_find_internal() compares from the first byte) before
-            # the once-only marker is handled, so a leading space, tab or '#'
-            # means no command is found and the instruction is skipped.
+            # function_parse.c looks internal commands up by their raw text,
+            # before the once-only marker is handled: function_find_internal()
+            # compares a command name from the first byte and needs a space or
+            # the end of the string after it.  The name Opus looks up is the
+            # text up to the first space; any other whitespace, a '#' or a
+            # control character in it means no command is found and the
+            # instruction is skipped.
+            usable = []
             for inst, text in commands:
-                if inst == 0 and text[:1] in (" ", "\t", "#") and text.strip(" \t#"):
-                    problems.append("%s: internal command %r starts with %r, so Opus finds no "
-                                    "command to run" % (ftype.name, text, text[:1]))
-            commands = [(inst, text) for inst, text in commands
-                        if (text[:1] not in ("", " ", "\t", "#") if inst == 0
-                            else program_word(inst, text))]
+                if inst != 0:
+                    if program_word(inst, text):
+                        usable.append((inst, text))
+                    continue
+                name = text.split(" ", 1)[0]
+                if name and name.isprintable() and not any(c.isspace() for c in name) and name[0] != "#":
+                    usable.append((inst, text))
+                elif text.strip():
+                    problems.append("%s: internal command %r is looked up as %r, so Opus finds no "
+                                    "command to run" % (ftype.name, text, name))
+            commands = usable
             if not commands:
                 if not func.is_menu or label != b"---":
                     problems.append("%s: %s has no commands" % (ftype.name, function_text(func)))
