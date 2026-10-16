@@ -47,7 +47,12 @@ FUNC_FLAGS = [
     (1 << 11, "no quotes"), (1 << 12, "rescan source"), (1 << 13, "rescan dest"),
     (1 << 16, "wait close"),
 ]
+# FUNCF_ORIGINAL_FLAGS: the only function flags the editor saves
+STORED_FUNC_FLAGS = sum(bit for bit, _name in FUNC_FLAGS)
 FUNCF2_LABEL_FUNC = 1 << 3
+# Used internally by Opus and never stored; FUNCF2_FREE_FUNCTION makes Opus
+# free a function that is still linked into the filetype list.
+FUNCF2_INTERNAL = (1 << 30) | (1 << 31)
 
 # Path prefixes that exist on a stock system or in DOpus5:.  PROGDIR: is
 # provided by AmigaDOS for every program.
@@ -143,6 +148,10 @@ def parse(data):
                     raise ValueError("instruction type %d is not one of INST_COMMAND..INST_LABEL" % kind)
                 instructions.append((kind, rest[:end]))
                 rest = rest[end + 3:]
+            flags2 = struct.unpack(">I", body[4:8])[0]
+            if flags2 & FUNCF2_INTERNAL:
+                raise ValueError("FUNC sets internal flags2 bits 0x%08x (FUNCF2_ORIGINAL/FREE_FUNCTION)"
+                                 % (flags2 & FUNCF2_INTERNAL))
             types[-1].functions.append(Function(body[:22], instructions))
         else:
             raise ValueError("unexpected chunk %r" % chunk)
@@ -332,6 +341,11 @@ def lint(path, types):
                                 % (ftype.name, function_text(func)))
             else:
                 seen_events.add(func.event)
+
+            # Higher bits are runtime FUNCF_* flags of function handles
+            if func.flags & ~STORED_FUNC_FLAGS:
+                problems.append("%s: %s sets function flags 0x%08x that the editor never saves"
+                                % (ftype.name, function_text(func), func.flags & ~STORED_FUNC_FLAGS))
 
             # Opus skips empty instructions, so they do not count as commands
             commands = [(inst, command_text(text.decode("latin-1")))
