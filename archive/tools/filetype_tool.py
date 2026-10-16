@@ -367,8 +367,6 @@ def parse_command(kind, words):
     leading "run"; for the other kinds the first remaining word is the
     program, script or ARexx macro."""
     words = list(words)
-    if kind == 1 and words and words[0].lower() == "run":
-        words = words[1:]
     rest, targets = [], []
     while words:
         word = words.pop(0)
@@ -384,6 +382,10 @@ def parse_command(kind, words):
             target = words.pop(0)
         if operand == "path":
             targets.append(target)
+    # "run" is looked at once the redirections are out of the way, so
+    # ">NIL: run BOOT:tool" still finds BOOT:tool
+    if kind == 1 and rest and rest[0].lower() == "run":
+        rest = rest[1:]
     return (rest[0] if rest else ""), rest[1:], targets
 
 
