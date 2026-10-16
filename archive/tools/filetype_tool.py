@@ -116,6 +116,11 @@ def parse(data):
         if chunk == b"TYPE":
             if len(body) < 46:
                 raise ValueError("TYPE chunk is shorter than CFG_TYPE (46 bytes)")
+            # Opus uses name[32] and id[8] as C strings
+            if b"\0" not in body[:32]:
+                raise ValueError("filetype name fills all 32 bytes without a NUL")
+            if b"\0" not in body[32:40]:
+                raise ValueError("filetype ID fills all 8 bytes without a NUL")
             strings = body[46:].split(b"\0")
             if len(strings) != 19 or strings[-1] != b"":
                 raise ValueError("TYPE chunk does not hold recognition, icon and 16 actions")
