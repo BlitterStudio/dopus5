@@ -1,6 +1,6 @@
 @database dopus5
 @master dopus5.guide
-@$VER: Dopus5Guide 58.15 (16.10.2026)
+@$VER: Dopus5Guide 58.16 (16.10.2026)
 @author "Mark Anderson, Andrew Dunbar, Dr Greg Perry, Leo Davidson and Dave Clarke"
 @(c) "Directory Opus 5 Help Guide (c) GPSoftware 1999"
 @(c) "Directory Opus 5 Help Guide (c) DOPUS5 Open Source Team 2012-2026"
@@ -277,6 +277,8 @@ a 68000 or 68010; use the os3-68000 archive there.
   @{" User1                          " link "User1"}  @{" User2                          " link "User2"}
   @{" User3                          " link "User3"}  @{" User4                          " link "User4"}
   @{" UserMenu                       " link "UserMenu"}  @{" ViewFont                       " link "ViewFont"}
+  @{" XADExtract                     " link "XADExtract"}  @{" XADOpen                        " link "XADOpen"}
+  @{" XADOpenInLister                " link "XADOpenInLister"}
 @endnode
 
 @node "Commands" "Commands"
@@ -306,7 +308,8 @@ Opus 5 supports the following internal commands:
 @{" ScanDir         " link "ScanDir"} @{" Search          " link "Search"} @{" Select          " link "Select"} @{" Set             " link "Set"}
 @{" SetAsBackground " link "SetAsBackground"} @{" Show            " link "Show"} @{" SmartRead       " link "SmartRead"} @{" Split           " link "Split"}
 @{" StopSniffer     " link "StopSniffer"} @{" Toggle          " link "Toggle"} @{" User            " link "User"} @{" User1           " link "User1"}
-@{" User2           " link "User2"} @{" User3           " link "User3"} @{" User4           " link "User4"}
+@{" User2           " link "User2"} @{" User3           " link "User3"} @{" User4           " link "User4"} @{" XADExtract      " link "XADExtract"}
+@{" XADOpen         " link "XADOpen"} @{" XADOpenInLister " link "XADOpenInLister"}
 
 @endnode
 
@@ -1959,6 +1962,64 @@ filetypes.
 While the User1 - User4 commands still work, they have been superseded by
 the @{" User " LINK "User"} command which provides up to ten user-definable filetype
 actions.
+
+@endnode
+
+@node "XADOpen" "XADOpen"
+XADOpen
+
+XADOpen is a command of xadopus.module and needs xadmaster.library.  It
+opens the selected archive or disk image in a new lister and shows its
+contents like a directory.  The Archives_over_XAD filetype (7z, LZX, LhA,
+RAR, ZIP and xz) runs it when you double-click an archive.
+
+In the archive lister:
+
+  - Double-click a directory to enter it, and use @{" Parent " link "Parent"} and @{" Root " link "Root"} to
+    go back up.  Typing a path inside the archive into the path field goes
+    there; any other path reads that directory and leaves the archive.
+  - Double-click a file to extract it to T: and run its double-click
+    action.  Read, AnsiRead, HexRead, Show, Play and IconInfo also work on
+    a copy in T:.  The copies are deleted when the archive lister closes.
+  - Copy, CopyAs, Move and MoveAs, or dragging entries to another lister,
+    extract them to that lister's directory.  The archive itself is never
+    changed, so Move does the same as Copy.
+
+Encrypted archives ask for the password.  To open archives in the lister
+they are in instead of a new one, use @{" XADOpenInLister " link "XADOpenInLister"}.
+
+@endnode
+
+@node "XADOpenInLister" "XADOpenInLister"
+XADOpenInLister
+
+XADOpenInLister works like @{" XADOpen " link "XADOpen"}, but shows the archive in the lister
+it was opened from instead of a new one.  Parent at the root of the
+archive leaves it and reads the directory that holds the archive.
+
+A new lister is opened as with XADOpen when there is no source lister, for
+example when the archive is double-clicked on the desktop, or when the
+lister already shows another archive or an FTP site.  If the archive
+cannot be read, the lister stays as it was.
+
+The default filetypes do not use XADOpenInLister.  To make double-clicking
+an archive open it in place, edit the Archives_over_XAD filetype in the
+@{" Filetype Editor " link "File Type Editor"} and change the command of its Double-click action
+from XADOpen to XADOpenInLister.  It can also be bound to the Ctrl or Alt
+double-click action, a button or a hotkey.
+
+@endnode
+
+@node "XADExtract" "XADExtract"
+XADExtract
+
+XADExtract is a command of xadopus.module.  It extracts the selected
+archives in the source lister into the directory of the destination
+lister, which is read again afterwards.  The Archives_over_XAD filetype
+runs it when you drag an archive to another lister.
+
+For a disk archive, such as a DMS file, XADExtract asks whether to extract
+the files on it or write it to a drive you pick.
 
 @endnode
 

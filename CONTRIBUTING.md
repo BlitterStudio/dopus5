@@ -69,6 +69,21 @@ make -C source/Modules/ftp -f makefile.tests test-libssh2
 CI runs both of these before the platform builds, so a green CI run is
 a good sanity check, but iterating locally is much faster.
 
+If you touched the base archive (`archive/basedata.lha`) or the
+installer script, run the checks for both; they need `lha` (or `7z`) on
+the path:
+
+```sh
+python3 archive/tests/test_basedata_default_drawers.py
+```
+
+New or changed filetypes should pass
+`python3 archive/tools/filetype_tool.py lint FILE...` before they go into
+`basedata.lha`. After changing a default button bank or an icon that the
+MagicWB set replaces, rebuild `IconSets/MagicWB` with
+`archive/tools/magicwb_iconset.py`. [`README.md`](README.md#testing) has
+the details for both tools.
+
 For program / library / module changes, do at minimum a clean OS3 build
 and check that no new warnings appeared in the area you touched. CI
 covers the full matrix on PR.
@@ -84,6 +99,12 @@ covers the full matrix on PR.
 - Don't add new compiler warnings. If GCC starts complaining about your
   changes on any platform, the warning needs to go away before the PR
   can land.
+- Keep large buffers off the stack. Opus starts most of its processes,
+  listers included, with `STACK_DEFAULT` from `source/Include/dopus/stack.h`
+  (8 KB on OS3), and the OS3 build warns about any function whose stack
+  frame is larger than 4 KB (`-Wframe-larger-than=4096`, passed to the
+  linker too because LTO lays out frames at link time). Allocate such
+  buffers instead.
 - Avoid dragging in new third-party dependencies casually. Open an issue
   first to discuss the trade-off (especially given the OS3 binary size
   budget and the AROS-x86_64 cross-compiler quirks).
@@ -97,14 +118,17 @@ covers the full matrix on PR.
 
   ```
   [dopus5 next] <short headline>
-  <one-line version-status sentence; "ships in <upcoming version>"
-  if no module/library version bump, otherwise mention the bump>
+  <which binaries or archives change>; version bump deferred.
 
-  <category>:
   - bullet describing what changed and (briefly) why
   ```
 
-  See the existing `[dopus5 5.101]` entries for examples.
+  The second line names what changes ("Program change", "configopus.module
+  change", "Release archive change", "Build-system change; no existing
+  program, library, module or command version changes", ...). The release
+  process does the version bumps and replaces the `next` entries with a
+  `[dopus5 <version>] Release summary`; see the existing `[dopus5 5.102]`
+  entries for an example.
 - Update `documents/DOpus5.guide` if your change affects user-facing
   behaviour and bump its `@$VER` line.
 - Bump the relevant `*_REVISION` constant in

@@ -106,6 +106,7 @@ The implementation is primarily located in:
 - **Packet**: `char *pathbuf`
 - **Return Value**: `PathNode *`
 - **Synchronous**: Yes
+- **Refreshing the destination**: Do not send `ScanDir` for the destination lister from inside the module call. The calling function holds that lister busy, so the second function process cannot lock it and opens a new lister instead. Before calling the module, `function_internal_command()` marks the destination path node for a rescan if the module command was registered with `FUNCF_NEED_DEST` or the calling function has `FUNCF_RESCAN_DEST`; the lister reads its directory again in place when the function finishes and releases it.
 
 ### `EXTCMD_END_SOURCE` (13)
 - **Description**: Finishes with the current source path.
