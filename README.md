@@ -18,7 +18,6 @@ work.
 ## Table of contents
 
 - [Supported platforms](#supported-platforms)
-- [Changes since 5.102](#changes-since-5102)
 - [Downloads](#downloads)
   - [Installing](#installing)
 - [Building](#building)
@@ -47,43 +46,6 @@ The 68000 OS3 variant ships in its own archive (`DOpus5_<rev>_os3-68000.lha`)
 so users on stock 68000-based hardware (A500, A600, A1000, A2000, CDTV) can
 run DOpus5 without needing the 020+ build. A1200 / A3000 / A4000 owners
 should use the regular `os3` archive, which targets `-m68020-60 -mtune=68030`.
-
-## Changes since 5.102
-
-These are on `master` and go into the next release. The
-[`ChangeLog`](ChangeLog) has the details.
-
-- **Installer:** every release archive has an `Install DOpus5` script for
-  new installations and upgrades, with Workbench replacement on AmigaOS 3.
-  See [Installing](#installing).
-- **MagicWB images and icons** for 8 and 16 colour screens, chosen in the
-  installer. When Opus replaces Workbench it locks the MagicWB pens as
-  Workbench does, and with "Set MagicWB Colors" on it no longer remaps
-  icons on the Workbench screen.
-- **Filetypes:** ASCII and AmigaGuide are installed by default, the stored
-  filetypes in `DOpus5:Storage/Filetypes` are cleaned up and renamed, and
-  the File Type Editor keeps assigns in icon paths.
-- **Eject Disk** in the Icons menu and the pop-up menu of disk icons.
-- **Environment editor:** Palette has Presets (Workbench Screen,
-  Workbench 3.1, MagicWB) and redraws its colour squares on RTG screens.
-  The custom colours in Lister Colours now apply to every lister element.
-- **Menus:** the Buttons menu is now Settings > Buttons.
-- **XADOpus:** the new `XADOpenInLister` command shows an archive in the
-  lister it was opened from. Dragging an archive onto a lister extracts it
-  and refreshes that lister instead of opening a second one.
-- **AmigaOS 3.2:** scrollers inside windows use the system knob imagery,
-  and icon labels take the Text+Outline and Text+Shadow modes from Font
-  prefs (also on AmigaOS 4). Outlined labels no longer have gaps.
-- **Startup:** module commands are cached in `DOpus5:System/module-cache`,
-  filetypes and the desktop backdrop load in their own processes, and
-  toolbar images remap with far fewer pen lookups.
-- **RTG screens:** icon masks and remapped image planes stay in fast
-  memory, and colours are right after Opus moves from an RTG screen to a
-  native one.
-- **Fixes:** FTP and SFTP connections no longer overflow the lister stack,
-  the lister toolbar is no taller than its buttons, and the title bar
-  padlock uses the shine pen.
-- **Builds:** new AROS aarch64 target.
 
 ## Downloads
 
