@@ -286,7 +286,31 @@ def shell_words(text):
     return words
 
 
-def command_words(inst, text):
+def shell_commands(text):
+    """Split instruction text into the separate commands the AmigaDOS shell
+    runs: one per line, and per side of the "|", "||" and "&&" operators
+    (shell V45+).  An unquoted ";" starts a comment."""
+    commands = []
+    for line in text.replace("\r", "\n").split("\n"):
+        current, quoted, index = "", False, 0
+        while index < len(line):
+            char = line[index]
+            if char == '"':
+                quoted = not quoted
+            elif not quoted and char == ";":
+                break
+            elif not quoted and (char == "|" or line.startswith("&&", index)):
+                commands.append(current)
+                current = ""
+                index += 2 if line.startswith(("||", "&&"), index) else 1
+                continue
+            current += char
+            index += 1
+        commands.append(current)
+    return commands
+
+
+def command_words(inst, text, marker=True):
     """Return the words of an instruction from the program it runs onward.
 
     AmigaDOS instructions are shell command lines: skip a leading "run".
@@ -294,8 +318,10 @@ def command_words(inst, text):
     starts in the first byte and puts the rest after "dopusrt5".  In both
     cases the shell consumes redirections that follow, so skip them.
     Script and ARexx instructions get "execute " or "rx " prepended, so
-    their first word is the script."""
-    text = command_text(text)
+    their first word is the script.  marker=False: the once-only marker has
+    already been removed."""
+    if marker:
+        text = command_text(text)
     if inst == 2 and text[:4].lower() == "run ":
         text = text[4:]
     words = shell_words(text)
@@ -307,10 +333,19 @@ def command_words(inst, text):
     return words
 
 
-def program_word(inst, text):
+def program_word(inst, text, marker=True):
     """Return the program or script an instruction runs (see command_words)."""
-    words = command_words(inst, text)
+    words = command_words(inst, text, marker)
     return words[0] if words else ""
+
+
+def instruction_programs(inst, text):
+    """Return the program of every command an external instruction makes:
+    the first follows the instruction's own rules, the others are AmigaDOS
+    commands.  The once-only marker is removed once, from the start."""
+    commands = shell_commands(command_text(text))
+    return [program_word(inst if index == 0 else 1, command, marker=False)
+            for index, command in enumerate(commands)]
 
 
 def path_prefix(text):
@@ -407,13 +442,13 @@ def lint(path, types):
                     continue
 
                 # External instructions go into a script verbatim, so a line
-                # break starts another command.  The first line follows the
-                # instruction's own rules, later lines are AmigaDOS commands.
+                # break or a "|", "||" or "&&" starts another command.  The
+                # first follows the instruction's own rules, the others are
+                # AmigaDOS commands.
                 if not text.isprintable():
                     problems.append("%s: instruction %r contains control characters; a line break in "
                                     "it starts another command in the script Opus writes" % (ftype.name, text))
-                lines = text.replace("\r", "\n").split("\n")
-                programs = [program_word(inst if index == 0 else 1, line) for index, line in enumerate(lines)]
+                programs = instruction_programs(inst, text)
                 if any(programs):
                     usable.append((inst, text))
                 for program in programs:
