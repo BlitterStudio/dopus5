@@ -740,6 +740,15 @@ short filetype_remove(config_filetypes_data *data, Att_Node *node, short store)
 	return change;
 }
 
+// Lock or create a drawer
+static void filetype_make_drawer(char *path)
+{
+	BPTR lock;
+
+	if ((lock = Lock(path, ACCESS_READ)) || (lock = CreateDir(path)))
+		UnLock(lock);
+}
+
 // Save filetypes
 short filetype_save(config_filetypes_data *data)
 {
@@ -792,7 +801,7 @@ short filetype_save(config_filetypes_data *data)
 
 					// Storage or normal?
 					if (list->flags & FTLISTF_STORE)
-						strcpy(list->path, "DOpus5:Filetypes/Storage/");
+						strcpy(list->path, "DOpus5:Storage/Filetypes/");
 					else
 						strcpy(list->path, "DOpus5:Filetypes/");
 
@@ -803,12 +812,19 @@ short filetype_save(config_filetypes_data *data)
 
 					// Add name
 					strcat(list->path, type->type.name);
+
+					// Clear flag
+					list->flags &= ~FTLISTF_STORE;
 				}
 
 				// Store?
 				else if (list->flags & FTLISTF_STORE)
 				{
 					char buf[256];
+
+					// Make sure the storage drawer exists
+					filetype_make_drawer("DOpus5:Storage");
+					filetype_make_drawer("DOpus5:Storage/Filetypes");
 
 					// Build storage filename
 					lsprintf(buf, "DOpus5:Storage/Filetypes/%s", FilePart(list->path));

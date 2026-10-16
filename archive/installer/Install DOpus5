@@ -1,0 +1,458 @@
+; Directory Opus 5 Installer
+;
+; Copyright (C) 2026, Dimitris Panokostas <midwan@gmail.com>
+; Distributed with Directory Opus 5 under the AROS Public License
+; version 1.1 (see COPYING).
+;
+; The release archive holds this script, its icon, DOpus5.info and the
+; DOpus5 drawer.  The script copies the DOpus5 drawer to the chosen place.
+; On an upgrade it replaces the program files and keeps the user's
+; configuration: configuration drawers only receive the files they lack.
+;
+; source/makefile replaces @BUILD@ with the release target (os3,
+; os3-68000, os4, mos, i386-aros, x86_64-aros or aarch64-aros).
+
+(set @app-name "Directory Opus 5")
+(set #build "@BUILD@")
+(set #src "DOpus5")
+
+(if (<> 1 (exists (tackon #src "DirectoryOpus") (noreq)))
+    (abort "The DOpus5 drawer was not found next to this script.\n\nUnpack the complete Directory Opus 5 archive and start the installer from the drawer it was unpacked to."))
+
+
+; --------------------------------------------------------------------
+; Processor check for the AmigaOS 3 builds
+; --------------------------------------------------------------------
+
+(set #cpu (database "cpu"))
+
+(if (and (= #build "os3") (or (= #cpu "68000") (= #cpu "68010")))
+    (abort "This archive is the AmigaOS 3 build for 68020 and newer processors, and this Amiga has a " #cpu ".\n\nUse the DOpus5_<version>_os3-68000.lha archive instead."))
+
+(if (and (= #build "os3-68000") (and (<> #cpu "68000") (<> #cpu "68010")))
+    (message "This archive is the AmigaOS 3 build for the plain 68000, and this Amiga has a " #cpu ".\n\nIt works, but the DOpus5_<version>_os3.lha archive is built for 68020 and newer processors and runs faster."))
+
+
+; --------------------------------------------------------------------
+; Destination
+; --------------------------------------------------------------------
+;
+; An existing DOpus5: assign points at the installation to upgrade (Opus
+; also assigns DOpus5: to its own drawer while it runs).
+
+(set #dest "")
+(set #olddir (getassign "DOpus5" "a"))
+
+(if (<> #olddir "")
+    (if (= 1 (exists (tackon #olddir "DirectoryOpus") (noreq)))
+        (if (askbool
+               (prompt "Directory Opus 5 is installed in\n\n" #olddir "\n\nUpgrade that installation?")
+               (help "Upgrading replaces the program, its libraries, modules, commands, manuals, ARexx scripts, images and stored items. Your settings, environments, button banks, filetypes, FTP sites and other configuration files are kept; configuration drawers only receive files they do not have yet.\n\nAnswer No to install a separate copy somewhere else.")
+               (default 1))
+            (set #dest #olddir))))
+
+(if (= #dest "")
+    (
+       (set #parent "SYS:")
+       (if (= 2 (exists "Work:" (noreq)))
+           (set #parent "Work:"))
+
+       (set #parent
+          (askdir
+             (prompt "Where should Directory Opus 5 be installed?\n\nA drawer called DOpus5 is created in the place you choose.")
+             (help "Choose the parent drawer, not the DOpus5 drawer itself: choosing Work: installs Directory Opus 5 into Work:DOpus5.\n\nIf you choose a drawer that already holds Directory Opus 5, that installation is upgraded.")
+             (newpath)
+             (default #parent)))
+
+       ; Someone picked the DOpus5 drawer itself
+       (if (= 1 (exists (tackon #parent "DirectoryOpus") (noreq)))
+           (set #dest #parent)
+           (set #dest (tackon #parent "DOpus5")))
+    ))
+
+(set #upgrade 0)
+(if (or (= 1 (exists (tackon #dest "DirectoryOpus") (noreq)))
+        (= 2 (exists (tackon #dest "Settings") (noreq))))
+    (set #upgrade 1))
+
+(set @default-dest #dest)
+
+(if #upgrade
+    (message "Upgrading Directory Opus 5 in\n\n" #dest "\n\nQuit Directory Opus before you continue, so that the new program and library are used the next time it starts.\n\nYour configuration files are kept."))
+
+(complete 5)
+
+
+; --------------------------------------------------------------------
+; Copy files
+; --------------------------------------------------------------------
+
+; Copies the files from #src/#pdir that #dest/#pdir does not have yet.
+; Used for configuration drawers on an upgrade.
+(procedure P_ADD_MISSING
+   (set #pd-src (tackon #src #pdir))
+   (set #pd-dst (tackon #dest #pdir))
+   (if (= 2 (exists #pd-src (noreq)))
+       (
+          (if (= 0 (exists #pd-dst (noreq)))
+              (makedir #pd-dst
+                 (prompt "Create " #pd-dst)
+                 (help "This configuration drawer is new in this release.")))
+          (foreach #pd-src "#?"
+             (if (and (= 1 (exists (tackon #pd-src @each-name) (noreq)))
+                      (= 0 (exists (tackon #pd-dst @each-name) (noreq))))
+                 (copyfiles
+                    (prompt "Add " @each-name " to " #pd-dst)
+                    (help "This file is new in this release. Existing configuration files are not replaced.")
+                    (source (tackon #pd-src @each-name))
+                    (dest #pd-dst))))
+       )))
+
+; Replaces the contents of #src/#pdir in #dest/#pdir.
+(procedure P_REPLACE
+   (if (= 2 (exists (tackon #src #pdir) (noreq)))
+       (copyfiles
+          (prompt "Install " #pdir)
+          (help "Replaces the files of this drawer with the ones from this release. Files you added yourself are kept.")
+          (source (tackon #src #pdir))
+          (dest (tackon #dest #pdir))
+          (all)
+          (infos))))
+
+; Copies #src/#pfile to #dest unless it is already there.
+(procedure P_ADD_FILE
+   (if (and (= 1 (exists (tackon #src #pfile) (noreq)))
+            (= 0 (exists (tackon #dest #pfile) (noreq))))
+       (copyfiles
+          (prompt "Add " #pfile)
+          (help "")
+          (source (tackon #src #pfile))
+          (dest #dest))))
+
+; The OS 3.2 Installer copies icons with (all) alone; (infos) asks for
+; them explicitly for Installer versions that read the options strictly.
+(if (not #upgrade)
+    (copyfiles
+       (prompt "Install Directory Opus 5 into " #dest)
+       (help "Copies the complete DOpus5 drawer.")
+       (source #src)
+       (dest #dest)
+       (all)
+       (infos))
+    (
+       (copyfiles
+          (prompt "Install the Directory Opus program")
+          (help "")
+          (source (tackon #src "DirectoryOpus"))
+          (dest #dest))
+
+       ; Program files, manuals and shipped extras
+       (set #pdir "Libs")      (P_REPLACE)
+       (set #pdir "Modules")   (P_REPLACE)
+       (set #pdir "C")         (P_REPLACE)
+       (complete 30)
+       (set #pdir "Help")      (P_REPLACE)
+       (set #pdir "ARexx")     (P_REPLACE)
+       (set #pdir "Icons")     (P_REPLACE)
+       (set #pdir "Images")    (P_REPLACE)
+       (set #pdir "Storage")   (P_REPLACE)
+       (set #pdir "WBStartup") (P_REPLACE)
+       (complete 60)
+
+       ; Configuration: only what is missing
+       (set #pdir "Buttons")         (P_ADD_MISSING)
+       (set #pdir "Environment")     (P_ADD_MISSING)
+       (set #pdir "Settings")        (P_ADD_MISSING)
+       (set #pdir "Filetypes")       (P_ADD_MISSING)
+       (set #pdir "Commands")        (P_ADD_MISSING)
+       (set #pdir "Desktop")         (P_ADD_MISSING)
+       (set #pdir "Groups")          (P_ADD_MISSING)
+       (set #pdir "Themes")          (P_ADD_MISSING)
+       (set #pdir "Sounds")          (P_ADD_MISSING)
+       (set #pdir "System")          (P_ADD_MISSING)
+       (set #pdir "System/Scripts")  (P_ADD_MISSING)
+       (set #pdir "System/_copyto")  (P_ADD_MISSING)
+
+       ; Icons that may carry the user's tool types
+       (set #pfile "DirectoryOpus.info") (P_ADD_FILE)
+       (set #pfile "Help.info")          (P_ADD_FILE)
+    ))
+
+; Drawer icon (not for a volume root)
+(set #drawer-icon (cat #dest ".info"))
+(if (and (<> (fileonly #dest) "")
+         (and (= 1 (exists "DOpus5.info" (noreq)))
+              (= 0 (exists #drawer-icon (noreq)))))
+    (copyfiles
+       (prompt "Install the drawer icon")
+       (help "")
+       (source "DOpus5.info")
+       (dest (pathonly #dest))
+       (newname (fileonly #drawer-icon))))
+
+(complete 75)
+
+
+; --------------------------------------------------------------------
+; Stored filetypes from older releases
+; --------------------------------------------------------------------
+;
+; Releases up to 5.102 named the files in Storage/Filetypes with
+; underscores ("Picture,_GIF") and kept copies of filetypes that are now
+; installed.  A file is only removed when its replacement is present.
+
+(set #olds (tackon #dest "Storage/Filetypes"))
+(set #oldft-pass 0)
+(set #oldft-found 0)
+
+(procedure P_OLD_FILETYPE
+   (if (and (= 1 (exists (tackon #olds #old) (noreq)))
+            (= 1 (exists #new (noreq))))
+       (if (= #oldft-pass 0)
+           (set #oldft-found (+ #oldft-found 1))
+           (delete (tackon #olds #old)
+              (prompt "Remove the old stored filetype " #old)
+              (help "")
+              (optional "force")))))
+
+(procedure P_OLD_FILETYPES
+   (set #old "ARC_archive"                #new (tackon #olds "ARC archive"))                 (P_OLD_FILETYPE)
+   (set #old "ARJ_archive"                #new (tackon #olds "ARJ archive"))                 (P_OLD_FILETYPE)
+   (set #old "ARexx_script"               #new (tackon #olds "ARexx script"))                (P_OLD_FILETYPE)
+   (set #old "AmigaDOS_program"           #new (tackon #olds "AmigaDOS program"))            (P_OLD_FILETYPE)
+   (set #old "AmigaDOS_runtime_library"   #new (tackon #olds "AmigaDOS runtime library"))    (P_OLD_FILETYPE)
+   (set #old "Animation,_IFF_ANIM"        #new (tackon #olds "Animation, IFF ANIM"))         (P_OLD_FILETYPE)
+   (set #old "CanDo_deck,_IFF_DECK"       #new (tackon #olds "CanDo deck, IFF DECK"))        (P_OLD_FILETYPE)
+   (set #old "CanDo_variable,_IFF_CDVR"   #new (tackon #olds "CanDo variable, IFF CDVR"))    (P_OLD_FILETYPE)
+   (set #old "Digitized_sound,_IFF_8SVX"  #new (tackon #olds "Sound, IFF 8SVX"))             (P_OLD_FILETYPE)
+   (set #old "DiskMasher_archive"         #new (tackon #olds "DiskMasher archive"))          (P_OLD_FILETYPE)
+   (set #old "FinalCopy_document"         #new (tackon #olds "FinalCopy document, IFF SWRT")) (P_OLD_FILETYPE)
+   (set #old "Flow_outline,_IFF_HEAD"     #new (tackon #olds "Flow outline, IFF HEAD"))      (P_OLD_FILETYPE)
+   (set #old "GPFax_file,_IFF_FAXX"       #new (tackon #olds "GPFax file, IFF FAXX"))        (P_OLD_FILETYPE)
+   (set #old "IFF_file"                   #new (tackon #olds "IFF file"))                    (P_OLD_FILETYPE)
+   (set #old "Imagine_object,_IFF_TDDD"   #new (tackon #olds "Imagine object, IFF TDDD"))    (P_OLD_FILETYPE)
+   (set #old "Imagine_picture,_IFF_RGBN"  #new (tackon #olds "Imagine picture, IFF RGBN"))   (P_OLD_FILETYPE)
+   (set #old "LHA_archive"                #new (tackon #olds "LHA archive"))                 (P_OLD_FILETYPE)
+   (set #old "LZX_archive"                #new (tackon #olds "LZX archive"))                 (P_OLD_FILETYPE)
+   (set #old "Maxiplan_worksheet"         #new (tackon #olds "Maxiplan worksheet"))          (P_OLD_FILETYPE)
+   (set #old "PNG_files"                  #new (tackon #olds "Picture, PNG"))                (P_OLD_FILETYPE)
+   (set #old "Pagestream_document"        #new (tackon #olds "Pagestream document"))         (P_OLD_FILETYPE)
+   (set #old "Picture,_GIF"               #new (tackon #olds "Picture, GIF"))                (P_OLD_FILETYPE)
+   (set #old "Picture,_IFF_ACBM"          #new (tackon #olds "Picture, IFF ACBM"))           (P_OLD_FILETYPE)
+   (set #old "Picture,_IFF_ILBM"          #new (tackon #olds "Picture, IFF ILBM"))           (P_OLD_FILETYPE)
+   (set #old "Picture,_IFF_ILBM_12bit"    #new (tackon #olds "Picture, IFF ILBM 12bit"))     (P_OLD_FILETYPE)
+   (set #old "Picture,_IFF_ILBM_24bit"    #new (tackon #olds "Picture, IFF ILBM 24bit"))     (P_OLD_FILETYPE)
+   (set #old "Picture,_JPEG"              #new (tackon #olds "Picture, JPEG"))               (P_OLD_FILETYPE)
+   (set #old "Picture,_PCX"               #new (tackon #olds "Picture, PCX"))                (P_OLD_FILETYPE)
+   (set #old "ProWrite_document"          #new (tackon #olds "ProWrite document, IFF WORD")) (P_OLD_FILETYPE)
+   (set #old "SFX_archive"                #new (tackon #olds "SFX archive"))                 (P_OLD_FILETYPE)
+   (set #old "Shrink_archive"             #new (tackon #olds "Shrink archive"))              (P_OLD_FILETYPE)
+   (set #old "Sonix_song,_IFF_SMUS"       #new (tackon #olds "Sonix song, IFF SMUS"))        (P_OLD_FILETYPE)
+   (set #old "Sound,_IFF_8SVX"            #new (tackon #olds "Sound, IFF 8SVX"))             (P_OLD_FILETYPE)
+   (set #old "Sound_Module"               #new (tackon #olds "Sound Module"))                (P_OLD_FILETYPE)
+   (set #old "Text_document,_IFF_FTXT"    #new (tackon #olds "Text document, IFF FTXT"))     (P_OLD_FILETYPE)
+   (set #old "WordPerfect_document"       #new (tackon #olds "WordPerfect document"))        (P_OLD_FILETYPE)
+   (set #old "ZIP_archive"                #new (tackon #olds "ZIP archive"))                 (P_OLD_FILETYPE)
+   (set #old "ZOO_archive"                #new (tackon #olds "ZOO archive"))                 (P_OLD_FILETYPE)
+   ; Copies of filetypes that are installed
+   (set #old "ASCII"      #new (tackon #dest "Filetypes/ASCII"))      (P_OLD_FILETYPE)
+   (set #old "AmigaGuide" #new (tackon #dest "Filetypes/AmigaGuide")) (P_OLD_FILETYPE)
+   (set #old "Font"       #new (tackon #dest "Filetypes/Font"))       (P_OLD_FILETYPE)
+   (set #old "Picture"    #new (tackon #dest "Filetypes/Picture"))    (P_OLD_FILETYPE))
+
+(if #upgrade
+    (
+       (P_OLD_FILETYPES)
+       (if (> #oldft-found 0)
+           (if (askbool
+                  (prompt "Remove " #oldft-found " outdated files from " #olds "?")
+                  (help "Older releases named the stored filetypes with underscores instead of spaces, for example Picture,_GIF instead of Picture, GIF, and kept copies of filetypes that are installed. This release installed the correctly named files, so the old ones are duplicates.\n\nOnly files whose replacement is present are removed.")
+                  (default 1))
+               (
+                  (set #oldft-pass 1)
+                  (P_OLD_FILETYPES)
+               )))
+    ))
+
+(complete 85)
+
+
+; --------------------------------------------------------------------
+; How Directory Opus starts
+; --------------------------------------------------------------------
+;
+; #mode 0 = manually, 1 = when Workbench starts (Opus5_Startup icon in
+; SYS:WBStartup), 2 = instead of Workbench.  The choice is kept in
+; ENVARC:DOpus5Startup so that the next run offers it again.
+;
+; Workbench replacement makes LoadDB resident under the name LoadWB in the
+; DOpus5 block of S:User-Startup, which the standard Startup-Sequence runs
+; just before its LoadWB line; the Startup-Sequence itself is not changed.
+; LoadDB starts Directory Opus with ENVIRONMENT=workbench and
+; WBSTARTUP=YES, runs C:LoadWB if Opus cannot start, and runs C:LoadWB
+; when Shift is held during boot.  Its own call to c:LoadWB names the
+; path, so it loads the real LoadWB, not the resident LoadDB.
+; Opus runs SYS:WBStartup itself in this mode, so the Opus5_Startup icon
+; must go, or Opus would be started twice.
+; AROS starts Wanderer directly, and the stock OS4 and MorphOS
+; Startup-Sequences have not been checked, so the option is offered for
+; the AmigaOS 3 builds only.
+
+(set #wbs "SYS:WBStartup/Opus5_Startup")
+(set #can-replace (= (substr #build 0 3) "os3"))
+(set #oldmode (getenv "DOpus5Startup"))
+
+(set #mode 0)
+(if (or (= #oldmode "wbstartup") (= 1 (exists #wbs (noreq))))
+    (set #mode 1))
+(if (and #can-replace (= #oldmode "workbench"))
+    (set #mode 2))
+
+(set #mode-help "Manually: start Directory Opus by double-clicking DirectoryOpus in its drawer.\n\nWhen Workbench starts: the Opus5_Startup icon in SYS:WBStartup starts Directory Opus after Workbench. Its tool types set the startup options, for example which environment to load.")
+
+(if #can-replace
+    (set #mode
+       (askchoice
+          (prompt "How should Directory Opus 5 start?")
+          (help #mode-help
+                "\n\nInstead of Workbench: Directory Opus replaces Workbench and runs the programs in SYS:WBStartup itself. "
+                "The DOpus5 block in S:User-Startup makes DOpus5:C/LoadDB resident as LoadWB, so the LoadWB line of the Startup-Sequence starts Directory Opus; the Startup-Sequence is not changed. "
+                "Hold Shift while the Amiga boots to start Workbench instead; if Directory Opus cannot start, Workbench starts. "
+                "In this mode Directory Opus loads the workbench environment, not the default one."
+                "\n\nRunning this installer again lets you change the choice.")
+          (choices "Manually" "When Workbench starts" "Instead of Workbench")
+          (default #mode)))
+    (set #mode
+       (askchoice
+          (prompt "How should Directory Opus 5 start?")
+          (help #mode-help "\n\nRunning this installer again lets you change the choice.")
+          (choices "Manually" "When Workbench starts")
+          (default #mode))))
+
+(set #modename "manual")
+(if (= #mode 1) (set #modename "wbstartup"))
+(if (= #mode 2) (set #modename "workbench"))
+
+(complete 88)
+
+
+; --------------------------------------------------------------------
+; S:User-Startup: DOpus5: assign, command path, Workbench replacement
+; --------------------------------------------------------------------
+;
+; Directory Opus assigns DOpus5: to its own drawer when it starts, so the
+; assign is only needed by things that run without it: ARexx scripts and
+; the commands in DOpus5:C started from a Shell, LoadDB, and other
+; programs that look for DOpus5:.  Workbench replacement needs it.
+;
+; ENVARC:DOpus5Assign records whether the block holds the assign.  When
+; the assign is declined and an earlier run wrote it, the block is
+; replaced by a comment so the old lines, which may point at another
+; drawer, stop running.  The Installer cannot read S:User-Startup, so
+; without the record it would either leave such a block behind or add an
+; empty block for users who never had one.
+
+(set #oldassign (getenv "DOpus5Assign"))
+
+(set #assign 1)
+(if (<> #mode 2)
+    (set #assign
+       (askbool
+          (prompt "Put the DOpus5: assign and the DOpus5:C command path in S:User-Startup?")
+          (help "Directory Opus assigns DOpus5: to its own drawer when it starts. The assign in S:User-Startup is needed by ARexx scripts and the commands in DOpus5:C started from a Shell, and by other programs that look for DOpus5: before Directory Opus has started."
+                "\n\nThe lines are written in a ;BEGIN DOpus5 / ;END DOpus5 block, which running this installer again replaces. Answering No empties a block written by an earlier run. The change takes effect after the next reboot.")
+          (default (<> #oldassign "no")))))
+
+(set #lines (cat "Assign DOpus5: \"" #dest "\"\nPath DOpus5:C ADD"))
+(if (= #mode 2)
+    (set #lines (cat #lines "\nResident LoadWB DOpus5:C/LoadDB PURE")))
+
+; Leaving Workbench replacement must take the Resident line out again,
+; and declining the assign must take out an assign written earlier.
+(if (not #assign)
+    (set #lines "; Directory Opus 5 needs no commands here"))
+
+(if (or #assign (or (= #oldmode "workbench") (= #oldassign "yes")))
+    (startup "DOpus5"
+       (prompt "Write these lines to S:User-Startup:\n\n" #lines)
+       (help "The lines are written in a ;BEGIN DOpus5 / ;END DOpus5 block, which running this installer again replaces. They take effect after the next reboot.")
+       (command #lines)))
+
+(complete 92)
+
+
+; --------------------------------------------------------------------
+; Opus5_Startup icon and the workbench environment
+; --------------------------------------------------------------------
+
+(if (= #mode 1)
+    (if (and (= 2 (exists "SYS:WBStartup" (noreq)))
+             (= 1 (exists (tackon #src "WBStartup/Opus5_Startup") (noreq))))
+        (
+           (if (= 0 (exists #wbs (noreq)))
+               (copyfiles
+                  (prompt "Install Opus5_Startup into SYS:WBStartup")
+                  (help "")
+                  (source (tackon #src "WBStartup/Opus5_Startup"))
+                  (dest "SYS:WBStartup")
+                  (infos)))
+           (tooltype
+              (prompt "Point " #wbs " at " #dest)
+              (help "")
+              (dest #wbs)
+              (setdefaulttool (tackon #dest "DirectoryOpus")))
+        )))
+
+(if (and (<> #mode 1) (= 1 (exists #wbs (noreq))))
+    (delete #wbs
+       (prompt "Remove " #wbs)
+       (help "Directory Opus is no longer started by this icon.")
+       (infos)))
+
+; LoadDB loads Environment/workbench.  Offer the user's default settings
+; when switching to Workbench replacement on an existing installation.
+(if (and (= #mode 2) (and #upgrade (<> #oldmode "workbench")))
+    (if (askbool
+           (prompt "Use your current settings when Directory Opus replaces Workbench?")
+           (help "When Directory Opus replaces Workbench it loads the environment saved as Environment/workbench instead of Environment/default. Answer Yes to copy your default environment over the workbench one. Answer No to keep the workbench environment as it is.")
+           (default 1))
+        (copyfiles
+           (prompt "Copy Environment/default to Environment/workbench")
+           (help "")
+           (source (tackon #dest "Environment/default"))
+           (dest (tackon #dest "Environment"))
+           (newname "workbench"))))
+
+(textfile
+   (prompt "Remember the startup choice in ENVARC:DOpus5Startup")
+   (help "")
+   (dest "ENVARC:DOpus5Startup")
+   (append #modename))
+(textfile
+   (prompt "Remember the startup choice in ENV:DOpus5Startup")
+   (help "")
+   (dest "ENV:DOpus5Startup")
+   (append #modename))
+
+(set #assignname "no")
+(if #assign (set #assignname "yes"))
+(textfile
+   (prompt "Remember the assign choice in ENVARC:DOpus5Assign")
+   (help "")
+   (dest "ENVARC:DOpus5Assign")
+   (append #assignname))
+(textfile
+   (prompt "Remember the assign choice in ENV:DOpus5Assign")
+   (help "")
+   (dest "ENV:DOpus5Assign")
+   (append #assignname))
+
+(complete 100)
+
+(set #final "Double-click DirectoryOpus in that drawer to start it.")
+(if (= #mode 1)
+    (set #final "Directory Opus starts with Workbench after the next reboot."))
+(if (= #mode 2)
+    (set #final "Directory Opus replaces Workbench after the next reboot. Hold Shift while the Amiga boots to start Workbench instead."))
+
+(message "Directory Opus 5 is installed in\n\n" #dest "\n\n" #final " The manual is in the Help drawer.\n\nhttps://github.com/BlitterStudio/dopus5")

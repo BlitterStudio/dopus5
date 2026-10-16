@@ -1,3 +1,80 @@
+[dopus5 next] Installer
+Release archive change.
+
+- Every release archive now has an "Install DOpus5" script for the
+  Installer program next to the DOpus5 drawer.  It installs Directory
+  Opus 5 into a DOpus5 drawer in the place you choose, or upgrades the
+  installation the DOpus5: assign points to.
+- An upgrade replaces the program, Libs, Modules, C, Help, ARexx, Icons,
+  Images, Storage and WBStartup, and keeps the configuration: Buttons,
+  Environment, Settings, Filetypes, Commands, Desktop, Groups, Themes,
+  Sounds and System only receive the files they do not have yet, and
+  existing DirectoryOpus.info and Help.info icons are kept.  It offers
+  to remove outdated stored filetypes left by older releases.
+- Asks how Directory Opus should start: manually, when Workbench starts
+  (an Opus5_Startup icon in SYS:WBStartup, pointed at the installed
+  program) or, for the AmigaOS 3 builds, instead of Workbench.
+  Workbench replacement adds "Resident LoadWB DOpus5:C/LoadDB PURE" to
+  the ;BEGIN DOpus5 block in S:User-Startup, so the LoadWB line of the
+  Startup-Sequence runs LoadDB; the Startup-Sequence is not edited.
+  Holding Shift during boot still starts Workbench, and LoadDB starts
+  Workbench when Opus cannot start.  On an upgrade the installer offers
+  to copy Environment/default to Environment/workbench, which this mode
+  loads.  Choosing another mode takes the Resident line and the
+  WBStartup icon out again.  The choice is kept in ENVARC:DOpus5Startup.
+- The ;BEGIN DOpus5 block also holds the DOpus5: assign and Path
+  DOpus5:C ADD (optional, except for Workbench replacement); running the
+  installer again replaces it.  Declining the assign empties a block an
+  earlier run wrote, so an old assign that may point at another drawer
+  stops running.  Whether the block holds the assign is kept in
+  ENVARC:DOpus5Assign.
+- The AmigaOS 3 68020 archive refuses to install on a 68000 or 68010 and
+  points to the os3-68000 archive; the 68000 archive suggests the faster
+  build on 68020 and newer processors.
+
+[dopus5 next] Default filetypes and filetype storage (issue #131)
+Base archive, dopus5.library, configopus.module and filetype.module
+change; version bump deferred.
+
+- The ASCII and AmigaGuide filetypes are installed by default, so
+  double-clicking a text file or a guide shows it with SmartRead or
+  MultiView instead of starting the Filetype Finder.  AmigaGuide now
+  recognises "@DATABASE" in any letter case and no longer points at a
+  non-existent icon.  Archives_over_XAD now recognises LZX archives, as
+  its name always claimed.
+- DOpus5:Storage/Filetypes: the files are named after their filetype
+  again ("Picture, GIF", not "Picture,_GIF").  The Filetype Finder
+  installs a stored filetype under its filetype name and the Filetype
+  Manager under its file name, so the old names let the same filetype
+  be installed twice.  The drawer is called Filetypes, not filetypes.
+- Removed from storage: Font and Picture (already installed), ASCII and
+  AmigaGuide (now installed), and "Digitized sound, IFF 8SVX" (a copy of
+  "Sound, IFF 8SVX" without actions).
+- Stored filetypes renamed to match the others: "Pic IFF 24bit" is now
+  "Picture, IFF ILBM 24bit", "PCX Pictures" is "Picture, PCX" and "PNG
+  files" is "Picture, PNG".  Icon paths into the BOOT: and MOSAIC:
+  assigns or relative PREFS/ drawers are removed.  "Picture, PNG" runs
+  SYS:Utilities/MultiView instead of BOOT:UTILITIES/MultiView and loses
+  its duplicate View action.  "Module", "Picture, PNG", "Picture, IFF
+  ILBM 24bit" and "Sound, IFF 8SVX" no longer define their own drag and
+  drop action (a plain Copy), so dropping such a file on the same volume
+  moves it like any other file.  The HTML View... menu passes the same
+  URL as its double-click action.  "Picture, PCX" only recognised
+  one-bit version 3 files; it now checks the PCX header and the .pcx
+  name.
+- Upgrading with the new installer removes the old underscore-named
+  files and the stored copies of installed filetypes.  Unpacking the
+  archive over an existing DOpus5: by hand leaves them next to the new
+  ones; they can be deleted.
+- Filetype Manager: storing a new filetype that had never been saved
+  wrote it to DOpus5:Filetypes/Storage/, which does not exist, and
+  failed with an error.  It goes to DOpus5:Storage/Filetypes now.
+  Storing also creates DOpus5:Storage/Filetypes when it is missing;
+  before, the filetype silently stayed installed.
+- dopus5.library SaveFiletypeList creates missing drawers in the path it
+  saves to, and the Filetype Finder and Creator create DOpus5:Filetypes
+  when it is missing.
+
 [dopus5 next] Colours after moving to a native screen
 Program change; version bump deferred.
 

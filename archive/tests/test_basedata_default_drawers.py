@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Regression checks for defaults shipped in basedata.lha."""
+"""Regression checks for defaults shipped in basedata.lha and the installer."""
 
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import unittest
@@ -9,6 +10,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 BASEDATA = ROOT / "archive" / "basedata.lha"
+INSTALLER = ROOT / "archive" / "installer" / "Install DOpus5"
 
 REQUIRED_PLACEHOLDERS = (
     "DOpus5/Commands/.dummy",
@@ -58,6 +60,26 @@ def archive_member(member):
     ).stdout
 
 
+def filetype_members(drawer):
+    members = []
+    for line in archive_listing().splitlines():
+        index = line.find(drawer)
+        if index >= 0:
+            member = line[index:].rstrip()
+            if not member.endswith("/"):
+                members.append(member)
+
+    return members
+
+
+def filetype_name(data):
+    # FORM <size> OPUS, then a TYPE chunk whose CFG_TYPE starts with the name
+    if data[:4] != b"FORM" or data[8:16] != b"OPUSTYPE":
+        raise AssertionError("not a filetype file")
+
+    return data[20:52].split(b"\0", 1)[0].decode("latin-1")
+
+
 class BasedataDefaultDrawerTests(unittest.TestCase):
     def test_default_empty_drawers_have_placeholders(self):
         listing = archive_listing()
@@ -81,6 +103,68 @@ class BasedataDefaultEnvironmentTests(unittest.TestCase):
         workbench = archive_member("DOpus5/Environment/workbench")
 
         self.assertEqual(default, workbench)
+
+
+class BasedataFiletypeTests(unittest.TestCase):
+    def test_stored_filetypes_are_named_after_the_filetype(self):
+        # The filetype finder installs a stored filetype under its name, the
+        # editor installs it under its file name; they must agree.
+        members = filetype_members("DOpus5/Storage/Filetypes/")
+        self.assertTrue(members)
+
+        for member in members:
+            with self.subTest(member=member):
+                self.assertEqual(member.rsplit("/", 1)[1], filetype_name(archive_member(member)))
+
+    def test_installed_filetypes_are_not_also_stored(self):
+        installed = {filetype_name(archive_member(m)).lower() for m in filetype_members("DOpus5/Filetypes/")}
+        stored = {filetype_name(archive_member(m)).lower() for m in filetype_members("DOpus5/Storage/Filetypes/")}
+
+        self.assertLessEqual({"ascii", "amigaguide"}, installed)
+        self.assertEqual(set(), installed & stored)
+
+
+class InstallerTests(unittest.TestCase):
+    def setUp(self):
+        self.script = INSTALLER.read_text(encoding="latin-1")
+
+    def test_string_literals_fit_the_installer_limit(self):
+        # The OS 3.2 Installer refuses to compile a script with a 539-byte
+        # string ("Symbol or String too long"); split long texts instead.
+        for match in re.finditer(r'"((?:[^"\\]|\\.)*)"', self.script):
+            with self.subTest(line=self.script.count("\n", 0, match.start()) + 1):
+                self.assertLessEqual(len(match.group(1)), 400)
+
+    def test_upgrade_handles_every_drawer_and_file_in_basedata(self):
+        # An upgrade copies drawer by drawer; a new top-level entry in
+        # basedata that the script does not name would never reach users.
+        handled = set(re.findall(r'\(set #pdir "([^"/]+)"\)', self.script))
+        handled |= set(re.findall(r'\(set #pfile "([^"]+)"\)', self.script))
+
+        top_level = set()
+        for line in archive_listing().splitlines():
+            index = line.find("DOpus5/")
+            if index >= 0:
+                parts = line[index:].rstrip().split("/")
+                if len(parts) > 1 and parts[1]:
+                    top_level.add(parts[1])
+
+        self.assertTrue(top_level)
+        self.assertEqual(set(), top_level - handled)
+
+    def test_old_stored_filetype_replacements_exist(self):
+        # The cleanup only removes an old file when its replacement is
+        # present, so a stale replacement name silently disables it.
+        stored = {m.rsplit("/", 1)[1] for m in filetype_members("DOpus5/Storage/Filetypes/")}
+        installed = {m.rsplit("/", 1)[1] for m in filetype_members("DOpus5/Filetypes/")}
+
+        replacements = re.findall(r'#new \(tackon #olds "([^"]+)"\)', self.script)
+        self.assertTrue(replacements)
+        self.assertEqual(set(), set(replacements) - stored)
+
+        installed_replacements = re.findall(r'#new \(tackon #dest "Filetypes/([^"]+)"\)', self.script)
+        self.assertTrue(installed_replacements)
+        self.assertEqual(set(), set(installed_replacements) - installed)
 
 
 if __name__ == "__main__":

@@ -2850,10 +2850,15 @@ int LIBFUNC L_Module_Entry(REG(a0, char *args),
 	int ret = 0;
 
 	ipc->proc->pr_Task.tc_Node.ln_Name = "filetype finder";
-	if ((newdir = Lock("DOpus5:Filetypes", ACCESS_READ)))
+
+	// Installed filetypes are saved here; create the drawer if it is missing
+	if (!(newdir = Lock("DOpus5:Filetypes", ACCESS_READ)) && (newdir = CreateDir("DOpus5:Filetypes")))
 	{
-		olddir = CurrentDir(newdir);
+		UnLock(newdir);
+		newdir = Lock("DOpus5:Filetypes", ACCESS_READ);
 	}
+	if (newdir)
+		olddir = CurrentDir(newdir);
 
 	if (mod_id == MODID_FIND_FT)
 		ret = finder(screen, ipc, main_ipc, func_callback);

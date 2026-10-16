@@ -1,6 +1,6 @@
 @database dopus5
 @master dopus5.guide
-@$VER: Dopus5Guide 58.10 (15.10.2026)
+@$VER: Dopus5Guide 58.12 (16.10.2026)
 @author "Mark Anderson, Andrew Dunbar, Dr Greg Perry, Leo Davidson and Dave Clarke"
 @(c) "Directory Opus 5 Help Guide (c) GPSoftware 1999"
 @(c) "Directory Opus 5 Help Guide (c) DOPUS5 Open Source Team 2012-2026"
@@ -66,7 +66,64 @@ For help on any lister gadget, button, or requester, simply press the help
 key over the item of interest.  For help on a menu item you must highlight
 that item and then press the help key before selecting it.
 
-  @{" Index " link "Index"}  @{" Commands " link "Commands"}  @{" Manual Index " link "Manual"}  @{" Revision " link "Revision"}  @{" Variables " link "Variables"}
+  @{" Index " link "Index"}  @{" Commands " link "Commands"}  @{" Manual Index " link "Manual"}  @{" Revision " link "Revision"}  @{" Variables " link "Variables"}  @{" Installation " link "Installation"}
+
+@endnode
+
+@node "Installation" "Installation"
+Installation
+
+Unpack the Directory Opus 5 archive anywhere, for example to RAM:, and
+double-click the "Install DOpus5" icon.
+
+New installation:
+  Choose the drawer to install into.  The installer creates a drawer
+  called DOpus5 there and copies Directory Opus 5 into it.
+
+Upgrade:
+  When the DOpus5: assign points to an existing installation, the
+  installer offers to upgrade it.  Quit Directory Opus first.  The
+  program, Libs, Modules, C, Help, ARexx, Icons, Images, Storage and
+  WBStartup drawers are replaced.  The Buttons, Environment, Settings,
+  Filetypes, Commands, Desktop, Groups, Themes, Sounds and System drawers
+  hold your configuration; they only receive files they do not have yet.
+  The installer also offers to remove the outdated stored filetypes that
+  older releases left in DOpus5:Storage/Filetypes.
+
+How Directory Opus starts:
+  The installer asks how Directory Opus should start, and offers the
+  answer you gave last time:
+
+  Manually
+    Double-click DirectoryOpus in its drawer.
+
+  When Workbench starts
+    The Opus5_Startup icon in SYS:WBStartup starts Directory Opus after
+    Workbench.  Its tool types set the startup options, for example the
+    environment to load.
+
+  Instead of Workbench (AmigaOS 3)
+    Directory Opus replaces Workbench and runs the programs in
+    SYS:WBStartup itself.  The installer makes DOpus5:C/LoadDB resident
+    as LoadWB in S:User-Startup, so the LoadWB line of the
+    Startup-Sequence starts Directory Opus; the Startup-Sequence itself
+    is not changed.  Hold Shift while the Amiga boots to start Workbench
+    instead, or Ctrl to skip SYS:WBStartup.  If Directory Opus cannot
+    start, Workbench starts.  In this mode Directory Opus loads the
+    environment saved as "workbench", not "default"; when you switch to
+    this mode, the installer offers to copy your default environment.
+
+S:User-Startup:
+  The installer can add a ;BEGIN DOpus5 block with the DOpus5: assign and
+  "Path DOpus5:C ADD", plus the Resident line for Workbench replacement.
+  Directory Opus assigns DOpus5: to its own drawer when it starts, so the
+  assign is only needed by ARexx scripts and the commands in DOpus5:C
+  started from a Shell, by Workbench replacement, and by other programs
+  that look for DOpus5:.  Running the installer again replaces the
+  block; answering No to the assign empties a block written earlier.
+
+The AmigaOS 3 archive for 68020 and newer processors does not install on
+a 68000 or 68010; use the os3-68000 archive there.
 
 @endnode
 
@@ -4120,6 +4177,18 @@ There are a variety of different options:
 This function allows you to alter the filetypes recognised and handled by
 Opus 5.  You may add, remove, rename, duplicate or @{" Edit " link "File Type Editor"} a selected
 filetype at this level.
+
+Installed filetypes are kept in the DOpus5:Filetypes drawer, one file per
+filetype, named after the filetype.  Store moves the selected filetype to
+the DOpus5:Storage/Filetypes drawer, where Opus 5 ignores it until you
+install it again, either from the @{" Filetype Finder " link "Filetype Finder"} or by double-clicking
+the stored file and saving it in the Filetype Manager.  Opus 5 creates
+either drawer when it saves a filetype there and the drawer is missing.
+
+A new installation has filetypes for plain text (ASCII, shown with
+SmartRead) and AmigaGuide documents (shown with MultiView) installed, so
+double-clicking such files does not start the Filetype Finder.  More
+filetypes are waiting in DOpus5:Storage/Filetypes.
 
 @endnode
 
