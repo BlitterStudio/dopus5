@@ -1,3 +1,34 @@
+[dopus5 next] MagicWB images and icons (#122)
+Release archive change.
+
+- Release archives carry a MagicWB set in IconSets/MagicWB, for 8 and
+  16 colour screens: the MWB_DOpus 8 toolbar images by Trevor Morris and
+  Leo Davidson (24x16, 8 colours, two frames with their own border),
+  their icon versions, and 8 colour planar versions of the DirectoryOpus,
+  Help, drawer, guide and Opus5_Startup icons and of the DOpus5:Icons
+  icons Opus uses (the alternative Beavis, IntelOutside and Icons-FTPNI
+  icons stay as they are).  Command, FTP, FTPDirectory, FTPFile, FTPSite
+  and PrintFilesAppIcon, which had no MagicWB icon, use the MWB_DOpus 8
+  project icon with a toolbar image; Toggle.small is new.  The set's
+  Toolbar, Toolbar.default and FTP_image banks have borderless buttons,
+  and its default and workbench environments have "Remap icon images"
+  off: remapping draws colours 4-7 of 8 colour icons in the last four
+  pens, not in the pens 4-7 that hold the MagicWB colours on the
+  Workbench screen.
+- The installer asks for the standard or the MagicWB images and icons,
+  suggests MagicWB on AmigaOS 3 without Picasso96 or CyberGraphX, and
+  keeps the choice in ENVARC:DOpus5Icons.  An upgrade that changes the
+  set offers to replace Buttons/Toolbar and Buttons/FTP_image and keeps
+  the old banks as Toolbar.old and FTP_image.old; it keeps the
+  environments, and says to turn remapping off after a change to
+  MagicWB.
+- A new installation gets the DOpus5 drawer icon from the archive.  The
+  OS 3.2 Installer gives a new drawer a default icon when copyfiles
+  (infos) copies into it, so the shipped icon was skipped; it is now
+  installed before the files.
+- archive/tools/magicwb_iconset.py builds the set from MWB_DOpus8c.lha
+  (Aminet pix/mwb).
+
 [dopus5 next] Filetype icon paths keep their assigns
 configopus.module change; version bump deferred.
 

@@ -4,10 +4,12 @@
 ; Distributed with Directory Opus 5 under the AROS Public License
 ; version 1.1 (see COPYING).
 ;
-; The release archive holds this script, its icon, DOpus5.info and the
-; DOpus5 drawer.  The script copies the DOpus5 drawer to the chosen place.
-; On an upgrade it replaces the program files and keeps the user's
-; configuration: configuration drawers only receive the files they lack.
+; The release archive holds this script, its icon, DOpus5.info, the
+; DOpus5 drawer and IconSets/MagicWB.  The script copies the DOpus5
+; drawer to the chosen place, with the MagicWB images and icons over the
+; standard ones if the user wants them.  On an upgrade it replaces the
+; program files and keeps the user's configuration: configuration
+; drawers only receive the files they lack.
 ;
 ; source/makefile replaces @BUILD@ with the release target (os3,
 ; os3-68000, os4, mos, i386-aros, x86_64-aros or aarch64-aros).
@@ -80,6 +82,68 @@
 (if #upgrade
     (message "Upgrading Directory Opus 5 in\n\n" #dest "\n\nQuit Directory Opus before you continue, so that the new program and library are used the next time it starts.\n\nYour configuration files are kept."))
 
+
+; --------------------------------------------------------------------
+; Images and icons
+; --------------------------------------------------------------------
+;
+; The DOpus5 drawer holds the standard toolbar images and icons, made for
+; RTG and other screens with many colours.  IconSets/MagicWB holds 8
+; colour MagicWB versions of the same files, laid out like the archive
+; root, button banks whose buttons have no border because the MagicWB
+; images draw their own, and environments with icon remapping off, which
+; only new installations receive.  #iconset 0 = standard, 1 = MagicWB;
+; the choice is kept in ENVARC:DOpus5Icons.  Releases before it had only
+; the standard set.
+
+(set #mwb "IconSets/MagicWB")
+(set #oldicons (getenv "DOpus5Icons"))
+(set #oldset 0)
+(if (= #oldicons "magicwb")
+    (set #oldset 1))
+(set #iconset #oldset)
+
+; Without an earlier choice, suggest MagicWB on AmigaOS 3 without RTG
+(if (and (= #oldicons "")
+         (and (= (substr #build 0 3) "os3")
+              (and (= 0 (exists "LIBS:Picasso96API.library" (noreq)))
+                   (= 0 (exists "LIBS:cybergraphics.library" (noreq))))))
+    (set #iconset 1))
+
+(if (= 2 (exists (tackon #mwb "DOpus5") (noreq)))
+    (set #iconset
+       (askchoice
+          (prompt "Which toolbar images and icons should Directory Opus 5 use?")
+          (help "Standard: images and icons made for RTG and other screens with many colours.\n\n"
+                "MagicWB: 8 colour images and icons in the MagicWB style (MWB_DOpus 8 by Trevor Morris and Leo Davidson), for 8 and 16 colour screens with the MagicWB palette. "
+                "They use colours 0 to 7 of the screen."
+                "\n\nOn an upgrade the DirectoryOpus, Help and drawer icons are kept, because they hold your tool types and window positions. "
+                "The MagicWB versions are in the IconSets/MagicWB drawer of this archive.")
+          (choices "Standard (many colours, RTG)" "MagicWB (8 or 16 colours)")
+          (default #iconset)))
+    (set #iconset 0))
+
+(set #setname "standard")
+(set #setsrc #src)
+(if (= #iconset 1)
+    (
+       (set #setname "MagicWB")
+       (set #setsrc (tackon #mwb "DOpus5"))
+    ))
+
+; The lister toolbar and the FTP bank belong to the images they show.  An
+; upgrade that changes the images offers to replace them; the user's
+; banks are kept as .old files.
+(set #banks 0)
+(if (and #upgrade (<> #iconset #oldset))
+    (set #banks
+       (askbool
+          (prompt "Replace the lister toolbar and the FTP button bank with the " #setname " ones?")
+          (help "The lister toolbar (Buttons/Toolbar) and the FTP bank (Buttons/FTP_image) show the images you chose. "
+                "The MagicWB images draw their own button border, so these banks have borderless buttons in the MagicWB set and bordered ones in the standard set.\n\n"
+                "Your current Toolbar and FTP_image are kept as Toolbar.old and FTP_image.old; Toolbar.default is replaced.")
+          (default 1))))
+
 (complete 5)
 
 
@@ -119,15 +183,65 @@
           (all)
           (infos))))
 
-; Copies #src/#pfile to #dest unless it is already there.
+; Copies #pfile of the chosen set to #dest unless it is already there.
 (procedure P_ADD_FILE
-   (if (and (= 1 (exists (tackon #src #pfile) (noreq)))
+   (if (and (= 1 (exists (tackon #setsrc #pfile) (noreq)))
             (= 0 (exists (tackon #dest #pfile) (noreq))))
        (copyfiles
           (prompt "Add " #pfile)
           (help "")
-          (source (tackon #src #pfile))
+          (source (tackon #setsrc #pfile))
           (dest #dest))))
+
+; Replaces the files of #dest/#pdir with the MagicWB ones.
+(procedure P_SET_REPLACE
+   (if (= 2 (exists (tackon #setsrc #pdir) (noreq)))
+       (copyfiles
+          (prompt "Install the " #setname " files in " #pdir)
+          (help "")
+          (source (tackon #setsrc #pdir))
+          (dest (tackon #dest #pdir))
+          (all)
+          (infos))))
+
+; Installs the button bank #bank of the chosen set; with #bank-keep the
+; user's bank is kept as <bank>.old first.
+(procedure P_BANK
+   (set #bk-src (tackon (tackon #setsrc "Buttons") #bank))
+   (set #bk-dir (tackon #dest "Buttons"))
+   (if (= 1 (exists #bk-src (noreq)))
+       (
+          (if (and #bank-keep (= 1 (exists (tackon #bk-dir #bank) (noreq))))
+              (copyfiles
+                 (prompt "Keep " #bank " as " #bank ".old")
+                 (help "")
+                 (source (tackon #bk-dir #bank))
+                 (dest #bk-dir)
+                 (newname (cat #bank ".old"))))
+          (copyfiles
+             (prompt "Install the " #setname " " #bank)
+             (help "")
+             (source #bk-src)
+             (dest #bk-dir))
+       )))
+
+; Drawer icon (not for a volume root), only when the drawer has none.
+; It goes in before the files: Installer 47 gives a drawer without an
+; icon a default one when copyfiles (infos) copies into it, and that new
+; icon could not always be replaced straight away ("object in use").
+(set #drawer-src "DOpus5.info")
+(if (= #iconset 1)
+    (set #drawer-src (tackon #mwb "DOpus5.info")))
+(set #drawer-icon (cat #dest ".info"))
+(if (and (<> (fileonly #dest) "")
+         (and (= 1 (exists #drawer-src (noreq)))
+              (= 0 (exists #drawer-icon (noreq)))))
+    (copyfiles
+       (prompt "Install the drawer icon")
+       (help "")
+       (source #drawer-src)
+       (dest (pathonly #dest))
+       (newname (fileonly #drawer-icon))))
 
 ; The OS 3.2 Installer copies icons with (all) alone; (infos) asks for
 ; them explicitly for Installer versions that read the options strictly.
@@ -178,17 +292,32 @@
        (set #pfile "Help.info")          (P_ADD_FILE)
     ))
 
-; Drawer icon (not for a volume root)
-(set #drawer-icon (cat #dest ".info"))
-(if (and (<> (fileonly #dest) "")
-         (and (= 1 (exists "DOpus5.info" (noreq)))
-              (= 0 (exists #drawer-icon (noreq)))))
-    (copyfiles
-       (prompt "Install the drawer icon")
-       (help "")
-       (source "DOpus5.info")
-       (dest (pathonly #dest))
-       (newname (fileonly #drawer-icon))))
+; MagicWB files over the standard ones: all of them for a new
+; installation, the program drawers for an upgrade.
+(if (= #iconset 1)
+    (if (not #upgrade)
+        (copyfiles
+           (prompt "Install the MagicWB images and icons")
+           (help "")
+           (source #setsrc)
+           (dest #dest)
+           (all)
+           (infos))
+        (
+           (set #pdir "Help")      (P_SET_REPLACE)
+           (set #pdir "Icons")     (P_SET_REPLACE)
+           (set #pdir "Images")    (P_SET_REPLACE)
+           (set #pdir "WBStartup") (P_SET_REPLACE)
+        )))
+
+(if #banks
+    (
+       (set #bank-keep 1)
+       (set #bank "Toolbar")         (P_BANK)
+       (set #bank "FTP_image")       (P_BANK)
+       (set #bank-keep 0)
+       (set #bank "Toolbar.default") (P_BANK)
+    ))
 
 (complete 75)
 
@@ -385,15 +514,16 @@
 ; Opus5_Startup icon and the workbench environment
 ; --------------------------------------------------------------------
 
+; The icon comes from the installed drawer, which has the chosen images
 (if (= #mode 1)
     (if (and (= 2 (exists "SYS:WBStartup" (noreq)))
-             (= 1 (exists (tackon #src "WBStartup/Opus5_Startup") (noreq))))
+             (= 1 (exists (tackon #dest "WBStartup/Opus5_Startup") (noreq))))
         (
            (if (= 0 (exists #wbs (noreq)))
                (copyfiles
                   (prompt "Install Opus5_Startup into SYS:WBStartup")
                   (help "")
-                  (source (tackon #src "WBStartup/Opus5_Startup"))
+                  (source (tackon #dest "WBStartup/Opus5_Startup"))
                   (dest "SYS:WBStartup")
                   (infos)))
            (tooltype
@@ -447,6 +577,19 @@
    (dest "ENV:DOpus5Assign")
    (append #assignname))
 
+(set #iconsname "standard")
+(if (= #iconset 1) (set #iconsname "magicwb"))
+(textfile
+   (prompt "Remember the choice of images in ENVARC:DOpus5Icons")
+   (help "")
+   (dest "ENVARC:DOpus5Icons")
+   (append #iconsname))
+(textfile
+   (prompt "Remember the choice of images in ENV:DOpus5Icons")
+   (help "")
+   (dest "ENV:DOpus5Icons")
+   (append #iconsname))
+
 (complete 100)
 
 (set #final "Double-click DirectoryOpus in that drawer to start it.")
@@ -455,4 +598,10 @@
 (if (= #mode 2)
     (set #final "Directory Opus replaces Workbench after the next reboot. Hold Shift while the Amiga boots to start Workbench instead."))
 
-(message "Directory Opus 5 is installed in\n\n" #dest "\n\n" #final " The manual is in the Help drawer.\n\nhttps://github.com/BlitterStudio/dopus5")
+; New MagicWB installations get environments with icon remapping off; an
+; upgrade keeps the user's environments.
+(set #hint "")
+(if (and #upgrade (and (= #iconset 1) (= #oldset 0)))
+    (set #hint "\n\nOn the Workbench screen the MagicWB icons need 'Remap icon images' off (Settings, Environment, Icon Settings)."))
+
+(message "Directory Opus 5 is installed in\n\n" #dest "\n\n" #final " The manual is in the Help drawer." #hint "\n\nhttps://github.com/BlitterStudio/dopus5")
