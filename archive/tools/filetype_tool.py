@@ -240,21 +240,47 @@ def dump(path, types):
 
 
 def command_text(text):
-    """Return an instruction as Opus runs it: without the once-only '#'
-    marker (function_parse.c) or a leading "run " (function_script.c)."""
+    """Return an instruction without the once-only '#' marker, which
+    function_parse.c strips before running it."""
     text = text.strip()
     if text.startswith("#"):
         text = text[1:].lstrip()
-    if text[:4].lower() == "run ":
-        text = text[4:].lstrip()
     return text
 
 
+def shell_words(text):
+    """Split a command line into words, keeping "quoted" words together."""
+    words, word, quoted = [], "", False
+    for char in text:
+        if char == '"':
+            quoted = not quoted
+        elif char in " \t" and not quoted:
+            if word:
+                words.append(word)
+            word = ""
+        else:
+            word += char
+    if word:
+        words.append(word)
+    return words
+
+
+def program_word(text):
+    """Return the program an instruction runs: skips a leading "run"
+    (function_script.c strips it for Workbench instructions, and it is the
+    AmigaDOS command for the others) and I/O redirections."""
+    words = shell_words(command_text(text))
+    if words and words[0].lower() == "run":
+        words = words[1:]
+    while words and (words[0].startswith(("<", ">", "*>"))):
+        words = words[1:]
+    return words[0] if words else ""
+
+
 def path_prefix(text):
-    """Return the device or assign a command or path starts with, or None."""
-    word = text.strip().split(" ", 1)[0].strip('"')
-    if ":" in word:
-        return word[:word.index(":") + 1].upper()
+    """Return the device or assign a path starts with, or None."""
+    if ":" in text:
+        return text[:text.index(":") + 1].upper()
     return None
 
 
@@ -275,7 +301,9 @@ def lint(path, types):
                 problems.append("%s: icon path uses %s %r" % (ftype.name, prefix, icon))
 
         clauses = [(op, arg) for op, arg in recognition_clauses(ftype.recognition) if arg is not None]
-        if clauses and all(op == "MATCHNAME" for op, arg in clauses) and \
+        if not clauses:
+            problems.append("%s: no recognition clauses, so it never matches" % ftype.name)
+        elif all(op == "MATCHNAME" for op, arg in clauses) and \
                 not any(arg in ("#?", "*") for op, arg in clauses):
             problems.append("%s: recognised by file name only" % ftype.name)
         for op, arg in recognition_clauses(ftype.recognition):
@@ -293,7 +321,7 @@ def lint(path, types):
                     problems.append("%s: %s has no commands" % (ftype.name, function_text(func)))
                 continue
             for inst, text in commands:
-                prefix = path_prefix(text)
+                prefix = path_prefix(program_word(text))
                 if inst in (1, 2, 3, 4) and prefix and prefix not in STOCK_ASSIGNS:
                     problems.append("%s: needs %s for %r" % (ftype.name, prefix, text))
             if not func.is_menu and func.event == DRAG_DROP and \
