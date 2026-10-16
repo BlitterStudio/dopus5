@@ -111,11 +111,22 @@ class Function:
         return struct.unpack(">H", self.header[16:18])[0]
 
 
+class FiletypeList(list):
+    """The filetypes of a file, plus what Opus would skip while reading it."""
+
+    def __init__(self):
+        super().__init__()
+        self.skipped = []
+
+
 def parse(data):
+    """Read a filetype file.  Like L_ReadFiletypes(), unknown chunks and a
+    FUNC before the first TYPE are skipped; they are listed in .skipped and
+    are not re-encoded, so check reports such files as differing."""
     if data[:4] != b"FORM" or data[8:12] != b"OPUS":
         raise ValueError("not an Opus IFF file")
 
-    types = []
+    types = FiletypeList()
     pos = 12
     while pos + 8 <= len(data):
         chunk = data[pos:pos + 4]
@@ -143,7 +154,8 @@ def parse(data):
             types.append(Filetype(body[:46], strings[0], strings[1], strings[2:18]))
         elif chunk == b"FUNC":
             if not types:
-                raise ValueError("FUNC chunk before any TYPE chunk")
+                types.skipped.append("FUNC chunk before the first TYPE")
+                continue
             if len(body) < 22:
                 raise ValueError("FUNC chunk is shorter than CFG_FUNC (22 bytes)")
             rest = body[22:]
@@ -165,7 +177,7 @@ def parse(data):
                                  "(FUNCF2_PLACEHOLDER/ORIGINAL/FREE_FUNCTION)" % (flags2 & FUNCF2_INTERNAL))
             types[-1].functions.append(Function(body[:22], instructions))
         else:
-            raise ValueError("unexpected chunk %r" % chunk)
+            types.skipped.append("%r chunk" % chunk)
 
     if pos != len(data):
         raise ValueError("missing pad byte after the last chunk" if pos > len(data)
@@ -252,8 +264,11 @@ def emit(line=""):
                   ("\\x%02x" % ord(char) if ord(char) < 0x100 else "\\u%04x" % ord(char))
                   for char in line))
 
+
 def dump(path, types):
     emit("== %s" % path)
+    for item in getattr(types, "skipped", []):
+        emit("  Skipped:  %s (Opus ignores it)" % item)
     for ftype in types:
         emit("  Name:     %s" % ftype.name)
         emit("  ID:       %s   priority %d   flags 0x%04x" % (ftype.id, ftype.priority, ftype.flags))
@@ -427,9 +442,10 @@ def instruction_analysis(inst, text):
              for index, (number, words) in enumerate(commands)], delimiters)
 
 
-# A device or assign name followed by ":", not part of a longer word or a
-# URL scheme ("file://")
-ASSIGN_REFERENCE = re.compile(r"(?:^|[^\w:/.])([A-Za-z][\w.-]*:)(?!//)")
+# A device, volume or assign name followed by ":".  Volume names may hold
+# anything but ":" and "/"; whitespace, quotes and shell punctuation end a
+# name here, and so does "=" (KEYWORD=value).  "scheme://" is a URL.
+ASSIGN_REFERENCE = re.compile(r"""(?:^|[\s"`<>|();=])([^\s:/"`<>|();=*{}]+:)(?!//)""")
 
 
 def assign_references(words):
@@ -465,6 +481,8 @@ def path_prefix(text):
 
 def lint(path, types):
     problems = []
+    for item in getattr(types, "skipped", []):
+        problems.append("Opus ignores the %s" % item)
     if len(types) == 1 and os.path.basename(path) != types[0].name.replace("/", "\\"):
         problems.append("file name differs from the filetype name %r; the Filetype Finder "
                         "installs under the filetype name, the Filetype Manager under the "
