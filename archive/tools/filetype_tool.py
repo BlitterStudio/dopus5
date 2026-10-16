@@ -112,17 +112,20 @@ class Function:
 
 
 class FiletypeList(list):
-    """The filetypes of a file, plus what Opus would skip while reading it."""
+    """The filetypes of a file, plus notes on what Opus would skip or fill
+    in while reading it."""
 
     def __init__(self):
         super().__init__()
-        self.skipped = []
+        self.notes = []
 
 
 def parse(data):
-    """Read a filetype file.  Like L_ReadFiletypes(), unknown chunks and a
-    FUNC before the first TYPE are skipped; they are listed in .skipped and
-    are not re-encoded, so check reports such files as differing."""
+    """Read a filetype file the way L_ReadFiletypes() does: unknown chunks,
+    a FUNC before the first TYPE and data after a TYPE's 18 strings are
+    skipped, missing strings read as empty.  Each such case is listed in
+    .notes; none of it is re-encoded, so check reports such files as
+    differing."""
     if data[:4] != b"FORM" or data[8:12] != b"OPUS":
         raise ValueError("not an Opus IFF file")
 
@@ -148,13 +151,28 @@ def parse(data):
             if struct.unpack(">H", body[44:46])[0] > 16:
                 raise ValueError("CFG_TYPE count %d is above 16, so Opus cannot save the filetype again"
                                  % struct.unpack(">H", body[44:46])[0])
-            strings = body[46:].split(b"\0")
-            if len(strings) != 19 or strings[-1] != b"":
-                raise ValueError("TYPE chunk does not hold recognition, icon and 16 actions")
+            # read_config_string(): recognition, icon and 16 actions in turn;
+            # a last string may lack its NUL, missing ones read as empty,
+            # anything after the 18th is ignored
+            rest, strings = body[46:], []
+            while rest and len(strings) < 18:
+                end = rest.find(b"\0")
+                if end < 0:
+                    strings.append(rest)
+                    rest = b""
+                else:
+                    strings.append(rest[:end])
+                    rest = rest[end + 1:]
+            name = body[:32].split(b"\0", 1)[0].decode("latin-1")
+            if len(strings) < 18 or (not rest and not body.endswith(b"\0")):
+                types.notes.append("Opus reads the missing strings of TYPE %r as empty" % name)
+            if rest:
+                types.notes.append("Opus ignores the data after the 16 action strings of TYPE %r" % name)
+            strings += [b""] * (18 - len(strings))
             types.append(Filetype(body[:46], strings[0], strings[1], strings[2:18]))
         elif chunk == b"FUNC":
             if not types:
-                types.skipped.append("FUNC chunk before the first TYPE")
+                types.notes.append("Opus ignores a FUNC chunk before the first TYPE")
                 continue
             if len(body) < 22:
                 raise ValueError("FUNC chunk is shorter than CFG_FUNC (22 bytes)")
@@ -177,7 +195,7 @@ def parse(data):
                                  "(FUNCF2_PLACEHOLDER/ORIGINAL/FREE_FUNCTION)" % (flags2 & FUNCF2_INTERNAL))
             types[-1].functions.append(Function(body[:22], instructions))
         else:
-            types.skipped.append("%r chunk" % chunk)
+            types.notes.append("Opus ignores the %r chunk" % chunk.decode("latin-1"))
 
     if pos != len(data):
         raise ValueError("missing pad byte after the last chunk" if pos > len(data)
@@ -267,8 +285,8 @@ def emit(line=""):
 
 def dump(path, types):
     emit("== %s" % path)
-    for item in getattr(types, "skipped", []):
-        emit("  Skipped:  %s (Opus ignores it)" % item)
+    for note in getattr(types, "notes", []):
+        emit("  Note:     %s" % note)
     for ftype in types:
         emit("  Name:     %s" % ftype.name)
         emit("  ID:       %s   priority %d   flags 0x%04x" % (ftype.id, ftype.priority, ftype.flags))
@@ -452,12 +470,20 @@ def assign_references(words):
     """Return every device or assign the words refer to.  This looks at all
     words, not only the program: arguments and redirection targets are paths
     too, and words of nested constructs ("run run ...", "( ... )", backtick
-    substitutions) are covered without modelling each of them."""
+    substitutions) are covered without modelling each of them.  A quoted
+    word is one literal path, so a volume name in it may hold spaces and
+    punctuation ("MY SYS:tool")."""
     found = []
     for word in words:
-        for match in ASSIGN_REFERENCE.finditer(word):
-            if match.group(1).upper() not in found:
-                found.append(match.group(1).upper())
+        if isinstance(word, Quoted):
+            colon = word.find(":")
+            names = [word[:colon + 1]] if colon > 0 and "/" not in word[:colon] \
+                and not word.startswith("//", colon + 1) else []
+        else:
+            names = [match.group(1) for match in ASSIGN_REFERENCE.finditer(word)]
+        for name in names:
+            if name.upper() not in found:
+                found.append(name.upper())
     return found
 
 
@@ -481,8 +507,8 @@ def path_prefix(text):
 
 def lint(path, types):
     problems = []
-    for item in getattr(types, "skipped", []):
-        problems.append("Opus ignores the %s" % item)
+    for note in getattr(types, "notes", []):
+        problems.append(note)
     if len(types) == 1 and os.path.basename(path) != types[0].name.replace("/", "\\"):
         problems.append("file name differs from the filetype name %r; the Filetype Finder "
                         "installs under the filetype name, the Filetype Manager under the "
