@@ -9,7 +9,6 @@ import unittest
 ROOT = Path(__file__).resolve().parents[4]
 CONFIGOPUS_DIR = ROOT / "source" / "Modules" / "configopus"
 FUNCTION_EDITOR_C = CONFIGOPUS_DIR / "function_editor.c"
-FILETYPE_EDITOR_C = CONFIGOPUS_DIR / "filetype_editor.c"
 PALETTE_C = CONFIGOPUS_DIR / "config_environment_palette.c"
 
 
@@ -63,12 +62,6 @@ class RequesterInitialDrawerTests(unittest.TestCase):
         block = source_between(source, "char path2[256];", "tags[3].ti_Tag")
 
         assert_namefromlock_failure_clears_buffer(self, block, "lock2", "path2", count=2)
-
-    def test_filetype_icon_drawer_clears_on_resolution_failure(self):
-        source = read_source(FILETYPE_EDITOR_C)
-        block = source_between(source, 'Lock("ENVARC:Sys", ACCESS_READ)', "// Build pattern")
-
-        assert_namefromlock_failure_clears_buffer(self, block, "lock", "path")
 
     def test_palette_drawer_buffer_is_cleared_before_resolution(self):
         source = read_source(PALETTE_C)

@@ -1,3 +1,15 @@
+[dopus5 next] Filetype icon paths keep their assigns
+configopus.module change; version bump deferred.
+
+- The File Type Editor no longer turns the icon path into the full path
+  on the boot volume.  An icon picked through an assign keeps it
+  (ENVARC:Sys/def_adf.info stays as it is instead of becoming
+  Work:Prefs/Env-Archive/Sys/def_adf.info), and the icon requester
+  opens in ENVARC:Sys.  Icons picked by volume or device name, or
+  dropped from Workbench, are stored relative to DOpus5:, ENVARC: or
+  SYS: when they lie inside one, so filetypes can be shared between
+  systems whose boot volumes have different names.
+
 [dopus5 next] Installer
 Release archive change.
 
