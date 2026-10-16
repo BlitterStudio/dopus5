@@ -5,7 +5,11 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
+import sys
 import unittest
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tools"))
+import filetype_tool  # noqa: E402
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -73,11 +77,11 @@ def filetype_members(drawer):
 
 
 def filetype_name(data):
-    # FORM <size> OPUS, then a TYPE chunk whose CFG_TYPE starts with the name
-    if data[:4] != b"FORM" or data[8:16] != b"OPUSTYPE":
-        raise AssertionError("not a filetype file")
+    types = filetype_tool.parse(data)
+    if len(types) != 1:
+        raise AssertionError("expected one filetype, found %d" % len(types))
 
-    return data[20:52].split(b"\0", 1)[0].decode("latin-1")
+    return types[0].name
 
 
 class BasedataDefaultDrawerTests(unittest.TestCase):
@@ -106,6 +110,17 @@ class BasedataDefaultEnvironmentTests(unittest.TestCase):
 
 
 class BasedataFiletypeTests(unittest.TestCase):
+    def test_tool_round_trips_every_shipped_filetype(self):
+        # archive/tools/filetype_tool.py is used to review and edit filetype
+        # files; it must reproduce every shipped file byte for byte.
+        members = filetype_members("DOpus5/Filetypes/") + filetype_members("DOpus5/Storage/Filetypes/")
+        self.assertTrue(members)
+
+        for member in members:
+            with self.subTest(member=member):
+                data = archive_member(member)
+                self.assertEqual(data, filetype_tool.encode(filetype_tool.parse(data)))
+
     def test_stored_filetypes_are_named_after_the_filetype(self):
         # The filetype finder installs a stored filetype under its name, the
         # editor installs it under its file name; they must agree.
