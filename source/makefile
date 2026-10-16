@@ -251,6 +251,8 @@ endif
 ifeq ($(log), yes)
 	@$(COPY) ../ChangeLog $(RELEASE_ROOT)
 endif
+	@sed 's/@BUILD@/$(NAME)/' "../archive/installer/Install DOpus5" > "$(RELEASE_DIR)/Install DOpus5"
+	@$(COPY) "../archive/installer/Install DOpus5.info" $(RELEASE_DIR)
 ifeq ($(SYSTEM), linux)
 # Ensure Amiga executables carry the Unix +x bit so lha records it
 # (Amiga LHA maps it back to the Amiga `e` protection flag on extract).
@@ -258,7 +260,7 @@ ifeq ($(SYSTEM), linux)
 		$(RELEASE_ROOT)/C/DOpusRT5 $(RELEASE_ROOT)/C/LoadDB $(RELEASE_ROOT)/C/viewfont
 endif
 	@$(COPY) ../archive/$(BASEARC) $(DEST)DOpus5$(VERSION)$(NAME)$(TYPE).lha
-	@cd $(RELEASE_DIR) && $(LHA) $(RELEASE_ARCDEST)/DOpus5$(VERSION)$(NAME)$(TYPE).lha DOpus5
+	@cd $(RELEASE_DIR) && $(LHA) $(RELEASE_ARCDEST)/DOpus5$(VERSION)$(NAME)$(TYPE).lha DOpus5 "Install DOpus5" "Install DOpus5.info"
 	@$(REMOVE) $(RELEASE_DIR)
 	@echo ">>>>>Release date:" $(shell $(DATE) "+%m/%d/%Y")
 

@@ -19,6 +19,7 @@ work.
 
 - [Supported platforms](#supported-platforms)
 - [Downloads](#downloads)
+  - [Installing](#installing)
 - [Building](#building)
   - [Per-platform make targets](#per-platform-make-targets)
   - [Release archives](#release-archives)
@@ -49,6 +50,34 @@ should use the regular `os3` archive, which targets `-m68020-60 -mtune=68030`.
 Pre-built binaries for every supported platform are published under
 [Releases](https://github.com/BlitterStudio/dopus5/releases). Each tagged
 release ships one `DOpus5_<rev>_<platform>.lha` per target.
+
+### Installing
+
+Unpack the archive anywhere, for example to `RAM:`, and double-click
+`Install DOpus5`. The script needs the Installer program that comes with
+each supported system.
+
+- **New installation:** choose the drawer to install into; the script
+  creates a `DOpus5` drawer there.
+- **Upgrade:** when the `DOpus5:` assign points to an existing
+  installation, the script offers to upgrade it. Quit Directory Opus
+  first. The program, libraries, modules, commands, manuals, ARexx
+  scripts, images and stored items are replaced; configuration drawers
+  (`Buttons`, `Environment`, `Settings`, `Filetypes`, `Commands`,
+  `Desktop`, `Groups`, `Themes`, `Sounds`, `System`) only receive files
+  they do not have yet.
+- **Start mode:** manually, from an `Opus5_Startup` icon in
+  `SYS:WBStartup` when Workbench starts, or (AmigaOS 3) instead of
+  Workbench. Workbench replacement makes `DOpus5:C/LoadDB` resident as
+  `LoadWB` in `S:User-Startup`, so the Startup-Sequence is not changed;
+  hold Shift during boot to get Workbench. The installer remembers the
+  choice in `ENVARC:DOpus5Startup`.
+- **Optional:** a `;BEGIN DOpus5` block in `S:User-Startup` with the
+  `DOpus5:` assign and `Path DOpus5:C ADD` (always written for
+  Workbench replacement).
+
+Directory Opus assigns `DOpus5:` to its own drawer when it starts, so
+copying the `DOpus5` drawer by hand also works for a new installation.
 
 ## Building
 

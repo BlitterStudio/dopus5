@@ -294,6 +294,54 @@ int LIBFUNC L_SaveButtonBank(REG(a0, Cfg_ButtonBank *bank), REG(a1, char *name),
 	return success;
 }
 
+// Create the missing drawers in the path of a file that is about to be written.
+// Returns TRUE if at least one drawer was created.
+static BOOL create_parent_drawers(char *name)
+{
+	char path[256], *start, *ptr;
+	BPTR lock;
+	BOOL created = FALSE;
+
+	stccpy(path, name, sizeof(path));
+	*PathPart(path) = 0;
+
+	// Skip the device or assign name
+	if ((start = strchr(path, ':')))
+		++start;
+	else
+		start = path;
+
+	// Lock or create each drawer in turn
+	for (ptr = start;; ptr++)
+	{
+		if (*ptr == '/' || !*ptr)
+		{
+			char ch = *ptr;
+
+			// Skip empty components (parent references)
+			if (ptr > start && ptr[-1] != '/')
+			{
+				*ptr = 0;
+				if ((lock = Lock(path, ACCESS_READ)))
+					UnLock(lock);
+				else if ((lock = CreateDir(path)))
+				{
+					UnLock(lock);
+					created = TRUE;
+				}
+				else
+					break;
+				*ptr = ch;
+			}
+
+			if (!ch)
+				break;
+		}
+	}
+
+	return created;
+}
+
 int LIBFUNC L_SaveFiletypeList(REG(a0, Cfg_FiletypeList *list), REG(a1, char *name), REG(a6, struct MyLibrary *libbase))
 {
 	struct _IFFHandle *iff;
@@ -311,8 +359,17 @@ int LIBFUNC L_SaveFiletypeList(REG(a0, Cfg_FiletypeList *list), REG(a1, char *na
 	if (!list || list->flags & FTLISTF_INTERNAL || !name || !name[0])
 		return -1;
 
-	// Try to open file to write
-	while ((iff = L_IFFOpen(name, MODE_NEWFILE, ID_OPUS)))
+	// Try to open file to write; if the drawer is missing, create it and try again
+	if (!(iff = L_IFFOpen(name, MODE_NEWFILE, ID_OPUS)))
+	{
+		LONG error = IoErr();
+
+		if (!create_parent_drawers(name))
+			return error;
+		iff = L_IFFOpen(name, MODE_NEWFILE, ID_OPUS);
+	}
+
+	while (iff)
 	{
 		char buf[40];
 
