@@ -60,9 +60,11 @@ FUNCF2_INTERNAL = (1 << 29) | (1 << 30) | (1 << 31)
 
 # Path prefixes that exist on a stock system or in DOpus5:.  PROGDIR: is
 # provided by AmigaDOS for every program; Opus assigns D5THEMES: itself.
+# The handlers are for redirections such as >NIL:.
 STOCK_ASSIGNS = ("SYS:", "C:", "S:", "L:", "LIBS:", "DEVS:", "FONTS:", "ENV:",
                  "ENVARC:", "T:", "RAM:", "DOPUS5:", "REXX:", "HELP:", "LOCALE:",
-                 "PROGDIR:", "D5THEMES:")
+                 "PROGDIR:", "D5THEMES:",
+                 "NIL:", "CON:", "RAW:", "CONSOLE:", "PIPE:", "PRT:", "PAR:", "SER:")
 
 
 class Filetype:
@@ -269,83 +271,125 @@ def command_text(text):
     return text[1:] if text.startswith("#") else text
 
 
-def shell_words(text):
-    """Split a command line into words, keeping "quoted" words together."""
-    words, word, quoted = [], "", False
-    for char in text:
-        if char == '"':
-            quoted = not quoted
-        elif char in " \t" and not quoted:
-            if word:
-                words.append(word)
-            word = ""
+PIPE = object()  # a "|", "||" or "&&" between two commands
+
+
+def shell_lex(line):
+    """Split one line into words and command separators the way the AmigaDOS
+    shell does.  A quote starts quoting only at the start of a word; inside
+    quotes "*" escapes ("*"" is a quote, "*N" a newline, "**" a star) and a
+    closing quote ends the word.  "|", "||" and "&&" outside quotes separate
+    commands (shell V45+); an unquoted ";" starts a comment."""
+    escapes = {'"': '"', "n": "\n", "N": "\n", "e": "\x1b", "E": "\x1b", "*": "*"}
+    tokens, word, in_word, quoted, index = [], "", False, False, 0
+    while index < len(line):
+        char = line[index]
+        if quoted:
+            if char == "*" and index + 1 < len(line):
+                word += escapes.get(line[index + 1], line[index:index + 2])
+                index += 2
+                continue
+            if char == '"':
+                tokens.append(word)
+                word, in_word, quoted = "", False, False
+            else:
+                word += char
+            index += 1
+            continue
+        if char in " \t":
+            if in_word:
+                tokens.append(word)
+                word, in_word = "", False
+        elif char == ";":
+            break
+        elif char == "|" or line.startswith("&&", index):
+            if in_word:
+                tokens.append(word)
+                word, in_word = "", False
+            tokens.append(PIPE)
+            index += 2 if line.startswith(("||", "&&"), index) else 1
+            continue
+        elif char == '"' and not in_word:
+            quoted = in_word = True
         else:
             word += char
-    if word:
-        words.append(word)
-    return words
+            in_word = True
+        index += 1
+    if in_word:
+        tokens.append(word)
+    return tokens
 
 
 def shell_commands(text):
-    """Split instruction text into the separate commands the AmigaDOS shell
-    runs: one per line, and per side of the "|", "||" and "&&" operators
-    (shell V45+).  An unquoted ";" starts a comment."""
+    """Return the commands a piece of shell text makes, as word lists: one
+    per line and per side of each "|", "||" or "&&"."""
     commands = []
     for line in text.replace("\r", "\n").split("\n"):
-        current, quoted, index = "", False, 0
-        while index < len(line):
-            char = line[index]
-            if char == '"':
-                quoted = not quoted
-            elif not quoted and char == ";":
-                break
-            elif not quoted and (char == "|" or line.startswith("&&", index)):
+        current = []
+        for token in shell_lex(line):
+            if token is PIPE:
                 commands.append(current)
-                current = ""
-                index += 2 if line.startswith(("||", "&&"), index) else 1
-                continue
-            current += char
-            index += 1
+                current = []
+            else:
+                current.append(token)
         commands.append(current)
     return commands
 
 
-def command_words(inst, text, marker=True):
-    """Return the words of an instruction from the program it runs onward.
+def redirection(word):
+    """Return the redirection operator a word starts with, or None."""
+    for operator in ("*>", ">>", ">", "<"):
+        if word.startswith(operator):
+            return operator
+    return None
 
-    AmigaDOS instructions are shell command lines: skip a leading "run".
-    For Workbench instructions function_script.c strips "run " only when it
-    starts in the first byte and puts the rest after "dopusrt5".  In both
-    cases the shell consumes redirections that follow, so skip them.
-    Script and ARexx instructions get "execute " or "rx " prepended, so
-    their first word is the script.  marker=False: the once-only marker has
-    already been removed."""
-    if marker:
-        text = command_text(text)
+
+def parse_command(kind, words):
+    """Return (program, arguments, redirection targets) of one command.
+
+    kind 1 (AmigaDOS): skip a leading "run".  Kinds 1 and 2 (AmigaDOS,
+    Workbench via dopusrt5) are shell command lines, so redirections before
+    the program and right after it belong to the shell.  Kinds 3 and 4
+    (Script, ARexx) get "execute " or "rx " prepended: the first word is
+    the script."""
+    words = list(words)
+    targets = []
+
+    def take_redirections():
+        while words and redirection(words[0]):
+            operator = redirection(words[0])
+            target = words.pop(0)[len(operator):]
+            if not target and words:
+                target = words.pop(0)
+            targets.append(target)
+
+    if kind == 1 and words and words[0].lower() == "run":
+        words = words[1:]
+    if kind in (1, 2):
+        take_redirections()
+    program = words.pop(0) if words else ""
+    if kind in (1, 2) and program:
+        take_redirections()
+    return program, words, targets
+
+
+def instruction_commands(inst, text):
+    """Return (program, arguments, redirection targets) for every command an
+    external instruction makes.  The once-only marker is removed once, and
+    for Workbench instructions a literal "run " in the first byte, as
+    function_script.c does.  The first command follows the instruction's
+    own rules; the others are AmigaDOS commands."""
+    text = command_text(text)
     if inst == 2 and text[:4].lower() == "run ":
         text = text[4:]
-    words = shell_words(text)
-    if inst == 1 and words and words[0].lower() == "run":
-        words = words[1:]
-    if inst in (1, 2):
-        while words and words[0].startswith(("<", ">", "*>")):
-            words = words[1:]
-    return words
+    return [parse_command(inst if index == 0 else 1, words)
+            for index, words in enumerate(shell_commands(text))]
 
 
-def program_word(inst, text, marker=True):
-    """Return the program or script an instruction runs (see command_words)."""
-    words = command_words(inst, text, marker)
-    return words[0] if words else ""
-
-
-def instruction_programs(inst, text):
-    """Return the program of every command an external instruction makes:
-    the first follows the instruction's own rules, the others are AmigaDOS
-    commands.  The once-only marker is removed once, from the start."""
-    commands = shell_commands(command_text(text))
-    return [program_word(inst if index == 0 else 1, command, marker=False)
-            for index, command in enumerate(commands)]
+def program_word(inst, text):
+    """Return the program or script the first command of an instruction runs."""
+    commands = instruction_commands(inst, text)
+    return commands[0][0] if commands else ""
 
 
 def path_prefix(text):
@@ -450,16 +494,18 @@ def lint(path, types):
                 if any(char != "\t" and not char.isprintable() for char in text):
                     problems.append("%s: instruction %r contains control characters; a line break in "
                                     "it starts another command in the script Opus writes" % (ftype.name, text))
-                programs = instruction_programs(inst, text)
-                if any(programs):
+                commands = instruction_commands(inst, text)
+                if any(program for program, _arguments, _targets in commands):
                     usable.append((inst, text))
-                for program in programs:
-                    prefix = path_prefix(program)
-                    if prefix and prefix not in STOCK_ASSIGNS:
-                        problems.append("%s: needs %s for %r" % (ftype.name, prefix, text))
+                for program, _arguments, targets in commands:
+                    # The shell also has to open redirection targets
+                    for used in [program] + targets:
+                        prefix = path_prefix(used)
+                        if prefix and prefix not in STOCK_ASSIGNS:
+                            problems.append("%s: needs %s for %r" % (ftype.name, prefix, text))
                 # function_script.c strips only a literal "run " in the first
                 # byte; any other form of run reaches dopusrt5 as the program
-                if inst == 2 and programs[0].lower() == "run":
+                if inst == 2 and commands and commands[0][0].lower() == "run":
                     problems.append("%s: Workbench instruction %r keeps \"run\" (Opus only removes a "
                                     "leading \"run \"), so dopusrt5 is asked to start a program called run"
                                     % (ftype.name, text))
@@ -477,13 +523,14 @@ def lint(path, types):
             if not func.is_menu and func.event == DRAG_DROP and len(usable) == 1:
                 inst, text = usable[0]
                 if inst == 0:
-                    words = text.split()
+                    plain = [word.lower() for word in text.split()] == ["copy"]
                 else:
-                    # Only a single shell command (no second line, operator or
-                    # anything but a comment after it) is a plain Copy
-                    commands = shell_commands(command_text(text))
-                    words = command_words(inst, commands[0], marker=False) if len(commands) == 1 else []
-                if inst in (0, 1) and [word.lower() for word in words] == ["copy"]:
+                    # Only a single shell command (no second line or operator;
+                    # a comment is fine) with no arguments is a plain Copy
+                    commands = instruction_commands(inst, text)
+                    plain = inst == 1 and len(commands) == 1 and commands[0][0].lower() == "copy" \
+                        and not commands[0][1]
+                if plain:
                     problems.append("%s: drag'n'drop runs a plain Copy, overriding the default "
                                     "Copy MOVEWHENSAME" % ftype.name)
 
