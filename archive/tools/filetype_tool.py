@@ -126,6 +126,10 @@ def parse(data):
                 raise ValueError("filetype name fills all 32 bytes without a NUL")
             if b"\0" not in body[32:40]:
                 raise ValueError("filetype ID fills all 8 bytes without a NUL")
+            # L_SaveFiletypeList() writes 16 actions and fails if count is higher
+            if struct.unpack(">H", body[44:46])[0] > 16:
+                raise ValueError("CFG_TYPE count %d is above 16, so Opus cannot save the filetype again"
+                                 % struct.unpack(">H", body[44:46])[0])
             strings = body[46:].split(b"\0")
             if len(strings) != 19 or strings[-1] != b"":
                 raise ValueError("TYPE chunk does not hold recognition, icon and 16 actions")
@@ -304,6 +308,11 @@ def lint(path, types):
                         "file name" % types[0].name)
 
     for ftype in types:
+        if not ftype.name.strip():
+            problems.append("filetype has no name")
+        if not ftype.id.strip():
+            problems.append("%s: filetype has no ID" % ftype.name)
+
         icon = ftype.icon.decode("latin-1")
         if icon:
             prefix = path_prefix(icon)
