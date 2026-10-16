@@ -380,14 +380,16 @@ def lint(path, types):
             # once-only marker themselves, exactly once, like Opus.
             commands = [(inst, text.decode("latin-1")) for inst, text in func.instructions
                         if inst != INST_LABEL]
-            # function_find_internal() matches the command name from the first
-            # byte, so an internal command after leading spaces is never found
+            # function_parse.c looks internal commands up by their raw text
+            # (function_find_internal() compares from the first byte) before
+            # the once-only marker is handled, so a leading space, tab or '#'
+            # means no command is found and the instruction is skipped.
             for inst, text in commands:
-                if inst == 0 and command_text(text)[:1].isspace() and command_text(text).strip():
-                    problems.append("%s: internal command %r starts with a space, so Opus finds no "
-                                    "command to run" % (ftype.name, text))
+                if inst == 0 and text[:1] in (" ", "\t", "#") and text.strip(" \t#"):
+                    problems.append("%s: internal command %r starts with %r, so Opus finds no "
+                                    "command to run" % (ftype.name, text, text[:1]))
             commands = [(inst, text) for inst, text in commands
-                        if (command_text(text)[:1] not in ("", " ", "\t") if inst == 0
+                        if (text[:1] not in ("", " ", "\t", "#") if inst == 0
                             else program_word(inst, text))]
             if not commands:
                 if not func.is_menu or label != b"---":
