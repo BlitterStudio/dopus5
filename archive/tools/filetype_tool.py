@@ -166,10 +166,12 @@ def parse(data):
                 raise ValueError("filetype name fills all 32 bytes without a NUL")
             if b"\0" not in header[32:40]:
                 raise ValueError("filetype ID fills all 8 bytes without a NUL")
-            # L_SaveFiletypeList() writes 16 actions and fails if count is higher
+            # L_ReadFiletypes() ignores count, but L_SaveFiletypeList()
+            # writes 16 actions and fails when count is higher
             if struct.unpack(">H", header[44:46])[0] > 16:
-                raise ValueError("CFG_TYPE count %d is above 16, so Opus cannot save the filetype again"
-                                 % struct.unpack(">H", header[44:46])[0])
+                types.notes.append("CFG_TYPE count %d of TYPE %r is above 16, so Opus cannot save the "
+                                   "filetype again" % (struct.unpack(">H", header[44:46])[0],
+                                                       header[:32].split(b"\0", 1)[0].decode("latin-1")))
             # read_config_string(): recognition, icon and 16 actions in turn;
             # a last string may lack its NUL, missing ones read as empty,
             # anything after the 18th is ignored
@@ -674,7 +676,9 @@ def lint(path, types):
                 # suspicious anywhere
                 if any(char not in "\t\n\r" and not char.isprintable() for char in text):
                     problems.append("%s: instruction %r contains control characters" % (ftype.name, text))
-                if any(command[3] > 0 for command in commands):
+                # A later line counts only if it runs something (not a blank
+                # line or a comment)
+                if any(command[3] > 0 and command[0] for command in commands):
                     problems.append("%s: instruction %r has a line break, which starts another command "
                                     "in the script Opus writes" % (ftype.name, text))
                 if any(command[0] for command in commands):
