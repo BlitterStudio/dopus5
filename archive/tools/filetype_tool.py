@@ -161,17 +161,20 @@ def parse(data):
             # Opus reads up to 46 header bytes into cleared memory, so a
             # shorter chunk leaves the rest of CFG_TYPE zero
             header = body[:46].ljust(46, b"\0")
-            # Opus uses name[32] and id[8] as C strings
+            name = header[:32].split(b"\0", 1)[0].decode("latin-1")
+            # Opus copies the header unchecked and uses name[32] and id[8]
+            # as C strings, so an unterminated one runs on into the next field
             if b"\0" not in header[:32]:
-                raise ValueError("filetype name fills all 32 bytes without a NUL")
+                types.notes.append("the name of TYPE %r fills all 32 bytes without a NUL; Opus reads it "
+                                   "on into the ID" % name)
             if b"\0" not in header[32:40]:
-                raise ValueError("filetype ID fills all 8 bytes without a NUL")
+                types.notes.append("the ID of TYPE %r fills all 8 bytes without a NUL; Opus reads it "
+                                   "on into the flags" % name)
             # L_ReadFiletypes() ignores count, but L_SaveFiletypeList()
             # writes 16 actions and fails when count is higher
             if struct.unpack(">H", header[44:46])[0] > 16:
                 types.notes.append("CFG_TYPE count %d of TYPE %r is above 16, so Opus cannot save the "
-                                   "filetype again" % (struct.unpack(">H", header[44:46])[0],
-                                                       header[:32].split(b"\0", 1)[0].decode("latin-1")))
+                                   "filetype again" % (struct.unpack(">H", header[44:46])[0], name))
             # read_config_string(): recognition, icon and 16 actions in turn;
             # a last string may lack its NUL, missing ones read as empty,
             # anything after the 18th is ignored
@@ -184,7 +187,6 @@ def parse(data):
                 else:
                     strings.append(rest[:end])
                     rest = rest[end + 1:]
-            name = header[:32].split(b"\0", 1)[0].decode("latin-1")
             if len(strings) < 18:
                 types.notes.append("Opus reads the missing strings of TYPE %r as empty" % name)
             if rest:
