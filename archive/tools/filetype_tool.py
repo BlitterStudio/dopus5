@@ -445,7 +445,9 @@ def lint(path, types):
                 # break or a "|", "||" or "&&" starts another command.  The
                 # first follows the instruction's own rules, the others are
                 # AmigaDOS commands.
-                if not text.isprintable():
+                # Tabs are ordinary shell whitespace; other control
+                # characters (line breaks above all) are not
+                if any(char != "\t" and not char.isprintable() for char in text):
                     problems.append("%s: instruction %r contains control characters; a line break in "
                                     "it starts another command in the script Opus writes" % (ftype.name, text))
                 programs = instruction_programs(inst, text)
@@ -474,7 +476,13 @@ def lint(path, types):
             # AmigaDOS Copy after run/redirections) replaces the default
             if not func.is_menu and func.event == DRAG_DROP and len(usable) == 1:
                 inst, text = usable[0]
-                words = text.split() if inst == 0 else command_words(inst, text)
+                if inst == 0:
+                    words = text.split()
+                else:
+                    # Only a single shell command (no second line, operator or
+                    # anything but a comment after it) is a plain Copy
+                    commands = shell_commands(command_text(text))
+                    words = command_words(inst, commands[0], marker=False) if len(commands) == 1 else []
                 if inst in (0, 1) and [word.lower() for word in words] == ["copy"]:
                     problems.append("%s: drag'n'drop runs a plain Copy, overriding the default "
                                     "Copy MOVEWHENSAME" % ftype.name)
