@@ -412,11 +412,12 @@ def lint(path, types):
                 prefix = path_prefix(program_word(inst, text))
                 if inst in (1, 2, 3, 4) and prefix and prefix not in STOCK_ASSIGNS:
                     problems.append("%s: needs %s for %r" % (ftype.name, prefix, text))
-                # function_script.c only strips "run " from the first byte
-                if inst == 2 and command_text(text)[:4].lower() != "run " and \
-                        command_text(text).lstrip()[:4].lower() == "run ":
-                    problems.append("%s: Workbench instruction %r has \"run\" after leading spaces, "
-                                    "so dopusrt5 is asked to start a program called run" % (ftype.name, text))
+                # function_script.c strips only a literal "run " in the first
+                # byte; any other form of run reaches dopusrt5 as the program
+                if inst == 2 and program_word(inst, text).lower() == "run":
+                    problems.append("%s: Workbench instruction %r keeps \"run\" (Opus only removes a "
+                                    "leading \"run \"), so dopusrt5 is asked to start a program called run"
+                                    % (ftype.name, text))
             if not func.is_menu and func.event == DRAG_DROP and \
                     [(i, command_text(t).strip().lower()) for i, t in commands] in ([(0, "copy")], [(1, "copy")]):
                 problems.append("%s: drag'n'drop runs a plain Copy, overriding the default "
