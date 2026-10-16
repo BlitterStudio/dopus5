@@ -213,8 +213,10 @@ python3 archive/tools/filetype_tool.py lint  FILE...  # problems to fix before s
 python3 archive/tools/filetype_tool.py check FILE...  # decode/re-encode round trip
 ```
 
-`lint` reports a file name that differs from the filetype name, icon paths
-and commands that need assigns a stock system lacks, recognition by file
+`lint` reports a file name that differs from the filetype name, damaged or
+partly ignored data, icon paths and commands that need assigns a stock
+system lacks, internal commands that neither Opus nor its modules provide
+(checked against `source/`, so run it from a checkout), recognition by file
 name alone, upper-case datatype IDs and drag'n'drop actions that replace the
 default `Copy MOVEWHENSAME` with a plain `Copy`. Use it to review
 contributed filetypes before adding them to `basedata.lha`.

@@ -125,11 +125,12 @@ class FiletypeList(list):
 
 
 def parse(data):
-    """Read a filetype file the way L_ReadFiletypes() does: unknown chunks,
-    a FUNC before the first TYPE and data after a TYPE's 18 strings are
-    skipped, missing strings read as empty.  Each such case is listed in
-    .notes; none of it is re-encoded, so check reports such files as
-    differing."""
+    """Read a filetype file the way L_ReadFiletypes() does.  What Opus skips
+    or fills in (unknown chunks, a FUNC before the first TYPE, short headers,
+    missing strings, data after a TYPE's 18 strings, cut-short chunks,
+    trailing bytes) is listed in .notes and is not re-encoded, so check
+    reports such files as differing.  A missing final pad byte and nested
+    FORMs, which Opus reads like a flat file, only show up in check."""
     if data[:4] != b"FORM" or data[8:12] != b"OPUS":
         raise ValueError("not an Opus IFF file")
 
@@ -161,6 +162,9 @@ def parse(data):
             # Opus reads up to 46 header bytes into cleared memory, so a
             # shorter chunk leaves the rest of CFG_TYPE zero
             header = body[:46].ljust(46, b"\0")
+            if len(body) < 46:
+                types.notes.append("TYPE header is %d of 46 bytes; Opus reads the rest as zero"
+                                   % len(body))
             name = header[:32].split(b"\0", 1)[0].decode("latin-1")
             # Opus copies the header unchecked and uses name[32] and id[8]
             # as C strings, so an unterminated one runs on into the next field
@@ -200,6 +204,9 @@ def parse(data):
             # L_ReadFunction() reads up to 22 header bytes over the defaults
             # of L_NewFunction(): code 0xffff, qual_mask 0xffff, the rest 0
             header = body[:22] + FUNC_DEFAULTS[len(body[:22]):]
+            if len(body) < 22:
+                types.notes.append("FUNC header is %d of 22 bytes; Opus fills the rest with the "
+                                   "defaults of L_NewFunction()" % len(body))
             # Instructions as config_open.c reads them: read_config_string()
             # takes text up to a NUL or the end, read_config_short() then
             # takes two bytes, or yields 0 (INST_COMMAND) when fewer are
