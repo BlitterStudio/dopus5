@@ -265,15 +265,18 @@ def shell_words(text):
     return words
 
 
-def program_word(text):
-    """Return the program an instruction runs: skips a leading "run"
-    (function_script.c strips it for Workbench instructions, and it is the
-    AmigaDOS command for the others) and I/O redirections."""
+def program_word(inst, text):
+    """Return the program or script an instruction runs.  AmigaDOS and
+    Workbench instructions are command lines: skip a leading "run"
+    (function_script.c strips it for Workbench, AmigaDOS runs it) and
+    I/O redirections.  Script and ARexx instructions get "execute " or
+    "rx " prepended, so their first word is the script."""
     words = shell_words(command_text(text))
-    if words and words[0].lower() == "run":
-        words = words[1:]
-    while words and (words[0].startswith(("<", ">", "*>"))):
-        words = words[1:]
+    if inst in (1, 2):
+        if words and words[0].lower() == "run":
+            words = words[1:]
+        while words and words[0].startswith(("<", ">", "*>")):
+            words = words[1:]
     return words[0] if words else ""
 
 
@@ -339,7 +342,7 @@ def lint(path, types):
                     problems.append("%s: %s has no commands" % (ftype.name, function_text(func)))
                 continue
             for inst, text in commands:
-                prefix = path_prefix(program_word(text))
+                prefix = path_prefix(program_word(inst, text))
                 if inst in (1, 2, 3, 4) and prefix and prefix not in STOCK_ASSIGNS:
                     problems.append("%s: needs %s for %r" % (ftype.name, prefix, text))
             if not func.is_menu and func.event == DRAG_DROP and \
