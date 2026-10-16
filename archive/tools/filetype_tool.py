@@ -59,6 +59,10 @@ STORED_FUNC_FLAGS2 = 0x0000000F
 # still linked into the filetype list).
 FUNCF2_INTERNAL = (1 << 29) | (1 << 30) | (1 << 31)
 
+# CFG_FUNC as L_NewFunction() leaves it: flags, flags2, pad, code 0xffff,
+# qual, func_type 0, qual_mask 0xffff, qual_same
+FUNC_DEFAULTS = struct.pack(">IIIHHHHH", 0, 0, 0, 0xffff, 0, 0, 0xffff, 0)
+
 # Path prefixes that exist on a stock system or in DOpus5:.  PROGDIR: is
 # provided by AmigaDOS for every program; Opus assigns D5THEMES: itself.
 # The handlers are for redirections such as >NIL:.
@@ -175,14 +179,15 @@ def parse(data):
             if not types:
                 types.notes.append("Opus ignores a FUNC chunk before the first TYPE")
                 continue
-            if len(body) < 22:
-                raise ValueError("FUNC chunk is shorter than CFG_FUNC (22 bytes)")
+            # L_ReadFunction() reads up to 22 header bytes over the defaults
+            # of L_NewFunction(): code 0xffff, qual_mask 0xffff, the rest 0
+            header = body[:22] + FUNC_DEFAULTS[len(body[:22]):]
             # Instructions as config_open.c reads them: read_config_string()
             # takes text up to a NUL or the end, read_config_short() then
             # takes two bytes, or yields 0 (INST_COMMAND) when fewer are
             # left.  It computes (p[0] << 16) | p[1] into a short, so only
             # the second byte counts (a signed char on m68k).
-            buffer, offset, size, instructions = body[22:], 0, len(body) - 22, []
+            buffer, offset, size, instructions = body[22:], 0, max(len(body) - 22, 0), []
             while size >= 1:
                 length = 0
                 while length < size and buffer[offset + length] != 0:
@@ -202,11 +207,11 @@ def parse(data):
                 if kind not in INSTRUCTIONS:
                     raise ValueError("instruction type %d is not one of INST_COMMAND..INST_LABEL" % kind)
                 instructions.append((kind, text))
-            flags2 = struct.unpack(">I", body[4:8])[0]
+            flags2 = struct.unpack(">I", header[4:8])[0]
             if flags2 & FUNCF2_INTERNAL:
                 raise ValueError("FUNC sets transient flags2 bits 0x%08x "
                                  "(FUNCF2_PLACEHOLDER/ORIGINAL/FREE_FUNCTION)" % (flags2 & FUNCF2_INTERNAL))
-            types[-1].functions.append(Function(body[:22], instructions))
+            types[-1].functions.append(Function(header, instructions))
         else:
             types.notes.append("Opus ignores the %r chunk" % chunk.decode("latin-1"))
 
@@ -537,7 +542,7 @@ def stock_commands():
                     with open(os.path.join(folder, name), encoding="latin-1") as handle:
                         match = re.search(r"module_info\s*=\s*\{(.*?)\}\s*\}\s*;", handle.read(), re.S)
                     if match:
-                        names.update(re.findall(r'\{\s*\d+,\s*"([^"]+)"', match.group(1)))
+                        names.update(re.findall(r'\{\s*\w+,\s*"([^"]+)"', match.group(1)))
         _STOCK_COMMANDS.append({name.lower() for name in names})
     return _STOCK_COMMANDS[0]
 
