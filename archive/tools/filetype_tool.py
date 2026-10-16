@@ -274,6 +274,10 @@ def command_text(text):
 PIPE = object()  # a "|", "||" or "&&" between two commands
 
 
+class Quoted(str):
+    """A word that was quoted, so the shell takes it literally."""
+
+
 def shell_lex(line):
     """Split one line into words and command separators the way the AmigaDOS
     shell does.  A quote starts quoting only at the start of a word; inside
@@ -290,7 +294,7 @@ def shell_lex(line):
                 index += 2
                 continue
             if char == '"':
-                tokens.append(word)
+                tokens.append(Quoted(word))
                 word, in_word, quoted = "", False, False
             else:
                 word += char
@@ -316,7 +320,7 @@ def shell_lex(line):
             in_word = True
         index += 1
     if in_word:
-        tokens.append(word)
+        tokens.append(Quoted(word) if quoted else word)
     return tokens
 
 
@@ -338,6 +342,8 @@ def shell_commands(text):
 
 def redirection(word):
     """Return the redirection operator a word starts with, or None."""
+    if isinstance(word, Quoted):
+        return None
     for operator in ("*>", ">>", ">", "<"):
         if word.startswith(operator):
             return operator
@@ -348,29 +354,29 @@ def parse_command(kind, words):
     """Return (program, arguments, redirection targets) of one command.
 
     kind 1 (AmigaDOS): skip a leading "run".  Kinds 1 and 2 (AmigaDOS,
-    Workbench via dopusrt5) are shell command lines, so redirections before
-    the program and right after it belong to the shell.  Kinds 3 and 4
-    (Script, ARexx) get "execute " or "rx " prepended: the first word is
-    the script."""
+    Workbench via dopusrt5) are shell command lines whose redirections the
+    shell opens; they are collected wherever they appear, so a target
+    cannot escape the assign check.  Quoted words are never redirections.
+    Kinds 3 and 4 (Script, ARexx) get "execute " or "rx " prepended: the
+    first word is the script."""
     words = list(words)
-    targets = []
+    if kind == 1 and words and words[0].lower() == "run":
+        words = words[1:]
+    if kind not in (1, 2):
+        return (words[0] if words else ""), words[1:], []
 
-    def take_redirections():
-        while words and redirection(words[0]):
-            operator = redirection(words[0])
-            target = words.pop(0)[len(operator):]
+    rest, targets = [], []
+    while words:
+        word = words.pop(0)
+        operator = redirection(word)
+        if operator:
+            target = word[len(operator):]
             if not target and words:
                 target = words.pop(0)
             targets.append(target)
-
-    if kind == 1 and words and words[0].lower() == "run":
-        words = words[1:]
-    if kind in (1, 2):
-        take_redirections()
-    program = words.pop(0) if words else ""
-    if kind in (1, 2) and program:
-        take_redirections()
-    return program, words, targets
+        else:
+            rest.append(word)
+    return (rest[0] if rest else ""), rest[1:], targets
 
 
 def instruction_commands(inst, text):
