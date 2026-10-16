@@ -195,6 +195,32 @@ make -C source/Modules/ftp -f makefile.tests test-libssh2
 
 CI runs both of these before kicking off the platform release builds.
 
+The checks for the base archive and the installer script need `lha` (or
+`7z`) on the path:
+
+```sh
+python3 archive/tests/test_basedata_default_drawers.py
+```
+
+### Filetype files
+
+`archive/tools/filetype_tool.py` reads the filetype files Directory Opus
+keeps in `DOpus5:Filetypes` and `DOpus5:Storage/Filetypes`:
+
+```sh
+python3 archive/tools/filetype_tool.py dump  FILE...  # recognition, icon and actions
+python3 archive/tools/filetype_tool.py lint  FILE...  # problems to fix before shipping
+python3 archive/tools/filetype_tool.py check FILE...  # decode/re-encode round trip
+```
+
+`lint` reports a file name that differs from the filetype name, damaged or
+partly ignored data, icon paths and commands that need assigns a stock
+system lacks, internal commands that neither Opus nor its modules provide
+(checked against `source/`, so run it from a checkout), recognition by file
+name alone, upper-case datatype IDs and drag'n'drop actions that replace the
+default `Copy MOVEWHENSAME` with a plain `Copy`. Use it to review
+contributed filetypes before adding them to `basedata.lha`.
+
 ## Project status
 
 Active development happens here. See:
