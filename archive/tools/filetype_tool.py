@@ -353,18 +353,16 @@ def redirection(word):
 def parse_command(kind, words):
     """Return (program, arguments, redirection targets) of one command.
 
-    kind 1 (AmigaDOS): skip a leading "run".  Kinds 1 and 2 (AmigaDOS,
-    Workbench via dopusrt5) are shell command lines whose redirections the
-    shell opens; they are collected wherever they appear, so a target
-    cannot escape the assign check.  Quoted words are never redirections.
-    Kinds 3 and 4 (Script, ARexx) get "execute " or "rx " prepended: the
-    first word is the script."""
+    Every external instruction ends up on a shell command line: AmigaDOS
+    as is, Workbench after "dopusrt5", Script and ARexx after "execute " or
+    "rx ".  The shell opens every redirection on it, so they are collected
+    wherever they appear, and a target cannot escape the assign check.
+    Quoted words are never redirections.  kind 1 (AmigaDOS) also skips a
+    leading "run"; for the other kinds the first remaining word is the
+    program, script or ARexx macro."""
     words = list(words)
     if kind == 1 and words and words[0].lower() == "run":
         words = words[1:]
-    if kind not in (1, 2):
-        return (words[0] if words else ""), words[1:], []
-
     rest, targets = [], []
     while words:
         word = words.pop(0)
