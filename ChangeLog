@@ -1,3 +1,17 @@
+[dopus5 next] STARTUPDRAWER: a startup drawer of its own (#107)
+Program and LoadDB change; version bump deferred.
+
+- New tool type and argument STARTUPDRAWER=<drawer>.  When Directory
+  Opus runs the Workbench startup programs (WBSTARTUP=YES, or started
+  without Workbench), it runs the programs in that drawer instead of
+  SYS:WBStartup, so Opus and Workbench can start different programs.
+  If the drawer does not exist, nothing is started.
+- LoadDB knows STARTUPDRAWER and passes it on to Directory Opus,
+  quoted, so a drawer name with spaces works.  Unlike an argument LoadDB
+  does not know, it does not make LoadDB ignore DELAY, CLEANUP, NEWPATH
+  and -DEBUG.  The command line it builds for Opus
+  has a larger buffer, so long arguments no longer overrun it.
+
 [dopus5 next] AppIcons that draw themselves (NewMeter)
 dopus5.library and Program change; version bump deferred.
 

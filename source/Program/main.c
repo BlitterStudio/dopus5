@@ -844,6 +844,10 @@ void startup_process_args(int argc, char **argv)
 				GUI->flags &= ~GUIF_DO_WBSTARTUP;
 		}
 
+		// Drawer to run instead of SYS:WBStartup?
+		if ((ptr = FindToolType(arg_array, "STARTUPDRAWER")))
+			stccpy(GUI->startup_drawer, ptr, sizeof(GUI->startup_drawer));
+
 		// Startup picture?
 		if ((ptr = FindToolType(arg_array, "STARTUPPIC")))
 		{

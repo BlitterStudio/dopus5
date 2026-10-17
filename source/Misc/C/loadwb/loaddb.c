@@ -39,7 +39,7 @@ struct DOpusIFace *IDOpus = NULL;
 
 const char USED_VAR version[] = "\0$VER: LoadDB " CMD_STRING;
 
-enum { ARG_DEBUG, ARG_DELAY, ARG_CLEANUP, ARG_NEWPATH, ARG_COUNT };
+enum { ARG_DEBUG, ARG_DELAY, ARG_CLEANUP, ARG_NEWPATH, ARG_STARTUPDRAWER, ARG_COUNT };
 
 #ifdef SYS_Error
 	#define DETACH_Error SYS_Error
@@ -58,22 +58,31 @@ int main(int argc, char **arg_string)
 	BPTR lock;
 	struct Process *proc;
 	APTR wsave;
-	char buf[256];
+	char buf[640];
 	struct IOStdReq input_req;
 	short a;
 	char *arg_ptr = 0;
 	char arg_buf[256];
+	char startup_drawer[256];
 	struct RDArgs *args;
 	IPTR arg_array[ARG_COUNT];
 
 	// Initialise arguments
 	arg_buf[0] = 0;
+	startup_drawer[0] = 0;
 	for (a = 0; a < ARG_COUNT; a++)
 		arg_array[a] = 0;
 
 	// Parse arguments
-	if ((args = ReadArgs("-DEBUG/S,DELAY/S,CLEANUP/S,NEWPATH/S", (APTR)arg_array, NULL)))
+	if ((args = ReadArgs("-DEBUG/S,DELAY/S,CLEANUP/S,NEWPATH/S,STARTUPDRAWER/K", (APTR)arg_array, NULL)))
 	{
+		// Keep the drawer name; ReadArgs owns the string
+		if (arg_array[ARG_STARTUPDRAWER])
+		{
+			strncpy(startup_drawer, (char *)arg_array[ARG_STARTUPDRAWER], sizeof(startup_drawer) - 1);
+			startup_drawer[sizeof(startup_drawer) - 1] = 0;
+		}
+
 		// Free arguments
 		FreeArgs(args);
 	}
@@ -162,6 +171,29 @@ int main(int argc, char **arg_string)
 	{
 		size_t len = strlen(arg_buf);
 
+		// STARTUPDRAWER goes to Opus quoted, from ReadArgs, so a name with
+		// spaces survives; leave it out here, with its value
+		if (startup_drawer[0] && strnicmp(arg_string[a], "STARTUPDRAWER", 13) == 0 &&
+			(arg_string[a][13] == '=' || arg_string[a][13] == 0))
+		{
+			if (arg_string[a][13] == 0)
+				a++;
+			else if (arg_string[a][14] == '"')
+			{
+				// STARTUPDRAWER="a b" can arrive split at the space; skip up
+				// to the argument with the closing quote
+				char *end = arg_string[a] + 15;
+
+				while (!*end || end[strlen(end) - 1] != '"')
+				{
+					if (++a >= argc)
+						break;
+					end = arg_string[a];
+				}
+			}
+			continue;
+		}
+
 		if (len < sizeof(arg_buf) - 1 && arg_buf[0])
 		{
 			arg_buf[len++] = ' ';
@@ -205,7 +237,15 @@ int main(int argc, char **arg_string)
 				// Build command string
 				strcpy(buf, "DOpus5:DirectoryOpus ENVIRONMENT=workbench ");
 				if (wb_startup)
+				{
 					strcat(buf, " WBSTARTUP=YES ");
+					if (startup_drawer[0])
+					{
+						strcat(buf, "\"STARTUPDRAWER=");
+						strcat(buf, startup_drawer);
+						strcat(buf, "\" ");
+					}
+				}
 				if (arg_ptr)
 					strcat(buf, arg_ptr);
 
