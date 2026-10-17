@@ -102,4 +102,4 @@ enum {
 	GAD_FORMAT_CANCEL,
 };
 
-extern unsigned long bootblock_20[22];
+extern ULONG bootblock_20[22];

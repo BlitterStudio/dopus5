@@ -173,7 +173,8 @@ ObjectDef format_objects[] = {
 
 	{OD_END}};
 
-unsigned long bootblock_20[22] = {0x00000370,
+// 68000 code of the Kickstart 2.0 bootblock, as 32-bit big-endian words
+ULONG bootblock_20[22] = {0x00000370,
 
 								  0x43fa003e, 0x70254eae, 0xfdd84a80, 0x670c2240, 0x08e90006, 0x00224eae, 0xfe6243fa,
 								  0x00184eae, 0xffa04a80, 0x670a2040, 0x20680016, 0x70004e75, 0x70ff4e75, 0x646f732e,
