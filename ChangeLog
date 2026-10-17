@@ -1,3 +1,14 @@
+[dopus5 next] MorphOS: XADOpus opens archives again (#175)
+Module change (xadopus, ftp, themes); version bump deferred.
+
+- On MorphOS a module's calls back into Opus put every A1-A4 and D0
+  argument into A0, so only the last of them arrived.  XADOpus could not
+  get its source lister and gave up, so double-clicking an archive did
+  nothing.  The FTP and Themes modules use the same calls and are fixed
+  too.
+- XADOpus's progress hook now goes through HookEntry on MorphOS, so
+  xadmaster.library can call it while extracting.
+
 [dopus5 next] STARTUPDRAWER: a startup drawer of its own (#107)
 Program and LoadDB change; version bump deferred.
 
