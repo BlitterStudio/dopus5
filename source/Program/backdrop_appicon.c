@@ -146,10 +146,6 @@ BackdropObject *backdrop_add_appicon(AppEntry *appicon, BackdropInfo *info, shor
 				}
 			}
 
-			// A render hook draws over whatever is there, so clear the old image first
-			if (appicon->render_hook)
-				backdrop_render_object(info, object, BRENDERF_CLEAR | BRENDERF_CLIP);
-
 			// Show image
 			backdrop_render_object(info, object, BRENDERF_CLIP);
 		}

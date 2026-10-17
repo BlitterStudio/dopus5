@@ -472,6 +472,28 @@ static BOOL backdrop_call_render_hook(struct Hook *hook,
 	return (BOOL)(CallHookPkt(hook, NULL, &msg) != 0);
 }
 
+#ifdef USE_DRAWICONSTATE
+// Fill the inside of an icon border except the image area, with the pen already set
+static void backdrop_fill_frame(struct RastPort *rp,
+								struct Rectangle *rect,
+								short left,
+								short top,
+								short width,
+								short height)
+{
+	short right = left + width - 1, bottom = top + height - 1;
+
+	if (top > rect->MinY + 1)
+		RectFill(rp, rect->MinX + 1, rect->MinY + 1, rect->MaxX - 1, top - 1);
+	if (bottom < rect->MaxY - 1)
+		RectFill(rp, rect->MinX + 1, bottom + 1, rect->MaxX - 1, rect->MaxY - 1);
+	if (left > rect->MinX + 1)
+		RectFill(rp, rect->MinX + 1, top, left - 1, bottom);
+	if (right < rect->MaxX - 1)
+		RectFill(rp, right + 1, top, rect->MaxX - 1, bottom);
+}
+#endif
+
 // Draw an object
 void backdrop_draw_object(BackdropInfo *info,
 						  BackdropObject *object,
@@ -648,7 +670,12 @@ void backdrop_draw_object(BackdropInfo *info,
 
 					// Clear boundary around image
 #ifdef USE_DRAWICONSTATE
-					RectFill(rp, rect.MinX + 1, rect.MinY + 1, rect.MaxX - 1, rect.MaxY - 1);
+					// A render hook paints its own image area; filling it first would
+					// flash on every redraw, so only fill the frame around it
+					if (render_hook)
+						backdrop_fill_frame(rp, &rect, left, top, object->pos.Width, object->pos.Height);
+					else
+						RectFill(rp, rect.MinX + 1, rect.MinY + 1, rect.MaxX - 1, rect.MaxY - 1);
 #else
 					RectFill(rp, rect.MinX + 1, rect.MinY + 1, rect.MaxX - 1, rect.MinY + 2);
 					RectFill(rp, rect.MinX + 1, rect.MinY + 1, rect.MinX + 3, rect.MaxY - 1);
@@ -657,7 +684,8 @@ void backdrop_draw_object(BackdropInfo *info,
 #endif
 				}
 #ifdef USE_DRAWICONSTATE
-				else
+				// Same for a borderless icon: the hook draws over what is there, as on Workbench
+				else if (!render_hook)
 				{
 					EraseRect(rp, rect.MinX, rect.MinY, rect.MaxX, rect.MaxY);
 				}
