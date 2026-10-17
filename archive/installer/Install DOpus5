@@ -462,6 +462,33 @@
 (if (= #mode 1) (set #modename "wbstartup"))
 (if (= #mode 2) (set #modename "workbench"))
 
+
+; --------------------------------------------------------------------
+; Loading dopus5.library at boot
+; --------------------------------------------------------------------
+;
+; dopus5.library installs its Workbench patches when it is first opened,
+; and Directory Opus only knows about the AppIcons added while they are
+; in place.  When Opus is started after Workbench, AppIcons from programs
+; in SYS:WBStartup (NewMeter, for example) stay on the Workbench desktop
+; behind the Opus desktop.  DOpus5:C/LoadDOpusLib in the DOpus5 block
+; opens the library before LoadWB and keeps it open.  Not needed when
+; Opus replaces Workbench, because it runs SYS:WBStartup itself.  Offered
+; for the AmigaOS 3 builds, where it has been tested.  The choice is kept
+; in ENVARC:DOpus5Preload.
+
+(set #oldpreload (getenv "DOpus5Preload"))
+
+(set #preload 0)
+(if (and #can-replace (<> #mode 2))
+    (set #preload
+       (askbool
+          (prompt "Load dopus5.library when the Amiga starts?")
+          (help "Directory Opus shows the AppIcons that programs add while dopus5.library is loaded. If you start Directory Opus after Workbench, AppIcons added before that, for example by programs in SYS:WBStartup such as NewMeter, stay on the Workbench desktop behind the Opus desktop."
+                "\n\nAnswer Yes to add DOpus5:C/LoadDOpusLib to the DOpus5 block in S:User-Startup. It loads dopus5.library before Workbench starts, so Directory Opus shows those AppIcons when you start it. The library and its Workbench patches then stay in memory until the next reboot, also while Directory Opus is not running. The line needs the DOpus5: assign, so the block holds that too."
+                "\n\nRunning this installer again lets you change the choice.")
+          (default (= #oldpreload "yes")))))
+
 (complete 88)
 
 
@@ -472,7 +499,8 @@
 ; Directory Opus assigns DOpus5: to its own drawer when it starts, so the
 ; assign is only needed by things that run without it: ARexx scripts and
 ; the commands in DOpus5:C started from a Shell, LoadDB, and other
-; programs that look for DOpus5:.  Workbench replacement needs it.
+; programs that look for DOpus5:.  Workbench replacement and
+; LoadDOpusLib need it.
 ;
 ; ENVARC:DOpus5Assign records whether the block holds the assign.  When
 ; the assign is declined and an earlier run wrote it, the block is
@@ -484,7 +512,7 @@
 (set #oldassign (getenv "DOpus5Assign"))
 
 (set #assign 1)
-(if (<> #mode 2)
+(if (and (<> #mode 2) (not #preload))
     (set #assign
        (askbool
           (prompt "Put the DOpus5: assign and the DOpus5:C command path in S:User-Startup?")
@@ -495,9 +523,12 @@
 (set #lines (cat "Assign DOpus5: \"" #dest "\"\nPath DOpus5:C ADD"))
 (if (= #mode 2)
     (set #lines (cat #lines "\nResident LoadWB DOpus5:C/LoadDB PURE")))
+(if #preload
+    (set #lines (cat #lines "\nDOpus5:C/LoadDOpusLib")))
 
-; Leaving Workbench replacement must take the Resident line out again,
-; and declining the assign must take out an assign written earlier.
+; Leaving Workbench replacement or boot loading must take its line out
+; again, and declining the assign must take out an assign written earlier.
+; Boot loading forces the assign, so an earlier one recorded "yes".
 (if (not #assign)
     (set #lines "; Directory Opus 5 needs no commands here"))
 
@@ -576,6 +607,19 @@
    (help "")
    (dest "ENV:DOpus5Assign")
    (append #assignname))
+
+(set #preloadname "no")
+(if #preload (set #preloadname "yes"))
+(textfile
+   (prompt "Remember the boot loading choice in ENVARC:DOpus5Preload")
+   (help "")
+   (dest "ENVARC:DOpus5Preload")
+   (append #preloadname))
+(textfile
+   (prompt "Remember the boot loading choice in ENV:DOpus5Preload")
+   (help "")
+   (dest "ENV:DOpus5Preload")
+   (append #preloadname))
 
 (set #iconsname "standard")
 (if (= #iconset 1) (set #iconsname "magicwb"))

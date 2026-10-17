@@ -134,7 +134,7 @@ covers the full matrix on PR.
 - Bump the relevant `*_REVISION` constant in
   `source/Include/dopus/version.h` if your change affects the program,
   library / modules, or the small command binaries (DOpusRT5 / LoadDB /
-  ViewFont). The release process consolidates revision numbers, so
+  LoadDOpusLib / ViewFont). The release process consolidates revision numbers, so
   individual PRs only need to bump them when they actually touch
   versioned binary surfaces.
 - CI (GitHub Actions) must be green before merge. The matrix builds all

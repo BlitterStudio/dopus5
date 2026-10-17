@@ -1,3 +1,44 @@
+[dopus5 next] AppIcons that draw themselves (NewMeter)
+dopus5.library and Program change; version bump deferred.
+
+- On AmigaOS 3 the AddAppIcon patch passed the tag list to Workbench in
+  D7 instead of A4, so Workbench read the program's tags from whatever
+  A4 held.  An AppIcon with a render hook, such as NewMeter's gauges,
+  then showed only its plain image.  The patches stay installed after
+  Opus quits, so this went on until a reboot.
+- WorkbenchControlA() is now patched on AmigaOS 3 (workbench.library
+  V44 or newer), MorphOS and AROS too.
+  WBCTRLA_RedrawAppIcon gets the AppIcon handle Opus returned; Opus
+  redraws its own copy and passes Workbench its own AppIcon.  Before,
+  Workbench got Opus's handle and did not redraw the icon.  A redraw
+  that only Opus can show (a local AppIcon, or no Workbench running)
+  no longer reaches Workbench and reports success.
+- The Opus desktop calls an AppIcon's Workbench render hook
+  (WBAPPICONA_RenderHook) to draw it.  When the hook draws everything,
+  Opus draws no image and no label, as Workbench does.
+
+[dopus5 next] Load dopus5.library at boot; Workbench Tools menu items
+dopus5.library, LoadDOpusLib (new command) and installer change; version
+bump deferred.
+
+- The AddAppMenuItem patch refused items without a message port.
+  Workbench's ARexx MENU ADD adds its own Tools menu items that way, so
+  while the patches were installed (Opus running, or after it quit)
+  MENU ADD failed with return code 10, and the items of MenuTools and
+  AutoArrangeIcons on OS 3.2 were missing from the Tools menu.  Items
+  without a port now go straight to Workbench.
+- New command DOpus5:C/LoadDOpusLib opens dopus5.library and leaves it
+  open.  Run from S:User-Startup before LoadWB, it installs the Workbench
+  patches before SYS:WBStartup runs, so a Directory Opus started later
+  shows the AppIcons those programs added (NewMeter, for example).
+  Without it they stay on the Workbench desktop behind the Opus desktop.
+- The AmigaOS 3 installer asks, for the Manually and When Workbench
+  starts modes, whether to load dopus5.library at boot, adds the
+  LoadDOpusLib line (and the DOpus5: assign it needs) to the DOpus5 block
+  in S:User-Startup, and remembers the choice in ENVARC:DOpus5Preload.
+- The guide describes the option, and the Display AppIcons text says
+  which AppIcons Opus can show.
+
 [dopus5 next] No icon remapping with "Set MagicWB Colors" on
 Program change (OS3); version bump deferred.
 

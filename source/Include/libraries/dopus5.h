@@ -1831,6 +1831,8 @@ typedef struct
 
 	unsigned short data;
 	long menu_id_base;	// Base ID for menu
+
+	struct Hook *render_hook;  // WBAPPICONA_RenderHook from AddAppIconA()
 } AppEntry;
 
 #define DAE_Local TAG_USER + 0			// Local entry

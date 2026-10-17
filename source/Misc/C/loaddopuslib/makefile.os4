@@ -1,0 +1,55 @@
+
+SHELL:= sh
+NEWDATE  := $(shell date +%d.%m.%Y)
+
+NAME := LoadDOpusLib
+DESTDIR  := ../../../bin.os4
+TARGET   := $(DESTDIR)/$(NAME)
+OBJDIR  := .objects/os4
+
+# Enter debug=no on "Make" command line to disable debuging.
+ifeq ($(debug), no)
+DEBUG := 
+STRIP := ppc-amigaos-strip -R=.comment $(TARGET)
+else
+DEBUG := -DDEBUG
+STRIP := 
+endif
+
+OPTIMIZE := -O2
+C_LIB :=  -mcrt=newlib
+DEBUGSYM := -gstabs
+OPTIONS  := $(C_LIB) -D__USE_INLINE__ -D__USE_OLD_TIMEVAL__ -D__OBSOLETE_MEMHANDLER_FLAGS__  -D__USE_BASETYPE__ -DUSE_OLD_ANCHORPATH -DCOMPDATE=$(NEWDATE)
+INCLUDES := -I../../../Include
+LDFLAGS  := $(C_LIB) $(DEBUGSYM)
+WARNINGS := -Wall
+CC       := ppc-amigaos-gcc
+CFLAGS   := $(OPTIONS) $(DEBUG) $(DEBUGSYM) $(OPTIMIZE)
+LIBS     := -lauto
+
+REMOVE = rm -f
+MAKEDIR := mkdir -p
+
+OBJS = loaddopuslib.o
+SRC_OBJS := $(OBJS)
+OBJS := $(addprefix $(OBJDIR)/,$(SRC_OBJS))
+
+all : $(TARGET)
+
+$(TARGET): $(OBJS)
+	@$(MAKEDIR) $(DESTDIR)
+	$(CC) $^ $(LDFLAGS) $(LIBS) -o $@
+	@$(STRIP)
+
+$(OBJDIR)/%.o : %.c
+	@echo ">>>>>Compiling $<"
+	@$(MAKEDIR) $(dir $@)
+	@$(CC) -c $< $(CFLAGS) $(INCLUDES) $(WARNINGS) -o $@
+
+.PHONY clean:
+clean:
+	@rm -rf $(OBJDIR)
+.PHONY cleanall:
+cleanall : clean
+	@$(REMOVE) $(TARGET) $(TARGET).map $(TARGET).s
+
