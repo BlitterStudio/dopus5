@@ -245,6 +245,7 @@ endif
 	@$(COPY) bin.$(NAME)/DirectoryOpus $(RELEASE_ROOT)
 	@$(COPY) bin.$(NAME)/DOpusRT5 $(RELEASE_ROOT)/C
 	@$(COPY) bin.$(NAME)/LoadDB $(RELEASE_ROOT)/C
+	@$(COPY) bin.$(NAME)/LoadDOpusLib $(RELEASE_ROOT)/C
 	@$(COPY) bin.$(NAME)/viewfont $(RELEASE_ROOT)/C
 	@$(COPY) ../documents/*.guide $(RELEASE_ROOT)/Help
 	@$(COPY) ../THIRD_PARTY_NOTICES.md $(RELEASE_ROOT)/Help
@@ -257,7 +258,7 @@ ifeq ($(SYSTEM), linux)
 # Ensure Amiga executables carry the Unix +x bit so lha records it
 # (Amiga LHA maps it back to the Amiga `e` protection flag on extract).
 	@chmod +x $(RELEASE_ROOT)/DirectoryOpus $(RELEASE_ROOT)/Libs/dopus5.library $(RELEASE_ROOT)/Modules/*.module \
-		$(RELEASE_ROOT)/C/DOpusRT5 $(RELEASE_ROOT)/C/LoadDB $(RELEASE_ROOT)/C/viewfont
+		$(RELEASE_ROOT)/C/DOpusRT5 $(RELEASE_ROOT)/C/LoadDB $(RELEASE_ROOT)/C/LoadDOpusLib $(RELEASE_ROOT)/C/viewfont
 endif
 	@$(COPY) ../archive/$(BASEARC) $(DEST)DOpus5$(VERSION)$(NAME)$(TYPE).lha
 	@cd $(RELEASE_DIR) && $(LHA) $(RELEASE_ARCDEST)/DOpus5$(VERSION)$(NAME)$(TYPE).lha DOpus5 "Install DOpus5" "Install DOpus5.info"

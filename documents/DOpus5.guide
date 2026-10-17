@@ -1,6 +1,6 @@
 @database dopus5
 @master dopus5.guide
-@$VER: Dopus5Guide 58.16 (16.10.2026)
+@$VER: Dopus5Guide 58.17 (17.10.2026)
 @author "Mark Anderson, Andrew Dunbar, Dr Greg Perry, Leo Davidson and Dave Clarke"
 @(c) "Directory Opus 5 Help Guide (c) GPSoftware 1999"
 @(c) "Directory Opus 5 Help Guide (c) DOPUS5 Open Source Team 2012-2026"
@@ -141,14 +141,28 @@ How Directory Opus starts:
     environment saved as "workbench", not "default"; when you switch to
     this mode, the installer offers to copy your default environment.
 
+  Load dopus5.library at boot (AmigaOS 3, Manually and When Workbench
+  starts)
+    Directory Opus shows the AppIcons that programs add while
+    dopus5.library is loaded.  Started after Workbench, it does not see
+    AppIcons added before, for example by programs in SYS:WBStartup such
+    as NewMeter; they stay on the Workbench desktop behind the Opus
+    desktop.  With this option the DOpus5 block in S:User-Startup runs
+    DOpus5:C/LoadDOpusLib, which loads the library before Workbench
+    starts, and Directory Opus shows those AppIcons when you start it.
+    The library and its Workbench patches stay in memory until the next
+    reboot, also while Directory Opus is not running.
+
 S:User-Startup:
   The installer can add a ;BEGIN DOpus5 block with the DOpus5: assign and
-  "Path DOpus5:C ADD", plus the Resident line for Workbench replacement.
+  "Path DOpus5:C ADD", plus the Resident line for Workbench replacement
+  and the LoadDOpusLib line for loading dopus5.library at boot.
   Directory Opus assigns DOpus5: to its own drawer when it starts, so the
   assign is only needed by ARexx scripts and the commands in DOpus5:C
-  started from a Shell, by Workbench replacement, and by other programs
-  that look for DOpus5:.  Running the installer again replaces the
-  block; answering No to the assign empties a block written earlier.
+  started from a Shell, by Workbench replacement and LoadDOpusLib, and by
+  other programs that look for DOpus5:.  Running the installer again
+  replaces the block; answering No to the assign empties a block written
+  earlier.
 
 The AmigaOS 3 archive for 68020 and newer processors does not install on
 a 68000 or 68010; use the os3-68000 archive there.
@@ -4094,7 +4108,15 @@ layer.
 
   Display AppIcons:
     Tells Opus to display all application icons in the Opus main
-    window, just as Workbench would.
+    window, just as Workbench would.  AppIcons that draw their own
+    contents through a Workbench render hook, such as the gauges of
+    NewMeter, are drawn by their program on the Opus desktop too.
+    Opus only knows about AppIcons added while dopus5.library is loaded.
+    If Opus is started by hand while Workbench is running, AppIcons that
+    were already there (for example from programs in SYS:WBStartup) stay
+    on the Workbench desktop behind the Opus desktop, unless the
+    installer was told to load dopus5.library at boot (see
+    LoadDOpusLib in the installation notes).
 
   Display 'Tools' Menu:
     Tells Opus to add any Workbench application menu items to a global

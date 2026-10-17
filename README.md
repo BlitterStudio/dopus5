@@ -86,6 +86,11 @@ each supported system.
 - **Optional:** a `;BEGIN DOpus5` block in `S:User-Startup` with the
   `DOpus5:` assign and `Path DOpus5:C ADD` (always written for
   Workbench replacement). Declining it later empties the block.
+- **Load dopus5.library at boot (AmigaOS 3):** for the manual and
+  Workbench start modes, the block can also run `DOpus5:C/LoadDOpusLib`.
+  Opus then shows AppIcons that programs in `SYS:WBStartup` added before
+  it started; the library stays in memory until the next reboot.
+  Remembered in `ENVARC:DOpus5Preload`.
 
 Directory Opus assigns `DOpus5:` to its own drawer when it starts, so
 copying the `DOpus5` drawer by hand also works for a new installation.

@@ -88,7 +88,7 @@ endif
 
 
 .PHONY : all
-all: dopusrt loaddb viewfont
+all: dopusrt loaddb loaddopuslib viewfont
 	@echo " "
 
 .PHONY : dopusrt
@@ -103,6 +103,12 @@ loaddb:
 	@echo "================== loaddb =================="
 	@$(MAKE) --no-print-directory -C loadwb -f makefile.$(PLATFORM) arch=$(arch)
 
+.PHONY : loaddopuslib
+loaddopuslib:
+	@echo " "
+	@echo "=============== loaddopuslib ==============="
+	@$(MAKE) --no-print-directory -C loaddopuslib -f makefile.$(PLATFORM) arch=$(arch)
+
 .PHONY : viewfont
 viewfont:
 	@echo " "
@@ -113,7 +119,7 @@ viewfont:
 ###########################################################
 
 .PHONY : clean
-clean: clean-dopusrt clean-loaddb clean-viewfont
+clean: clean-dopusrt clean-loaddb clean-loaddopuslib clean-viewfont
 	@echo " "
 
 .PHONY : clean-dopusrt
@@ -127,6 +133,12 @@ clean-loaddb:
 	@echo " "
 	@echo "--------------- clean loaddb ---------------"
 	@$(MAKE) --no-print-directory -C loadwb -f makefile.$(PLATFORM) arch=$(arch) clean
+
+.PHONY : clean-loaddopuslib
+clean-loaddopuslib:
+	@echo " "
+	@echo "------------- clean loaddopuslib -----------"
+	@$(MAKE) --no-print-directory -C loaddopuslib -f makefile.$(PLATFORM) arch=$(arch) clean
 
 .PHONY : clean-viewfont
 clean-viewfont:
