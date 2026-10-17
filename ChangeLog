@@ -4,9 +4,10 @@ Program change; version bump deferred.
 - Opus cleared an AppIcon to the desktop background before calling its
   render hook, so NewMeter's gauges flashed the wallpaper once a second
   on the Opus desktop, and not on Workbench.  The hook now draws over
-  the previous image, as on Workbench.  On AROS and AmigaOS 4 the draw
-  no longer erases or fills the image area of such an icon either; only
-  the frame around it is filled when the icon has a border.
+  the previous image, as on Workbench; the icon is still cleared when
+  its program changes the image (ChangeAppIcon).  On AROS and AmigaOS 4
+  the draw no longer erases or fills the image area of such an icon
+  either; only the frame around it is filled when the icon has a border.
 
 [dopus5 next] AROS: Format Install and Show animations
 Module change (format, show); version bump deferred.

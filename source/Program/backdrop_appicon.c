@@ -146,6 +146,11 @@ BackdropObject *backdrop_add_appicon(AppEntry *appicon, BackdropInfo *info, shor
 				}
 			}
 
+			// A new image may not cover the old one, so clear it first. Plain redraws of a
+			// render-hook icon are not cleared: the hook repaints its area, and an erase flashes
+			if (flags & BDAF_NEW_IMAGE && appicon->render_hook)
+				backdrop_render_object(info, object, BRENDERF_CLEAR | BRENDERF_CLIP);
+
 			// Show image
 			backdrop_render_object(info, object, BRENDERF_CLIP);
 		}
