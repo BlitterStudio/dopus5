@@ -50,6 +50,37 @@ static inline void atomic_dec(ULONG *counter)
 {
 	asm volatile("subql #1,%0" : "+m"(*counter));
 }
+
+// Calls the original AddAppIconA. A C call through a function pointer cannot
+// load d0/d1/a0-a4/a6 and still keep an address register for the target, so
+// the stub loads the target into a5 (saved here).
+APTR wb_call_addappicon(APTR func,
+						struct Library *base,
+						IPTR id,
+						IPTR userdata,
+						char *text,
+						struct MsgPort *port,
+						BPTR lock,
+						struct DiskObject *icon,
+						struct TagItem *tags);
+
+asm(".text                       \n\
+     .even                       \n\
+     .globl _wb_call_addappicon  \n\
+   _wb_call_addappicon:          \n\
+      moveml a2-a6,sp@-          \n\
+      movel sp@(24),a5           \n\
+      movel sp@(28),a6           \n\
+      movel sp@(32),d0           \n\
+      movel sp@(36),d1           \n\
+      movel sp@(40),a0           \n\
+      movel sp@(44),a1           \n\
+      movel sp@(48),a2           \n\
+      movel sp@(52),a3           \n\
+      movel sp@(56),a4           \n\
+      jsr a5@                    \n\
+      moveml sp@+,a2-a6          \n\
+      rts");
 #elif defined(__AROS__) && defined(__arm__)
 	#include <aros/atomic.h>
 static inline void atomic_inc(ULONG *counter)
@@ -199,13 +230,6 @@ PATCHED_5(struct AppMenuItem *,
 		BOOL osonly = FALSE;
 		APTR object = NULL;
 
-		// Check valid data
-		if (!port)
-		{
-			atomic_dec(&usecount[WB_PATCH_ADDAPPMENUA]);
-			return NULL;
-		}
-
 		// Open library
 		if (!(libbase = GET_DOPUSLIB))
 		{
@@ -216,15 +240,17 @@ PATCHED_5(struct AppMenuItem *,
 		// Get Workbench data pointer
 		wb_data = &((struct LibData *)libbase->ml_UserData)->wb_data;
 
-		// Pass straight through?
-		if (tags && !(GetTagData(DAE_Local, 1, tags)))
+		// Pass straight through? Workbench's own Tools menu items (its ARexx
+		// MENU ADD, used by MenuTools and AutoArrangeIcons on OS 3.2) have no
+		// message port, so Opus could not run them; Workbench does.
+		if (!port || (tags && !(GetTagData(DAE_Local, 1, tags))))
 			osonly = TRUE;
 
 		// Get new AppEntry
 		if (osonly || (app_entry = new_app_entry(APP_MENU, id, userdata, 0, text, port, wb_data)))
 		{
 			// Local AppThing?
-			if (tags && GetTagData(DAE_Local, 0, tags))
+			if (!osonly && tags && GetTagData(DAE_Local, 0, tags))
 			{
 				// Set local flag
 				app_entry->flags |= APPENTF_LOCAL;
@@ -418,6 +444,9 @@ PATCHED_7(struct AppIcon *,
 				// Set menu base
 				app_entry->menu_id_base = GetTagData(DAE_MenuBase, 0, tags);
 
+				// Workbench render hook; the desktop calls it to draw the icon
+				app_entry->render_hook = (struct Hook *)GetTagData(WBAPPICONA_RenderHook, 0, tags);
+
 				// Go through tags
 				tstate = tags;
 				while ((tag = NextTagItem(&tstate)))
@@ -460,24 +489,15 @@ PATCHED_7(struct AppIcon *,
 			else
 			{
 #ifdef __amigaos3__
-				object = LIBCALL_7(APTR,
-								   wb_data->old_function[WB_PATCH_ADDAPPICONA],
-								   WorkbenchBase,
-								   IWorkbench,
-								   d0,
-								   id,
-								   d1,
-								   userdata,
-								   a0,
-								   text,
-								   a1,
-								   port,
-								   a2,
-								   lock,
-								   a3,
-								   icon,
-								   d7,
-								   tags);
+				object = wb_call_addappicon(wb_data->old_function[WB_PATCH_ADDAPPICONA],
+											WorkbenchBase,
+											id,
+											userdata,
+											text,
+											port,
+											lock,
+											icon,
+											tags);
 #else
 				object = LIBCALL_7(APTR,
 								   wb_data->old_function[WB_PATCH_ADDAPPICONA],
@@ -1270,7 +1290,7 @@ BOOL internalWBCtrl(struct MyLibrary *libbase, CONST_STRPTR name, const struct T
 			break;
 
 		case WBCTRLA_RedrawAppIcon:
-			/* if we have a list of appicons, we could support this */
+			/* wb_workbench_control() has already redrawn Opus's copy */
 			break;
 
 		case WBCTRLA_GetProgramList:
@@ -1345,16 +1365,109 @@ BOOL internalWBCtrl(struct MyLibrary *libbase, CONST_STRPTR name, const struct T
 
 	return result;
 }
+#endif
+
+// Find an AppIcon by the handle our AddAppIconA patch returned (list must be locked)
+static AppEntry *wb_find_appicon(IPTR handle, WB_Data *wb_data)
+{
+	AppEntry *entry;
+
+	for (entry = (AppEntry *)wb_data->app_list.mlh_Head; entry->node.mln_Succ; entry = (AppEntry *)entry->node.mln_Succ)
+	{
+		if ((IPTR)entry == handle && entry->type == APP_ICON)
+			return entry;
+	}
+
+	return NULL;
+}
+
+// WBCTRLA_RedrawAppIcon names the AppEntry that our AddAppIconA patch handed
+// out. Redraw Opus's copy of the icon, and pass the OS its own AppIcon. Local
+// AppIcons have no OS AppIcon, and without Workbench only Opus shows icons;
+// those redraws are Opus's alone and do not reach the OS.
+static BOOL wb_workbench_control(struct MyLibrary *libbase, CONST_STRPTR name, const struct TagItem *tags)
+{
+	WB_Data *wb_data = &((struct LibData *)libbase->ml_UserData)->wb_data;
+	struct TagItem *os_tags = NULL, *tstate, *tag;
+	AppEntry *entry;
+	BOOL ours = FALSE, wb_running, result = FALSE;
+
+	// Is Workbench running?
+	Forbid();
+	wb_running = (FindPort("WORKBENCH") != NULL);
+	Permit();
+
+	// Lock AppEntry list
+	L_GetSemaphore(&wb_data->patch_lock, SEMF_SHARED, 0);
+
+	// Redraw our copies
+	tstate = (struct TagItem *)tags;
+	while ((tag = NextTagItem(&tstate)))
+	{
+		if (tag->ti_Tag == WBCTRLA_RedrawAppIcon && (entry = wb_find_appicon(tag->ti_Data, wb_data)))
+		{
+			L_SendNotifyMsg(DN_APP_ICON_LIST, (IPTR)entry, DNF_ICON_CHANGED, FALSE, 0, 0, libbase);
+			ours = TRUE;
+		}
+	}
+
+	// Swap in the OS AppIcons
+	if (ours && (os_tags = CloneTagItems(tags)))
+	{
+		tstate = os_tags;
+		while ((tag = NextTagItem(&tstate)))
+		{
+			if (tag->ti_Tag == WBCTRLA_RedrawAppIcon && (entry = wb_find_appicon(tag->ti_Data, wb_data)))
+			{
+				if (entry->os_object && wb_running)
+					tag->ti_Data = (IPTR)entry->os_object;
+				else
+					tag->ti_Tag = TAG_IGNORE;
+			}
+		}
+	}
+
+	// Unlock list
+	L_FreeSemaphore(&wb_data->patch_lock);
+
+	// Out of memory for the copy; never pass our AppEntry to the OS
+	if (ours && !os_tags)
+		return FALSE;
+
+	if (os_tags)
+	{
+		// Nothing left for the OS: Opus did all the redraws
+		tstate = os_tags;
+		if (!NextTagItem(&tstate))
+		{
+			FreeTagItems(os_tags);
+			return TRUE;
+		}
+		tags = os_tags;
+	}
+
+#ifdef __amigaos4__
+	if (!wb_running)
+		result = internalWBCtrl(libbase, name, tags);
+	else
+#endif
+		result = LIBCALL_2(
+			BOOL, wb_data->old_function[WB_PATCH_WORKBENCHCONTROLA], WorkbenchBase, IWorkbench, a0, name, a1, tags);
+
+	FreeTagItems(os_tags);
+	return result;
+}
+
+#ifdef __amigaos4__
 //// WorkbenchControl patch
 VARARGS68K BOOL L_WB_WorkbenchControl_stubs(struct WorkbenchIFace *IWorkbench, CONST_STRPTR name, ...)
 {
 	atomic_inc(&usecount[WB_PATCH_WORKBENCHCONTROL]);
 	{
-		WB_Data *wb_data;
 		struct MyLibrary *libbase;
 		va_list ap;
 		struct TagItem *tags;
-		BOOL result = FALSE;
+		BOOL result;
 
 		va_startlinear(ap, name);
 
@@ -1369,37 +1482,21 @@ VARARGS68K BOOL L_WB_WorkbenchControl_stubs(struct WorkbenchIFace *IWorkbench, C
 			return FALSE;
 		}
 
-		// Get Workbench data pointer
-		wb_data = &((struct LibData *)libbase->ml_UserData)->wb_data;
-
-		if (FindPort("WORKBENCH"))
-		{
-			// D(bug("Workbench available, calling original vector\n"));
-			// call original, but check examples of how all of this can be handled in another PATCHED functions there.
-			result = LIBCALL_2(
-				BOOL, wb_data->old_function[WB_PATCH_WORKBENCHCONTROLA], WorkbenchBase, IWorkbench, a0, name, a1, tags);
-		}
-		else
-		{
-			// D(bug("Workbench not found, handling call ourselves\n" ));
-			result = internalWBCtrl(libbase, name, tags);
-		}
+		result = wb_workbench_control(libbase, name, tags);
 
 		atomic_dec(&usecount[WB_PATCH_WORKBENCHCONTROL]);
 		return result;
 	}
 }
+#endif
 
 //// WorkbenchControlA patch
 PATCHED_2(BOOL, LIBFUNC L_WB_WorkbenchControlA, a0, CONST_STRPTR, name, a1, const struct TagItem *, tags)
 {
 	atomic_inc(&usecount[WB_PATCH_WORKBENCHCONTROLA]);
 	{
-		WB_Data *wb_data;
 		struct MyLibrary *libbase;
-		BOOL result = FALSE;
-
-		D(bug("called by %s\n", FindTask(NULL)->tc_Node.ln_Name));
+		BOOL result;
 
 		// Open library
 		if (!(libbase = GET_DOPUSLIB))
@@ -1408,30 +1505,13 @@ PATCHED_2(BOOL, LIBFUNC L_WB_WorkbenchControlA, a0, CONST_STRPTR, name, a1, cons
 			return FALSE;
 		}
 
-		// Get Workbench data pointer
-		wb_data = &((struct LibData *)libbase->ml_UserData)->wb_data;
-
-		if (FindPort("WORKBENCH"))
-		{
-			// D(bug("Workbench available, calling original vector\n"));
-
-			// call original, but check examples of how all of this can be handled in another PATCHED functions there.
-			result = LIBCALL_2(
-				BOOL, wb_data->old_function[WB_PATCH_WORKBENCHCONTROLA], WorkbenchBase, IWorkbench, a0, name, a1, tags);
-		}
-		else
-		{
-			// D(bug("Workbench not found, handling %s ourselves\n", name ));
-			result = internalWBCtrl(libbase, name, tags);
-		}
+		result = wb_workbench_control(libbase, name, tags);
 
 		atomic_dec(&usecount[WB_PATCH_WORKBENCHCONTROLA]);
 		return result;
 	}
 }
 PATCH_END
-
-#endif
 
 // Change an AppIcon's image
 void LIBFUNC L_ChangeAppIcon(REG(a0, APTR appicon),
@@ -2454,7 +2534,8 @@ static PatchList wb_patches[WB_PATCH_COUNT] = {
 	// proved that after patching by SetMethod() only OWOA call, OWO still didn't point directly on patched OWOA. So we
 	// done it 2 times.
 	//
-	// Third and fourth functions are: WorkbenchControl and WorkbenchControlA.
+	// Third and fourth functions are: WorkbenchControl and WorkbenchControlA (the latter is patched on all platforms,
+	// below).
 	// We should pacth it as well, as without it "duplicate search patches" thing will not works (which used a lot by
 	// the system itself,
 	// and for example by CodeBench).
@@ -2471,11 +2552,12 @@ static PatchList wb_patches[WB_PATCH_COUNT] = {
 		  offsetof(struct WorkbenchIFace, WorkbenchControl),
 		  L_WB_WorkbenchControl,
 		  WB_PATCH_WORKBENCH),
+#endif
+	// WorkbenchControlA (V44): WBCTRLA_RedrawAppIcon gets the AppEntry from our AddAppIconA, not the OS AppIcon
 	PATCH(-18 * LIB_VECTSIZE,
 		  offsetof(struct WorkbenchIFace, WorkbenchControlA),
 		  L_WB_WorkbenchControlA,
 		  WB_PATCH_WORKBENCH),
-#endif
 	PATCH(-14 * LIB_VECTSIZE, offsetof(struct IconIFace, PutDiskObject), L_WB_PutDiskObject, WB_PATCH_ICON),
 	PATCH(-23 * LIB_VECTSIZE, offsetof(struct IconIFace, DeleteDiskObject), L_WB_DeleteDiskObject, WB_PATCH_ICON),
 	PATCH(-59 * LIB_VECTSIZE, offsetof(struct ExecIFace, AddPort), L_WB_AddPort, WB_PATCH_EXEC),
@@ -2539,6 +2621,12 @@ void LIBFUNC L_WB_Install_Patch(REG(a6, struct MyLibrary *libbase))
 			for (patch = 0; patch < WB_PATCH_COUNT; patch++)
 			{
 				APTR libptr;
+
+#ifndef __amigaos4__
+				// WorkbenchControlA() is V44; older workbench.library has no such vector
+				if (patch == WB_PATCH_WORKBENCHCONTROLA && WorkbenchBase->lib_Version < 44)
+					continue;
+#endif
 
 				// Get library
 				if ((libptr = wb_get_patchbase(wb_patches[patch].type, (struct LibData *)libbase->ml_UserData)))

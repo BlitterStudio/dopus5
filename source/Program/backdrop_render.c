@@ -445,6 +445,33 @@ void backdrop_render_object(BackdropInfo *info, BackdropObject *object, UWORD fl
 	FreeSemaphore(&info->window_lock);
 }
 
+// Call an AppIcon's Workbench render hook (WBAPPICONA_RenderHook).
+// Returns TRUE if the hook wants the regular image drawn as well.
+static BOOL backdrop_call_render_hook(struct Hook *hook,
+									  BackdropObject *object,
+									  struct RastPort *rp,
+									  short left,
+									  short top)
+{
+	struct AppIconRenderMsg msg;
+	struct RastPort hook_rp;
+
+	// The hook may change pens, draw mode or font; give it a copy
+	hook_rp = *rp;
+
+	msg.arm_RastPort = &hook_rp;
+	msg.arm_Icon = object->icon;
+	msg.arm_Label = object->name;
+	msg.arm_Tags = NULL;
+	msg.arm_Left = left;
+	msg.arm_Top = top;
+	msg.arm_Width = object->pos.Width;
+	msg.arm_Height = object->pos.Height;
+	msg.arm_State = (object->state) ? IDS_SELECTED : IDS_NORMAL;
+
+	return (BOOL)(CallHookPkt(hook, NULL, &msg) != 0);
+}
+
 // Draw an object
 void backdrop_draw_object(BackdropInfo *info,
 						  BackdropObject *object,
@@ -458,8 +485,9 @@ void backdrop_draw_object(BackdropInfo *info,
 	struct Image *image = 0;
 	struct Rectangle rect;
 	short len;
-	BOOL comp = 0, draw = 1, state = 0;
+	BOOL comp = 0, draw = 1, state = 0, draw_image = 1, draw_label = 1;
 	short has_border;
+	struct Hook *render_hook = NULL;
 
 	// No icon?
 	if (!object->icon)
@@ -467,6 +495,10 @@ void backdrop_draw_object(BackdropInfo *info,
 
 	// See if icon has no border
 	has_border = backdrop_icon_border(object);
+
+	// AppIcon that renders itself? Drag images always use the plain image
+	if (flags & BRENDERF_REAL && object->type == BDO_APP_ICON)
+		render_hook = ((AppEntry *)object->misc_data)->render_hook;
 
 	// Not just clearing image?
 	if (!(flags & BRENDERF_CLEAR))
@@ -587,7 +619,7 @@ void backdrop_draw_object(BackdropInfo *info,
 	if (!(flags & BRENDERF_CLEAR))
 	{
 		// Not drawing if no image
-		if (!imagedata)
+		if (!imagedata && !render_hook)
 			draw = 0;
 
 		// Ok to draw?
@@ -632,103 +664,128 @@ void backdrop_draw_object(BackdropInfo *info,
 #endif
 			}
 
-#ifdef USE_DRAWICONSTATE
-			DrawIconState(rp,
-						  object->icon,
-						  NULL,
-						  left,
-						  top,
-						  object->state ? IDS_SELECTED : IDS_NORMAL,
-						  ICONDRAWA_Frameless,
-						  TRUE,
-						  ICONDRAWA_Borderless,
-						  TRUE,
-						  ICONDRAWA_EraseBackground,
-						  FALSE,
-						  TAG_DONE);
-#else
-	#if defined(__MORPHOS__)
-			if (ISOWN(object->icon))
+			// Let the AppIcon draw itself. If the hook says it drew everything, Workbench
+			// draws neither the image nor the label, so we don't either
+			if (render_hook)
 			{
-				IPTR tags[] = {BLTBMA_USESOURCEALPHA, TRUE, TAG_DONE};
-				struct OwnDiskObject *o = (APTR)object->icon;
-				BltBitMapRastPortAlpha(
-					o->pngimage, 0, 0, rp, left, top, o->pngimage_width, o->pngimage_height, (struct TagItem *)&tags);
-
-				if (object->state)
-				{
-					ProcessPixelArray(rp, left, top, o->pngimage_width, o->pngimage_height, POP_TINT, 0x5082ff, NULL);
-				}
-			}
-			else
-			{
-	#endif
-				// Get image as a bitmap
-				backdrop_image_bitmap(info, image, imagedata, &bitmap);
-
-				// Using a mask (no border)?
-				if (!has_border && object->image_mask[state] &&
-					backdrop_blit_icon_mask(&bitmap, rp, left, top, image, object->image_mask[state]))
-				{
-					use_mask = 1;
-				}
-
-				// Draw normally
+				if (backdrop_call_render_hook(render_hook, object, rp, left, top))
+					draw_image = (imagedata != 0);
 				else
 				{
-					// Draw image
-					BltBitMapRastPort(&bitmap, 0, 0, rp, left, top, image->Width, image->Height, 0xc0);
+					draw_image = 0;
+					draw_label = 0;
 				}
+			}
 
-				// Complement?
-				if (comp)
+			if (draw_image)
+			{
+#ifdef USE_DRAWICONSTATE
+				DrawIconState(rp,
+							  object->icon,
+							  NULL,
+							  left,
+							  top,
+							  object->state ? IDS_SELECTED : IDS_NORMAL,
+							  ICONDRAWA_Frameless,
+							  TRUE,
+							  ICONDRAWA_Borderless,
+							  TRUE,
+							  ICONDRAWA_EraseBackground,
+							  FALSE,
+							  TAG_DONE);
+#else
+	#if defined(__MORPHOS__)
+				if (ISOWN(object->icon))
 				{
-					DragInfo *drag_info;
-					UBYTE mask;
+					IPTR tags[] = {BLTBMA_USESOURCEALPHA, TRUE, TAG_DONE};
+					struct OwnDiskObject *o = (APTR)object->icon;
+					BltBitMapRastPortAlpha(o->pngimage,
+										   0,
+										   0,
+										   rp,
+										   left,
+										   top,
+										   o->pngimage_width,
+										   o->pngimage_height,
+										   (struct TagItem *)&tags);
 
-					// Only complement to image depth
-					mask = rp->Mask;
-					SetWrMsk(rp, image->PlanePick);
-
-					// Need backfill?
-					if ((object->icon->do_Gadget.Flags & GFLG_GADGBACKFILL) &&
-						(drag_info = GetDragInfo(info->window, 0, -object->pos.Width, -object->pos.Height, 0)))
+					if (object->state)
 					{
-						// Draw icon into drag buffer
-						BltBitMapRastPort(&bitmap, 0, 0, &drag_info->drag_rp, 0, 0, image->Width, image->Height, 0xc0);
+						ProcessPixelArray(
+							rp, left, top, o->pngimage_width, o->pngimage_height, POP_TINT, 0x5082ff, NULL);
+					}
+				}
+				else
+				{
+	#endif
+					// Get image as a bitmap
+					backdrop_image_bitmap(info, image, imagedata, &bitmap);
 
-						// Build mask
-						GetDragMask(drag_info);
-
-						// Complement area with mask
-						BltMaskBitMapRastPort(&drag_info->drag_bm,
-											  0,
-											  0,
-											  rp,
-											  left,
-											  top,
-											  image->Width,
-											  image->Height,
-											  0x20,
-											  (PLANEPTR)drag_info->bob.ImageShadow);
-
-						// Free temporary drag info
-						FreeDragInfo(drag_info);
+					// Using a mask (no border)?
+					if (!has_border && object->image_mask[state] &&
+						backdrop_blit_icon_mask(&bitmap, rp, left, top, image, object->image_mask[state]))
+					{
+						use_mask = 1;
 					}
 
-					// Just complement image
+					// Draw normally
 					else
 					{
-						ClipBlit(rp, left, top, rp, left, top, image->Width, image->Height, 0x50);
+						// Draw image
+						BltBitMapRastPort(&bitmap, 0, 0, rp, left, top, image->Width, image->Height, 0xc0);
 					}
 
-					// Restore mask
-					SetWrMsk(rp, mask);
-				}
+					// Complement?
+					if (comp)
+					{
+						DragInfo *drag_info;
+						UBYTE mask;
+
+						// Only complement to image depth
+						mask = rp->Mask;
+						SetWrMsk(rp, image->PlanePick);
+
+						// Need backfill?
+						if ((object->icon->do_Gadget.Flags & GFLG_GADGBACKFILL) &&
+							(drag_info = GetDragInfo(info->window, 0, -object->pos.Width, -object->pos.Height, 0)))
+						{
+							// Draw icon into drag buffer
+							BltBitMapRastPort(
+								&bitmap, 0, 0, &drag_info->drag_rp, 0, 0, image->Width, image->Height, 0xc0);
+
+							// Build mask
+							GetDragMask(drag_info);
+
+							// Complement area with mask
+							BltMaskBitMapRastPort(&drag_info->drag_bm,
+												  0,
+												  0,
+												  rp,
+												  left,
+												  top,
+												  image->Width,
+												  image->Height,
+												  0x20,
+												  (PLANEPTR)drag_info->bob.ImageShadow);
+
+							// Free temporary drag info
+							FreeDragInfo(drag_info);
+						}
+
+						// Just complement image
+						else
+						{
+							ClipBlit(rp, left, top, rp, left, top, image->Width, image->Height, 0x50);
+						}
+
+						// Restore mask
+						SetWrMsk(rp, mask);
+					}
 	#if defined(__MORPHOS__)
-			}
+				}
 	#endif
 #endif
+			}
 
 			// Left out (on desktop), or a link?
 			if (!(environment->env->desktop_flags & DESKTOPF_NO_ARROW) &&
@@ -797,7 +854,7 @@ void backdrop_draw_object(BackdropInfo *info,
 	}
 
 	// Full icon?
-	if (flags & BRENDERF_REAL && !(object->flags & BDOF_NO_LABEL))
+	if (flags & BRENDERF_REAL && draw_label && !(object->flags & BDOF_NO_LABEL))
 	{
 		char *name, namebuf[40];
 
