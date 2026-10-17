@@ -7,14 +7,12 @@
 	#include <aros/libcall.h>
 #endif /* !AROS_LIBCALL_H */
 
-#include <defines/aros_voidcall.h>
-
 #ifndef NEWICON_BASE_NAME
 	#define NEWICON_BASE_NAME NewIconBase
 #endif /* !NEWICON_BASE_NAME */
 
 #define FreeNewDiskObject(___newdiskobj)                            \
-	AROS_VOID_LC1(                                                  \
+	AROS_LC1NR(void,                                                   \
 			 FreeNewDiskObject,                                     \
 			 AROS_LCA(struct NewDiskObject *, (___newdiskobj), A0), \
 			 struct Library *,                                      \
@@ -23,7 +21,7 @@
 			 /* s */)
 
 #define FreeRemappedImage(___image, ___screen)           \
-	AROS_VOID_LC2(                                       \
+	AROS_LC2NR(void,                                        \
 			 FreeRemappedImage,                          \
 			 AROS_LCA(struct Image *, (___image), A0),   \
 			 AROS_LCA(struct Screen *, (___screen), A1), \

@@ -8,14 +8,13 @@
 #endif /* !AROS_LIBCALL_H */
 
 #include <aros/preprocessor/variadic/cast2iptr.hpp>
-#include <defines/aros_voidcall.h>
 
 #ifndef DOPUS_BASE_NAME
 	#define DOPUS_BASE_NAME DOpusBase
 #endif /* !DOPUS_BASE_NAME */
 
 #define ActivateStrGad(___gadget, ___window)             \
-	AROS_VOID_LC2(                                       \
+	AROS_LC2NR(void,                                        \
 			 ActivateStrGad,                             \
 			 AROS_LCA(struct Gadget *, (___gadget), A0), \
 			 AROS_LCA(struct Window *, (___window), A1), \
@@ -35,7 +34,7 @@
 			 /* s */)
 
 #define AddDragImage(___drag) \
-	AROS_VOID_LC1( AddDragImage, AROS_LCA(DragInfo *, (___drag), A0), struct Library *, DOPUS_BASE_NAME, 38, /* s */)
+	AROS_LC1NR(void,  AddDragImage, AROS_LCA(DragInfo *, (___drag), A0), struct Library *, DOPUS_BASE_NAME, 38, /* s */)
 
 #define AddNotifyRequest(___type, ___data, ___port)     \
 	AROS_LC3(APTR,                                      \
@@ -71,7 +70,7 @@
 			 /* s */)
 
 #define AddSorted(___list, ___node)                  \
-	AROS_VOID_LC2(                                   \
+	AROS_LC2NR(void,                                    \
 			 AddSorted,                              \
 			 AROS_LCA(struct List *, (___list), A0), \
 			 AROS_LCA(struct Node *, (___node), A1), \
@@ -81,7 +80,7 @@
 			 /* s */)
 
 #define AddWindowMenus(___window, ___data)               \
-	AROS_VOID_LC2(                                       \
+	AROS_LC2NR(void,                                        \
 			 AddWindowMenus,                             \
 			 AROS_LCA(struct Window *, (___window), A0), \
 			 AROS_LCA(MenuData *, (___data), A1),        \
@@ -122,7 +121,7 @@
 			 /* s */)
 
 #define AnimDecodeRIFFSet(___delta, ___plane, ___rowbytes, ___sourcebytes) \
-	AROS_VOID_LC4(                                                         \
+	AROS_LC4NR(void,                                                          \
 			 AnimDecodeRIFFSet,                                            \
 			 AROS_LCA(unsigned char *, (___delta), A0),                    \
 			 AROS_LCA(char *, (___plane), A1),                             \
@@ -134,7 +133,7 @@
 			 /* s */)
 
 #define AnimDecodeRIFFXor(___delta, ___plane, ___rowbytes, ___sourcebytes) \
-	AROS_VOID_LC4(                                                         \
+	AROS_LC4NR(void,                                                          \
 			 AnimDecodeRIFFXor,                                            \
 			 AROS_LCA(unsigned char *, (___delta), A0),                    \
 			 AROS_LCA(char *, (___plane), A1),                             \
@@ -178,7 +177,7 @@
 			 /* s */)
 
 #define Att_ChangeNodeName(___node, ___name)      \
-	AROS_VOID_LC2(                                \
+	AROS_LC2NR(void,                                 \
 			 Att_ChangeNodeName,                  \
 			 AROS_LCA(Att_Node *, (___node), A0), \
 			 AROS_LCA(char *, (___name), A1),     \
@@ -266,7 +265,7 @@
 			 /* s */)
 
 #define Att_PosNode(___list, ___node, ___before)    \
-	AROS_VOID_LC3(                                  \
+	AROS_LC3NR(void,                                   \
 			 Att_PosNode,                           \
 			 AROS_LCA(Att_List *, (___list), A0),   \
 			 AROS_LCA(Att_Node *, (___node), A1),   \
@@ -277,7 +276,7 @@
 			 /* s */)
 
 #define Att_RemList(___list, ___flags)            \
-	AROS_VOID_LC2(                                \
+	AROS_LC2NR(void,                                 \
 			 Att_RemList,                         \
 			 AROS_LCA(Att_List *, (___list), A0), \
 			 AROS_LCA(long, (___flags), D0),      \
@@ -287,10 +286,10 @@
 			 /* s */)
 
 #define Att_RemNode(___node) \
-	AROS_VOID_LC1( Att_RemNode, AROS_LCA(Att_Node *, (___node), A0), struct Library *, DOPUS_BASE_NAME, 75, /* s */)
+	AROS_LC1NR(void,  Att_RemNode, AROS_LCA(Att_Node *, (___node), A0), struct Library *, DOPUS_BASE_NAME, 75, /* s */)
 
 #define BOOPSIFree(___list)                                                                                         \
-	AROS_VOID_LC1( BOOPSIFree, AROS_LCA(struct List *, (___list), A0), struct Library *, DOPUS_BASE_NAME, 175, /* s \
+	AROS_LC1NR(void,  BOOPSIFree, AROS_LCA(struct List *, (___list), A0), struct Library *, DOPUS_BASE_NAME, 175, /* s \
 																												*/)
 
 #define BoundsCheckGadget(___list, ___id, ___min, ___max) \
@@ -306,7 +305,7 @@
 			 /* s */)
 
 #define BtoCStr(___bstr, ___cstr, ___len)     \
-	AROS_VOID_LC3(                            \
+	AROS_LC3NR(void,                             \
 			 BtoCStr,                         \
 			 AROS_LCA(BSTR, (___bstr), A0),   \
 			 AROS_LCA(char *, (___cstr), A1), \
@@ -317,7 +316,7 @@
 			 /* s */)
 
 #define BuildKeyString(___code, ___qual, ___mask, ___same, ___buffer) \
-	AROS_VOID_LC5(                                                    \
+	AROS_LC5NR(void,                                                     \
 			 BuildKeyString,                                          \
 			 AROS_LCA(UWORD, (___code), D0),                          \
 			 AROS_LCA(UWORD, (___qual), D1),                          \
@@ -374,7 +373,7 @@
 			 /* s */)
 
 #define BytesToString(___bytes, ___string, ___places, ___sep) \
-	AROS_VOID_LC4(                                            \
+	AROS_LC4NR(void,                                             \
 			 BytesToString,                                   \
 			 AROS_LCA(ULONG, (___bytes), D0),                 \
 			 AROS_LCA(char *, (___string), A0),               \
@@ -386,7 +385,7 @@
 			 /* s */)
 
 #define BytesToString64(___bytes, ___string, ___str_size, ___places, ___sep) \
-	AROS_VOID_LC5(                                                           \
+	AROS_LC5NR(void,                                                            \
 			 BytesToString64,                                                \
 			 AROS_LCA(UQUAD *, (___bytes), A0),                              \
 			 AROS_LCA(char *, (___string), A1),                              \
@@ -454,7 +453,7 @@
 			 /* s */)
 
 #define ChangeAppIcon(___icon, ___render, ___select, ___title, ___flags) \
-	AROS_VOID_LC5(                                                       \
+	AROS_LC5NR(void,                                                        \
 			 ChangeAppIcon,                                              \
 			 AROS_LCA(APTR, (___icon), A0),                              \
 			 AROS_LCA(struct Image *, (___render), A1),                  \
@@ -522,48 +521,48 @@
 			 196,                             \
 			 /* s */)
 
-#define ClearFiletypeCache() AROS_VOID_LC0( ClearFiletypeCache, struct Library *, DOPUS_BASE_NAME, 332, /* s */)
+#define ClearFiletypeCache() AROS_LC0NR(void,  ClearFiletypeCache, struct Library *, DOPUS_BASE_NAME, 332, /* s */)
 
 #define ClearMemHandle(___handle) \
-	AROS_VOID_LC1( ClearMemHandle, AROS_LCA(void *, (___handle), A0), struct Library *, DOPUS_BASE_NAME, 113, /* s */)
+	AROS_LC1NR(void,  ClearMemHandle, AROS_LCA(void *, (___handle), A0), struct Library *, DOPUS_BASE_NAME, 113, /* s */)
 
 #define ClearWindowBusy(___window)                                                                                     \
-	AROS_VOID_LC1( ClearWindowBusy, AROS_LCA(struct Window *, (___window), A0), struct Library *, DOPUS_BASE_NAME, 66, \
+	AROS_LC1NR(void,  ClearWindowBusy, AROS_LCA(struct Window *, (___window), A0), struct Library *, DOPUS_BASE_NAME, 66, \
 			 /* s */)
 
 #define CloseBuf(___file) \
 	AROS_LC1(long, CloseBuf, AROS_LCA(APTR, (___file), A0), struct Library *, DOPUS_BASE_NAME, 165, /* s */)
 
 #define CloseButtonBank(___bank)                                                                                       \
-	AROS_VOID_LC1( CloseButtonBank, AROS_LCA(Cfg_ButtonBank *, (___bank), A0), struct Library *, DOPUS_BASE_NAME, 132, \
+	AROS_LC1NR(void,  CloseButtonBank, AROS_LCA(Cfg_ButtonBank *, (___bank), A0), struct Library *, DOPUS_BASE_NAME, 132, \
 			 /* s */)
 
 #define CloseClipBoard(___clip)                                                                                     \
-	AROS_VOID_LC1(                                                                                                       \
+	AROS_LC1NR(void,                                                                                                        \
 		 CloseClipBoard, AROS_LCA(struct ClipHandle *, (___clip), A0), struct Library *, DOPUS_BASE_NAME, 211, \
 		/* s */)
 
 #define CloseConfigWindow(___window)                                                                                \
-	AROS_VOID_LC1(                                                                                                       \
+	AROS_LC1NR(void,                                                                                                        \
 		 CloseConfigWindow, AROS_LCA(struct Window *, (___window), A0), struct Library *, DOPUS_BASE_NAME, 41, \
 		/* s */)
 
 #define CloseDisk(___handle)                                                                                        \
-	AROS_VOID_LC1( CloseDisk, AROS_LCA(DiskHandle *, (___handle), A0), struct Library *, DOPUS_BASE_NAME, 172, /* s \
+	AROS_LC1NR(void,  CloseDisk, AROS_LCA(DiskHandle *, (___handle), A0), struct Library *, DOPUS_BASE_NAME, 172, /* s \
 																												*/)
 
 #define CloseIFFFile(___iff)                                                                                         \
-	AROS_VOID_LC1( CloseIFFFile, AROS_LCA(struct IFFHandle *, (___iff), A0), struct Library *, DOPUS_BASE_NAME, 154, \
+	AROS_LC1NR(void,  CloseIFFFile, AROS_LCA(struct IFFHandle *, (___iff), A0), struct Library *, DOPUS_BASE_NAME, 154, \
 			 /* s */)
 
 #define CloseImage(___image) \
-	AROS_VOID_LC1( CloseImage, AROS_LCA(APTR, (___image), A0), struct Library *, DOPUS_BASE_NAME, 106, /* s */)
+	AROS_LC1NR(void,  CloseImage, AROS_LCA(APTR, (___image), A0), struct Library *, DOPUS_BASE_NAME, 106, /* s */)
 
 #define CloseProgressWindow(___win) \
-	AROS_VOID_LC1( CloseProgressWindow, AROS_LCA(APTR, (___win), A0), struct Library *, DOPUS_BASE_NAME, 272, /* s */)
+	AROS_LC1NR(void,  CloseProgressWindow, AROS_LCA(APTR, (___win), A0), struct Library *, DOPUS_BASE_NAME, 272, /* s */)
 
 #define CloseWindowSafely(___window)                                                                                \
-	AROS_VOID_LC1(                                                                                                       \
+	AROS_LC1NR(void,                                                                                                        \
 		 CloseWindowSafely, AROS_LCA(struct Window *, (___window), A0), struct Library *, DOPUS_BASE_NAME, 45, \
 		/* s */)
 
@@ -589,7 +588,7 @@
 			 /* s */)
 
 #define ConvertStartMenu(___bank)                                                                                  \
-	AROS_VOID_LC1(                                                                                                      \
+	AROS_LC1NR(void,                                                                                                       \
 		 ConvertStartMenu, AROS_LCA(Cfg_ButtonBank *, (___bank), A0), struct Library *, DOPUS_BASE_NAME, 367, \
 		/* s */)
 
@@ -669,7 +668,7 @@
 	AROS_LC1(APTR, CopyImage, AROS_LCA(APTR, (___image), A0), struct Library *, DOPUS_BASE_NAME, 107, /* s */)
 
 #define CopyLocalEnv(___base)                                                                                       \
-	AROS_VOID_LC1( CopyLocalEnv, AROS_LCA(struct Library *, (___base), A0), struct Library *, DOPUS_BASE_NAME, 193, \
+	AROS_LC1NR(void,  CopyLocalEnv, AROS_LCA(struct Library *, (___base), A0), struct Library *, DOPUS_BASE_NAME, 193, \
 			 /* s */)
 
 #define CreateRexxMsgEx(___port, ___extension, ___host) \
@@ -721,7 +720,7 @@
 			 /* s */)
 
 #define DecodeILBM(___src, ___w, ___h, ___d, ___dst, ___mask, ___comp) \
-	AROS_VOID_LC7(                                                     \
+	AROS_LC7NR(void,                                                      \
 			 DecodeILBM,                                               \
 			 AROS_LCA(char *, (___src), A0),                           \
 			 AROS_LCA(UWORD, (___w), D0),                              \
@@ -736,17 +735,17 @@
 			 /* s */)
 
 #define DecodeRLE(___rleinfo) \
-	AROS_VOID_LC1( DecodeRLE, AROS_LCA(RLEinfo *, (___rleinfo), A0), struct Library *, DOPUS_BASE_NAME, 161, /* s */)
+	AROS_LC1NR(void,  DecodeRLE, AROS_LCA(RLEinfo *, (___rleinfo), A0), struct Library *, DOPUS_BASE_NAME, 161, /* s */)
 
 #define DefaultButtonBank() \
 	AROS_LC0(Cfg_ButtonBank *, DefaultButtonBank, struct Library *, DOPUS_BASE_NAME, 128, /* s */)
 
 #define DefaultEnvironment(___env)                                                                                 \
-	AROS_VOID_LC1( DefaultEnvironment, AROS_LCA(CFG_ENVR *, (___env), A0), struct Library *, DOPUS_BASE_NAME, 127, \
+	AROS_LC1NR(void,  DefaultEnvironment, AROS_LCA(CFG_ENVR *, (___env), A0), struct Library *, DOPUS_BASE_NAME, 127, \
 			 /* s */)
 
 #define DefaultSettings(___settings)                                                                                 \
-	AROS_VOID_LC1( DefaultSettings, AROS_LCA(CFG_SETS *, (___settings), A0), struct Library *, DOPUS_BASE_NAME, 126, \
+	AROS_LC1NR(void,  DefaultSettings, AROS_LCA(CFG_SETS *, (___settings), A0), struct Library *, DOPUS_BASE_NAME, 126, \
 			 /* s */)
 
 #define DeleteIcon(___name) \
@@ -784,7 +783,7 @@
 			 /* s */)
 
 #define DisableObject(___list, ___id, ___state)     \
-	AROS_VOID_LC3(                                  \
+	AROS_LC3NR(void,                                   \
 			 DisableObject,                         \
 			 AROS_LCA(ObjectList *, (___list), A0), \
 			 AROS_LCA(ULONG, (___id), D0),          \
@@ -795,7 +794,7 @@
 			 /* s */)
 
 #define DisplayObject(___window, ___object, ___fg, ___bg, ___txt) \
-	AROS_VOID_LC5(                                                \
+	AROS_LC5NR(void,                                                 \
 			 DisplayObject,                                       \
 			 AROS_LCA(struct Window *, (___window), A0),          \
 			 AROS_LCA(GL_Object *, (___object), A1),              \
@@ -808,14 +807,14 @@
 			 /* s */)
 
 #define DisposeArgs(___args) \
-	AROS_VOID_LC1( DisposeArgs, AROS_LCA(FuncArgs *, (___args), A0), struct Library *, DOPUS_BASE_NAME, 309, /* s */)
+	AROS_LC1NR(void,  DisposeArgs, AROS_LCA(FuncArgs *, (___args), A0), struct Library *, DOPUS_BASE_NAME, 309, /* s */)
 
 #define DisposeBitMap(___b)                                                                                      \
-	AROS_VOID_LC1( DisposeBitMap, AROS_LCA(struct BitMap *, (___b), A0), struct Library *, DOPUS_BASE_NAME, 307, \
+	AROS_LC1NR(void,  DisposeBitMap, AROS_LCA(struct BitMap *, (___b), A0), struct Library *, DOPUS_BASE_NAME, 307, \
 			 /* s */)
 
 #define DivideToString(___string, ___num, ___div, ___places, ___sep) \
-	AROS_VOID_LC5(                                                   \
+	AROS_LC5NR(void,                                                    \
 			 DivideToString,                                         \
 			 AROS_LCA(char *, (___string), A0),                      \
 			 AROS_LCA(ULONG, (___num), D0),                          \
@@ -828,7 +827,7 @@
 			 /* s */)
 
 #define DivideToString64(___string, ___str_size, ___bytes, ___div, ___places, ___sep) \
-	AROS_VOID_LC6(                                                                    \
+	AROS_LC6NR(void,                                                                     \
 			 DivideToString64,                                                        \
 			 AROS_LCA(char *, (___string), A0),                                       \
 			 AROS_LCA(int, (___str_size), D0),                                        \
@@ -854,7 +853,7 @@
 			 /* s */)
 
 #define DivideU64(___num, ___div, ___rem, ___quo) \
-	AROS_VOID_LC4(                                \
+	AROS_LC4NR(void,                                 \
 			 DivideU64,                           \
 			 AROS_LCA(UQUAD *, (___num), A0),     \
 			 AROS_LCA(ULONG, (___div), D0),       \
@@ -892,7 +891,7 @@
 			 /* s */)
 
 #define DrawBox(___rp, ___rect, ___info, ___recess)       \
-	AROS_VOID_LC4(                                        \
+	AROS_LC4NR(void,                                         \
 			 DrawBox,                                     \
 			 AROS_LCA(struct RastPort *, (___rp), A0),    \
 			 AROS_LCA(struct Rectangle *, (___rect), A1), \
@@ -904,7 +903,7 @@
 			 /* s */)
 
 #define DrawDragList(___rp, ___vp, ___flags)           \
-	AROS_VOID_LC3(                                     \
+	AROS_LC3NR(void,                                      \
 			 DrawDragList,                             \
 			 AROS_LCA(struct RastPort *, (___rp), A0), \
 			 AROS_LCA(struct ViewPort *, (___vp), A1), \
@@ -915,7 +914,7 @@
 			 /* s */)
 
 #define DrawFieldBox(___rp, ___rect, ___info)             \
-	AROS_VOID_LC3(                                        \
+	AROS_LC3NR(void,                                         \
 			 DrawFieldBox,                                \
 			 AROS_LCA(struct RastPort *, (___rp), A0),    \
 			 AROS_LCA(struct Rectangle *, (___rect), A1), \
@@ -926,7 +925,7 @@
 			 /* s */)
 
 #define EndRefreshConfigWindow(___win)                                                                                 \
-	AROS_VOID_LC1(                                                                                                          \
+	AROS_LC1NR(void,                                                                                                           \
 		 EndRefreshConfigWindow, AROS_LCA(struct Window *, (___win), A0), struct Library *, DOPUS_BASE_NAME, 302, \
 		/* s */)
 
@@ -1029,24 +1028,24 @@
 			 /* s */)
 
 #define FixTitleGadgets(___win)                                                                                      \
-	AROS_VOID_LC1( FixTitleGadgets, AROS_LCA(struct Window *, (___win), A0), struct Library *, DOPUS_BASE_NAME, 328, \
+	AROS_LC1NR(void,  FixTitleGadgets, AROS_LCA(struct Window *, (___win), A0), struct Library *, DOPUS_BASE_NAME, 328, \
 			 /* s */)
 
 #define FlushBuf(___file) \
 	AROS_LC1(long, FlushBuf, AROS_LCA(APTR, (___file), A0), struct Library *, DOPUS_BASE_NAME, 168, /* s */)
 
-#define FlushImages() AROS_VOID_LC0( FlushImages, struct Library *, DOPUS_BASE_NAME, 108, /* s */)
+#define FlushImages() AROS_LC0NR(void,  FlushImages, struct Library *, DOPUS_BASE_NAME, 108, /* s */)
 
 #define FreeAppMessage(___msg)                                                                                        \
-	AROS_VOID_LC1( FreeAppMessage, AROS_LCA(DOpusAppMessage *, (___msg), A0), struct Library *, DOPUS_BASE_NAME, 298, \
+	AROS_LC1NR(void,  FreeAppMessage, AROS_LCA(DOpusAppMessage *, (___msg), A0), struct Library *, DOPUS_BASE_NAME, 298, \
 			 /* s */)
 
 #define FreeButton(___button)                                                                                        \
-	AROS_VOID_LC1( FreeButton, AROS_LCA(Cfg_Button *, (___button), A0), struct Library *, DOPUS_BASE_NAME, 136, /* s \
+	AROS_LC1NR(void,  FreeButton, AROS_LCA(Cfg_Button *, (___button), A0), struct Library *, DOPUS_BASE_NAME, 136, /* s \
 																												 */)
 
 #define FreeButtonFunction(___func)                         \
-	AROS_VOID_LC1(                                          \
+	AROS_LC1NR(void,                                           \
 			 FreeButtonFunction,                            \
 			 AROS_LCA(Cfg_ButtonFunction *, (___func), A0), \
 			 struct Library *,                              \
@@ -1055,15 +1054,15 @@
 			 /* s */)
 
 #define FreeButtonImages(___list)                                                                                    \
-	AROS_VOID_LC1( FreeButtonImages, AROS_LCA(struct List *, (___list), A0), struct Library *, DOPUS_BASE_NAME, 135, \
+	AROS_LC1NR(void,  FreeButtonImages, AROS_LCA(struct List *, (___list), A0), struct Library *, DOPUS_BASE_NAME, 135, \
 			 /* s */)
 
 #define FreeButtonList(___list)                                                                                    \
-	AROS_VOID_LC1( FreeButtonList, AROS_LCA(struct List *, (___list), A0), struct Library *, DOPUS_BASE_NAME, 134, \
+	AROS_LC1NR(void,  FreeButtonList, AROS_LCA(struct List *, (___list), A0), struct Library *, DOPUS_BASE_NAME, 134, \
 			 /* s */)
 
 #define FreeCachedDiskObject(___icon)                      \
-	AROS_VOID_LC1(                                         \
+	AROS_LC1NR(void,                                          \
 			 FreeCachedDiskObject,                         \
 			 AROS_LCA(struct DiskObject *, (___icon), A0), \
 			 struct Library *,                             \
@@ -1072,7 +1071,7 @@
 			 /* s */)
 
 #define FreeDiskObjectCopy(___icon)                        \
-	AROS_VOID_LC1(                                         \
+	AROS_LC1NR(void,                                          \
 			 FreeDiskObjectCopy,                           \
 			 AROS_LCA(struct DiskObject *, (___icon), A0), \
 			 struct Library *,                             \
@@ -1081,64 +1080,64 @@
 			 /* s */)
 
 #define FreeDosListCopy(___list)                                                                                    \
-	AROS_VOID_LC1( FreeDosListCopy, AROS_LCA(struct List *, (___list), A0), struct Library *, DOPUS_BASE_NAME, 342, \
+	AROS_LC1NR(void,  FreeDosListCopy, AROS_LCA(struct List *, (___list), A0), struct Library *, DOPUS_BASE_NAME, 342, \
 			 /* s */)
 
 #define FreeDosPathList(___list) \
-	AROS_VOID_LC1( FreeDosPathList, AROS_LCA(BPTR, (___list), A0), struct Library *, DOPUS_BASE_NAME, 24, /* s */)
+	AROS_LC1NR(void,  FreeDosPathList, AROS_LCA(BPTR, (___list), A0), struct Library *, DOPUS_BASE_NAME, 24, /* s */)
 
 #define FreeDragInfo(___draginfo)                                                                                \
-	AROS_VOID_LC1( FreeDragInfo, AROS_LCA(DragInfo *, (___draginfo), A0), struct Library *, DOPUS_BASE_NAME, 31, \
+	AROS_LC1NR(void,  FreeDragInfo, AROS_LCA(DragInfo *, (___draginfo), A0), struct Library *, DOPUS_BASE_NAME, 31, \
 			 /* s */)
 
 #define FreeEditHook(___hook)                                                                                    \
-	AROS_VOID_LC1( FreeEditHook, AROS_LCA(struct Hook *, (___hook), A0), struct Library *, DOPUS_BASE_NAME, 236, \
+	AROS_LC1NR(void,  FreeEditHook, AROS_LCA(struct Hook *, (___hook), A0), struct Library *, DOPUS_BASE_NAME, 236, \
 			 /* s */)
 
 #define FreeFiletype(___type)                                                                                     \
-	AROS_VOID_LC1( FreeFiletype, AROS_LCA(Cfg_Filetype *, (___type), A0), struct Library *, DOPUS_BASE_NAME, 147, \
+	AROS_LC1NR(void,  FreeFiletype, AROS_LCA(Cfg_Filetype *, (___type), A0), struct Library *, DOPUS_BASE_NAME, 147, \
 			 /* s */)
 
 #define FreeFiletypeList(___list)                                                                                    \
-	AROS_VOID_LC1(                                                                                                        \
+	AROS_LC1NR(void,                                                                                                         \
 		 FreeFiletypeList, AROS_LCA(Cfg_FiletypeList *, (___list), A0), struct Library *, DOPUS_BASE_NAME, 146, \
 		/* s */)
 
 #define FreeFunction(___function)                                                                                     \
-	AROS_VOID_LC1( FreeFunction, AROS_LCA(Cfg_Function *, (___function), A0), struct Library *, DOPUS_BASE_NAME, 137, \
+	AROS_LC1NR(void,  FreeFunction, AROS_LCA(Cfg_Function *, (___function), A0), struct Library *, DOPUS_BASE_NAME, 137, \
 			 /* s */)
 
 #define FreeILBM(___ilbm) \
-	AROS_VOID_LC1( FreeILBM, AROS_LCA(ILBMHandle *, (___ilbm), A0), struct Library *, DOPUS_BASE_NAME, 159, /* s */)
+	AROS_LC1NR(void,  FreeILBM, AROS_LCA(ILBMHandle *, (___ilbm), A0), struct Library *, DOPUS_BASE_NAME, 159, /* s */)
 
 #define FreeImageRemap(___remap)                                                                                   \
-	AROS_VOID_LC1( FreeImageRemap, AROS_LCA(ImageRemap *, (___remap), A0), struct Library *, DOPUS_BASE_NAME, 256, \
+	AROS_LC1NR(void,  FreeImageRemap, AROS_LCA(ImageRemap *, (___remap), A0), struct Library *, DOPUS_BASE_NAME, 256, \
 			 /* s */)
 
 #define FreeInstruction(___ins)                                                                                        \
-	AROS_VOID_LC1( FreeInstruction, AROS_LCA(Cfg_Instruction *, (___ins), A0), struct Library *, DOPUS_BASE_NAME, 138, \
+	AROS_LC1NR(void,  FreeInstruction, AROS_LCA(Cfg_Instruction *, (___ins), A0), struct Library *, DOPUS_BASE_NAME, 138, \
 			 /* s */)
 
 #define FreeInstructionList(___func)                                                                                \
-	AROS_VOID_LC1(                                                                                                       \
+	AROS_LC1NR(void,                                                                                                        \
 		 FreeInstructionList, AROS_LCA(Cfg_Function *, (___func), A0), struct Library *, DOPUS_BASE_NAME, 139, \
 		/* s */)
 
 #define FreeListerDef(___lister)                                                                                   \
-	AROS_VOID_LC1( FreeListerDef, AROS_LCA(Cfg_Lister *, (___lister), A0), struct Library *, DOPUS_BASE_NAME, 133, \
+	AROS_LC1NR(void,  FreeListerDef, AROS_LCA(Cfg_Lister *, (___lister), A0), struct Library *, DOPUS_BASE_NAME, 133, \
 			 /* s */)
 
 #define FreeMatchHandle(___handle) \
-	AROS_VOID_LC1( FreeMatchHandle, AROS_LCA(APTR, (___handle), A0), struct Library *, DOPUS_BASE_NAME, 290, /* s */)
+	AROS_LC1NR(void,  FreeMatchHandle, AROS_LCA(APTR, (___handle), A0), struct Library *, DOPUS_BASE_NAME, 290, /* s */)
 
 #define FreeMemH(___memory) \
-	AROS_VOID_LC1( FreeMemH, AROS_LCA(void *, (___memory), A0), struct Library *, DOPUS_BASE_NAME, 115, /* s */)
+	AROS_LC1NR(void,  FreeMemH, AROS_LCA(void *, (___memory), A0), struct Library *, DOPUS_BASE_NAME, 115, /* s */)
 
 #define FreeMemHandle(___handle) \
-	AROS_VOID_LC1( FreeMemHandle, AROS_LCA(void *, (___handle), A0), struct Library *, DOPUS_BASE_NAME, 112, /* s */)
+	AROS_LC1NR(void,  FreeMemHandle, AROS_LCA(void *, (___handle), A0), struct Library *, DOPUS_BASE_NAME, 112, /* s */)
 
 #define FreeObject(___objlist, ___object)              \
-	AROS_VOID_LC2(                                     \
+	AROS_LC2NR(void,                                      \
 			 FreeObject,                               \
 			 AROS_LCA(ObjectList *, (___objlist), A0), \
 			 AROS_LCA(GL_Object *, (___object), A1),   \
@@ -1148,11 +1147,11 @@
 			 /* s */)
 
 #define FreeObjectList(___objlist)                                                                                  \
-	AROS_VOID_LC1( FreeObjectList, AROS_LCA(ObjectList *, (___objlist), A0), struct Library *, DOPUS_BASE_NAME, 50, \
+	AROS_LC1NR(void,  FreeObjectList, AROS_LCA(ObjectList *, (___objlist), A0), struct Library *, DOPUS_BASE_NAME, 50, \
 			 /* s */)
 
 #define FreeRemapImage(___image, ___remap)           \
-	AROS_VOID_LC2(                                   \
+	AROS_LC2NR(void,                                    \
 			 FreeRemapImage,                         \
 			 AROS_LCA(APTR, (___image), A0),         \
 			 AROS_LCA(ImageRemap *, (___remap), A1), \
@@ -1162,20 +1161,20 @@
 			 /* s */)
 
 #define FreeRexxMsgEx(___msg)                                                                                       \
-	AROS_VOID_LC1( FreeRexxMsgEx, AROS_LCA(struct RexxMsg *, (___msg), A0), struct Library *, DOPUS_BASE_NAME, 335, \
+	AROS_LC1NR(void,  FreeRexxMsgEx, AROS_LCA(struct RexxMsg *, (___msg), A0), struct Library *, DOPUS_BASE_NAME, 335, \
 			 /* s */)
 
 #define FreeSemaphore(___sem)                                                                                          \
-	AROS_VOID_LC1(                                                                                                          \
+	AROS_LC1NR(void,                                                                                                           \
 		 FreeSemaphore, AROS_LCA(struct SignalSemaphore *, (___sem), A0), struct Library *, DOPUS_BASE_NAME, 224, \
 		/* s */)
 
 #define FreeTimer(___handle)                                                                                        \
-	AROS_VOID_LC1( FreeTimer, AROS_LCA(TimerHandle *, (___handle), A0), struct Library *, DOPUS_BASE_NAME, 19, /* s \
+	AROS_LC1NR(void,  FreeTimer, AROS_LCA(TimerHandle *, (___handle), A0), struct Library *, DOPUS_BASE_NAME, 19, /* s \
 																												*/)
 
 #define FreeWindowMenus(___window)                                                                                     \
-	AROS_VOID_LC1( FreeWindowMenus, AROS_LCA(struct Window *, (___window), A0), struct Library *, DOPUS_BASE_NAME, 64, \
+	AROS_LC1NR(void,  FreeWindowMenus, AROS_LCA(struct Window *, (___window), A0), struct Library *, DOPUS_BASE_NAME, 64, \
 			 /* s */)
 
 #define GetCachedDefDiskObject(___type)     \
@@ -1219,7 +1218,7 @@
 			 /* s */)
 
 #define GetDosListCopy(___list, ___memory)           \
-	AROS_VOID_LC2(                                   \
+	AROS_LC2NR(void,                                    \
 			 GetDosListCopy,                         \
 			 AROS_LCA(struct List *, (___list), A0), \
 			 AROS_LCA(APTR, (___memory), A1),        \
@@ -1232,7 +1231,7 @@
 	AROS_LC1(BPTR, GetDosPathList, AROS_LCA(BPTR, (___copy), A0), struct Library *, DOPUS_BASE_NAME, 23, /* s */)
 
 #define GetDragImage(___draginfo, ___x, ___y)         \
-	AROS_VOID_LC3(                                    \
+	AROS_LC3NR(void,                                     \
 			 GetDragImage,                            \
 			 AROS_LCA(DragInfo *, (___draginfo), A0), \
 			 AROS_LCA(ULONG, (___x), D0),             \
@@ -1256,7 +1255,7 @@
 			 /* s */)
 
 #define GetDragMask(___drag) \
-	AROS_VOID_LC1( GetDragMask, AROS_LCA(DragInfo *, (___drag), A0), struct Library *, DOPUS_BASE_NAME, 36, /* s */)
+	AROS_LC1NR(void,  GetDragMask, AROS_LCA(DragInfo *, (___drag), A0), struct Library *, DOPUS_BASE_NAME, 36, /* s */)
 
 #define GetEditHook(___type, ___flags, ___tags)         \
 	AROS_LC3(struct Hook *,                             \
@@ -1306,7 +1305,7 @@
 		/* s */)
 
 #define GetIconPosition(___icon, ___x, ___y)               \
-	AROS_VOID_LC3(                                         \
+	AROS_LC3NR(void,                                          \
 			 GetIconPosition,                              \
 			 AROS_LCA(struct DiskObject *, (___icon), A0), \
 			 AROS_LCA(short *, (___x), A1),                \
@@ -1321,7 +1320,7 @@
 			 /* s */)
 
 #define GetImageAttrs(___image, ___tags)                \
-	AROS_VOID_LC2(                                      \
+	AROS_LC2NR(void,                                       \
 			 GetImageAttrs,                             \
 			 AROS_LCA(APTR, (___image), A0),            \
 			 AROS_LCA(struct TagItem *, (___tags), A1), \
@@ -1380,7 +1379,7 @@
 			 /* s */)
 
 #define GetPalette32(___vp, ___palette, ___count, ___first) \
-	AROS_VOID_LC4(                                          \
+	AROS_LC4NR(void,                                           \
 			 GetPalette32,                                  \
 			 AROS_LCA(struct ViewPort *, (___vp), A0),      \
 			 AROS_LCA(ULONG *, (___palette), A1),           \
@@ -1392,7 +1391,7 @@
 			 /* s */)
 
 #define GetPopUpImageSize(___window, ___menu, ___width, ___height) \
-	AROS_VOID_LC4(                                                 \
+	AROS_LC4NR(void,                                                  \
 			 GetPopUpImageSize,                                    \
 			 AROS_LCA(struct Window *, (___window), A0),           \
 			 AROS_LCA(PopUpMenu *, (___menu), A1),                 \
@@ -1414,7 +1413,7 @@
 			 /* s */)
 
 #define GetProgressWindow(___win, ___tags)              \
-	AROS_VOID_LC2(                                      \
+	AROS_LC2NR(void,                                       \
 			 GetProgressWindow,                         \
 			 AROS_LCA(APTR, (___win), A0),              \
 			 AROS_LCA(struct TagItem *, (___tags), A1), \
@@ -1506,11 +1505,11 @@
 			 /* s */)
 
 #define HideDragImage(___draginfo)                                                                                \
-	AROS_VOID_LC1( HideDragImage, AROS_LCA(DragInfo *, (___draginfo), A0), struct Library *, DOPUS_BASE_NAME, 34, \
+	AROS_LC1NR(void,  HideDragImage, AROS_LCA(DragInfo *, (___draginfo), A0), struct Library *, DOPUS_BASE_NAME, 34, \
 			 /* s */)
 
 #define HideProgressWindow(___win) \
-	AROS_VOID_LC1( HideProgressWindow, AROS_LCA(APTR, (___win), A0), struct Library *, DOPUS_BASE_NAME, 273, /* s */)
+	AROS_LC1NR(void,  HideProgressWindow, AROS_LCA(APTR, (___win), A0), struct Library *, DOPUS_BASE_NAME, 273, /* s */)
 
 #define IFFChunkID(___iff) \
 	AROS_LC1(ULONG, IFFChunkID, AROS_LCA(APTR, (___iff), A0), struct Library *, DOPUS_BASE_NAME, 232, /* s */)
@@ -1522,10 +1521,10 @@
 	AROS_LC1(long, IFFChunkSize, AROS_LCA(APTR, (___iff), A0), struct Library *, DOPUS_BASE_NAME, 228, /* s */)
 
 #define IFFClose(___handle) \
-	AROS_VOID_LC1( IFFClose, AROS_LCA(APTR, (___handle), A0), struct Library *, DOPUS_BASE_NAME, 201, /* s */)
+	AROS_LC1NR(void,  IFFClose, AROS_LCA(APTR, (___handle), A0), struct Library *, DOPUS_BASE_NAME, 201, /* s */)
 
 #define IFFFailure(___iff) \
-	AROS_VOID_LC1( IFFFailure, AROS_LCA(APTR, (___iff), A0), struct Library *, DOPUS_BASE_NAME, 265, /* s */)
+	AROS_LC1NR(void,  IFFFailure, AROS_LCA(APTR, (___iff), A0), struct Library *, DOPUS_BASE_NAME, 265, /* s */)
 
 #define IFFFileHandle(___iff) \
 	AROS_LC1(APTR, IFFFileHandle, AROS_LCA(APTR, (___iff), A0), struct Library *, DOPUS_BASE_NAME, 230, /* s */)
@@ -1628,17 +1627,17 @@
 			 /* s */)
 
 #define IPC_Flush(___port) \
-	AROS_VOID_LC1( IPC_Flush, AROS_LCA(IPCData *, (___port), A0), struct Library *, DOPUS_BASE_NAME, 101, /* s */)
+	AROS_LC1NR(void,  IPC_Flush, AROS_LCA(IPCData *, (___port), A0), struct Library *, DOPUS_BASE_NAME, 101, /* s */)
 
 #define IPC_Free(___ipc) \
-	AROS_VOID_LC1( IPC_Free, AROS_LCA(IPCData *, (___ipc), A0), struct Library *, DOPUS_BASE_NAME, 94, /* s */)
+	AROS_LC1NR(void,  IPC_Free, AROS_LCA(IPCData *, (___ipc), A0), struct Library *, DOPUS_BASE_NAME, 94, /* s */)
 
 #define IPC_GetGoodbye(___msg)                                                                                   \
 	AROS_LC1(IPTR, IPC_GetGoodbye, AROS_LCA(IPCMessage *, (___msg), A0), struct Library *, DOPUS_BASE_NAME, 99,  \
 			 /* s */)
 
 #define IPC_Goodbye(___ipc, ___owner, ___flags)   \
-	AROS_VOID_LC3(                                \
+	AROS_LC3NR(void,                                 \
 			 IPC_Goodbye,                         \
 			 AROS_LCA(IPCData *, (___ipc), A0),   \
 			 AROS_LCA(IPCData *, (___owner), A1), \
@@ -1649,7 +1648,7 @@
 			 /* s */)
 
 #define IPC_Hello(___ipc, ___owner)               \
-	AROS_VOID_LC2(                                \
+	AROS_LC2NR(void,                                 \
 			 IPC_Hello,                           \
 			 AROS_LCA(IPCData *, (___ipc), A0),   \
 			 AROS_LCA(IPCData *, (___owner), A1), \
@@ -1674,7 +1673,7 @@
 			 /* s */)
 
 #define IPC_ListCommand(___list, ___command, ___flags, ___data, ___wait) \
-	AROS_VOID_LC5(                                                       \
+	AROS_LC5NR(void,                                                        \
 			 IPC_ListCommand,                                            \
 			 AROS_LCA(struct ListLock *, (___list), A0),                 \
 			 AROS_LCA(ULONG, (___command), D0),                          \
@@ -1709,7 +1708,7 @@
 			 /* s */)
 
 #define IPC_Quit(___ipc, ___flags, ___wait)     \
-	AROS_VOID_LC3(                              \
+	AROS_LC3NR(void,                               \
 			 IPC_Quit,                          \
 			 AROS_LCA(IPCData *, (___ipc), A0), \
 			 AROS_LCA(ULONG, (___flags), D0),   \
@@ -1720,7 +1719,7 @@
 			 /* s */)
 
 #define IPC_QuitName(___list, ___name, ___flags)         \
-	AROS_VOID_LC3(                                       \
+	AROS_LC3NR(void,                                        \
 			 IPC_QuitName,                               \
 			 AROS_LCA(struct ListLock *, (___list), A0), \
 			 AROS_LCA(char *, (___name), A1),            \
@@ -1731,7 +1730,7 @@
 			 /* s */)
 
 #define IPC_Reply(___msg) \
-	AROS_VOID_LC1( IPC_Reply, AROS_LCA(IPCMessage *, (___msg), A0), struct Library *, DOPUS_BASE_NAME, 93, /* s */)
+	AROS_LC1NR(void,  IPC_Reply, AROS_LCA(IPCMessage *, (___msg), A0), struct Library *, DOPUS_BASE_NAME, 93, /* s */)
 
 #define IPC_SafeCommand(___ipc, ___command, ___flags, ___data, ___data_free, ___reply, ___list) \
 	AROS_LC7(IPTR,                                                                              \
@@ -1773,7 +1772,7 @@
 	AROS_LC1(BOOL, InitDragDBuf, AROS_LCA(DragInfo *, (___drag), A0), struct Library *, DOPUS_BASE_NAME, 334, /* s */)
 
 #define InitListLock(___ll, ___name)                   \
-	AROS_VOID_LC2(                                     \
+	AROS_LC2NR(void,                                      \
 			 InitListLock,                             \
 			 AROS_LCA(struct ListLock *, (___ll), A0), \
 			 AROS_LCA(char *, (___name), A1),          \
@@ -1783,7 +1782,7 @@
 			 /* s */)
 
 #define InitWindowDims(___window, ___dims)                \
-	AROS_VOID_LC2(                                        \
+	AROS_LC2NR(void,                                         \
 			 InitWindowDims,                              \
 			 AROS_LCA(struct Window *, (___window), A0),  \
 			 AROS_LCA(WindowDimensions *, (___dims), A1), \
@@ -1802,7 +1801,7 @@
 		/* s */)
 
 #define Ito26(___num, ___str)                \
-	AROS_VOID_LC2(                           \
+	AROS_LC2NR(void,                            \
 			 Ito26,                          \
 			 AROS_LCA(ULONG, (___num), D0),  \
 			 AROS_LCA(char *, (___str), A0), \
@@ -1812,7 +1811,7 @@
 			 /* s */)
 
 #define Itoa(___num, ___str, ___sep)         \
-	AROS_VOID_LC3(                           \
+	AROS_LC3NR(void,                            \
 			 Itoa,                           \
 			 AROS_LCA(long, (___num), D0),   \
 			 AROS_LCA(char *, (___str), A0), \
@@ -1823,7 +1822,7 @@
 			 /* s */)
 
 #define ItoaU(___num, ___str, ___sep)        \
-	AROS_VOID_LC3(                           \
+	AROS_LC3NR(void,                            \
 			 ItoaU,                          \
 			 AROS_LCA(ULONG, (___num), D0),  \
 			 AROS_LCA(char *, (___str), A0), \
@@ -1834,7 +1833,7 @@
 			 /* s */)
 
 #define ItoaU64(___num, ___str, ___str_size, ___sep) \
-	AROS_VOID_LC4(                                   \
+	AROS_LC4NR(void,                                    \
 			 ItoaU64,                                \
 			 AROS_LCA(UQUAD *, (___num), A0),        \
 			 AROS_LCA(char *, (___str), A1),         \
@@ -1846,11 +1845,11 @@
 			 /* s */)
 
 #define LayoutResize(___window)                                                                                      \
-	AROS_VOID_LC1( LayoutResize, AROS_LCA(struct Window *, (___window), A0), struct Library *, DOPUS_BASE_NAME, 292, \
+	AROS_LC1NR(void,  LayoutResize, AROS_LCA(struct Window *, (___window), A0), struct Library *, DOPUS_BASE_NAME, 292, \
 			 /* s */)
 
 #define LoadPalette32(___vp, ___palette)               \
-	AROS_VOID_LC2(                                     \
+	AROS_LC2NR(void,                                      \
 			 LoadPalette32,                            \
 			 AROS_LCA(struct ViewPort *, (___vp), A0), \
 			 AROS_LCA(ULONG *, (___palette), A1),      \
@@ -1873,7 +1872,7 @@
 #define LockAppList() AROS_LC0(APTR, LockAppList, struct Library *, DOPUS_BASE_NAME, 184, /* s */)
 
 #define LockAttList(___list, ___exclusive)        \
-	AROS_VOID_LC2(                                \
+	AROS_LC2NR(void,                                 \
 			 LockAttList,                         \
 			 AROS_LCA(Att_List *, (___list), A0), \
 			 AROS_LCA(short, (___exclusive), D0), \
@@ -1892,7 +1891,7 @@
 			 /* s */)
 
 #define MUFSLogin(___window, ___name, ___password)       \
-	AROS_VOID_LC3(                                       \
+	AROS_LC3NR(void,                                        \
 			 MUFSLogin,                                  \
 			 AROS_LCA(struct Window *, (___window), A0), \
 			 AROS_LCA(char *, (___name), A1),            \
@@ -2010,7 +2009,7 @@
 			 185,                            \
 			 /* s */)
 
-#define NotifyDiskChange() AROS_VOID_LC0( NotifyDiskChange, struct Library *, DOPUS_BASE_NAME, 340, /* s */)
+#define NotifyDiskChange() AROS_LC0NR(void,  NotifyDiskChange, struct Library *, DOPUS_BASE_NAME, 340, /* s */)
 
 #define OpenBuf(___name, ___mode, ___buffer_size)  \
 	AROS_LC3(APTR,                                 \
@@ -2214,11 +2213,11 @@
 			 /* s */)
 
 #define PopUpEndSub(___handle)                                                                                    \
-	AROS_VOID_LC1( PopUpEndSub, AROS_LCA(PopUpHandle *, (___handle), A0), struct Library *, DOPUS_BASE_NAME, 379, \
+	AROS_LC1NR(void,  PopUpEndSub, AROS_LCA(PopUpHandle *, (___handle), A0), struct Library *, DOPUS_BASE_NAME, 379, \
 			 /* s */)
 
 #define PopUpFreeHandle(___handle)                                                                                    \
-	AROS_VOID_LC1( PopUpFreeHandle, AROS_LCA(PopUpHandle *, (___handle), A0), struct Library *, DOPUS_BASE_NAME, 375, \
+	AROS_LC1NR(void,  PopUpFreeHandle, AROS_LCA(PopUpHandle *, (___handle), A0), struct Library *, DOPUS_BASE_NAME, 375, \
 			 /* s */)
 
 #define PopUpItemSub(___handle, ___item)               \
@@ -2255,7 +2254,7 @@
 			 /* s */)
 
 #define PopUpSeparator(___handle)                                                                                    \
-	AROS_VOID_LC1( PopUpSeparator, AROS_LCA(PopUpHandle *, (___handle), A0), struct Library *, DOPUS_BASE_NAME, 377, \
+	AROS_LC1NR(void,  PopUpSeparator, AROS_LCA(PopUpHandle *, (___handle), A0), struct Library *, DOPUS_BASE_NAME, 377, \
 			 /* s */)
 
 #define PopUpSetFlags(___menu, ___id, ___value, ___mask) \
@@ -2372,7 +2371,7 @@
 			 /* s */)
 
 #define RefreshObjectList(___window, ___list)            \
-	AROS_VOID_LC2(                                       \
+	AROS_LC2NR(void,                                        \
 			 RefreshObjectList,                          \
 			 AROS_LCA(struct Window *, (___window), A0), \
 			 AROS_LCA(ObjectList *, (___list), A1),      \
@@ -2382,11 +2381,11 @@
 			 /* s */)
 
 #define RemAllocBitmapPatch(___handle)                                                                           \
-	AROS_VOID_LC1( RemAllocBitmapPatch, AROS_LCA(APTR, (___handle), A0), struct Library *, DOPUS_BASE_NAME, 382, \
+	AROS_LC1NR(void,  RemAllocBitmapPatch, AROS_LCA(APTR, (___handle), A0), struct Library *, DOPUS_BASE_NAME, 382, \
 			 /* s */)
 
 #define RemDragImage(___drag) \
-	AROS_VOID_LC1( RemDragImage, AROS_LCA(DragInfo *, (___drag), A0), struct Library *, DOPUS_BASE_NAME, 39, /* s */)
+	AROS_LC1NR(void,  RemDragImage, AROS_LCA(DragInfo *, (___drag), A0), struct Library *, DOPUS_BASE_NAME, 39, /* s */)
 
 #define RemapIcon(___icon, ___screen, ___free)             \
 	AROS_LC3(BOOL,                                         \
@@ -2411,36 +2410,36 @@
 			 /* s */)
 
 #define RemoveDragImage(___drag)                                                                                 \
-	AROS_VOID_LC1( RemoveDragImage, AROS_LCA(DragInfo *, (___drag), A0), struct Library *, DOPUS_BASE_NAME, 349, \
+	AROS_LC1NR(void,  RemoveDragImage, AROS_LCA(DragInfo *, (___drag), A0), struct Library *, DOPUS_BASE_NAME, 349, \
 			 /* s */)
 
 #define RemoveNotifyRequest(___node)                                                                                \
-	AROS_VOID_LC1( RemoveNotifyRequest, AROS_LCA(APTR, (___node), A0), struct Library *, DOPUS_BASE_NAME, 188, /* s \
+	AROS_LC1NR(void,  RemoveNotifyRequest, AROS_LCA(APTR, (___node), A0), struct Library *, DOPUS_BASE_NAME, 188, /* s \
 																												*/)
 
-#define RemovedFunc1() AROS_VOID_LC0( RemovedFunc1, struct Library *, DOPUS_BASE_NAME, 216, /* s */)
+#define RemovedFunc1() AROS_LC0NR(void,  RemovedFunc1, struct Library *, DOPUS_BASE_NAME, 216, /* s */)
 
-#define RemovedFunc10() AROS_VOID_LC0( RemovedFunc10, struct Library *, DOPUS_BASE_NAME, 260, /* s */)
+#define RemovedFunc10() AROS_LC0NR(void,  RemovedFunc10, struct Library *, DOPUS_BASE_NAME, 260, /* s */)
 
-#define RemovedFunc11() AROS_VOID_LC0( RemovedFunc11, struct Library *, DOPUS_BASE_NAME, 261, /* s */)
+#define RemovedFunc11() AROS_LC0NR(void,  RemovedFunc11, struct Library *, DOPUS_BASE_NAME, 261, /* s */)
 
-#define RemovedFunc12() AROS_VOID_LC0( RemovedFunc12, struct Library *, DOPUS_BASE_NAME, 262, /* s */)
+#define RemovedFunc12() AROS_LC0NR(void,  RemovedFunc12, struct Library *, DOPUS_BASE_NAME, 262, /* s */)
 
-#define RemovedFunc2() AROS_VOID_LC0( RemovedFunc2, struct Library *, DOPUS_BASE_NAME, 217, /* s */)
+#define RemovedFunc2() AROS_LC0NR(void,  RemovedFunc2, struct Library *, DOPUS_BASE_NAME, 217, /* s */)
 
-#define RemovedFunc3() AROS_VOID_LC0( RemovedFunc3, struct Library *, DOPUS_BASE_NAME, 218, /* s */)
+#define RemovedFunc3() AROS_LC0NR(void,  RemovedFunc3, struct Library *, DOPUS_BASE_NAME, 218, /* s */)
 
-#define RemovedFunc4() AROS_VOID_LC0( RemovedFunc4, struct Library *, DOPUS_BASE_NAME, 219, /* s */)
+#define RemovedFunc4() AROS_LC0NR(void,  RemovedFunc4, struct Library *, DOPUS_BASE_NAME, 219, /* s */)
 
-#define RemovedFunc5() AROS_VOID_LC0( RemovedFunc5, struct Library *, DOPUS_BASE_NAME, 220, /* s */)
+#define RemovedFunc5() AROS_LC0NR(void,  RemovedFunc5, struct Library *, DOPUS_BASE_NAME, 220, /* s */)
 
-#define RemovedFunc6() AROS_VOID_LC0( RemovedFunc6, struct Library *, DOPUS_BASE_NAME, 221, /* s */)
+#define RemovedFunc6() AROS_LC0NR(void,  RemovedFunc6, struct Library *, DOPUS_BASE_NAME, 221, /* s */)
 
-#define RemovedFunc7() AROS_VOID_LC0( RemovedFunc7, struct Library *, DOPUS_BASE_NAME, 222, /* s */)
+#define RemovedFunc7() AROS_LC0NR(void,  RemovedFunc7, struct Library *, DOPUS_BASE_NAME, 222, /* s */)
 
-#define RemovedFunc8() AROS_VOID_LC0( RemovedFunc8, struct Library *, DOPUS_BASE_NAME, 246, /* s */)
+#define RemovedFunc8() AROS_LC0NR(void,  RemovedFunc8, struct Library *, DOPUS_BASE_NAME, 246, /* s */)
 
-#define RemovedFunc9() AROS_VOID_LC0( RemovedFunc9, struct Library *, DOPUS_BASE_NAME, 258, /* s */)
+#define RemovedFunc9() AROS_LC0NR(void,  RemovedFunc9, struct Library *, DOPUS_BASE_NAME, 258, /* s */)
 
 #define RenderImage(___rp, ___image, ___left, ___top, ___tags) \
 	AROS_LC5(short,                                            \
@@ -2464,14 +2463,14 @@
 #endif /* !NO_INLINE_STDARG */
 
 #define ReplyAppMessage(___msg)                                                                                        \
-	AROS_VOID_LC1( ReplyAppMessage, AROS_LCA(DOpusAppMessage *, (___msg), A0), struct Library *, DOPUS_BASE_NAME, 299, \
+	AROS_LC1NR(void,  ReplyAppMessage, AROS_LCA(DOpusAppMessage *, (___msg), A0), struct Library *, DOPUS_BASE_NAME, 299, \
 			 /* s */)
 
 #define ReplyFreeMsg(___msg) \
-	AROS_VOID_LC1( ReplyFreeMsg, AROS_LCA(APTR, (___msg), A0), struct Library *, DOPUS_BASE_NAME, 197, /* s */)
+	AROS_LC1NR(void,  ReplyFreeMsg, AROS_LCA(APTR, (___msg), A0), struct Library *, DOPUS_BASE_NAME, 197, /* s */)
 
 #define ReplyWindowMsg(___msg)                                                                                      \
-	AROS_VOID_LC1(                                                                                                       \
+	AROS_LC1NR(void,                                                                                                        \
 		 ReplyWindowMsg, AROS_LCA(struct IntuiMessage *, (___msg), A0), struct Library *, DOPUS_BASE_NAME, 43, \
 		/* s */)
 
@@ -2564,7 +2563,7 @@
 			 /* s */)
 
 #define Seed(___seed) \
-	AROS_VOID_LC1( Seed, AROS_LCA(int, (___seed), D0), struct Library *, DOPUS_BASE_NAME, 259, /* s */)
+	AROS_LC1NR(void,  Seed, AROS_LCA(int, (___seed), D0), struct Library *, DOPUS_BASE_NAME, 259, /* s */)
 
 #define SeekBuf(___file, ___offset, ___mode)  \
 	AROS_LC3(long,                            \
@@ -2607,7 +2606,7 @@
 			  /* s */)
 
 #define SendNotifyMsg(___type, ___data, ___flags, ___wait, ___name, ___fib) \
-	AROS_VOID_LC6(                                                          \
+	AROS_LC6NR(void,                                                           \
 			 SendNotifyMsg,                                                 \
 			 AROS_LCA(ULONG, (___type), D0),                                \
 			 AROS_LCA(IPTR, (___data), D1),                                 \
@@ -2646,11 +2645,11 @@
 			 /* s */)
 
 #define SetBusyPointer(___window)                                                                                     \
-	AROS_VOID_LC1( SetBusyPointer, AROS_LCA(struct Window *, (___window), A0), struct Library *, DOPUS_BASE_NAME, 15, \
+	AROS_LC1NR(void,  SetBusyPointer, AROS_LCA(struct Window *, (___window), A0), struct Library *, DOPUS_BASE_NAME, 15, \
 			 /* s */)
 
 #define SetConfigWindowLimits(___window, ___min, ___max) \
-	AROS_VOID_LC3(                                       \
+	AROS_LC3NR(void,                                        \
 			 SetConfigWindowLimits,                      \
 			 AROS_LCA(struct Window *, (___window), A0), \
 			 AROS_LCA(ConfigWindow *, (___min), A1),     \
@@ -2661,7 +2660,7 @@
 			 /* s */)
 
 #define SetEnv(___name, ___data, ___save)     \
-	AROS_VOID_LC3(                            \
+	AROS_LC3NR(void,                             \
 			 SetEnv,                          \
 			 AROS_LCA(char *, (___name), A0), \
 			 AROS_LCA(char *, (___data), A1), \
@@ -2672,7 +2671,7 @@
 			 /* s */)
 
 #define SetGadgetChoices(___list, ___id, ___choices) \
-	AROS_VOID_LC3(                                   \
+	AROS_LC3NR(void,                                    \
 			 SetGadgetChoices,                       \
 			 AROS_LCA(ObjectList *, (___list), A0),  \
 			 AROS_LCA(ULONG, (___id), D0),           \
@@ -2683,7 +2682,7 @@
 			 /* s */)
 
 #define SetGadgetValue(___list, ___id, ___value)    \
-	AROS_VOID_LC3(                                  \
+	AROS_LC3NR(void,                                   \
 			 SetGadgetValue,                        \
 			 AROS_LCA(ObjectList *, (___list), A0), \
 			 AROS_LCA(UWORD, (___id), D0),          \
@@ -2694,7 +2693,7 @@
 			 /* s */)
 
 #define SetIconFlags(___icon, ___flags)                    \
-	AROS_VOID_LC2(                                         \
+	AROS_LC2NR(void,                                          \
 			 SetIconFlags,                                 \
 			 AROS_LCA(struct DiskObject *, (___icon), A0), \
 			 AROS_LCA(ULONG, (___flags), D0),              \
@@ -2704,7 +2703,7 @@
 			 /* s */)
 
 #define SetIconPosition(___icon, ___x, ___y)               \
-	AROS_VOID_LC3(                                         \
+	AROS_LC3NR(void,                                          \
 			 SetIconPosition,                              \
 			 AROS_LCA(struct DiskObject *, (___icon), A0), \
 			 AROS_LCA(short, (___x), D0),                  \
@@ -2725,7 +2724,7 @@
 			 /* s */)
 
 #define SetNewIconsFlags(___flags, ___prec)   \
-	AROS_VOID_LC2(                            \
+	AROS_LC2NR(void,                             \
 			 SetNewIconsFlags,                \
 			 AROS_LCA(ULONG, (___flags), D0), \
 			 AROS_LCA(short, (___prec), D1),  \
@@ -2735,7 +2734,7 @@
 			 /* s */)
 
 #define SetNotifyRequest(___req, ___flags, ___mask) \
-	AROS_VOID_LC3(                                  \
+	AROS_LC3NR(void,                                   \
 			 SetNotifyRequest,                      \
 			 AROS_LCA(APTR, (___req), A0),          \
 			 AROS_LCA(ULONG, (___flags), D0),       \
@@ -2746,7 +2745,7 @@
 			 /* s */)
 
 #define SetObjectKind(___list, ___id, ___kind)      \
-	AROS_VOID_LC3(                                  \
+	AROS_LC3NR(void,                                   \
 			 SetObjectKind,                         \
 			 AROS_LCA(ObjectList *, (___list), A0), \
 			 AROS_LCA(ULONG, (___id), D0),          \
@@ -2757,10 +2756,10 @@
 			 /* s */)
 
 #define SetPopUpDelay(___delay) \
-	AROS_VOID_LC1( SetPopUpDelay, AROS_LCA(short, (___delay), D0), struct Library *, DOPUS_BASE_NAME, 370, /* s */)
+	AROS_LC1NR(void,  SetPopUpDelay, AROS_LCA(short, (___delay), D0), struct Library *, DOPUS_BASE_NAME, 370, /* s */)
 
 #define SetProgressWindow(___win, ___tags)              \
-	AROS_VOID_LC2(                                      \
+	AROS_LC2NR(void,                                       \
 			 SetProgressWindow,                         \
 			 AROS_LCA(APTR, (___win), A0),              \
 			 AROS_LCA(struct TagItem *, (___tags), A1), \
@@ -2778,7 +2777,7 @@
 #endif /* !NO_INLINE_STDARG */
 
 #define SetReqBackFill(___hook, ___scr)                \
-	AROS_VOID_LC2(                                     \
+	AROS_LC2NR(void,                                      \
 			 SetReqBackFill,                           \
 			 AROS_LCA(struct Hook *, (___hook), A0),   \
 			 AROS_LCA(struct Screen **, (___scr), A1), \
@@ -2800,7 +2799,7 @@
 			 /* s */)
 
 #define SetStatusText(___window, ___text)                \
-	AROS_VOID_LC2(                                       \
+	AROS_LC2NR(void,                                        \
 			 SetStatusText,                              \
 			 AROS_LCA(struct Window *, (___window), A0), \
 			 AROS_LCA(char *, (___text), A1),            \
@@ -2823,11 +2822,11 @@
 			 /* s */)
 
 #define SetWindowBusy(___window)                                                                                     \
-	AROS_VOID_LC1( SetWindowBusy, AROS_LCA(struct Window *, (___window), A0), struct Library *, DOPUS_BASE_NAME, 65, \
+	AROS_LC1NR(void,  SetWindowBusy, AROS_LCA(struct Window *, (___window), A0), struct Library *, DOPUS_BASE_NAME, 65, \
 			 /* s */)
 
 #define SetWindowID(___window, ___id_ptr, ___id, ___port) \
-	AROS_VOID_LC4(                                        \
+	AROS_LC4NR(void,                                         \
 			 SetWindowID,                                 \
 			 AROS_LCA(struct Window *, (___window), A0),  \
 			 AROS_LCA(WindowID *, (___id_ptr), A1),       \
@@ -2839,7 +2838,7 @@
 			 /* s */)
 
 #define ShowDragImage(___draginfo, ___x, ___y)        \
-	AROS_VOID_LC3(                                    \
+	AROS_LC3NR(void,                                     \
 			 ShowDragImage,                           \
 			 AROS_LCA(DragInfo *, (___draginfo), A0), \
 			 AROS_LCA(ULONG, (___x), D0),             \
@@ -2850,7 +2849,7 @@
 			 /* s */)
 
 #define ShowProgressBar(___window, ___object, ___total, ___count) \
-	AROS_VOID_LC4(                                                \
+	AROS_LC4NR(void,                                                 \
 			 ShowProgressBar,                                     \
 			 AROS_LCA(struct Window *, (___window), A0),          \
 			 AROS_LCA(GL_Object *, (___object), A1),              \
@@ -2862,7 +2861,7 @@
 			 /* s */)
 
 #define ShowProgressWindow(___prog, ___scr, ___win)   \
-	AROS_VOID_LC3(                                    \
+	AROS_LC3NR(void,                                     \
 			 ShowProgressWindow,                      \
 			 AROS_LCA(APTR, (___prog), A0),           \
 			 AROS_LCA(struct Screen *, (___scr), A1), \
@@ -2873,7 +2872,7 @@
 			 /* s */)
 
 #define ShowSemaphore(___sem)                                                                                          \
-	AROS_VOID_LC1(                                                                                                          \
+	AROS_LC1NR(void,                                                                                                           \
 		 ShowSemaphore, AROS_LCA(struct SignalSemaphore *, (___sem), A0), struct Library *, DOPUS_BASE_NAME, 225, \
 		/* s */)
 
@@ -2902,7 +2901,7 @@
 #endif /* !NO_INLINE_STDARG */
 
 #define StampDragImage(___draginfo, ___x, ___y)       \
-	AROS_VOID_LC3(                                    \
+	AROS_LC3NR(void,                                     \
 			 StampDragImage,                          \
 			 AROS_LCA(DragInfo *, (___draginfo), A0), \
 			 AROS_LCA(ULONG, (___x), D0),             \
@@ -2913,7 +2912,7 @@
 			 /* s */)
 
 #define StartRefreshConfigWindow(___win, ___state)    \
-	AROS_VOID_LC2(                                    \
+	AROS_LC2NR(void,                                     \
 			 StartRefreshConfigWindow,                \
 			 AROS_LCA(struct Window *, (___win), A0), \
 			 AROS_LCA(long, (___state), D0),          \
@@ -2923,7 +2922,7 @@
 			 /* s */)
 
 #define StartTimer(___handle, ___secs, ___micro)       \
-	AROS_VOID_LC3(                                     \
+	AROS_LC3NR(void,                                      \
 			 StartTimer,                               \
 			 AROS_LCA(TimerHandle *, (___handle), A0), \
 			 AROS_LCA(ULONG, (___secs), D0),           \
@@ -2934,11 +2933,11 @@
 			 /* s */)
 
 #define StopTimer(___handle)                                                                                        \
-	AROS_VOID_LC1( StopTimer, AROS_LCA(TimerHandle *, (___handle), A0), struct Library *, DOPUS_BASE_NAME, 22, /* s \
+	AROS_LC1NR(void,  StopTimer, AROS_LCA(TimerHandle *, (___handle), A0), struct Library *, DOPUS_BASE_NAME, 22, /* s \
 																												*/)
 
 #define StoreGadgetValue(___list, ___msg)                   \
-	AROS_VOID_LC2(                                          \
+	AROS_LC2NR(void,                                           \
 			 StoreGadgetValue,                              \
 			 AROS_LCA(ObjectList *, (___list), A0),         \
 			 AROS_LCA(struct IntuiMessage *, (___msg), A1), \
@@ -2948,7 +2947,7 @@
 			 /* s */)
 
 #define StoreWindowDims(___window, ___dims)               \
-	AROS_VOID_LC2(                                        \
+	AROS_LC2NR(void,                                         \
 			 StoreWindowDims,                             \
 			 AROS_LCA(struct Window *, (___window), A0),  \
 			 AROS_LCA(WindowDimensions *, (___dims), A1), \
@@ -2981,7 +2980,7 @@
 			 /* s */)
 
 #define StripIntuiMessagesDopus(___window)               \
-	AROS_VOID_LC1(                                       \
+	AROS_LC1NR(void,                                        \
 			 StripIntuiMessagesDopus,                    \
 			 AROS_LCA(struct Window *, (___window), A0), \
 			 struct Library *,                           \
@@ -2990,7 +2989,7 @@
 			 /* s */)
 
 #define StripWindowMessages(___port, ___except)                \
-	AROS_VOID_LC2(                                             \
+	AROS_LC2NR(void,                                              \
 			 StripWindowMessages,                              \
 			 AROS_LCA(struct MsgPort *, (___port), A0),        \
 			 AROS_LCA(struct IntuiMessage *, (___except), A1), \
@@ -3000,7 +2999,7 @@
 			 /* s */)
 
 #define SwapListNodes(___list, ___s1, ___s2)         \
-	AROS_VOID_LC3(                                   \
+	AROS_LC3NR(void,                                    \
 			 SwapListNodes,                          \
 			 AROS_LCA(struct List *, (___list), A0), \
 			 AROS_LCA(struct Node *, (___s1), A1),   \
@@ -3014,24 +3013,24 @@
 	AROS_LC1(BOOL, TimerActive, AROS_LCA(TimerHandle *, (___timer), A0), struct Library *, DOPUS_BASE_NAME, 198, \
 			 /* s */)
 
-#define UnlockAppList() AROS_VOID_LC0( UnlockAppList, struct Library *, DOPUS_BASE_NAME, 186, /* s */)
+#define UnlockAppList() AROS_LC0NR(void,  UnlockAppList, struct Library *, DOPUS_BASE_NAME, 186, /* s */)
 
 #define UnlockAttList(___list)                                                                                      \
-	AROS_VOID_LC1( UnlockAttList, AROS_LCA(Att_List *, (___list), A0), struct Library *, DOPUS_BASE_NAME, 215, /* s \
+	AROS_LC1NR(void,  UnlockAttList, AROS_LCA(Att_List *, (___list), A0), struct Library *, DOPUS_BASE_NAME, 215, /* s \
 																												*/)
 
-#define UnlockReqBackFill() AROS_VOID_LC0( UnlockReqBackFill, struct Library *, DOPUS_BASE_NAME, 356, /* s */)
+#define UnlockReqBackFill() AROS_LC0NR(void,  UnlockReqBackFill, struct Library *, DOPUS_BASE_NAME, 356, /* s */)
 
 #define UpdateEnvironment(___env)                                                                                 \
-	AROS_VOID_LC1( UpdateEnvironment, AROS_LCA(CFG_ENVR *, (___env), A0), struct Library *, DOPUS_BASE_NAME, 366, \
+	AROS_LC1NR(void,  UpdateEnvironment, AROS_LCA(CFG_ENVR *, (___env), A0), struct Library *, DOPUS_BASE_NAME, 366, \
 			 /* s */)
 
 #define UpdateGadgetList(___list)                                                                                   \
-	AROS_VOID_LC1( UpdateGadgetList, AROS_LCA(ObjectList *, (___list), A0), struct Library *, DOPUS_BASE_NAME, 305, \
+	AROS_LC1NR(void,  UpdateGadgetList, AROS_LCA(ObjectList *, (___list), A0), struct Library *, DOPUS_BASE_NAME, 305, \
 			 /* s */)
 
 #define UpdateGadgetValue(___list, ___msg, ___id)           \
-	AROS_VOID_LC3(                                          \
+	AROS_LC3NR(void,                                           \
 			 UpdateGadgetValue,                             \
 			 AROS_LCA(ObjectList *, (___list), A0),         \
 			 AROS_LCA(struct IntuiMessage *, (___msg), A1), \
@@ -3041,12 +3040,12 @@
 			 304,                                           \
 			 /* s */)
 
-#define UpdateMyPaths() AROS_VOID_LC0( UpdateMyPaths, struct Library *, DOPUS_BASE_NAME, 360, /* s */)
+#define UpdateMyPaths() AROS_LC0NR(void,  UpdateMyPaths, struct Library *, DOPUS_BASE_NAME, 360, /* s */)
 
-#define UpdatePathList() AROS_VOID_LC0( UpdatePathList, struct Library *, DOPUS_BASE_NAME, 359, /* s */)
+#define UpdatePathList() AROS_LC0NR(void,  UpdatePathList, struct Library *, DOPUS_BASE_NAME, 359, /* s */)
 
 #define UpdateStatusGraph(___window, ___text, ___total, ___count) \
-	AROS_VOID_LC4(                                                \
+	AROS_LC4NR(void,                                                 \
 			 UpdateStatusGraph,                                   \
 			 AROS_LCA(struct Window *, (___window), A0),          \
 			 AROS_LCA(char *, (___text), A1),                     \
@@ -3121,7 +3120,7 @@
 			 181,                                        \
 			 /* s */)
 
-#define WB_Install_Patch() AROS_VOID_LC0( WB_Install_Patch, struct Library *, DOPUS_BASE_NAME, 177, /* s */)
+#define WB_Install_Patch() AROS_LC0NR(void,  WB_Install_Patch, struct Library *, DOPUS_BASE_NAME, 177, /* s */)
 
 #define WB_Launch(___name, ___screen, ___wait)           \
 	AROS_LC3(BOOL,                                       \
@@ -3197,7 +3196,7 @@
 			 /* s */)
 
 #define WriteFileIcon(___source, ___dest)       \
-	AROS_VOID_LC2(                              \
+	AROS_LC2NR(void,                               \
 			 WriteFileIcon,                     \
 			 AROS_LCA(char *, (___source), A0), \
 			 AROS_LCA(char *, (___dest), A1),   \
