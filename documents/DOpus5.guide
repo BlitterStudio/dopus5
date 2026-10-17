@@ -1,6 +1,6 @@
 @database dopus5
 @master dopus5.guide
-@$VER: Dopus5Guide 58.17 (16.10.2026)
+@$VER: Dopus5Guide 58.16 (16.10.2026)
 @author "Mark Anderson, Andrew Dunbar, Dr Greg Perry, Leo Davidson and Dave Clarke"
 @(c) "Directory Opus 5 Help Guide (c) GPSoftware 1999"
 @(c) "Directory Opus 5 Help Guide (c) DOPUS5 Open Source Team 2012-2026"
@@ -4126,10 +4126,6 @@ layer.
     When set, the icon-information popup is routed through
     Workbench's WBInfo() instead of DOpus's built-in editor.  Lets
     third-party tools such as SwazInfo or RAWBInfo handle the request.
-    Files and drawers that have no icon of their own still open in the
-    built-in editor: Workbench does not know the filetype or default
-    icon Opus shows for them and would show and save its own default
-    icon instead, which may be of another type.
     Replaces the legacy dopus/UseWBInfo env variable.
 
   Enable Desktop Keyboard Shortcuts:
