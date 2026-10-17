@@ -1066,6 +1066,14 @@ void show_next_frame(show_data *data)
 	}
 }
 
+// A DLTA chunk starts with a table of big-endian 32-bit offsets from its start
+static ULONG delta_offset(const unsigned char *delta, unsigned short index)
+{
+	const unsigned char *ptr = delta + index * 4;
+
+	return ((ULONG)ptr[0] << 24) | ((ULONG)ptr[1] << 16) | ((ULONG)ptr[2] << 8) | (ULONG)ptr[3];
+}
+
 void do_riff(unsigned char *delta,
 			 struct BitMap *bitmap,
 			 unsigned short xor
@@ -1074,7 +1082,7 @@ void do_riff(unsigned char *delta,
 			 unsigned short size)
 {
 	unsigned short plane;
-	unsigned long *dptr;
+	ULONG offset;
 	unsigned char *data;
 
 	// Round up source width
@@ -1082,17 +1090,17 @@ void do_riff(unsigned char *delta,
 	sourcewidth >>= 4;
 	sourcewidth <<= 1;
 
-	// Get long pointer to delta
-	if ((dptr = (unsigned long *)delta))
+	// Got delta?
+	if (delta)
 	{
 		// Go through planes
 		for (plane = 0; plane < bitmap->Depth; plane++)
 		{
 			// Valid delta for this plane?
-			if (dptr[plane])
+			if ((offset = delta_offset(delta, plane)))
 			{
 				// Get pointer to plane delta
-				data = (unsigned char *)delta + dptr[plane];
+				data = delta + offset;
 
 				// Normal RIFF
 				if (size == 0)
@@ -1140,7 +1148,7 @@ void do_riff(unsigned char *delta,
 void do_riff_7(unsigned char *delta, struct BitMap *bitmap, unsigned short sourcewidth, unsigned short size)
 {
 	unsigned short plane;
-	unsigned long *dptr;
+	ULONG op_offset, data_offset;
 	unsigned char *data;
 	unsigned char *opcode;
 
@@ -1149,20 +1157,22 @@ void do_riff_7(unsigned char *delta, struct BitMap *bitmap, unsigned short sourc
 	sourcewidth >>= 4;
 	sourcewidth <<= 1;
 
-	// Get long pointer to delta
-	if ((dptr = (unsigned long *)delta))
+	// Got delta?
+	if (delta)
 	{
 		// Go through planes
 		for (plane = 0; plane < bitmap->Depth; plane++)
 		{
-			// Valid delta for this plane?
-			if (dptr[plane] && dptr[plane + 8])
+			// Valid delta for this plane? (opcode lists, then data lists 8 entries later)
+			op_offset = delta_offset(delta, plane);
+			data_offset = delta_offset(delta, plane + 8);
+			if (op_offset && data_offset)
 			{
 				// Get opcodes
-				opcode = (unsigned char *)delta + dptr[plane];
+				opcode = delta + op_offset;
 
 				// Get pointer to plane delta
-				data = (unsigned char *)delta + dptr[plane + 8];
+				data = delta + data_offset;
 
 				// Short?
 				if (size == 0)
@@ -1175,7 +1185,7 @@ void do_riff_7(unsigned char *delta, struct BitMap *bitmap, unsigned short sourc
 				else
 				{
 					decode_riff7_long(
-						(unsigned long *)data, opcode, bitmap->Planes[plane], bitmap->BytesPerRow, sourcewidth);
+						(ULONG *)data, opcode, bitmap->Planes[plane], bitmap->BytesPerRow, sourcewidth);
 				}
 			}
 		}
@@ -1327,7 +1337,7 @@ void decode_riff7_short(unsigned short *delta,
 	}
 }
 
-void decode_riff7_long(unsigned long *delta,
+void decode_riff7_long(ULONG *delta,
 					   unsigned char *opcode,
 					   unsigned char *plane,
 					   unsigned short rowbytes,
@@ -1370,7 +1380,7 @@ void decode_riff7_long(unsigned long *delta,
 					// Run of data
 					while (ch--)
 					{
-						*(unsigned long *)data = *delta++;
+						*(ULONG *)data = *delta++;
 						data += rowbytes;
 					}
 				}
@@ -1385,7 +1395,7 @@ void decode_riff7_long(unsigned long *delta,
 				// Do count
 				while (ch--)
 				{
-					*(unsigned long *)data = *delta;
+					*(ULONG *)data = *delta;
 					data += rowbytes;
 				}
 				++delta;

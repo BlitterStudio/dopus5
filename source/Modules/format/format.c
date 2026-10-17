@@ -1184,12 +1184,26 @@ BOOL do_raw_format(format_data *data, DiskHandle *disk, APTR status)
 	return (BOOL)(!abort);
 }
 
+// Bootblocks are stored as big-endian 32-bit words whatever the host CPU
+static void bootblock_put_long(UBYTE *ptr, ULONG value)
+{
+	ptr[0] = (UBYTE)(value >> 24);
+	ptr[1] = (UBYTE)(value >> 16);
+	ptr[2] = (UBYTE)(value >> 8);
+	ptr[3] = (UBYTE)value;
+}
+
+static ULONG bootblock_get_long(const UBYTE *ptr)
+{
+	return ((ULONG)ptr[0] << 24) | ((ULONG)ptr[1] << 16) | ((ULONG)ptr[2] << 8) | (ULONG)ptr[3];
+}
+
 // Install bootblock
 void do_install(format_data *data, DiskHandle *disk, APTR status)
 {
-	unsigned long *boot_buffer;
-	unsigned long track_size, boot_size;
-	long a, sum_size, sum;
+	UBYTE *boot_buffer;
+	unsigned long track_size, boot_size, a;
+	ULONG sum;
 
 	// Disk valid for bootblock?
 	if (disk->dh_geo->de_TableSize < DE_BOOTBLOCKS)
@@ -1208,25 +1222,25 @@ void do_install(format_data *data, DiskHandle *disk, APTR status)
 	// Show status text
 	SetProgressWindowTags(status, PW_Info, (IPTR)GetString(locale, MSG_INSTALLING_DISK), TAG_END);
 
-	// Copy standard 2.0 bootblock into buffer
-	CopyMem((char *)bootblock_20, (char *)(boot_buffer + 2), sizeof(bootblock_20));
+	// Copy standard 2.0 bootblock into buffer, after the DOS type and checksum
+	for (a = 0; a < sizeof(bootblock_20) / sizeof(bootblock_20[0]); a++)
+		bootblock_put_long(boot_buffer + 8 + a * 4, bootblock_20[a]);
 
 	// Set DOS type
-	boot_buffer[0] = data->dos_type;
+	bootblock_put_long(boot_buffer, data->dos_type);
 
-	// Calculate checksum
-	for (a = 0, sum = 0, sum_size = boot_size >> 2; a < sum_size; a++)
+	// Calculate checksum (32-bit sum with the carry added back in)
+	for (a = 0, sum = 0; a < boot_size; a += 4)
 	{
-		long lastsum;
+		ULONG lastsum = sum;
 
-		lastsum = sum;
-		sum += boot_buffer[a];
-		if (lastsum > sum)
+		sum += bootblock_get_long(boot_buffer + a);
+		if (sum < lastsum)
 			++sum;
 	}
 
 	// Store checksum
-	boot_buffer[1] = (unsigned long)~sum;
+	bootblock_put_long(boot_buffer + 4, ~sum);
 
 	// Write bootblock
 	disk->dh_io->iotd_Req.io_Command = CMD_WRITE;

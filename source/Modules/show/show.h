@@ -110,7 +110,7 @@ void decode_riff7_short(unsigned short *delta,
 						unsigned char *plane,
 						unsigned short rowbytes,
 						unsigned short sourcebytes);
-void decode_riff7_long(unsigned long *delta,
+void decode_riff7_long(ULONG *delta,
 					   unsigned char *opcode,
 					   unsigned char *plane,
 					   unsigned short rowbytes,

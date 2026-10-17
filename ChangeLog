@@ -1,3 +1,17 @@
+[dopus5 next] AROS: Format Install and Show animations
+Module change (format, show); version bump deferred.
+
+- Format's Install option wrote the bootblock in the CPU's byte order.
+  On AROS (i386, x86_64 and aarch64 are all little-endian) the DOS type,
+  the boot code and the checksum came out byte-swapped, so the disk would
+  not boot.  The 64-bit builds also spaced the boot code 8 bytes per word.
+  The bootblock is now built big-endian on every CPU; AmigaOS, MorphOS
+  and AmigaOS 4 write the same bytes as before.
+- Show read the offset table at the start of an ANIM frame (DLTA) in the
+  CPU's byte order, so on AROS ANIM-5 and ANIM-7 animations looked for
+  each frame's data at the wrong place.  ANIM-7 with long words also
+  stepped 8 bytes per word on 64-bit AROS.
+
 [dopus5 next] AROS x86_64: Copy and Move no longer crash (#145, #147)
 dopus5.library, Program and module change; version bump deferred.
 
