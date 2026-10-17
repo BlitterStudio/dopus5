@@ -1,3 +1,15 @@
+[dopus5 next] Workbench Icon Information and files without icons (#204)
+Module change (icon.module); version bump deferred.
+
+- With "Use Workbench Icon Information" on, Icon Information on a file
+  or drawer with no icon of its own went to Workbench's WBInfo(), which
+  knows nothing of the filetype or default icon Opus shows for it and
+  uses its own default icon.  An ADF shown with a project icon from its
+  filetype came up as a Tool, and saving it there would write a Tool icon.
+  Such objects now open in the built-in editor, which shows and saves
+  the icon Opus displays.  Objects with a real icon, and disks, still
+  go to WBInfo().
+
 [dopus5 next] No icon remapping with "Set MagicWB Colors" on
 Program change (OS3); version bump deferred.
 

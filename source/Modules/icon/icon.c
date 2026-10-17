@@ -1956,6 +1956,25 @@ void icon_pick_editor(icon_data *data)
 	}
 }
 
+// Does the object in data->name have an icon file of its own?  Uses data->path
+// as scratch space; icon_info() fills it in properly afterwards.
+static BOOL icon_file_exists(icon_data *data)
+{
+	BPTR lock;
+
+	if (strlen(data->name) + 6 > sizeof(data->path))
+		return FALSE;
+
+	strcpy(data->path, data->name);
+	strcat(data->path, ".info");
+
+	if (!(lock = Lock(data->path, ACCESS_READ)))
+		return FALSE;
+
+	UnLock(lock);
+	return TRUE;
+}
+
 // Icon information
 short icon_info(icon_data *data, char *name, struct Node *next)
 {
@@ -1973,6 +1992,10 @@ short icon_info(icon_data *data, char *name, struct Node *next)
 		{
 			BPTR parent;
 
+			// Strip .info suffix if applicable
+			if ((a = strlen(data->name)) > 5 && stricmp(data->name + a - 5, ".info") == 0)
+				data->name[a - 5] = 0;
+
 			// Get parent dir
 			if (!(parent = ParentDir(lock)))
 			{
@@ -1983,20 +2006,30 @@ short icon_info(icon_data *data, char *name, struct Node *next)
 				strcpy(data->name, "Disk");
 			}
 
+			// A file or drawer without an icon is shown with a filetype or
+			// default icon that only Opus knows about.  WBInfo() would use
+			// its own default icon instead, possibly of another type (an ADF
+			// shown as a Project came up as a Tool) and save that, so use
+			// our own editor for these.
+			else if (!icon_file_exists(data))
+			{
+				UnLock(parent);
+				parent = 0;
+			}
+
 			// Unlock main lock
 			else
 				UnLock(lock);
 
-			// Strip .info suffix if applicable
-			if ((a = strlen(data->name)) > 5 && stricmp(data->name + a - 5, ".info") == 0)
-				data->name[a - 5] = 0;
+			if (parent)
+			{
+				// Show info
+				WBInfo(parent, FilePart(data->name), data->screen);
 
-			// Show info
-			WBInfo(parent, FilePart(data->name), data->screen);
-
-			// Unlock dirs
-			UnLock(parent);
-			return 1;
+				// Unlock dirs
+				UnLock(parent);
+				return 1;
+			}
 		}
 
 		// Examine file
