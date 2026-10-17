@@ -23,6 +23,19 @@ char *viewcmds = "Read Play Show HexRead AnsiRead IconInfo";
 
 LIBFUNC ULONG ASM SAVEDS L_ProgressHook(REG(a0, struct Hook *), REG(a2, int skip), REG(a1, struct xadProgressInfo *));
 
+// xadmaster calls the progress hook through CallHookPkt(), which on MorphOS needs
+// the HookEntry gate in h_Entry and the native function in h_SubEntry
+static void xad_init_progress_hook(struct Hook *hook, struct xoData *data)
+{
+#if defined(__MORPHOS__)
+	hook->h_Entry = (HOOKFUNC)HookEntry;
+	hook->h_SubEntry = (HOOKFUNC)L_ProgressHook;
+#else
+	hook->h_Entry = (ULONG(*)())L_ProgressHook;
+#endif
+	hook->h_Data = data;
+}
+
 static IPTR xad_parse_handle(const char *text)
 {
 	UQUAD value = 0;
@@ -677,8 +690,7 @@ void _copy(struct xoData *data, char *name, char *Dest, BOOL CopyAs)
 	TreeName = AllocVec(1024, 0);
 	Drawer = AllocVec(1024, 0);
 
-	prhk.h_Entry = (ULONG(*)())L_ProgressHook;
-	prhk.h_Data = data;
+	xad_init_progress_hook(&prhk, data);
 
 	total = countchar(name) / 2;
 
@@ -990,8 +1002,7 @@ BOOL ExtractD(struct xoData *data)
 	WORD sel;
 	Att_List *list;
 
-	prhk.h_Entry = (ULONG(*)())L_ProgressHook;
-	prhk.h_Data = data;
+	xad_init_progress_hook(&prhk, data);
 
 	if ((list = Att_NewList(0)))
 	{
@@ -1062,8 +1073,7 @@ BOOL ExtractF(struct xoData *data)
 	xadERROR err;
 	BOOL retry;
 
-	prhk.h_Entry = (ULONG(*)())L_ProgressHook;
-	prhk.h_Data = data;
+	xad_init_progress_hook(&prhk, data);
 
 	data->All = 5;
 

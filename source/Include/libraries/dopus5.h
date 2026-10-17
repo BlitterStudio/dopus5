@@ -2726,11 +2726,11 @@ typedef struct
 #if defined(__MORPHOS__)
 
 	#define DC_REGA0 REG_A0
-	#define DC_REGA1 REG_A0
-	#define DC_REGA2 REG_A0
-	#define DC_REGA3 REG_A0
-	#define DC_REGA4 REG_A0
-	#define DC_REGD0 REG_A0
+	#define DC_REGA1 REG_A1
+	#define DC_REGA2 REG_A2
+	#define DC_REGA3 REG_A3
+	#define DC_REGA4 REG_A4
+	#define DC_REGD0 REG_D0
 	#define DC_REGD1 REG_D1
 	#define DC_REGD2 REG_D2
 
