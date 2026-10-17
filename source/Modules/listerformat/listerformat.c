@@ -731,10 +731,11 @@ void listerformat_end_drag(config_lister_data *data, BOOL ok)
 // Position an entry in the selected list
 void listerformat_position(config_lister_data *data, Att_Node *node)
 {
-	ULONG top, item;
+	IPTR top;
+	ULONG item;
 	Att_Node *pos;
 
-	// Get top item
+	// Get top item (DLV_Top stores an IPTR)
 	GetAttr(DLV_Top, (Object *)GADGET(data->sel_lister), &top);
 
 	// Get item we dropped over

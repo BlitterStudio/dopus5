@@ -1607,16 +1607,17 @@ BOOL show_get_dtpic(show_data *data, struct Node *node)
 			else
 			{
 				struct DataType *dt;
+				IPTR modeid = data->modeid, numcolours = data->numcolours;
 				// long horiz,vert;
 
-				// Get attributes of picture
+				// Get attributes of picture (datatypes store an IPTR for each one)
 				GetDTAttrs(data->dt_object,
 						   PDTA_ModeID,
-						   &data->modeid,
+						   &modeid,
 						   PDTA_CRegs,
 						   &data->cregs,
 						   PDTA_NumColors,
-						   &data->numcolours,
+						   &numcolours,
 						   PDTA_BitMap,
 						   &data->dt_bm,
 						   DTA_DataType,
@@ -1624,6 +1625,8 @@ BOOL show_get_dtpic(show_data *data, struct Node *node)
 						   /*DTA_NominalVert,&vert,
 						   DTA_NominalHoriz,&horiz,*/
 						   TAG_END);
+				data->modeid = modeid;
+				data->numcolours = numcolours;
 
 #ifdef __AROS__
 				if (!data->dt_bm)

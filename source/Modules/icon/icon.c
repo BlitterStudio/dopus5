@@ -1020,6 +1020,7 @@ static void drag_arrange(icon_data *data, int swap)
 	GL_Object *obj;
 	int x, y;
 	ULONG drop_item;
+	IPTR line;
 	Att_Node *drag_node, *drop_node;
 
 	if ((obj = GetObject(data->list, GAD_ICON_TOOLTYPES)))
@@ -1030,9 +1031,11 @@ static void drag_arrange(icon_data *data, int swap)
 		// Dropped on listview?
 		if (CheckObjectArea(obj, x, y))
 		{
-			drop_item = (x << 16) | y;
+			line = (x << 16) | y;
 
-			GetAttr(DLV_GetLine, (Object *)GADGET(obj), &drop_item);
+			// DLV_GetLine stores an IPTR
+			GetAttr(DLV_GetLine, (Object *)GADGET(obj), &line);
+			drop_item = (ULONG)line;
 
 			// Item dragged onto itself?
 			if (data->drag_item == drop_item)
@@ -2163,6 +2166,7 @@ short icon_info(icon_data *data, char *name, struct Node *next)
 					Att_Node *node;
 					GL_Object *obj;
 					ULONG drop_item;
+					IPTR line;
 					Att_Node *drop_node;
 
 					data->modified = TRUE;
@@ -2182,9 +2186,11 @@ short icon_info(icon_data *data, char *name, struct Node *next)
 					// Dropped on listview?
 					if (CheckObjectArea(obj, p->x, p->y))
 					{
-						drop_item = (p->x << 16) | p->y;
+						line = (p->x << 16) | p->y;
 
-						GetAttr(DLV_GetLine, (Object *)GADGET(obj), &drop_item);
+						// DLV_GetLine stores an IPTR
+						GetAttr(DLV_GetLine, (Object *)GADGET(obj), &line);
+						drop_item = (ULONG)line;
 
 						// Find drop node
 						if (drop_item != -1)

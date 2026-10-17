@@ -401,17 +401,19 @@ void buttons_refresh(Buttons *buttons, ULONG type)
 	// Refresh event
 	if (type & BUTREFRESH_REFRESH)
 	{
-		// Get vertical position
+		IPTR pos;
+
+		// Get vertical position (PGA_Top stores an IPTR; button_top is an int)
+		pos = 0;
 		if (buttons->vert_scroll)
-			GetAttr(PGA_Top, buttons->vert_scroll, (ULONG *)&buttons->button_top);
-		else
-			buttons->button_top = 0;
+			GetAttr(PGA_Top, buttons->vert_scroll, &pos);
+		buttons->button_top = pos;
 
 		// Horizontal
+		pos = 0;
 		if (buttons->horiz_scroll)
-			GetAttr(PGA_Top, buttons->horiz_scroll, (ULONG *)&buttons->button_left);
-		else
-			buttons->button_left = 0;
+			GetAttr(PGA_Top, buttons->horiz_scroll, &pos);
+		buttons->button_left = pos;
 
 		// Draw buttons
 		button = (Cfg_Button *)buttons->bank->buttons.lh_Head;

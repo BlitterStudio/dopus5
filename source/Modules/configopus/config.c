@@ -23,7 +23,7 @@ short functioned_get_line(struct Window *window,
 						  unsigned short y,
 						  struct Library *IntuitionBase)
 {
-	ULONG storage;
+	IPTR storage;
 
 	// Get window-relative coordinates
 	x -= window->LeftEdge;

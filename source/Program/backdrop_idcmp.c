@@ -458,7 +458,7 @@ BOOL backdrop_idcmp(BackdropInfo *info, struct IntuiMessage *msg, unsigned short
 		// Page up/Page down
 		case PAGEUP:
 		case PAGEDOWN: {
-			ULONG oldpos, pos;
+			IPTR oldpos, pos;
 			long newpos, diff;
 
 			// Get old position
@@ -495,7 +495,7 @@ BOOL backdrop_idcmp(BackdropInfo *info, struct IntuiMessage *msg, unsigned short
 		// Home/End
 		case HOME:
 		case END: {
-			ULONG oldpos, pos;
+			IPTR oldpos, pos;
 			long diff;
 
 			// Get old position
