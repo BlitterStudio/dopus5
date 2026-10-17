@@ -1907,7 +1907,7 @@ PATCHED_1(void, LIBFUNC L_WB_AddPort, a1, struct MsgPort *, port)
 		}
 
 		// Pass through
-		LIBCALL_1(void, wb_data->old_function[WB_PATCH_ADDPORT], SysBase, IExec, a1, port);
+		LIBCALL_1NR(wb_data->old_function[WB_PATCH_ADDPORT], SysBase, IExec, a1, port);
 
 		atomic_dec(&usecount[WB_PATCH_ADDPORT]);
 	}
@@ -1955,7 +1955,7 @@ PATCHED_1(void, LIBFUNC L_WB_CloseWindow, a0, struct Window *, window)
 		}
 
 		// Close window
-		LIBCALL_1(void, wb_data->old_function[WB_PATCH_CLOSEWINDOW], IntuitionBase, IIntuition, a0, window);
+		LIBCALL_1NR(wb_data->old_function[WB_PATCH_CLOSEWINDOW], IntuitionBase, IIntuition, a0, window);
 
 		// Task to signal?
 		if (sigtask)
@@ -2193,7 +2193,7 @@ PATCHED_1(void, LIBFUNC L_PatchedRemTask, a1, struct Task *, task)
 		atomic_dec(&usecount[WB_PATCH_REMTASK]);
 
 		// Call original function
-		LIBCALL_1(void, data->wb_data.old_function[WB_PATCH_REMTASK], SysBase, IExec, a1, task);
+		LIBCALL_1NR(data->wb_data.old_function[WB_PATCH_REMTASK], SysBase, IExec, a1, task);
 	}
 }
 PATCH_END

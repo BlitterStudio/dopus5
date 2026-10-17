@@ -307,7 +307,7 @@ void play_cleanup(play_data *data)
 // Update length info field
 void play_update_length(play_data *data)
 {
-	unsigned long minutes, seconds;
+	ULONG minutes, seconds;	 // DivideU() stores a ULONG remainder
 	unsigned long length = 0;
 	unsigned long period = 0;
 	char length_buf[10];

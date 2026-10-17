@@ -50,7 +50,7 @@ void config_drag_start(CfgDragInfo *drag, Att_List *list, short item, struct Tag
 {
 	short width, height;
 	ListViewDraw draw;
-	ULONG ptr;
+	IPTR ptr;
 
 	// Find node
 	if (!(drag->drag_node = Att_FindNode(list, item)))

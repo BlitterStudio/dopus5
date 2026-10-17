@@ -624,6 +624,7 @@ static void address_drag_arrange(struct display_globals *dg, int swap)
 	GL_Object *obj;
 	int x, y;
 	ULONG drop_item;
+	IPTR line;
 	Att_Node *drag_node, *drop_node;
 
 	if ((obj = GetObject(dg->dg_addrwp->wp_objlist, GAD_FTP_SITES)))
@@ -634,11 +635,13 @@ static void address_drag_arrange(struct display_globals *dg, int swap)
 		// Dropped on listview?
 		if (CheckObjectArea(obj, x, y))
 		{
-			drop_item = (x << 16) | y;
+			line = (x << 16) | y;
 
-			D(bug("x %ld y %ld di %ld\n  ", (long)x, (long)y, (long)drop_item));
+			D(bug("x %ld y %ld di %ld\n  ", (long)x, (long)y, (long)line));
 
-			GetAttr(DLV_GetLine, GADGET(obj), &drop_item);
+			// DLV_GetLine stores an IPTR
+			GetAttr(DLV_GetLine, GADGET(obj), &line);
+			drop_item = (ULONG)line;
 
 			D(bug("di %ld\n  ", (long)drop_item));
 

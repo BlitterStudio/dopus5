@@ -1033,7 +1033,7 @@ BOOL do_format(format_data *data, DiskHandle *disk, unsigned short type, short *
 // Low-level format a disk
 BOOL do_raw_format(format_data *data, DiskHandle *disk, APTR status)
 {
-	unsigned long *track_buffer, *verify_buffer = 0;
+	ULONG *track_buffer, *verify_buffer = 0;  // compared in 32-bit words (compare_size)
 	unsigned long track_size, compare_size = 0, track_count;
 	unsigned long offset, track;
 	struct Window *window;

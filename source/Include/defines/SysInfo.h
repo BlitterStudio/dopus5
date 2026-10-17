@@ -7,8 +7,6 @@
 	#include <aros/libcall.h>
 #endif /* !AROS_LIBCALL_H */
 
-#include <defines/aros_voidcall.h>
-
 #ifndef SYSINFO_BASE_NAME
 	#define SYSINFO_BASE_NAME SysInfoBase
 #endif /* !SYSINFO_BASE_NAME */
@@ -25,11 +23,11 @@
 			 /* s */)
 
 #define FreeSysInfo(___si)                                                                                       \
-	AROS_VOID_LC1( FreeSysInfo, AROS_LCA(struct SysInfo *, (___si), A0), struct Library *, SYSINFO_BASE_NAME, 6, \
+	AROS_LC1NR(void,  FreeSysInfo, AROS_LCA(struct SysInfo *, (___si), A0), struct Library *, SYSINFO_BASE_NAME, 6, \
 			 /* s */)
 
 #define GetCpuUsage(___si, ___usage)                         \
-	AROS_VOID_LC2(                                           \
+	AROS_LC2NR(void,                                            \
 			 GetCpuUsage,                                    \
 			 AROS_LCA(struct SysInfo *, (___si), A0),        \
 			 AROS_LCA(struct SI_CpuUsage *, (___usage), A1), \
@@ -39,7 +37,7 @@
 			 /* s */)
 
 #define GetLoadAverage(___si, ___la)                         \
-	AROS_VOID_LC2(                                           \
+	AROS_LC2NR(void,                                            \
 			 GetLoadAverage,                                 \
 			 AROS_LCA(struct SysInfo *, (___si), A0),        \
 			 AROS_LCA(struct SI_LoadAverage *, (___la), A1), \
@@ -82,7 +80,7 @@
 #define InitSysInfo() AROS_LC0(struct SysInfo *, InitSysInfo, struct Library *, SYSINFO_BASE_NAME, 5, /* s */)
 
 #define RemoveNotify(___si, ___notify)                      \
-	AROS_VOID_LC2(                                          \
+	AROS_LC2NR(void,                                           \
 			 RemoveNotify,                                  \
 			 AROS_LCA(struct SysInfo *, (___si), A0),       \
 			 AROS_LCA(struct SI_Notify *, (___notify), A1), \

@@ -1,3 +1,32 @@
+[dopus5 next] AROS x86_64: Copy and Move no longer crash (#145, #147)
+dopus5.library, Program and module change; version bump deferred.
+
+- When Opus called a DOS, Exec, Intuition or Workbench function it had
+  patched, it passed the library base as a C argument only.  AROS
+  x86_64 expects it in register r12, so the original function ran with
+  whatever r12 held.  Copy to a disk icon (RAM:, DF0:, the desktop) went
+  through OriginalOpen() with dopus5.library's base in r12, and dos.library
+  then called AddDragImage() instead of one of its own functions.  Move
+  crashed the same way in GetString() through OriginalRename().  These
+  calls now go through AROS_CALLn, which sets the base where each CPU
+  expects it.  The i386 and aarch64 code is unchanged.
+- Library functions that return nothing were called the same way, without
+  r12.  dopus5.library ignores its base so this went unnoticed; the
+  newicon, multiuser, music and SysInfo calls now get theirs too.
+- GetAttr() and GetDTAttrs() store a 64-bit value on AROS x86_64 and
+  aarch64.  Several places gave them a 32-bit variable, so the next
+  4 bytes were overwritten: the button bank scroll offsets, desktop
+  Page Up/Down and Home/End, drag and drop in the Opus configuration,
+  Lister Format, FTP site list and Icon Information tooltype lists, and
+  the screen mode and colour count in Show.  Starting a drag in the
+  configuration editors also cut the address of the drawing data to
+  32 bits, which could crash.
+- Diskcopy and Format verify compared a track in 64-bit words, reading
+  twice the buffer.  Diskcopy's root block offset and Play's length
+  display used a 32-bit result in a 64-bit variable whose top half was
+  never set.  Animated button images (ANIM operation 5) read their delta
+  offsets 8 bytes apart instead of 4.
+
 [dopus5 next] MorphOS: XADOpus opens archives again (#175)
 Module change (xadopus, ftp, themes); version bump deferred.
 

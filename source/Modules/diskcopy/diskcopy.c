@@ -809,11 +809,12 @@ void cleanup_diskcopy(diskcopy_data *data)
 BOOL do_diskcopy(diskcopy_data *data, APTR status)
 {
 	Att_Node *node;
-	unsigned long *track_buffer, *verify_buffer = 0;
+	ULONG *track_buffer, *verify_buffer = 0;  // compared in 32-bit words (compare_size)
 	unsigned long track_size, compare_size = 0, track_count, buffer_size;
 	unsigned long offset, buffer_offset, read_track, write_track;
 	unsigned long total_track, track_num, track_update = 1;
-	unsigned long root_track, root_offset;
+	unsigned long root_track;
+	ULONG root_offset;	// DivideU() stores a ULONG remainder
 	BOOL serialise = 0;
 	BOOL abort = 0, same_flag = 0;
 	short dest_count = 0;
@@ -1012,10 +1013,10 @@ BOOL do_diskcopy(diskcopy_data *data, APTR status)
 			{
 				BOOL loop = 0;
 				short send_count = 0;
-				long *track_buffer_ptr;
+				ULONG *track_buffer_ptr;
 
 				// Get track buffer pointer
-				track_buffer_ptr = (long *)(((char *)track_buffer) + buffer_offset);
+				track_buffer_ptr = (ULONG *)(((char *)track_buffer) + buffer_offset);
 
 				// Go through destinations
 				for (node = (Att_Node *)data->dest_list->list.lh_Head; node->node.ln_Succ;

@@ -1105,7 +1105,7 @@ Image_Data *read_image(char *name, OpenImageInfo *info)
 						// Or RIFF option 5
 						else if (frame->header.operation == 5)
 						{
-							unsigned long *dptr;
+							ULONG *dptr;  // 32-bit offsets in the ANIM delta
 							unsigned char *ddata;
 							unsigned short sourcewidth;
 
@@ -1113,7 +1113,7 @@ Image_Data *read_image(char *name, OpenImageInfo *info)
 							sourcewidth = ((ilbm->header.w + 15) >> 4) << 1;
 
 							// Get long pointer to deltas
-							if ((dptr = (unsigned long *)frame->delta))
+							if ((dptr = (ULONG *)frame->delta))
 							{
 								// Go through planes
 								for (plane = 0; plane < ilbm->header.nPlanes; plane++)

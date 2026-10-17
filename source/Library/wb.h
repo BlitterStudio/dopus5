@@ -245,6 +245,58 @@ For more information on Directory Opus for Windows please see:
 
 #else
 
+	#if defined(__AROS__)
+
+	// AROS_CALLn puts the library base where the CPU's AROS ABI expects it: the last
+	// C argument on i386 and aarch64, register r12 on x86_64. Passing it as a plain
+	// trailing argument leaves r12 holding whatever the caller had in it, and the
+	// called function then uses that as its library base.
+	#define LIBCALL_0(ret, func, callbase, dummy) AROS_CALL0(ret, func, APTR, callbase)
+
+	#define LIBCALL_1(ret, func, callbase, dummy, r1, n1) \
+		AROS_CALL1(ret, func, AROS_LCA(IPTR, (IPTR)(n1), r1), APTR, callbase)
+
+	#define LIBCALL_1NR(func, callbase, dummy, r1, n1) \
+		AROS_CALL1NR(void, func, AROS_LCA(IPTR, (IPTR)(n1), r1), APTR, callbase)
+
+	#define LIBCALL_2(ret, func, callbase, dummy, r1, n1, r2, n2) \
+		AROS_CALL2(ret, func, AROS_LCA(IPTR, (IPTR)(n1), r1), AROS_LCA(IPTR, (IPTR)(n2), r2), APTR, callbase)
+
+	#define LIBCALL_3(ret, func, callbase, dummy, r1, n1, r2, n2, r3, n3) \
+		AROS_CALL3(ret,                                                    \
+				   func,                                                   \
+				   AROS_LCA(IPTR, (IPTR)(n1), r1),                         \
+				   AROS_LCA(IPTR, (IPTR)(n2), r2),                         \
+				   AROS_LCA(IPTR, (IPTR)(n3), r3),                         \
+				   APTR,                                                   \
+				   callbase)
+
+	#define LIBCALL_5(ret, func, callbase, dummy, r1, n1, r2, n2, r3, n3, r4, n4, r5, n5) \
+		AROS_CALL5(ret,                                                                    \
+				   func,                                                                   \
+				   AROS_LCA(IPTR, (IPTR)(n1), r1),                                         \
+				   AROS_LCA(IPTR, (IPTR)(n2), r2),                                         \
+				   AROS_LCA(IPTR, (IPTR)(n3), r3),                                         \
+				   AROS_LCA(IPTR, (IPTR)(n4), r4),                                         \
+				   AROS_LCA(IPTR, (IPTR)(n5), r5),                                         \
+				   APTR,                                                                   \
+				   callbase)
+
+	#define LIBCALL_7(ret, func, callbase, dummy, r1, n1, r2, n2, r3, n3, r4, n4, r5, n5, r6, n6, r7, n7) \
+		AROS_CALL7(ret,                                                                                    \
+				   func,                                                                                   \
+				   AROS_LCA(IPTR, (IPTR)(n1), r1),                                                         \
+				   AROS_LCA(IPTR, (IPTR)(n2), r2),                                                         \
+				   AROS_LCA(IPTR, (IPTR)(n3), r3),                                                         \
+				   AROS_LCA(IPTR, (IPTR)(n4), r4),                                                         \
+				   AROS_LCA(IPTR, (IPTR)(n5), r5),                                                         \
+				   AROS_LCA(IPTR, (IPTR)(n6), r6),                                                         \
+				   AROS_LCA(IPTR, (IPTR)(n7), r7),                                                         \
+				   APTR,                                                                                   \
+				   callbase)
+
+	#else
+
 	#define LIBCALL_0(ret, func, callbase, dummy) ((ret ASM(*)(REG(a6, APTR)))func)((APTR)callbase)
 
 	#define LIBCALL_1(ret, func, callbase, dummy, r1, n1) \
@@ -272,6 +324,8 @@ For more information on Directory Opus for Windows please see:
 					 REG(r7, IPTR),                                                                       \
 					 REG(a6, APTR)))func)(                                                                \
 			(IPTR)n1, (IPTR)n2, (IPTR)n3, (IPTR)n4, (IPTR)n5, (IPTR)n6, (IPTR)n7, (APTR)callbase)
+
+	#endif
 
 	#define PATCH(offset, iface_dummy, func, type) \
 		{                                          \
@@ -305,6 +359,10 @@ For more information on Directory Opus for Windows please see:
 				 REG(r6, t6 n6),                                                                                     \
 				 REG(r7, t7 n7))                                                                                     \
 		{
+#endif
+
+#ifndef LIBCALL_1NR
+	#define LIBCALL_1NR(func, callbase, callface, r1, n1) LIBCALL_1(void, func, callbase, callface, r1, n1)
 #endif
 
 #define PATCH_END }
