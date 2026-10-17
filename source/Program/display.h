@@ -218,6 +218,8 @@ typedef struct
 
 	short startup_pic_delay;
 
+	char startup_drawer[256];  // STARTUPDRAWER: run instead of SYS:WBStartup
+
 	// Icons for iconified listers and button banks, loaded by get_iconify_icon()
 	struct DiskObject *lister_icon;
 	struct DiskObject *button_icon;

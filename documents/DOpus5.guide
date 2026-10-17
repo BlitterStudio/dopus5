@@ -1,6 +1,6 @@
 @database dopus5
 @master dopus5.guide
-@$VER: Dopus5Guide 58.17 (17.10.2026)
+@$VER: Dopus5Guide 58.18 (17.10.2026)
 @author "Mark Anderson, Andrew Dunbar, Dr Greg Perry, Leo Davidson and Dave Clarke"
 @(c) "Directory Opus 5 Help Guide (c) GPSoftware 1999"
 @(c) "Directory Opus 5 Help Guide (c) DOPUS5 Open Source Team 2012-2026"
@@ -152,6 +152,20 @@ How Directory Opus starts:
     starts, and Directory Opus shows those AppIcons when you start it.
     The library and its Workbench patches stay in memory until the next
     reboot, also while Directory Opus is not running.
+
+  Programs started with Directory Opus
+    With the tool type WBSTARTUP=YES, Directory Opus runs the programs in
+    SYS:WBStartup when it starts.  It does that on its own when it
+    replaces Workbench, and when it is started from a Shell while
+    Workbench is not running; WBSTARTUP=NO turns it off.  The tool type
+    STARTUPDRAWER names another drawer to run instead, for example
+    STARTUPDRAWER=SYS:DOStartup, so Directory Opus can start other
+    programs than Workbench does.  Give the full path.  If the drawer
+    does not exist, no programs are started.  Both also work as Shell
+    arguments; for a drawer name with spaces, quote the whole argument:
+    "STARTUPDRAWER=Work:My Drawer".  LoadDB passes STARTUPDRAWER on to
+    Directory Opus, so when Opus replaces Workbench, add it to the
+    LoadWB line of the Startup-Sequence: LoadWB STARTUPDRAWER=SYS:DOStartup.
 
 S:User-Startup:
   The installer can add a ;BEGIN DOpus5 block with the DOpus5: assign and
