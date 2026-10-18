@@ -26,7 +26,7 @@ For more information on Directory Opus for Windows please see:
 #include <proto/multiuser.h>
 
 int read_dir(DirBuffer *, Lister *, FunctionHandle *, BPTR, struct InfoData *, ReselectionData *);
-void readdir_check_format(Lister *lister, char *path, ListFormat *, BOOL);
+void readdir_check_format(Lister *lister, ULONG side, char *path, ListFormat *, BOOL);
 
 #define PATH_FULL_DEVICE handle->work_buffer
 #define PATH_FULL_NAME handle->work_buffer + 768
@@ -161,10 +161,10 @@ void function_read_directory(FunctionHandle *handle, Lister *lister, ULONG side,
 			UnLock(lock);
 
 			// Check for special sort format
-			readdir_check_format(lister, PATH_FULL_NAME, &oldformat, same);
+			readdir_check_format(lister, side, PATH_FULL_NAME, &oldformat, same);
 
 			// Store format
-			lister->format = oldformat;
+			lister_dual_set_format(lister, (short)side - 1, &oldformat);
 
 			// Reset some flags in the buffer
 			buffer->more_flags &= ~DWF_LOCK_STATE;
@@ -191,7 +191,11 @@ void function_read_directory(FunctionHandle *handle, Lister *lister, ULONG side,
 				find_packet->stamp = stamp_ptr;
 				find_packet->side = side;
 
-				IPC_Command(lister->ipc, LISTER_BUFFER_FIND_EMPTY, 0, find_packet, find_packet, REPLY_NO_PORT);
+				// A dual panel gets no buffer when the only one left is shown
+				// by the other panel
+				if (!IPC_Command(lister->ipc, LISTER_BUFFER_FIND_EMPTY, 0, find_packet, find_packet, REPLY_NO_PORT) &&
+					side)
+					noread = 1;
 			}
 			else if (!side)
 				IPC_Command(lister->ipc,
@@ -203,6 +207,9 @@ void function_read_directory(FunctionHandle *handle, Lister *lister, ULONG side,
 
 			// The old message form would work on the active panel
 			else
+				noread = 1;
+
+			if (noread)
 			{
 				if (lock)
 					UnLock(lock);
@@ -280,13 +287,13 @@ void function_read_directory(FunctionHandle *handle, Lister *lister, ULONG side,
 			buffer_lock(buffer, TRUE);
 
 			// Check format
-			readdir_check_format(lister, PATH_FULL_NAME, &oldformat, same);
+			readdir_check_format(lister, side, PATH_FULL_NAME, &oldformat, same);
 
 			// Store format
 			buffer->buf_ListFormat = oldformat;
 
 			/**************/
-			lister->format = oldformat;
+			lister_dual_set_format(lister, (short)side - 1, &oldformat);
 			/**************/
 
 			// Save disk type
@@ -675,8 +682,8 @@ void network_get_info(NetworkInfo *network,
 	*ptr = 0;
 }
 
-// Check sort format
-void readdir_check_format(Lister *lister, char *path, ListFormat *format, BOOL same)
+// Check sort format (side: 1-based dual panel, 0 = normal lister)
+void readdir_check_format(Lister *lister, ULONG side, char *path, ListFormat *format, BOOL same)
 {
 	position_rec *pos;
 
@@ -684,14 +691,14 @@ void readdir_check_format(Lister *lister, char *path, ListFormat *format, BOOL s
 	if (lister->more_flags & LISTERF_LOCK_FORMAT || same)
 	{
 		// Use current format
-		*format = lister->format;
+		lister_dual_get_format(lister, (short)side - 1, format);
 	}
 
 	// See if position is supplied
 	else if (!(pos = GetListerPosition(path, 0, 0, 0, 0, format, 0, 0, 0)) || !(pos->flags & POSITIONF_FORMAT))
 	{
 		// Use current format from lister
-		*format = lister->format;
+		lister_dual_get_format(lister, (short)side - 1, format);
 
 		// Gauge flag is preserved from lister->format as-is (already copied above)
 	}

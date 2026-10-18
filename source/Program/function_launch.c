@@ -45,7 +45,6 @@ BOOL function_launch(ULONG command,
 {
 	FunctionHandle *handle;
 	IPCData *ipc;
-	char *dual_dest_path = 0;
 	short dual_dest_side;
 
 	// Take the dual panel a drop is aimed at first, so a failed launch
@@ -109,13 +108,21 @@ BOOL function_launch(ULONG command,
 			AddPart(handle->source_path, "", 512);
 	}
 
-	// Dual lister functions use the inactive side as destination.
-	if (source_list && !dest_list && !dest_path && (dual_dest_path = lister_dual_dest_path(source_list)) &&
-		dual_dest_path[0])
+	// Dual lister functions use the panel opposite the source panel as
+	// destination
+	if (source_list && !dest_list && !dest_path && (dual_dest_side = lister_dual_launch_side(source_list)) >= 0)
 	{
-		dest_path = dual_dest_path;
-		dest_list = source_list;
-		dual_dest_side = lister_dual_dest_index(source_list);
+		DirBuffer *buffer;
+
+		dual_dest_side = (dual_dest_side == LISTER_DUAL_LEFT) ? LISTER_DUAL_RIGHT : LISTER_DUAL_LEFT;
+		buffer = lister_dual_side_buffer(source_list, dual_dest_side);
+		if (buffer->buf_Path[0])
+		{
+			dest_path = buffer->buf_Path;
+			dest_list = source_list;
+		}
+		else
+			dual_dest_side = -1;
 	}
 
 	// Destination path

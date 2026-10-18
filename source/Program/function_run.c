@@ -371,9 +371,12 @@ static BOOL function_dual_dest(FunctionHandle *handle)
 	if (IsListEmpty((struct List *)&handle->source_paths.list))
 		return FALSE;
 
+	// The destination is the panel opposite the one the source node captured;
+	// the active panel may have changed since
 	source = (PathNode *)handle->source_paths.list.mlh_Head;
-	if (!source->lister || (side = lister_dual_dest_index(source->lister)) < 0)
+	if (!source->lister || !(source->flags & LISTNF_DUAL_SIDE) || !lister_dual_one_window(source->lister))
 		return FALSE;
+	side = (source->dual_side == LISTER_DUAL_LEFT) ? LISTER_DUAL_RIGHT : LISTER_DUAL_LEFT;
 
 	// The panel must show a directory (not a device list)
 	buffer = lister_dual_side_buffer(source->lister, side);

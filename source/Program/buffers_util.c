@@ -244,6 +244,9 @@ void buffer_show_special(Lister *lister, char *title)
 	if (!title)
 		title = "";
 
+	// One special buffer per lister: the other dual panel gives it up
+	lister_dual_release_special(lister);
+
 	// Free special dir contents
 	buffer_freedir(lister->special_buffer, 1);
 	lister->special_buffer->buf_FreeDiskSpace = 0;

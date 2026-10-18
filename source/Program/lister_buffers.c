@@ -268,12 +268,19 @@ DirBuffer *lister_buffer_find_empty(Lister *lister, char *path, struct DateStamp
 	// If nothing yet, use first unlocked buffer (if there is one)
 	if (!buffer && !(buffer = first_unlocked))
 	{
-		// The other dual panel may show the current buffer; it gets a new one
+		// The other dual panel may show the current buffer; it needs a new
+		// one, and without it there is no buffer to read into
 		if (lister_dual_other_side_shows(lister, lister->cur_buffer))
-			buffer = lister_new_buffer(lister);
+		{
+			if (!(buffer = lister_new_buffer(lister)))
+			{
+				unlock_listlock(&GUI->buffer_list);
+				return 0;
+			}
+		}
 
 		// If not, re-use current buffer
-		if (!buffer)
+		else
 			buffer = lister->cur_buffer;
 	}
 

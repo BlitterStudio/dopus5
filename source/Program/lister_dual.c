@@ -40,6 +40,8 @@ typedef struct ListerDualState
 	short highlight_side; // Panel holding the drag-over highlight
 	BOOL locked;
 	UBYTE rescan_sides; // Panels with a rescan queued while the lister was busy
+	ListFormat format[LISTER_DUAL_SIDES]; // Working format of each panel (lister->format for the shown one)
+	DirBuffer *old_buffer[LISTER_DUAL_SIDES]; // Buffer each panel returns to from a device list
 	DirBuffer *buffer[LISTER_DUAL_SIDES];
 	DirBuffer *offset_buffer[LISTER_DUAL_SIDES];
 	long vert_offset[LISTER_DUAL_SIDES];
@@ -258,7 +260,15 @@ static void lister_dual_apply_panel(Lister *lister, short side)
 	}
 
 	// Other processes pair view with cur_buffer (lister_dual_side_buffer)
+	// and write the shown panel's working format (lister_dual_set_format)
 	Forbid();
+	if (side != state->view)
+	{
+		state->format[state->view] = lister->format;
+		lister->format = state->format[side];
+		state->old_buffer[state->view] = lister->old_buffer;
+		lister->old_buffer = state->old_buffer[side];
+	}
 	state->view = side;
 	lister->cur_buffer = state->buffer[side];
 	Permit();
@@ -2185,18 +2195,6 @@ void lister_dual_activate_other(Lister *lister)
 	lister_dual_set_active(lister, state, lister_dual_other_side(state->active));
 }
 
-// Return the inactive panel path for dual commands
-char *lister_dual_dest_path(Lister *lister)
-{
-	short side;
-	DirBuffer *buffer;
-
-	if ((side = lister_dual_dest_index(lister)) >= 0 && (buffer = lister_dual_side_buffer(lister, side)))
-		return buffer->buf_Path;
-
-	return 0;
-}
-
 // Return the inactive panel index for dual command destinations
 short lister_dual_dest_index(Lister *lister)
 {
@@ -2326,7 +2324,10 @@ BOOL lister_dual_other_side_shows(Lister *lister, DirBuffer *buffer)
 		return FALSE;
 
 	other = state->buffer[lister_dual_other_side(state->view)];
-	return (other == buffer || (other == lister->special_buffer && lister->old_buffer == buffer)) ? TRUE : FALSE;
+	return (other == buffer ||
+			(other == lister->special_buffer && state->old_buffer[lister_dual_other_side(state->view)] == buffer))
+			   ? TRUE
+			   : FALSE;
 }
 
 // Mark the panel a drop is aimed at; function_launch() takes it for the
@@ -2405,6 +2406,56 @@ BOOL lister_dual_do_rescans(Lister *lister)
 	return TRUE;
 }
 
+// Working format of a panel (side -1 or a normal lister: lister->format).
+// Function processes use these while the lister process shows either panel.
+void lister_dual_get_format(Lister *lister, short side, ListFormat *format)
+{
+	ListerDualState *state;
+
+	Forbid();
+	if (side >= 0 && side < LISTER_DUAL_SIDES && (state = lister_dual_get_state(lister)) &&
+		state->flags & DUALF_ONE_WINDOW && side != state->view)
+		*format = state->format[side];
+	else
+		*format = lister->format;
+	Permit();
+}
+
+void lister_dual_set_format(Lister *lister, short side, ListFormat *format)
+{
+	ListerDualState *state;
+
+	Forbid();
+	if (side >= 0 && side < LISTER_DUAL_SIDES && (state = lister_dual_get_state(lister)) &&
+		state->flags & DUALF_ONE_WINDOW && side != state->view)
+		state->format[side] = *format;
+	else
+		lister->format = *format;
+	Permit();
+}
+
+// The shown panel is about to show the special buffer (device or buffer
+// list). There is one special buffer per lister, so if the other panel shows
+// it, that panel returns to the directory it came from first.
+void lister_dual_release_special(Lister *lister)
+{
+	ListerDualState *state;
+	short other;
+
+	if (!(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW) ||
+		lister->cur_buffer == lister->special_buffer)
+		return;
+
+	other = lister_dual_other_side(state->view);
+	if (state->buffer[other] != lister->special_buffer || !state->old_buffer[other])
+		return;
+
+	state->buffer[other] = state->old_buffer[other];
+	state->old_buffer[other] = 0;
+	if (lister_valid_window(lister))
+		lister_dual_draw_panel(lister, other);
+}
+
 // Show the busy/source/destination state of both panels
 void lister_dual_show_status(Lister *lister)
 {
@@ -2427,13 +2478,16 @@ static void lister_dual_detach(Lister *lister)
 	}
 }
 
+// Normal buffer a panel the Lister does not show holds: its own, or the one it
+// returns to from a device list
+static DirBuffer *lister_dual_held_buffer(Lister *lister, ListerDualState *state, short side)
+{
+	return (state->buffer[side] == lister->special_buffer) ? state->old_buffer[side] : state->buffer[side];
+}
+
 // Release the lock a panel holds on a buffer the Lister no longer shows
 static void lister_dual_release_buffer(Lister *lister, DirBuffer *buffer, short arg)
 {
-	// A panel showing a device list holds the buffer it came from
-	if (buffer == lister->special_buffer && lister->cur_buffer != lister->special_buffer)
-		buffer = lister->old_buffer;
-
 	if (!buffer || buffer == lister->cur_buffer || buffer == lister->special_buffer ||
 		(buffer == lister->old_buffer && lister->cur_buffer == lister->special_buffer))
 		return;
@@ -2453,7 +2507,7 @@ void lister_dual_detach_closing(Lister *lister)
 	if ((state = lister_dual_get_state(lister)) && state->flags & DUALF_ONE_WINDOW)
 	{
 		lister_dual_capture_view(lister, state);
-		other = state->buffer[lister_dual_other_side(state->view)];
+		other = lister_dual_held_buffer(lister, state, lister_dual_other_side(state->view));
 	}
 	lister_dual_detach(lister);
 	lister_dual_release_buffer(lister, other, 1);
@@ -2551,6 +2605,8 @@ BOOL lister_dual_enter(Lister *lister)
 	state->locked = FALSE;
 	state->buffer[LISTER_DUAL_LEFT] = lister->cur_buffer;
 	state->buffer[LISTER_DUAL_RIGHT] = lister->cur_buffer;
+	state->format[LISTER_DUAL_LEFT] = state->format[LISTER_DUAL_RIGHT] = lister->format;
+	state->old_buffer[LISTER_DUAL_LEFT] = state->old_buffer[LISTER_DUAL_RIGHT] = lister->old_buffer;
 
 	lister->flags2 |= LISTERF2_DUAL;
 	lister_dual_apply_panel(lister, state->active);
@@ -2575,7 +2631,7 @@ void lister_dual_leave(Lister *lister)
 		DirBuffer *dropped;
 
 		lister_dual_switch_view(lister, state, state->active);
-		dropped = state->buffer[lister_dual_other_side(state->active)];
+		dropped = lister_dual_held_buffer(lister, state, lister_dual_other_side(state->active));
 		lister->flags2 &= ~LISTERF2_DUAL;
 		lister_dual_free_state(lister);
 		lister_dual_release_buffer(lister, dropped, 0);
