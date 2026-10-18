@@ -175,9 +175,6 @@ int function_build_list(FunctionHandle *handle, PathNode **path, InstructionPars
 	handle->link_file_count = 0;
 	handle->link_dir_count = 0;
 
-	if (path && *path)
-		function_apply_path_side(*path);
-
 	// Do we need entries?
 	if (instruction && !(instruction->flags & (FUNCF_NEED_ENTRIES | FUNCF_WANT_ENTRIES)))
 		return 1;
@@ -304,11 +301,11 @@ int function_build_list(FunctionHandle *handle, PathNode **path, InstructionPars
 			BOOL trapped = 0;
 
 			// See if there's a current source lister, with a custom handler
-			if (*path && (*path)->lister && (*path)->lister->cur_buffer->buf_CustomHandler[0])
+			if (*path && (*path)->lister && function_path_buffer(*path)->buf_CustomHandler[0])
 			{
 				// See if there's a trap for this command
 				if (!instruction->new_arg &&
-					FindFunctionTrap(instruction->command->name, (*path)->lister->cur_buffer->buf_CustomHandler, 0))
+					FindFunctionTrap(instruction->command->name, function_path_buffer(*path)->buf_CustomHandler, 0))
 				{
 					trapped = 1;
 				}
@@ -345,10 +342,10 @@ int function_build_list(FunctionHandle *handle, PathNode **path, InstructionPars
 									DirEntry *entry;
 
 									// Find entry in path
-									if ((entry = find_entry(&(*path)->lister->cur_buffer->entry_list,
+									if ((entry = find_entry(&function_path_buffer(*path)->entry_list,
 															funcentry->name,
 															0,
-															(*path)->lister->cur_buffer->more_flags & DWF_CASE)))
+															function_path_buffer(*path)->more_flags & DWF_CASE)))
 									{
 										// Fix as a lister entry
 										funcentry->entry = entry;
@@ -428,7 +425,7 @@ int function_build_list(FunctionHandle *handle, PathNode **path, InstructionPars
 	}
 
 	// If we don't have anything yet, check for a valid source buffer?
-	if (!done && *path && (*path)->lister && (buffer = (*path)->lister->cur_buffer))
+	if (!done && *path && (*path)->lister && (buffer = function_path_buffer(*path)))
 	{
 		/* ACTION_CHANGE */
 		// Icon mode?
@@ -772,15 +769,12 @@ int function_build_dest_list(FunctionHandle *handle, PathNode **path, Instructio
 	handle->dest_current_entry = 0;
 	handle->dest_entry_path = (path) ? *path : 0;
 
-	if (path && *path)
-		function_apply_path_side(*path);
-
 	// Do we need destination entries?
 	if (instruction && !(instruction->flags & (FUNCF_NEED_DEST_ENTRIES | FUNCF_WANT_DEST_ENTRIES)))
 		return 1;
 
 	// Need a real lister to get selected destination entries
-	if (!path || !*path || !(*path)->lister || !(buffer = (*path)->lister->cur_buffer))
+	if (!path || !*path || !(*path)->lister || !(buffer = function_path_buffer(*path)))
 		return 0;
 
 	// Icon mode
@@ -1180,8 +1174,7 @@ FunctionEntry *function_get_entry(FunctionHandle *handle)
 					DirBuffer *buffer;
 
 					// Make sure there's a valid buffer
-					function_apply_path_side(handle->source_paths.current);
-					if ((buffer = handle->source_paths.current->lister->cur_buffer))
+					if ((buffer = function_path_buffer(handle->source_paths.current)))
 					{
 						// Allowed to count sizes?
 						if (!(handle->instruction_flags & INSTF_DIR_NO_SIZES))

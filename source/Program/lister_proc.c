@@ -38,30 +38,15 @@ static void lister_launch_special_pair(Lister *lister, Cfg_Function *func)
 	function_launch_quick(FUNCTION_RUN_FUNCTION, func, lister);
 }
 
-static short lister_proc_apply_side(Lister **lister, ULONG side, BOOL preserve_active)
+// Load the panel a message names (1-based side, 0 = active panel). Handlers
+// call lister_dual_active_side() when done, so the active panel is loaded
+// again between messages.
+static void lister_proc_view_side(Lister *lister, ULONG side)
 {
-	short old_side = -1;
-
-	if (!lister || !*lister)
-		return -1;
-
 	if (side > 0 && side <= LISTER_DUAL_SIDES)
-	{
-		old_side = lister_dual_active_index(*lister);
-		if (preserve_active && lister_dual_apply_side_temporary(*lister, side - 1))
-			return old_side;
-		lister_dual_apply_side(*lister, side - 1);
-	}
+		lister_dual_view_side(lister, side - 1);
 	else
-		*lister = lister_dual_active_side(*lister);
-
-	return -1;
-}
-
-static void lister_proc_restore_side(Lister *lister, short side)
-{
-	if (side >= 0)
-		lister_dual_restore_active(lister, side);
+		lister_dual_active_side(lister);
 }
 
 // Initialise a new lister
@@ -278,18 +263,26 @@ IPC_EntryCode(lister_code)
 					// Need to redraw?
 					if (show)
 					{
-						// Update slider and title?
-						if (show & SNIFFF_SLIDERS)
-						{
-							lister_update_slider(lister, SLIDER_HORZ);
-							lister_show_title(lister, TRUE);
-						}
+						// Dual panels redraw through the panel code, which
+						// clips each panel and covers the inactive one
+						if (lister_dual_one_window(lister))
+							lister_dual_refresh_all(lister, (show & SNIFFF_SLIDERS) ? REFRESHF_SLIDERS : 0);
 
-						// Redraw display?
-						if (show & SNIFFF_SHOW)
+						else
 						{
-							lister->cur_buffer->buf_OldVertOffset = -1;
-							lister_display_dir(lister);
+							// Update slider and title?
+							if (show & SNIFFF_SLIDERS)
+							{
+								lister_update_slider(lister, SLIDER_HORZ);
+								lister_show_title(lister, TRUE);
+							}
+
+							// Redraw display?
+							if (show & SNIFFF_SHOW)
+							{
+								lister->cur_buffer->buf_OldVertOffset = -1;
+								lister_display_dir(lister);
+							}
 						}
 					}
 				}
@@ -817,7 +810,7 @@ IPC_EntryCode(lister_code)
 
 						// Activate window
 						ActivateWindow(lister->window);
-						lister_dual_to_front(lister);
+						WindowToFront(lister->window);
 					}
 
 					// Uniconify/Make visible?
@@ -915,7 +908,8 @@ IPC_EntryCode(lister_code)
 							else if (lister->flags & LISTERF_RESCAN)
 							{
 								lister->flags &= ~LISTERF_RESCAN;
-								read_directory(lister, lister->cur_buffer->buf_Path, GETDIRF_RESELECT);
+								if (!lister_dual_do_rescans(lister))
+									read_directory(lister, lister->cur_buffer->buf_Path, GETDIRF_RESELECT);
 							}
 						}
 
@@ -929,12 +923,9 @@ IPC_EntryCode(lister_code)
 
 				// Check if currently showing a special buffer
 				case LISTER_CHECK_SPECIAL_BUFFER:
-					if (flags > 0 && flags <= LISTER_DUAL_SIDES)
-						lister_dual_apply_side(lister, flags - 1);
-					else
-						lister = lister_dual_active_side(lister);
+					lister_proc_view_side(lister, flags);
 					lmsg->command = check_special_buffer(lister, 1);
-					lister_dual_store_active_buffer(lister);
+					lister_dual_active_side(lister);
 					break;
 
 				// Show special buffer
@@ -945,7 +936,7 @@ IPC_EntryCode(lister_code)
 					if (!title && flags)
 						title = GetString(&locale, flags);
 					buffer_show_special(lister, title);
-					lister_dual_store_active_buffer(lister);
+					lister_dual_active_side(lister);
 					break;
 				}
 
@@ -961,10 +952,7 @@ IPC_EntryCode(lister_code)
 
 					if (find && lmsg->data_free == find)
 					{
-						if (find->side > 0 && find->side <= LISTER_DUAL_SIDES)
-							lister_dual_apply_side(lister, find->side - 1);
-						else
-							lister = lister_dual_active_side(lister);
+						lister_proc_view_side(lister, find->side);
 						lmsg->command = (IPTR)lister_find_buffer(lister,
 																 0,
 																 find->path,
@@ -982,6 +970,7 @@ IPC_EntryCode(lister_code)
 																 (char *)lmsg->data_free,
 																 LISTER_BFPF_DONT_MOVE | LISTER_BFPF_DONT_UNLOCK);
 					}
+					lister_dual_active_side(lister);
 					break;
 				}
 
@@ -991,10 +980,7 @@ IPC_EntryCode(lister_code)
 
 					side = LISTER_SHOW_BUFFER_SIDE(flags);
 					flags = LISTER_SHOW_BUFFER_BASE_FLAGS(flags);
-					if (side > 0 && side <= LISTER_DUAL_SIDES)
-						lister_dual_apply_side(lister, side - 1);
-					else
-						lister = lister_dual_active_side(lister);
+					lister_proc_view_side(lister, side);
 
 					// If in icon mode, clear window
 					if (lister->flags & LISTERF_VIEW_ICONS)
@@ -1005,8 +991,8 @@ IPC_EntryCode(lister_code)
 
 					// Show buffer and check for reread
 					lister_show_buffer(lister, (DirBuffer *)data, 1, 1);
-					lister_dual_store_active_buffer(lister);
 					lister_check_old_buffer(lister, 0);
+					lister_dual_active_side(lister);
 
 					// Unlock buffer list?
 					if (flags)
@@ -1026,10 +1012,7 @@ IPC_EntryCode(lister_code)
 
 					if (find && lmsg->data_free == find)
 					{
-						if (find->side > 0 && find->side <= LISTER_DUAL_SIDES)
-							lister_dual_apply_side(lister, find->side - 1);
-						else
-							lister = lister_dual_active_side(lister);
+						lister_proc_view_side(lister, find->side);
 						lmsg->command = (IPTR)lister_buffer_find_empty(lister, find->path, find->stamp);
 					}
 					else
@@ -1037,7 +1020,7 @@ IPC_EntryCode(lister_code)
 						lister = lister_dual_active_side(lister);
 						lmsg->command = (IPTR)lister_buffer_find_empty(lister, data, (struct DateStamp *)flags);
 					}
-					lister_dual_store_active_buffer(lister);
+					lister_dual_active_side(lister);
 					break;
 				}
 
@@ -1048,36 +1031,34 @@ IPC_EntryCode(lister_code)
 					break;
 
 				// Refresh path field
-				case LISTER_REFRESH_PATH: {
-					short restore_side;
-
-					restore_side = lister_proc_apply_side(&lister, flags, TRUE);
+				case LISTER_REFRESH_PATH:
+					lister_proc_view_side(lister, flags);
 
 					// Refresh path field
 					lister_update_pathfield(lister);
 
 					// Update title bar
+					lister_dual_active_side(lister);
 					lister_show_name(lister);
-					lister_proc_restore_side(lister, restore_side);
 					break;
-				}
 
 				// Refresh free space
 				case LISTER_REFRESH_FREE:
-				case LISTER_REFRESH_NAME: {
-					short restore_side;
-
-					restore_side = lister_proc_apply_side(&lister, flags, TRUE);
+				case LISTER_REFRESH_NAME:
+					lister_proc_view_side(lister, flags);
 					lister_update_name(lister);
-					lister_proc_restore_side(lister, restore_side);
+
+					// The window title belongs to the active panel
+					if (flags && lister_dual_one_window(lister))
+					{
+						lister_dual_active_side(lister);
+						lister_show_name(lister);
+					}
 					break;
-				}
 
 				// Refresh lister display
-				case LISTER_REFRESH_WINDOW: {
-					short restore_side;
-
-					restore_side = lister_proc_apply_side(&lister, (IPTR)data, TRUE);
+				case LISTER_REFRESH_WINDOW:
+					lister_proc_view_side(lister, (IPTR)data);
 
 					// Datestamp?
 					if (flags & REFRESHF_DATESTAMP)
@@ -1088,7 +1069,7 @@ IPC_EntryCode(lister_code)
 						// Only refresh date?
 						if (flags == REFRESHF_DATESTAMP)
 						{
-							lister_proc_restore_side(lister, restore_side);
+							lister_dual_active_side(lister);
 							break;
 						}
 					}
@@ -1097,15 +1078,17 @@ IPC_EntryCode(lister_code)
 					if (lister->window)
 					{
 						lister->flags &= ~LISTERF_NO_REFRESH;
-						lister_refresh_display(lister, flags);
+
+						// A request for no particular panel refreshes both
+						if ((IPTR)data || !lister_dual_refresh_all(lister, flags))
+							lister_refresh_display(lister, flags);
 					}
+					lister_dual_active_side(lister);
 
 					// Change directory?
 					if (flags & REFRESHF_CD)
 						lister_fix_cd(lister);
-					lister_proc_restore_side(lister, restore_side);
 					break;
-				}
 
 				// Refresh lister title
 				case LISTER_REFRESH_TITLE:
@@ -1133,10 +1116,7 @@ IPC_EntryCode(lister_code)
 
 					if (select && lmsg->data_free == select)
 					{
-						if (select->side > 0 && select->side <= LISTER_DUAL_SIDES)
-							lister_dual_apply_side(lister, select->side - 1);
-						else
-							lister = lister_dual_active_side(lister);
+						lister_proc_view_side(lister, select->side);
 						MakeReselect(select->reselect, lister->cur_buffer, select->flags);
 					}
 					else
@@ -1144,6 +1124,7 @@ IPC_EntryCode(lister_code)
 						lister = lister_dual_active_side(lister);
 						MakeReselect((ReselectionData *)data, lister->cur_buffer, flags);
 					}
+					lister_dual_active_side(lister);
 					break;
 				}
 
@@ -1153,10 +1134,7 @@ IPC_EntryCode(lister_code)
 
 					if (select && lmsg->data_free == select)
 					{
-						if (select->side > 0 && select->side <= LISTER_DUAL_SIDES)
-							lister_dual_apply_side(lister, select->side - 1);
-						else
-							lister = lister_dual_active_side(lister);
+						lister_proc_view_side(lister, select->side);
 						buffer_lock(lister->cur_buffer, FALSE);
 						DoReselect(select->reselect, lister, select->flags);
 						buffer_unlock(lister->cur_buffer);
@@ -1168,6 +1146,7 @@ IPC_EntryCode(lister_code)
 						DoReselect((ReselectionData *)data, lister, flags);
 						buffer_unlock(lister->cur_buffer);
 					}
+					lister_dual_active_side(lister);
 					break;
 				}
 
@@ -1177,10 +1156,11 @@ IPC_EntryCode(lister_code)
 					lister_show_selected(lister, (int)(IPTR)data);
 					break;
 
-				// Scroll to show an entry
+				// Scroll to show an entry (flags: 1-based panel)
 				case LISTER_FIND_ENTRY:
-					lister = lister_dual_active_side(lister);
+					lister_proc_view_side(lister, flags);
 					lister_show_entry(lister, (DirEntry *)data);
+					lister_dual_active_side(lister);
 					break;
 
 				// Do parent/root
@@ -1190,14 +1170,11 @@ IPC_EntryCode(lister_code)
 					break;
 
 				// Show selection information
-				case LISTER_SHOW_INFO: {
-					short restore_side;
-
-					restore_side = lister_proc_apply_side(&lister, flags, TRUE);
+				case LISTER_SHOW_INFO:
+					lister_proc_view_side(lister, flags);
 					select_show_info(lister, 0);
-					lister_proc_restore_side(lister, restore_side);
+					lister_dual_active_side(lister);
 					break;
-				}
 
 				// Remove directory sizes
 				case LISTER_REMOVE_SIZES:
@@ -1216,20 +1193,16 @@ IPC_EntryCode(lister_code)
 
 				// Select global state
 				case LISTER_SELECT_GLOBAL_STATE:
-					if ((IPTR)data > 0 && (IPTR)data <= LISTER_DUAL_SIDES)
-						lister_dual_apply_side(lister, (IPTR)data - 1);
-					else
-						lister = lister_dual_active_side(lister);
+					lister_proc_view_side(lister, (IPTR)data);
 					select_global_state(lister, flags);
+					lister_dual_active_side(lister);
 					break;
 
 				// Toggle global state
 				case LISTER_SELECT_GLOBAL_TOGGLE:
-					if (flags > 0 && flags <= LISTER_DUAL_SIDES)
-						lister_dual_apply_side(lister, flags - 1);
-					else
-						lister = lister_dual_active_side(lister);
+					lister_proc_view_side(lister, flags);
 					select_global_toggle(lister);
+					lister_dual_active_side(lister);
 					break;
 
 				// Wildcard selection
@@ -1238,10 +1211,7 @@ IPC_EntryCode(lister_code)
 
 					if (select && lmsg->data_free == select)
 					{
-						if (select->side > 0 && select->side <= LISTER_DUAL_SIDES)
-							lister_dual_apply_side(lister, select->side - 1);
-						else
-							lister = lister_dual_active_side(lister);
+						lister_proc_view_side(lister, select->side);
 						select_global_wild(lister, &select->data, select->dest_list);
 					}
 					else
@@ -1249,6 +1219,7 @@ IPC_EntryCode(lister_code)
 						lister = lister_dual_active_side(lister);
 						select_global_wild(lister, (SelectData *)data, (PathList *)flags);
 					}
+					lister_dual_active_side(lister);
 					break;
 				}
 
@@ -1370,17 +1341,14 @@ IPC_EntryCode(lister_code)
 					break;
 
 				// Update buffer stamp
-				case LISTER_UPDATE_STAMP: {
-					short restore_side;
-
-					restore_side = lister_proc_apply_side(&lister, flags, TRUE);
+				case LISTER_UPDATE_STAMP:
+					lister_proc_view_side(lister, flags);
 
 					// If there's no pending rescan
 					if (!(lister->flags & LISTERF_RESCAN))
 						update_buffer_stamp(lister);
-					lister_proc_restore_side(lister, restore_side);
+					lister_dual_active_side(lister);
 					break;
-				}
 
 				// Copy a buffer
 				case LISTER_COPY_BUFFER:
@@ -1402,10 +1370,7 @@ IPC_EntryCode(lister_code)
 
 				// Rescan directory
 				case LISTER_RESCAN:
-					if (flags > 0 && flags <= LISTER_DUAL_SIDES)
-						lister_dual_apply_side(lister, flags - 1);
-					else
-						lister = lister_dual_active_side(lister);
+					lister_proc_view_side(lister, flags);
 
 					// If not busy, reread immediately
 					if (!(lister->flags & LISTERF_LOCK))
@@ -1413,7 +1378,11 @@ IPC_EntryCode(lister_code)
 
 					// Otherwise, set flag to queue rescan
 					else
+					{
 						lister->flags |= LISTERF_RESCAN;
+						lister_dual_queue_rescan(lister);
+					}
+					lister_dual_active_side(lister);
 					break;
 
 				// Split display with another lister
@@ -1592,6 +1561,15 @@ IPC_EntryCode(lister_code)
 
 				// Toggle dual lister mode
 				case LISTER_DUAL:
+
+					// A function may be using the panels; toggle when it is done
+					if (lister->flags & LISTERF_BUSY)
+					{
+						lister_new_waiter(lister, lmsg, 0, LISTERWAIT_AUTO_CMD);
+						lmsg = 0;
+						break;
+					}
+
 					lister_dual_toggle(lister, flags);
 					break;
 
@@ -1708,14 +1686,11 @@ IPC_EntryCode(lister_code)
 					break;
 
 				// Set gauge state
-				case LISTER_SET_GAUGE: {
-					short restore_side;
-
-					restore_side = lister_proc_apply_side(&lister, flags, TRUE);
+				case LISTER_SET_GAUGE:
+					lister_proc_view_side(lister, flags);
 					lister_set_gauge(lister, TRUE);
-					lister_proc_restore_side(lister, restore_side);
+					lister_dual_active_side(lister);
 					break;
-				}
 
 				// Highlight an entry
 				case LISTER_HIGHLIGHT:
@@ -2036,8 +2011,8 @@ short lister_handle_sniff(Lister *lister, SniffData *data)
 			}
 		}
 
-		// Is buffer currently visible?
-		if (lister->cur_buffer == data->buffer && !(lister->flags & LISTERF_VIEW_ICONS))
+		// Is buffer currently visible? (in either panel of a dual lister)
+		if (lister_dual_view_buffer(lister, data->buffer) && !(lister->flags & LISTERF_VIEW_ICONS))
 		{
 			short len;
 
@@ -2103,5 +2078,6 @@ short lister_handle_sniff(Lister *lister, SniffData *data)
 			show = 0;
 	}
 
+	lister_dual_active_side(lister);
 	return show;
 }

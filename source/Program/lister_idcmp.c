@@ -692,7 +692,7 @@ void lister_process_msg(Lister *lister, struct IntuiMessage *msg)
 
 			// F10 means window to front
 			case 0x59:
-				lister_dual_to_front(lister);
+				WindowToFront(lister->window);
 				break;
 
 			// Default
@@ -820,24 +820,10 @@ void lister_process_msg(Lister *lister, struct IntuiMessage *msg)
 
 	// Window activated
 	case IDCMP_ACTIVEWINDOW:
-	{
-		BOOL suppress_front;
 
 		// Set pointer to current lister only if not minimized to titlebar
 		if (!(lister->more_flags & LISTERF_TITLEBARRED))
 			GUI->current_lister = lister;
-
-		// Dual listers keep source/destination between their two sides.
-		// Toolbar and popup clicks should act without raising the lister over
-		// their transient UI.
-		suppress_front = lister_dual_consume_popup_front(lister);
-		if (lister_dual_is_side(lister) && !lister_dual_one_window(lister) &&
-			!suppress_front && !lister_dual_popup_at(lister, msg->MouseX, msg->MouseY))
-			lister_dual_to_front(lister);
-		if (!lister_dual_popup_at(lister, msg->MouseX, msg->MouseY) &&
-			(!(lister->flags & LISTERF_TOOLBAR) ||
-			 !point_in_element(&lister->toolbar_area, msg->MouseX, msg->MouseY)))
-			lister_dual_activate(lister);
 
 		/*
 					// Is lister busy, and do we have a known locker?
@@ -859,7 +845,6 @@ void lister_process_msg(Lister *lister, struct IntuiMessage *msg)
 			lister_check_old_buffer(lister, 0);
 		}
 		break;
-	}
 
 	// Mouse move
 	case IDCMP_MOUSEMOVE:
@@ -1209,11 +1194,10 @@ void lister_process_msg(Lister *lister, struct IntuiMessage *msg)
 		if (msg->Code == SELECTDOWN && lister_dual_handle_close_button(lister, msg->MouseX, msg->MouseY))
 			break;
 
-		// Legacy split dual listers keep their windows together.
-		if (msg->Qualifier != 0xffff && lister_dual_is_side(lister) && !lister_dual_one_window(lister) &&
-			!lister_dual_popup_at(lister, msg->MouseX, msg->MouseY))
-			lister_dual_to_front(lister);
-		lister_dual_activate_at(lister, msg->MouseX, msg->MouseY);
+		// Activate the panel clicked in (not for the button-up faked when the
+		// window goes inactive: the mouse is then over another window)
+		if (msg->Qualifier != 0xffff)
+			lister_dual_activate_at(lister, msg->MouseX, msg->MouseY);
 
 		// Dismiss any toolbar tooltip immediately
 		lister_toolbar_tooltip_hide(lister);
@@ -1597,7 +1581,6 @@ void lister_process_msg(Lister *lister, struct IntuiMessage *msg)
 						else
 						{
 							// Launch function
-							lister_dual_suppress_popup_front(lister);
 							function_launch_quick(FUNCTION_RUN_FUNCTION, function, lister_dual_active_side(lister));
 						}
 					}

@@ -56,7 +56,7 @@ DOPUS_FUNC(function_printdir)
 		DirEntry *entry;
 
 		// Lock lister buffer
-		buffer_lock((buffer = lister->cur_buffer), FALSE);
+		buffer_lock((buffer = function_path_buffer(path)), FALSE);
 
 		// Go through buffer
 		for (entry = (DirEntry *)buffer->entry_list.mlh_Head; entry->de_Node.dn_Succ;

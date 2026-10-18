@@ -1005,8 +1005,12 @@ short select_select_files(Lister *lister, UWORD qual, short mouse_x, short mouse
 						over_parent = DROPF_PARENT;
 					}
 
-					// Check it's not ours, unless we dropped onto a directory
-					if (window != lister->window || over_entry || over_parent)
+					// Check it's not ours, unless we dropped onto a directory or
+					// onto the other panel of a dual lister
+					if (window != lister->window || over_entry || over_parent ||
+						(lister_dual_one_window(lister) &&
+						 lister_dual_side_at(lister, mouse_x - window->LeftEdge, mouse_y - window->TopEdge) ==
+							 lister_dual_dest_index(lister)))
 					{
 						// See if window is in list of AppWindows
 						if (!(app_window = WB_FindAppWindow(window)))
@@ -2616,7 +2620,6 @@ short select_key_select(Lister *lister, BOOL doubleclick)
 void file_run_function(Lister *lister, DirEntry *entry, Cfg_Function *func, char *dest, ULONG flags)
 {
 	lister = lister_dual_active_side(lister);
-	lister_dual_suppress_popup_front(lister);
 
 	// Build filename
 	strcpy(lister->work_buffer, lister->cur_buffer->buf_Path);

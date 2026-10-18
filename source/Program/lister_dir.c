@@ -82,7 +82,7 @@ void lister_change_format(Lister *lister, ListFormat *format)
 		buffer_lock(lister->cur_buffer, FALSE);
 
 		// Get filetypes
-		filetype_find_typelist(lister, flags);
+		filetype_find_typelist(lister, lister->cur_buffer, flags);
 
 		// Unlock buffer
 		buffer_unlock(lister->cur_buffer);
@@ -463,23 +463,23 @@ void lister_parent_popup(Lister *lister, unsigned short code)
 	FreeMemHandle(memory);
 }
 
-// Add an entry to the history list
-void lister_add_history(Lister *lister)
+// Add the path of a buffer the lister shows to the history list
+void lister_add_history(Lister *lister, DirBuffer *buffer)
 {
 	Att_Node *node;
 
-	// Is current buffer valid?
-	if (!lister->path_history || !(lister->cur_buffer->flags & DWF_VALID) || !lister->cur_buffer->buf_Path[0])
+	// Is buffer valid?
+	if (!lister->path_history || !buffer || !(buffer->flags & DWF_VALID) || !buffer->buf_Path[0])
 		return;
 
 	// Lock list
 	LockAttList(lister->path_history, TRUE);
 
 	// See if buffer is already in history list
-	if (!(node = (Att_Node *)FindNameI(&lister->path_history->list, lister->cur_buffer->buf_Path)))
+	if (!(node = (Att_Node *)FindNameI(&lister->path_history->list, buffer->buf_Path)))
 	{
 		// Allocate a history node
-		if ((node = Att_NewNode(lister->path_history, lister->cur_buffer->buf_Path, 0, 0)))
+		if ((node = Att_NewNode(lister->path_history, buffer->buf_Path, 0, 0)))
 		{
 			// If count is over 20, remove first entry
 			if (lister->history_count == 20)

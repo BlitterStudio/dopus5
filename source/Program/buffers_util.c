@@ -104,7 +104,7 @@ void buffer_copy(DirBuffer *source, DirBuffer *dest, Lister *dest_lister)
 
 		// Things to get?
 		if (flags != SNIFFF_NO_FILETYPES)
-			filetype_find_typelist(dest_lister, flags);
+			filetype_find_typelist(dest_lister, dest, flags);
 
 		// Do reselection
 		DoReselect(&reselect, dest_lister, 0);

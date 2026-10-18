@@ -358,6 +358,9 @@ void lister_init_filelist(Lister *lister)
 	short width;
 	struct Rectangle *rect;
 
+	if (lister_dual_init_filelist(lister))
+		return;
+
 	// Rectangle at top
 	if (lister->more_flags & LISTERF_TITLE)
 		rect = &lister->title_area.rect;

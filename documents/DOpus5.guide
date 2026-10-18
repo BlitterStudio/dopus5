@@ -1,6 +1,6 @@
 @database dopus5
 @master dopus5.guide
-@$VER: Dopus5Guide 58.18 (17.10.2026)
+@$VER: Dopus5Guide 58.19 (18.10.2026)
 @author "Mark Anderson, Andrew Dunbar, Dr Greg Perry, Leo Davidson and Dave Clarke"
 @(c) "Directory Opus 5 Help Guide (c) GPSoftware 1999"
 @(c) "Directory Opus 5 Help Guide (c) DOPUS5 Open Source Team 2012-2026"
@@ -2500,18 +2500,32 @@ Lister mode, one lister window is split into two independent panels.  Each
 panel keeps its own path, scroll position and file display, while sharing
 the same window, toolbar and lister menu.
 
-Click inside a panel to make it active.  The active panel is treated as the
-source and the other panel is treated as the destination, so commands such
-as Copy can use the opposite panel as their default target.  The small
-menu button in each panel opens the lister menu for that panel; the close
-button closes that panel and returns the remaining panel to normal lister
-mode.
+Click inside a panel to make it active, or press Tab to switch panels.  The
+active panel is treated as the source and the other panel is treated as
+the destination, so commands such as Copy can use the opposite panel as
+their default target.  Scrolling a panel does not make it active.  The
+small menu button in each panel opens the lister menu for that panel; the
+close button closes that panel and returns the remaining panel to normal
+lister mode.
+
+Files dragged from one panel to the other are copied or moved there, as
+between two listers.  Files dropped on a panel from another lister or from
+Workbench go to the directory of that panel, whether it is active or not;
+with Shift, or with sub-directory drops enabled, a directory in the panel
+can take the drop.
 
 Dual Lister mode can also be controlled from buttons, hotkeys or scripts
 with the @{" Set " link "Set"} command, for example "Set Dual Toggle",
-"Set Dual On" or "Set Dual Off".
+"Set Dual On" or "Set Dual Off".  From ARexx, name the lister with
+"command source <handle> Set Dual On".
 
-Icon-mode and icon-action listers remain single-panel listers.
+Commands that need a source and are not started from a lister (a button
+bank, a hotkey, ARexx "command" without a lister) use the active panel of
+a dual lister when no other lister is a source, and its other panel as
+the destination.
+
+Icon-mode and icon-action listers remain single-panel listers, and a dual
+lister always zooms normally, even with title-bar zooming selected.
 
 @endnode
 

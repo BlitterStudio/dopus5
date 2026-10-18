@@ -209,7 +209,7 @@ DOPUS_FUNC(function_makedir)
 		if (read_flag)
 		{
 			// Read directory
-			function_read_directory(handle, path->lister, dir_path);
+			function_read_directory(handle, path->lister, function_path_side(path), dir_path);
 			add_flag = 0;
 		}
 

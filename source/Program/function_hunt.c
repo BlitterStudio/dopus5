@@ -179,7 +179,8 @@ DOPUS_FUNC(function_hunt)
 						{
 							// Read directory
 							handle->flags = GETDIRF_CANCHECKBUFS | GETDIRF_CANMOVEEMPTY;
-							function_read_directory(handle, path->lister, handle->work_buffer + 512);
+							function_read_directory(
+								handle, path->lister, function_path_side(path), handle->work_buffer + 512);
 
 							// Do wildcard selection
 							function_select_file(

@@ -946,8 +946,9 @@ void lister_set_gauge(Lister *lister, BOOL refresh)
 		lister_init_display(lister);
 		lister_refresh(lister, LREFRESH_FULL | LREFRESH_FULL_ICON);
 
-		// If the path field is added, refresh it
-		if (lister->path_field && lister->flags & LISTERF_PATH_FIELD)
+		// If the path field is added, refresh it (the dual layout already
+		// placed its path fields in lister_init_display)
+		if (lister->path_field && lister->flags & LISTERF_PATH_FIELD && !lister_dual_one_window(lister))
 		{
 			struct gpResize resize;
 

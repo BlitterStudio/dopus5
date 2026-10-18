@@ -28,15 +28,12 @@ DOPUS_FUNC(function_reselect)
 {
 	Lister *lister;
 	ListerReselectData *packet;
-	short active;
 	ULONG side;
 
 	// Get current lister
 	if ((lister = function_lister_current(&handle->source_paths)))
 	{
-		side = 0;
-		if ((active = lister_dual_active_index(lister)) >= 0)
-			side = active + 1;
+		side = function_path_side(handle->source_paths.current);
 
 		if ((packet = AllocVec(sizeof(ListerReselectData), MEMF_CLEAR)))
 		{

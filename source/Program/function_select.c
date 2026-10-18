@@ -33,7 +33,6 @@ DOPUS_FUNC(function_select)
 	Lister *lister;
 	SelectData *data;
 	SelectWildData *packet;
-	short active;
 	short ret = 0;
 	ULONG side;
 
@@ -41,9 +40,7 @@ DOPUS_FUNC(function_select)
 	if (!(lister = function_lister_current(&handle->source_paths)))
 		return 1;
 
-	side = 0;
-	if ((active = lister_dual_active_index(lister)) >= 0)
-		side = active + 1;
+	side = function_path_side(handle->source_paths.current);
 
 	// Allocate and copy local select data
 	if (!(data = AllocVec(sizeof(SelectData), MEMF_CLEAR)))
@@ -537,7 +534,6 @@ void function_select_file(FunctionHandle *handle, Lister *lister, char *filename
 {
 	SelectData data;
 	SelectWildData *packet;
-	short active;
 	ULONG side;
 
 	// Fill in selection data
@@ -550,9 +546,10 @@ void function_select_file(FunctionHandle *handle, Lister *lister, char *filename
 	data.compare_match = SELECT_MATCH_IGNORE;
 	data.include = SELECT_INCLUDE;
 
-	side = 0;
-	if ((active = lister_dual_active_index(lister)) >= 0)
-		side = active + 1;
+	// The file was read into the current source panel
+	side = (handle->source_paths.current && handle->source_paths.current->lister == lister)
+			   ? function_path_side(handle->source_paths.current)
+			   : 0;
 
 	// Select file
 	if ((packet = AllocVec(sizeof(SelectWildData), MEMF_CLEAR)))

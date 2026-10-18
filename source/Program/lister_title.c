@@ -256,9 +256,10 @@ void lister_show_status(Lister *lister)
 	struct TextExtent extent;
 	int len, lock = 0;
 
+	// Dual panels show their status in the panel headers
 	if (lister_dual_one_window(lister))
 	{
-		lister_dual_refresh(lister, LREFRESH_FULL);
+		lister_dual_show_status(lister);
 		return;
 	}
 

@@ -43,6 +43,7 @@ DOPUS_FUNC(function_user)
 	short action;
 	char *cmd_ptr = 0, cmd_buf[10], *dest_path = 0;
 	Lister *dest_lister = 0, *source_lister = 0;
+	DirBuffer *source_buffer = 0;
 	UWORD qual = 0;
 
 	// Get user filetype type
@@ -156,22 +157,22 @@ DOPUS_FUNC(function_user)
 	{
 		// Get destination path
 		if ((dest_lister = source->lister))
-			dest_path = dest_lister->cur_buffer->buf_Path;
+			dest_path = function_path_buffer(source)->buf_Path;
 	}
 
 	// Get source lister
-	if ((source = function_path_current(&handle->source_paths)))
-		source_lister = source->lister;
+	if ((source = function_path_current(&handle->source_paths)) && (source_lister = source->lister))
+		source_buffer = function_path_buffer(source);
 
 	// Go through entries
 	while ((entry = function_get_entry(handle)))
 	{
 		// Custom handler assigned?
-		if (source_lister && source_lister->cur_buffer->buf_CustomHandler[0])
+		if (source_buffer && source_buffer->buf_CustomHandler[0])
 		{
 			// Send double-click message
 			rexx_handler_msg(0,
-							 source_lister->cur_buffer,
+							 source_buffer,
 							 RXMF_WARN,
 							 HA_String,
 							 0,

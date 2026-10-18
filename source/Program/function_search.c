@@ -229,7 +229,8 @@ DOPUS_FUNC(function_search)
 
 								// Read directory
 								handle->flags = GETDIRF_CANCHECKBUFS | GETDIRF_CANMOVEEMPTY;
-								function_read_directory(handle, path->lister, handle->work_buffer);
+								function_read_directory(
+									handle, path->lister, function_path_side(path), handle->work_buffer);
 
 								// Select file
 								function_select_file(handle, path->lister, filename);

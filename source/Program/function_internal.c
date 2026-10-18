@@ -55,18 +55,20 @@ int function_internal_command(CommandList *command, char *args, FunctionHandle *
 		// Get current source lister
 		if ((lister = function_lister_current(&handle->source_paths)))
 		{
+			DirBuffer *buffer = function_path_buffer(handle->source_paths.current);
+
 			// Custom handler installed?
-			if (lister->cur_buffer->buf_CustomHandler[0])
+			if (buffer->buf_CustomHandler[0])
 			{
 				// If there's a NEW flag, we won't be using this lister
 				if (instruction && !instruction->new_arg)
 				{
 					// Look for trap handler
-					if (FindFunctionTrap(command->name, lister->cur_buffer->buf_CustomHandler, custom_port))
+					if (FindFunctionTrap(command->name, buffer->buf_CustomHandler, custom_port))
 					{
 						source_lister = lister;
 						dest_lister = function_lister_current(&handle->dest_paths);
-						cust_buffer = lister->cur_buffer;
+						cust_buffer = buffer;
 					}
 				}
 			}
@@ -76,15 +78,17 @@ int function_internal_command(CommandList *command, char *args, FunctionHandle *
 		if (!cust_buffer && (command->flags & FUNCF_NEED_DEST) &&
 			(lister = function_lister_current(&handle->dest_paths)))
 		{
+			DirBuffer *buffer = function_path_buffer(handle->dest_paths.current);
+
 			// Custom handler installed?
-			if (lister->cur_buffer->buf_CustomHandler[0])
+			if (buffer->buf_CustomHandler[0])
 			{
 				// Look for trap handler
-				if (FindFunctionTrap(command->name, lister->cur_buffer->buf_CustomHandler, custom_port))
+				if (FindFunctionTrap(command->name, buffer->buf_CustomHandler, custom_port))
 				{
 					source_lister = function_lister_current(&handle->source_paths);
 					dest_lister = lister;
-					cust_buffer = lister->cur_buffer;
+					cust_buffer = buffer;
 				}
 			}
 		}

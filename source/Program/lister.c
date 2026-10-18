@@ -834,8 +834,9 @@ void lister_zoom_window(Lister *lister)
 		GUI->current_lister = lister;
 	}
 
-	// Ben Vost zoom mode?
-	else if (environment->env->lister_options & LISTEROPTF_VOSTY_ZOOM)
+	// Ben Vost zoom mode? Dual listers keep panel gadgets in the window, so
+	// they always zoom normally
+	else if (environment->env->lister_options & LISTEROPTF_VOSTY_ZOOM && !lister_dual_one_window(lister))
 	{
 		// Save old dimensions
 		lister->restore_dims.Width = lister->window->Width;
