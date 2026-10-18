@@ -509,13 +509,19 @@ def instruction_analysis(inst, text):
     line number).  The once-only marker is removed once, and for Workbench
     instructions a literal "run " in the first byte, as function_script.c
     does.  The first command follows the instruction's own rules; the
-    others are AmigaDOS commands."""
+    others are AmigaDOS commands.  Opus replaces each {...} sequence (file
+    names, requesters such as {RdSelect destination:}) before the shell
+    sees the line, so each one stands for a single word here."""
     text = command_text(text)
     if inst == 2 and text[:4].lower() == "run ":
         text = text[4:]
-    commands, delimiters = shell_commands(text)
+    commands, delimiters = shell_commands(OPUS_SEQUENCE.sub("_", text))
     return ([parse_command(inst if index == 0 else 1, words) + (number,)
              for index, (number, words) in enumerate(commands)], delimiters)
+
+
+# An Opus command sequence: {f}, {Qs}, {RfSelect file:SYS:} ...
+OPUS_SEQUENCE = re.compile(r"\{[^{}]*\}")
 
 
 # A device, volume or assign name followed by ":".  Volume names may hold

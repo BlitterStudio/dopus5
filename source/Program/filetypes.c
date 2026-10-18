@@ -269,14 +269,18 @@ void filetype_default_list(APTR memory, struct ListLock *main_list)
 		NewList(&list->filetype_list);
 		list->flags = FTLISTF_INTERNAL;
 
+		// Button banks and environments are saved as FORM EPUS, older ones
+		// as FORM OPUS; "FORM?????PUS" matches both (MATCHCHUNK starts at
+		// the first chunk regardless of the position)
+
 		// Create default startmenu filetype
 		if ((type = filetype_default_new(
-				 memory, list, "Opus 5 Start Menu", "STRTMEN", 30, "loadbuttons start", "DOpus5:Icons/startmenu.info")))
+				 memory, list, "Opus 5 Start Menu", "STRTMEN", 38, "loadbuttons start", "DOpus5:Icons/startmenu.info")))
 		{
 			// Recognition string for buttons
 			lsprintf(type->recognition,
-					 "%lcOPUS%lc%lcBTNW%lc%lcSTRT%lc%lcBPIC%lc%lcSTRT",
-					 FTOP_MATCHFORM,
+					 "%lcFORM?????PUS%lc%lcBTNW%lc%lcSTRT%lc%lcBPIC%lc%lcSTRT",
+					 FTOP_MATCH,
 					 FTOP_AND,
 					 FTOP_MATCHCHUNK,
 					 FTOP_AND,
@@ -289,10 +293,10 @@ void filetype_default_list(APTR memory, struct ListLock *main_list)
 
 		// Create default button filetype
 		if ((type = filetype_default_new(
-				 memory, list, "Opus 5 Buttons", "BUTTONS", 12, "loadbuttons", "DOpus5:Icons/buttons.info")))
+				 memory, list, "Opus 5 Buttons", "BUTTONS", 20, "loadbuttons", "DOpus5:Icons/buttons.info")))
 		{
 			// Recognition string for buttons
-			lsprintf(type->recognition, "%lcOPUS%lc%lcBTNW", FTOP_MATCHFORM, FTOP_AND, FTOP_MATCHCHUNK);
+			lsprintf(type->recognition, "%lcFORM?????PUS%lc%lcBTNW", FTOP_MATCH, FTOP_AND, FTOP_MATCHCHUNK);
 		}
 
 		// Create default environment filetype
@@ -300,12 +304,12 @@ void filetype_default_list(APTR memory, struct ListLock *main_list)
 										 list,
 										 "Opus 5 Environment",
 										 "ENVIRON",
-										 12,
+										 20,
 										 "loadenvironment",
 										 "DOpus5:Icons/environment.info")))
 		{
 			// Recognition string for environment
-			lsprintf(type->recognition, "%lcOPUS%lc%lcENVR", FTOP_MATCHFORM, FTOP_AND, FTOP_MATCHCHUNK);
+			lsprintf(type->recognition, "%lcFORM?????PUS%lc%lcENVR", FTOP_MATCH, FTOP_AND, FTOP_MATCHCHUNK);
 		}
 
 		// Create default filetype filetype
