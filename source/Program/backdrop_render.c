@@ -60,21 +60,16 @@ static BOOL backdrop_mask_blittable(struct BitMap *bm, APTR mask)
 	return (BOOL)(display_rtg_bitmap(bm) || (TypeOfMem(mask) & MEMF_CHIP));
 }
 
+#ifndef USE_DRAWICONSTATE
 // Memory type for icon masks on the current screen
 static ULONG backdrop_mask_memory(void)
 {
-#ifdef USE_DRAWICONSTATE
-	// Icons are drawn by DrawIconState(); masks are only used for hit-testing
-	return MEMF_ANY;
-#else
 	// No screen yet; stay with chip, backdrop_init_info() checks again
 	if (!GUI->screen_pointer)
 		return MEMF_CHIP;
 	return display_rtg_bitmap(GUI->screen_pointer->RastPort.BitMap) ? MEMF_ANY : MEMF_CHIP;
-#endif
 }
 
-#ifndef USE_DRAWICONSTATE
 // Draw an icon image through its mask. Returns FALSE if the mask could not
 // be used, so the caller draws the image without it.
 static BOOL backdrop_blit_icon_mask(struct BitMap *bitmap,
@@ -1074,7 +1069,7 @@ void backdrop_image_bitmap(BackdropInfo *info, struct Image *image, UWORD *image
 BOOL backdrop_masks_misplaced(BackdropObject *object)
 {
 #ifdef USE_DRAWICONSTATE
-	// Masks are never blitted; any memory will do
+	// No masks are built
 	return FALSE;
 #else
 	BOOL in_chip, want_chip;
@@ -1091,7 +1086,9 @@ BOOL backdrop_masks_misplaced(BackdropObject *object)
 void backdrop_get_masks(BackdropObject *object)
 {
 	short a;
+#ifndef USE_DRAWICONSTATE
 	struct Image *image;
+#endif
 
 	// Free existing masks
 	for (a = 0; a < 2; a++)
@@ -1100,6 +1097,9 @@ void backdrop_get_masks(BackdropObject *object)
 		object->image_mask[a] = 0;
 	}
 
+	// DrawIconState() draws the icons and does its own transparency, and
+	// nothing else reads the masks, so don't build them
+#ifndef USE_DRAWICONSTATE
 	// See if icon has border - no mask if so
 	if (!backdrop_icon_border(object))
 	{
@@ -1142,6 +1142,7 @@ void backdrop_get_masks(BackdropObject *object)
 				break;
 		}
 	}
+#endif
 }
 
 // Install clip region

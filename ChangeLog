@@ -1,3 +1,13 @@
+[dopus5 next] AmigaOS 4, AROS: no unused icon masks
+Program change; version bump deferred.
+
+- On AmigaOS 4 and AROS, DrawIconState() draws the icons with their own
+  transparency, but Opus still built two masks for every borderless icon
+  when it was loaded and kept them until the icon was freed.  Nothing
+  read them: ghosting only uses a mask on the planar path, and the click
+  test on the mask was disabled long ago.  They are no longer built,
+  which saves the time and memory of two masks per icon.
+
 [dopus5 next] Faster icon transparency masks
 dopus5.library and Program change; version bump deferred.
 
