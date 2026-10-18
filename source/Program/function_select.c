@@ -180,7 +180,7 @@ DOPUS_FUNC(function_select)
 			if (!IPC_Command(lister->ipc, LISTER_SELECT_WILD, 0, packet, packet, REPLY_NO_PORT))
 				FreeVec(packet);
 		}
-		else
+		else if (!side)
 			IPC_Command(lister->ipc, LISTER_SELECT_WILD, (IPTR)&handle->dest_paths, data, 0, REPLY_NO_PORT);
 
 		// Refresh window
@@ -561,6 +561,6 @@ void function_select_file(FunctionHandle *handle, Lister *lister, char *filename
 		if (!IPC_Command(lister->ipc, LISTER_SELECT_WILD, 0, packet, packet, (struct MsgPort *)-1))
 			FreeVec(packet);
 	}
-	else
+	else if (!side)
 		IPC_Command(lister->ipc, LISTER_SELECT_WILD, (IPTR)&handle->dest_paths, &data, 0, (struct MsgPort *)-1);
 }

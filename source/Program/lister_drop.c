@@ -278,13 +278,18 @@ DirEntry *lister_test_drag(Lister *our_lister, DragInfo *drag, short x, short y,
 				// Get lister pointer
 				if ((lister = (Lister *)IPCDATA(ipc)))
 				{
+					DirBuffer *buffer;
+
+					// Buffer of the dual panel under the pointer
+					buffer = lister_dual_side_buffer(
+						lister, lister_dual_side_at(lister, x - window->LeftEdge, y - window->TopEdge));
+
 					// If lister is busy, can't use it
 					if (lister->flags & LISTERF_BUSY)
 						lister = 0;
 
 					// Custom handler, not enabled?
-					else if (lister->cur_buffer->buf_CustomHandler[0] &&
-							 !(lister->cur_buffer->cust_flags & CUSTF_SUBDROP))
+					else if (buffer->buf_CustomHandler[0] && !(buffer->cust_flags & CUSTF_SUBDROP))
 						lister = 0;
 				}
 			}

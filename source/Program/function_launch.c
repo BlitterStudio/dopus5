@@ -46,7 +46,11 @@ BOOL function_launch(ULONG command,
 	FunctionHandle *handle;
 	IPCData *ipc;
 	char *dual_dest_path = 0;
-	short dual_dest_side = -1;
+	short dual_dest_side;
+
+	// Take the dual panel a drop is aimed at first, so a failed launch
+	// cannot leave it behind for a later function
+	dual_dest_side = (dest_list) ? lister_dual_take_drop_side(dest_list) : -1;
 
 	// Allocate handle
 	if (!(handle = function_new_handle(0, 0)))
@@ -156,8 +160,6 @@ BOOL function_launch(ULONG command,
 		{
 			// Dual lister destination paths target the inactive panel, or the
 			// panel something was dropped on
-			if (handle->dest_lister && dual_dest_side < 0)
-				dual_dest_side = lister_dual_take_drop_side(handle->dest_lister);
 			if (dual_dest_side >= 0)
 			{
 				path->dual_side = dual_dest_side;

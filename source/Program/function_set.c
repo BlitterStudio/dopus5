@@ -344,8 +344,8 @@ DOPUS_FUNC(function_set)
 		// Save format
 		lister->user_format = lister->format;
 
-		// Set flag to resort
-		lister->cur_buffer->flags &= ~DWF_SPECIAL_SORT;
+		// Set flag to resort the panel the command was started from
+		function_path_buffer(handle->source_paths.current)->flags &= ~DWF_SPECIAL_SORT;
 		handle->result_flags |= FRESULTF_RESORT;
 	}
 

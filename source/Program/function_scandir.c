@@ -189,6 +189,9 @@ DOPUS_FUNC(function_scandir)
 		{
 			BPTR lock;
 
+			// A new lister has no panels
+			side = 0;
+
 			// Got a path and can lock it?
 			if (path_flag && handle->source_path[0] && (lock = Lock(handle->source_path, ACCESS_READ)))
 			{
@@ -228,8 +231,8 @@ DOPUS_FUNC(function_scandir)
 			// Copy it
 			strcpy(copy, sel_file);
 
-			// Send selection command
-			IPC_Command(lister->ipc, LISTER_SELSHOW, 1, 0, copy, 0);
+			// Send selection command for the panel that was read
+			IPC_Command(lister->ipc, LISTER_SELSHOW, 1, (APTR)(IPTR)side, copy, 0);
 		}
 	}
 

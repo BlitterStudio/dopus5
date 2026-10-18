@@ -45,7 +45,7 @@ DOPUS_FUNC(function_reselect)
 			if (!IPC_Command(lister->ipc, LISTER_DO_RESELECT, 0, packet, packet, (struct MsgPort *)-1))
 				FreeVec(packet);
 		}
-		else
+		else if (!side)
 			IPC_Command(lister->ipc, LISTER_DO_RESELECT, 1, (APTR)&lister->reselect, 0, (struct MsgPort *)-1);
 	}
 

@@ -1562,11 +1562,12 @@ IPC_EntryCode(lister_code)
 				// Toggle dual lister mode
 				case LISTER_DUAL:
 
-					// A function may be using the panels; toggle when it is done
+					// A function may be using the panels; toggle when it is done.
+					// Without memory for the waiter the message is just replied.
 					if (lister->flags & LISTERF_BUSY)
 					{
-						lister_new_waiter(lister, lmsg, 0, LISTERWAIT_AUTO_CMD);
-						lmsg = 0;
+						if (lister_new_waiter(lister, lmsg, 0, LISTERWAIT_AUTO_CMD))
+							lmsg = 0;
 						break;
 					}
 
@@ -1638,12 +1639,14 @@ IPC_EntryCode(lister_code)
 				case LISTER_CONFIGURE:
 
 					// Saying hello?
-					if (lmsg->flags)
+					if (lmsg->flags & 1)
 						lister->more_flags |= LISTERF_CONFIGURE;
 
-					// Saying goodbye
+					// Saying goodbye (bits 8+ name the panel)
 					else
 					{
+						lister_proc_view_side(lister, lmsg->flags >> 8);
+
 						// New format?
 						if (lmsg->data_free)
 							lister_change_format(lister, (ListFormat *)lmsg->data_free);
@@ -1663,6 +1666,7 @@ IPC_EntryCode(lister_code)
 							// Snapshot lister
 							PositionUpdate(lister, flags);
 						}
+						lister_dual_active_side(lister);
 					}
 					break;
 
@@ -1681,8 +1685,10 @@ IPC_EntryCode(lister_code)
 						break;
 					}
 
-					// Select entry
+					// Select entry (data names the 1-based panel)
+					lister_proc_view_side(lister, (IPTR)lmsg->data);
 					lister_sel_show(lister, (char *)lmsg->data_free);
+					lister_dual_active_side(lister);
 					break;
 
 				// Set gauge state

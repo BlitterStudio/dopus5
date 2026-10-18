@@ -150,7 +150,8 @@ void function_read_directory(FunctionHandle *handle, Lister *lister, ULONG side,
 			buffer = (DirBuffer *)IPC_Command(
 				lister->ipc, LISTER_BUFFER_FIND, 0, find_packet, find_packet, REPLY_NO_PORT);
 		}
-		else
+		// The old message form names no panel; a dual panel skips the search
+		else if (!side)
 			buffer = (DirBuffer *)IPC_Command(
 				lister->ipc, LISTER_BUFFER_FIND, (IPTR)stamp_ptr, (APTR)(IPTR)PATH_FULL_DEVICE, 0, REPLY_NO_PORT);
 
@@ -192,13 +193,22 @@ void function_read_directory(FunctionHandle *handle, Lister *lister, ULONG side,
 
 				IPC_Command(lister->ipc, LISTER_BUFFER_FIND_EMPTY, 0, find_packet, find_packet, REPLY_NO_PORT);
 			}
-			else
+			else if (!side)
 				IPC_Command(lister->ipc,
 							LISTER_BUFFER_FIND_EMPTY,
 							(IPTR)stamp_ptr,
 							(APTR)(IPTR)PATH_FULL_DEVICE,
 							0,
 							REPLY_NO_PORT);
+
+			// The old message form would work on the active panel
+			else
+			{
+				if (lock)
+					UnLock(lock);
+				function_error_text(handle, ERROR_NO_FREE_STORE);
+				return;
+			}
 		}
 
 		// Get buffer
@@ -234,7 +244,7 @@ void function_read_directory(FunctionHandle *handle, Lister *lister, ULONG side,
 				if (!IPC_Command(lister->ipc, LISTER_MAKE_RESELECT, 0, packet, packet, REPLY_NO_PORT))
 					FreeVec(packet);
 			}
-			else
+			else if (!side)
 				IPC_Command(lister->ipc, LISTER_MAKE_RESELECT, RESELF_SAVE_FILETYPES, (APTR)&reselect, 0, REPLY_NO_PORT);
 		}
 
@@ -315,7 +325,7 @@ void function_read_directory(FunctionHandle *handle, Lister *lister, ULONG side,
 					if (!IPC_Command(lister->ipc, LISTER_DO_RESELECT, 0, packet, packet, REPLY_NO_PORT))
 						FreeVec(packet);
 				}
-				else
+				else if (!side)
 					IPC_Command(lister->ipc, LISTER_DO_RESELECT, 0, (APTR)&reselect, 0, REPLY_NO_PORT);
 			}
 			FreeReselect(&reselect);
