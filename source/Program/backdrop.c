@@ -298,18 +298,9 @@ void backdrop_remove_object(BackdropInfo *info, BackdropObject *object)
 	// Remove from list
 	Remove(&object->node);
 
-	// Not an appicon?
-	if (object->type != BDO_APP_ICON)
-	{
-		if (object->icon)
-		{
-			// Free icon remapping
-			RemapIcon(object->icon, (info->window) ? info->window->WScreen : 0, 1);
-
-			// Free icon
-			FreeCachedDiskObject(object->icon);
-		}
-	}
+	// Not an appicon? Free icon
+	if (object->type != BDO_APP_ICON && object->icon)
+		backdrop_free_icon(info, object->icon);
 
 	// Mask plane?
 	for (a = 0; a < 2; a++)
@@ -319,11 +310,21 @@ void backdrop_remove_object(BackdropInfo *info, BackdropObject *object)
 	FreeMemH(object);
 }
 
+// Free an object's icon. icon.library V44+ undoes LayoutIcon() itself in
+// FreeDiskObject(); a remapped NewIcon must be restored first
+void backdrop_free_icon(BackdropInfo *info, struct DiskObject *icon)
+{
+	if (IconBase->lib_Version < 44)
+		RemapIcon(icon, (info->window) ? info->window->WScreen : 0, 1);
+	FreeCachedDiskObject(icon);
+}
+
 // Get icon for an object
 void backdrop_get_icon(BackdropInfo *info, BackdropObject *object, short flags)
 {
 	short x, y, border_x = 0, border_y_top = 0, border_y_bottom = 0;
 	BOOL new_icon = 1;
+	struct DiskObject *had_icon = object->icon;
 
 	// Keeping icon?
 	if (flags & GETICON_KEEP)
@@ -337,12 +338,10 @@ void backdrop_get_icon(BackdropInfo *info, BackdropObject *object, short flags)
 		// Already got icon?
 		if (object->icon && !(flags & GETICON_KEEP))
 		{
-			// Free icon remapping
-			RemapIcon(object->icon, (info->window) ? info->window->WScreen : 0, 1);
-
 			// Free icon
-			FreeCachedDiskObject(object->icon);
+			backdrop_free_icon(info, object->icon);
 			object->icon = 0;
+			had_icon = 0;
 
 			// We'll be getting a new one
 			new_icon = 1;
@@ -592,8 +591,11 @@ void backdrop_get_icon(BackdropInfo *info, BackdropObject *object, short flags)
 			// Window open?
 			if (info->window)
 			{
-				// Remap the icon
-				RemapIcon(object->icon, info->window->WScreen, 0);
+				// Remap the icon, unless icon.library V44+ just loaded it, which lays
+				// it out for the Opus screen already (ICONGETA_Screen)
+				if (IconBase->lib_Version < 44 || object->icon == had_icon ||
+					info->window->WScreen != GUI->screen_pointer)
+					RemapIcon(object->icon, info->window->WScreen, 0);
 
 				// Set flag
 				object->flags |= BDOF_REMAPPED;

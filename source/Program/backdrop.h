@@ -301,6 +301,7 @@ void backdrop_check_change(BackdropInfo *, BackdropObject *);
 void backdrop_get_leftouts(BackdropInfo *, BackdropObject *);
 BackdropObject *backdrop_leftout_new(BackdropInfo *, char *, char *, ULONG);
 void backdrop_get_icon(BackdropInfo *, BackdropObject *, short);
+void backdrop_free_icon(BackdropInfo *, struct DiskObject *);
 void backdrop_leave_icons_out(BackdropInfo *info, BackdropObject *, BOOL);
 void backdrop_save_leftouts(BackdropInfo *);
 BackdropObject *find_backdrop_object(BackdropInfo *, BackdropObject *);

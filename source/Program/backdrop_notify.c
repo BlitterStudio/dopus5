@@ -221,13 +221,7 @@ BOOL backdrop_check_notify(BackdropInfo *info, DOpusNotify *notify, Lister *list
 
 			// Free old icon
 			if (old)
-			{
-				// Free icon remapping
-				RemapIcon(old, (info->window) ? info->window->WScreen : 0, 1);
-
-				// Free icon
-				FreeCachedDiskObject(old);
-			}
+				backdrop_free_icon(info, old);
 
 			// Fix new icon size
 			backdrop_get_icon(info, object, GETICON_POS_ONLY | GETICON_SAVE_POS | GETICON_KEEP);
