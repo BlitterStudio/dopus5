@@ -355,7 +355,7 @@ void lister_draw_entry(Lister *lister, DirEntry *entry, short x, short y, short 
 	else
 	{
 		// Build string to display
-		builddisplaystring(entry, lister->display_buf, lister);
+		builddisplaystring(entry, lister->display_buf, lister, lister->cur_buffer);
 
 		// Display entry
 		Move(&lister->text_area.rast, x, y);
@@ -551,9 +551,9 @@ void getdispcol(DirEntry *entry, Lister *lister, short *fpen, short *bpen)
 	*bpen = lister_colour_pen(lister, col, 1);
 }
 
-// Build the string to display an entry
+// Build the string to display an entry of a buffer
 // Called from the LISTER process
-void builddisplaystring(DirEntry *entry, char *display_buf, Lister *lister)
+void builddisplaystring(DirEntry *entry, char *display_buf, Lister *lister, DirBuffer *buffer)
 {
 	NetworkInfo *network = 0;
 	char size_buf[27];
@@ -561,7 +561,6 @@ void builddisplaystring(DirEntry *entry, char *display_buf, Lister *lister)
 	char *end_ptr;
 	register short len;
 	register short item;
-	DirBuffer *buffer = lister->cur_buffer;
 
 	// If entry is invalid, fill string with spaces
 	if (!entry->de_Node.dn_Succ)

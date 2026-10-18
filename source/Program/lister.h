@@ -694,7 +694,7 @@ void display_entry(struct DirectoryEntry *, Lister *, int);
 void lister_draw_entry(Lister *, struct DirectoryEntry *, short, short, short, short, short);
 void setdispcol(struct DirectoryEntry *, Lister *);
 void getdispcol(struct DirectoryEntry *, Lister *, short *, short *);
-void builddisplaystring(struct DirectoryEntry *, char *, Lister *);
+void builddisplaystring(struct DirectoryEntry *, char *, Lister *, struct DirectoryBuffer *);
 void entry_highlight(Lister *, short);
 void lister_update_name(Lister *);
 void lister_refresh_display(Lister *, ULONG);
