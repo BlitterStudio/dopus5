@@ -74,7 +74,8 @@ char *dual_mode_keys[] = {"off", "on", "toggle", "0", "1", 0};
 DOPUS_FUNC(function_set)
 {
 	Lister *lister;
-	short set, refresh = 0;
+	ListFormat format;
+	short set, refresh = 0, side = -1;
 	char *set_args = args;
 
 	// Get key word
@@ -87,8 +88,13 @@ DOPUS_FUNC(function_set)
 	else if ((set = rexx_match_keyword(&args, set_keys, 0)) == -1)
 		return 0;
 
-	// Get current lister
+	// Get current lister, and the format of the panel the command was started from
 	lister = function_lister_current(&handle->source_paths);
+	if (lister)
+	{
+		side = (short)function_path_side(handle->source_paths.current) - 1;
+		lister_dual_get_format(lister, side, &format);
+	}
 
 	// Set what?
 	switch (set)
@@ -106,7 +112,7 @@ DOPUS_FUNC(function_set)
 			break;
 
 		// Set sort format
-		refresh = !(rexx_set_format(RXCMD_SET, RXCMD_SORT, &lister->format, args));
+		refresh = !(rexx_set_format(RXCMD_SET, RXCMD_SORT, &format, args));
 		break;
 
 	case SET_DISPLAY:
@@ -116,7 +122,7 @@ DOPUS_FUNC(function_set)
 			break;
 
 		// Set display format
-		refresh = !(rexx_set_format(RXCMD_SET, RXCMD_DISPLAY, &lister->format, args));
+		refresh = !(rexx_set_format(RXCMD_SET, RXCMD_DISPLAY, &format, args));
 		break;
 
 	case SET_SEPARATE:
@@ -126,7 +132,7 @@ DOPUS_FUNC(function_set)
 			break;
 
 		// Set separation
-		refresh = !(rexx_set_format(RXCMD_SET, RXCMD_SEPARATE, &lister->format, args));
+		refresh = !(rexx_set_format(RXCMD_SET, RXCMD_SEPARATE, &format, args));
 		break;
 
 	case SET_SHOW:
@@ -136,7 +142,7 @@ DOPUS_FUNC(function_set)
 			break;
 
 		// Set show pattern
-		refresh = !(rexx_set_format(RXCMD_SET, RXCMD_SHOW, &lister->format, args));
+		refresh = !(rexx_set_format(RXCMD_SET, RXCMD_SHOW, &format, args));
 		break;
 
 	case SET_HIDE:
@@ -146,7 +152,7 @@ DOPUS_FUNC(function_set)
 			break;
 
 		// Set hide pattern
-		refresh = !(rexx_set_format(RXCMD_SET, RXCMD_HIDE, &lister->format, args));
+		refresh = !(rexx_set_format(RXCMD_SET, RXCMD_HIDE, &format, args));
 		break;
 
 	case SET_FLAGS: {
@@ -164,12 +170,12 @@ DOPUS_FUNC(function_set)
 		if (!*ptr)
 		{
 			// Clear flags initially
-			lister->format.sort.sort_flags &= ~SORT_REVERSE;
-			lister->format.flags &= ~(LFORMATF_REJECT_ICONS | LFORMATF_HIDDEN_BIT);
+			format.sort.sort_flags &= ~SORT_REVERSE;
+			format.flags &= ~(LFORMATF_REJECT_ICONS | LFORMATF_HIDDEN_BIT);
 		}
 
 		// Set flags
-		refresh = !(rexx_set_format(RXCMD_SET, RXCMD_FLAGS, &lister->format, args));
+		refresh = !(rexx_set_format(RXCMD_SET, RXCMD_FLAGS, &format, args));
 	}
 	break;
 
@@ -341,8 +347,9 @@ DOPUS_FUNC(function_set)
 	// Resort?
 	if (refresh)
 	{
-		// Save format
-		lister->user_format = lister->format;
+		// Store and save format
+		lister_dual_set_format(lister, side, &format);
+		lister->user_format = format;
 
 		// Set flag to resort the panel the command was started from
 		function_path_buffer(handle->source_paths.current)->flags &= ~DWF_SPECIAL_SORT;

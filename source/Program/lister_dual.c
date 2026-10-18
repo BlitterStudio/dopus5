@@ -2129,7 +2129,11 @@ BOOL lister_dual_handle_close_button(Lister *lister, UWORD x, UWORD y)
 	{
 		if (point_in_element(&state->close_area[side], x, y))
 		{
-			lister_dual_close_side(lister, side);
+			// A running function may use either panel's buffer
+			if (lister->flags & LISTERF_BUSY)
+				DisplayBeep(lister->window->WScreen);
+			else
+				lister_dual_close_side(lister, side);
 			return TRUE;
 		}
 	}
