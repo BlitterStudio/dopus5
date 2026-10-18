@@ -509,19 +509,60 @@ def instruction_analysis(inst, text):
     line number).  The once-only marker is removed once, and for Workbench
     instructions a literal "run " in the first byte, as function_script.c
     does.  The first command follows the instruction's own rules; the
-    others are AmigaDOS commands.  Opus replaces each {...} sequence (file
+    others are AmigaDOS commands.  Opus replaces its {...} sequences (file
     names, requesters such as {RdSelect destination:}) before the shell
     sees the line, so each one stands for a single word here."""
     text = command_text(text)
     if inst == 2 and text[:4].lower() == "run ":
         text = text[4:]
-    commands, delimiters = shell_commands(OPUS_SEQUENCE.sub("_", text))
+    commands, delimiters = shell_commands(opus_sequences(text, "_"))
     return ([parse_command(inst if index == 0 else 1, words) + (number,)
              for index, (number, words) in enumerate(commands)], delimiters)
 
 
-# An Opus command sequence: {f}, {Qs}, {RfSelect file:SYS:} ...
-OPUS_SEQUENCE = re.compile(r"\{[^{}]*\}")
+def opus_sequences(text, placeholder):
+    """Replace the command sequences in an instruction the way
+    function_parse_instruction() reads them: "{{" is a literal "{", a "{"
+    at the end stays, {R...} and {v...} run to the next "}", the others
+    take their letter and modifiers plus one more character (the "}", not
+    checked), and an unknown letter drops "{" and the letter only."""
+    out, i, n = [], 0, len(text)
+    while i < n:
+        if text[i] != "{" or i == n - 1:
+            out.append(text[i])
+            i += 1
+            continue
+        if text[i + 1] == "{":
+            out.append("{")
+            i += 2
+            continue
+        j = i + 1
+        kind = text[j]
+        if kind in "vR":
+            end = text.find("}", j + 1)
+            i = n if end < 0 else end + 1
+        elif kind == "Q":
+            i = j + 3
+        elif kind in "oOfFsdp":
+            if kind == "d" and text[j + 1:j + 2] in ("f", "F", "o", "O"):
+                j += 1
+                kind = text[j]
+            elif kind == "d":
+                kind = "s"
+            if kind in "of" and text[j + 1:j + 2] == "u":
+                j += 1
+            if kind != "p" and text[j + 1:j + 2] == "!":
+                j += 1
+            if kind in "oOfF" and text[j + 1:j + 2] in ("`", "'", "~"):
+                j += 1
+            if kind in "of" and text[j + 1:j + 2] == "-":
+                j += 1
+            i = j + 2
+        else:
+            i = j + 1
+            continue
+        out.append(placeholder)
+    return "".join(out)
 
 
 # A device, volume or assign name followed by ":".  Volume names may hold

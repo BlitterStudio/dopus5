@@ -270,33 +270,38 @@ void filetype_default_list(APTR memory, struct ListLock *main_list)
 		list->flags = FTLISTF_INTERNAL;
 
 		// Button banks and environments are saved as FORM EPUS, older ones
-		// as FORM OPUS; "FORM?????PUS" matches both (MATCHCHUNK starts at
-		// the first chunk regardless of the position)
+		// as FORM OPUS.  Operators group to the right, so the chunk tests
+		// come first and the form test ends each string: "B AND O OR E"
+		// is B && (O || E).  FINDCHUNK finds STRT after an optional BPIC.
 
 		// Create default startmenu filetype
 		if ((type = filetype_default_new(
-				 memory, list, "Opus 5 Start Menu", "STRTMEN", 38, "loadbuttons start", "DOpus5:Icons/startmenu.info")))
+				 memory, list, "Opus 5 Start Menu", "STRTMEN", 24, "loadbuttons start", "DOpus5:Icons/startmenu.info")))
 		{
 			// Recognition string for buttons
 			lsprintf(type->recognition,
-					 "%lcFORM?????PUS%lc%lcBTNW%lc%lcSTRT%lc%lcBPIC%lc%lcSTRT",
-					 FTOP_MATCH,
-					 FTOP_AND,
+					 "%lcBTNW%lc%lcSTRT%lc%lcOPUS%lc%lcEPUS",
 					 FTOP_MATCHCHUNK,
 					 FTOP_AND,
-					 FTOP_MATCHCHUNK,
+					 FTOP_FINDCHUNK,
+					 FTOP_AND,
+					 FTOP_MATCHFORM,
 					 FTOP_OR,
-					 FTOP_MATCHCHUNK,
-					 FTOP_AND,
-					 FTOP_MATCHCHUNK);
+					 FTOP_MATCHFORM);
 		}
 
 		// Create default button filetype
 		if ((type = filetype_default_new(
-				 memory, list, "Opus 5 Buttons", "BUTTONS", 20, "loadbuttons", "DOpus5:Icons/buttons.info")))
+				 memory, list, "Opus 5 Buttons", "BUTTONS", 18, "loadbuttons", "DOpus5:Icons/buttons.info")))
 		{
 			// Recognition string for buttons
-			lsprintf(type->recognition, "%lcFORM?????PUS%lc%lcBTNW", FTOP_MATCH, FTOP_AND, FTOP_MATCHCHUNK);
+			lsprintf(type->recognition,
+					 "%lcBTNW%lc%lcOPUS%lc%lcEPUS",
+					 FTOP_MATCHCHUNK,
+					 FTOP_AND,
+					 FTOP_MATCHFORM,
+					 FTOP_OR,
+					 FTOP_MATCHFORM);
 		}
 
 		// Create default environment filetype
@@ -304,12 +309,18 @@ void filetype_default_list(APTR memory, struct ListLock *main_list)
 										 list,
 										 "Opus 5 Environment",
 										 "ENVIRON",
-										 20,
+										 18,
 										 "loadenvironment",
 										 "DOpus5:Icons/environment.info")))
 		{
 			// Recognition string for environment
-			lsprintf(type->recognition, "%lcFORM?????PUS%lc%lcENVR", FTOP_MATCH, FTOP_AND, FTOP_MATCHCHUNK);
+			lsprintf(type->recognition,
+					 "%lcENVR%lc%lcOPUS%lc%lcEPUS",
+					 FTOP_MATCHCHUNK,
+					 FTOP_AND,
+					 FTOP_MATCHFORM,
+					 FTOP_OR,
+					 FTOP_MATCHFORM);
 		}
 
 		// Create default filetype filetype
