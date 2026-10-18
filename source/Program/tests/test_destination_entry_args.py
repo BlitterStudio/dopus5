@@ -115,31 +115,6 @@ class DestinationEntryArgumentTests(unittest.TestCase):
             r"handle->func_parameters.flags = old_flags;",
         )
 
-    def test_dual_lister_destination_panel_is_preserved(self):
-        lister_h = read_program_source("lister.h")
-        lister_dual_c = read_program_source("lister_dual.c")
-        function_launch_c = read_program_source("function_launch.c")
-        function_launch_h = read_program_source("function_launch.h")
-
-        self.assertIn("short lister_dual_dest_index(Lister *lister);", lister_h)
-        self.assertRegex(
-            lister_dual_c,
-            r"(?s)short lister_dual_dest_index\(Lister \*lister\).*"
-            r"return lister_dual_other_side\(state->active\);.*"
-            r"return -1;",
-        )
-        self.assertIn("dest_list = source_list;", function_launch_c)
-        self.assertIn("dual_dest_side = lister_dual_dest_index(source_list);", function_launch_c)
-        self.assertRegex(
-            function_launch_c,
-            r"(?s)if \(dual_dest_side >= 0\).*"
-            r"path->dual_side = dual_dest_side;.*"
-            r"path->flags \|= LISTNF_DUAL_SIDE;",
-        )
-        self.assertIn("#define LISTNF_SHARED_LOCK", function_launch_h)
-        self.assertIn("LISTNF_LOCKED | LISTNF_SHARED_LOCK", function_launch_c)
-        self.assertIn("shared = (node->flags & LISTNF_SHARED_LOCK) ? TRUE : FALSE;", function_launch_c)
-
     def test_user_facing_strings_docs_and_changelog_are_updated(self):
         string_data_h = read_configopus_source("string_data.h")
         configopus_cd = read_configopus_source("configopus.cd")

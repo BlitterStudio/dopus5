@@ -84,8 +84,8 @@ void filetype_find_type(Lister *lister, DirBuffer *buffer, char *name, short fla
 	}
 }
 
-// Find the filetypes for a list of files
-void filetype_find_typelist(Lister *lister, short flags)
+// Find the filetypes for a list of files in a buffer the lister shows
+void filetype_find_typelist(Lister *lister, DirBuffer *buffer, short flags)
 {
 	IPCData *ipc;
 
@@ -100,7 +100,7 @@ void filetype_find_typelist(Lister *lister, short flags)
 		{
 			// Fill out packet
 			data->lister = lister;
-			data->buffer = lister->cur_buffer;
+			data->buffer = buffer;
 			data->flags = SNIFFF_START;
 
 			// Send the command
@@ -108,7 +108,7 @@ void filetype_find_typelist(Lister *lister, short flags)
 		}
 
 		// Go through files
-		for (entry = (DirEntry *)lister->cur_buffer->entry_list.mlh_Head; entry->de_Node.dn_Succ;
+		for (entry = (DirEntry *)buffer->entry_list.mlh_Head; entry->de_Node.dn_Succ;
 			 entry = (DirEntry *)entry->de_Node.dn_Succ)
 		{
 			BOOL ok = 0;
@@ -130,7 +130,7 @@ void filetype_find_typelist(Lister *lister, short flags)
 				{
 					// Fill out packet
 					data->lister = lister;
-					data->buffer = lister->cur_buffer;
+					data->buffer = buffer;
 					data->flags = flags;
 					strcpy(data->name, entry->de_Node.dn_Name);
 
@@ -145,7 +145,7 @@ void filetype_find_typelist(Lister *lister, short flags)
 		{
 			// Fill out packet
 			data->lister = lister;
-			data->buffer = lister->cur_buffer;
+			data->buffer = buffer;
 			data->flags = SNIFFF_STOP;
 
 			// Send the command

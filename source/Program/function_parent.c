@@ -69,7 +69,7 @@ DOPUS_FUNC(function_parent)
 	{
 		// Read directory
 		handle->flags = GETDIRF_CANCHECKBUFS | GETDIRF_CANMOVEEMPTY;
-		function_read_directory(handle, path->lister, handle->inst_data);
+		function_read_directory(handle, path->lister, function_path_side(path), handle->inst_data);
 	}
 	else
 	{

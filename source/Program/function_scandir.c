@@ -35,6 +35,7 @@ enum {
 DOPUS_FUNC(function_scandir)
 {
 	Lister *lister, *dest = 0;
+	ULONG side;
 	Cfg_Lister *cfg;
 	short path_flag = 0, new_flag = 0, dest_flag = 0, cont_flag = 0;
 	FunctionEntry *entry;
@@ -43,6 +44,7 @@ DOPUS_FUNC(function_scandir)
 
 	// Get current lister
 	lister = function_lister_current(&handle->source_paths);
+	side = function_path_side(handle->source_paths.current);
 
 	// Clear buffer
 	if (!(sel_file = AllocVec(256, MEMF_CLEAR)))
@@ -147,7 +149,10 @@ DOPUS_FUNC(function_scandir)
 	{
 		// Get destination lister
 		if ((dest = function_lister_current(&handle->dest_paths)))
+		{
 			lister = dest;
+			side = function_path_side(handle->dest_paths.current);
+		}
 	}
 
 	// No destination lister?
@@ -167,7 +172,7 @@ DOPUS_FUNC(function_scandir)
 			handle->flags = 0;
 
 		// Read directory
-		function_read_directory(handle, lister, handle->source_path);
+		function_read_directory(handle, lister, side, handle->source_path);
 	}
 
 	// Create a new lister
@@ -183,6 +188,9 @@ DOPUS_FUNC(function_scandir)
 		if ((lister = lister_new(cfg)))
 		{
 			BPTR lock;
+
+			// A new lister has no panels
+			side = 0;
 
 			// Got a path and can lock it?
 			if (path_flag && handle->source_path[0] && (lock = Lock(handle->source_path, ACCESS_READ)))
@@ -223,8 +231,8 @@ DOPUS_FUNC(function_scandir)
 			// Copy it
 			strcpy(copy, sel_file);
 
-			// Send selection command
-			IPC_Command(lister->ipc, LISTER_SELSHOW, 1, 0, copy, 0);
+			// Send selection command for the panel that was read
+			IPC_Command(lister->ipc, LISTER_SELSHOW, 1, (APTR)(IPTR)side, copy, 0);
 		}
 	}
 

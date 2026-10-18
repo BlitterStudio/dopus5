@@ -26,14 +26,21 @@ For more information on Directory Opus for Windows please see:
 #include <proto/multiuser.h>
 
 int read_dir(DirBuffer *, Lister *, FunctionHandle *, BPTR, struct InfoData *, ReselectionData *);
-void readdir_check_format(Lister *lister, char *path, ListFormat *, BOOL);
+void readdir_check_format(Lister *lister, ULONG side, char *path, ListFormat *, BOOL);
 
 #define PATH_FULL_DEVICE handle->work_buffer
 #define PATH_FULL_NAME handle->work_buffer + 768
 
-// Sets up and reads a new directory
+// Buffer of the panel being read (side is 1-based, 0 = normal lister)
+static DirBuffer *function_read_buffer(Lister *lister, ULONG side)
+{
+	return (side) ? lister_dual_side_buffer(lister, side - 1) : lister->cur_buffer;
+}
+
+// Sets up and reads a new directory. side is the 1-based dual panel to read
+// into, 0 for a normal lister or the active panel.
 // Called from FUNCTION PROCESS
-void function_read_directory(FunctionHandle *handle, Lister *lister, char *source_path)
+void function_read_directory(FunctionHandle *handle, Lister *lister, ULONG side, char *source_path)
 {
 	ReselectionData reselect;
 	BPTR lock;
@@ -47,12 +54,10 @@ void function_read_directory(FunctionHandle *handle, Lister *lister, char *sourc
 	ULONG disktype = 0;
 	ListerReselectData *packet;
 	ListerBufferFindData *find_packet;
-	short active;
-	ULONG side;
 
-	side = 0;
-	if ((active = lister_dual_active_index(lister)) >= 0)
-		side = active + 1;
+	// Resolve the panel now; the active panel may change while we read
+	if (!side && lister_dual_active_index(lister) >= 0)
+		side = lister_dual_active_index(lister) + 1;
 
 	// If we're currently displaying a special buffer, return to a normal one
 	IPC_Command(lister->ipc, LISTER_CHECK_SPECIAL_BUFFER, side, 0, 0, REPLY_NO_PORT);
@@ -102,7 +107,7 @@ void function_read_directory(FunctionHandle *handle, Lister *lister, char *sourc
 	AddPart(PATH_FULL_NAME, "", 256);
 
 	// Store current list format
-	oldformat = lister->cur_buffer->buf_ListFormat;
+	oldformat = function_read_buffer(lister, side)->buf_ListFormat;
 
 	// Search for this path in another buffer?
 	if (handle->flags & GETDIRF_CANCHECKBUFS)
@@ -145,7 +150,8 @@ void function_read_directory(FunctionHandle *handle, Lister *lister, char *sourc
 			buffer = (DirBuffer *)IPC_Command(
 				lister->ipc, LISTER_BUFFER_FIND, 0, find_packet, find_packet, REPLY_NO_PORT);
 		}
-		else
+		// The old message form names no panel; a dual panel skips the search
+		else if (!side)
 			buffer = (DirBuffer *)IPC_Command(
 				lister->ipc, LISTER_BUFFER_FIND, (IPTR)stamp_ptr, (APTR)(IPTR)PATH_FULL_DEVICE, 0, REPLY_NO_PORT);
 
@@ -155,10 +161,10 @@ void function_read_directory(FunctionHandle *handle, Lister *lister, char *sourc
 			UnLock(lock);
 
 			// Check for special sort format
-			readdir_check_format(lister, PATH_FULL_NAME, &oldformat, same);
+			readdir_check_format(lister, side, PATH_FULL_NAME, &oldformat, same);
 
 			// Store format
-			lister->format = oldformat;
+			lister_dual_set_format(lister, (short)side - 1, &oldformat);
 
 			// Reset some flags in the buffer
 			buffer->more_flags &= ~DWF_LOCK_STATE;
@@ -172,8 +178,12 @@ void function_read_directory(FunctionHandle *handle, Lister *lister, char *sourc
 	// Still reading?
 	if (!noread)
 	{
-		// Empty buffer?
-		if (handle->flags & GETDIRF_CANMOVEEMPTY)
+		// Empty buffer? A panel never re-uses a buffer the other panel shows
+		// for another directory
+		buffer = function_read_buffer(lister, side);
+		if (handle->flags & GETDIRF_CANMOVEEMPTY ||
+			(side && buffer == function_read_buffer(lister, (side == 1) ? 2 : 1) &&
+			 stricmp(buffer->buf_Path, PATH_FULL_DEVICE)))
 		{
 			if ((find_packet = AllocVec(sizeof(ListerBufferFindData), MEMF_CLEAR)))
 			{
@@ -181,19 +191,35 @@ void function_read_directory(FunctionHandle *handle, Lister *lister, char *sourc
 				find_packet->stamp = stamp_ptr;
 				find_packet->side = side;
 
-				IPC_Command(lister->ipc, LISTER_BUFFER_FIND_EMPTY, 0, find_packet, find_packet, REPLY_NO_PORT);
+				// A dual panel gets no buffer when the only one left is shown
+				// by the other panel
+				if (!IPC_Command(lister->ipc, LISTER_BUFFER_FIND_EMPTY, 0, find_packet, find_packet, REPLY_NO_PORT) &&
+					side)
+					noread = 1;
 			}
-			else
+			else if (!side)
 				IPC_Command(lister->ipc,
 							LISTER_BUFFER_FIND_EMPTY,
 							(IPTR)stamp_ptr,
 							(APTR)(IPTR)PATH_FULL_DEVICE,
 							0,
 							REPLY_NO_PORT);
+
+			// The old message form would work on the active panel
+			else
+				noread = 1;
+
+			if (noread)
+			{
+				if (lock)
+					UnLock(lock);
+				function_error_text(handle, ERROR_NO_FREE_STORE);
+				return;
+			}
 		}
 
 		// Get buffer
-		buffer = lister->cur_buffer;
+		buffer = function_read_buffer(lister, side);
 
 		// Same path?
 		if (stricmp(buffer->buf_Path, PATH_FULL_DEVICE) == 0)
@@ -225,7 +251,7 @@ void function_read_directory(FunctionHandle *handle, Lister *lister, char *sourc
 				if (!IPC_Command(lister->ipc, LISTER_MAKE_RESELECT, 0, packet, packet, REPLY_NO_PORT))
 					FreeVec(packet);
 			}
-			else
+			else if (!side)
 				IPC_Command(lister->ipc, LISTER_MAKE_RESELECT, RESELF_SAVE_FILETYPES, (APTR)&reselect, 0, REPLY_NO_PORT);
 		}
 
@@ -233,7 +259,7 @@ void function_read_directory(FunctionHandle *handle, Lister *lister, char *sourc
 		buffer_freedir(buffer, 0); /******* was 1 ******/
 
 		// Default to previous format
-		lister->cur_buffer->buf_ListFormat = oldformat;
+		buffer->buf_ListFormat = oldformat;
 
 		// Unlock buffer
 		buffer_unlock(buffer);
@@ -261,13 +287,13 @@ void function_read_directory(FunctionHandle *handle, Lister *lister, char *sourc
 			buffer_lock(buffer, TRUE);
 
 			// Check format
-			readdir_check_format(lister, PATH_FULL_NAME, &oldformat, same);
+			readdir_check_format(lister, side, PATH_FULL_NAME, &oldformat, same);
 
 			// Store format
 			buffer->buf_ListFormat = oldformat;
 
 			/**************/
-			lister->format = oldformat;
+			lister_dual_set_format(lister, (short)side - 1, &oldformat);
 			/**************/
 
 			// Save disk type
@@ -306,14 +332,14 @@ void function_read_directory(FunctionHandle *handle, Lister *lister, char *sourc
 					if (!IPC_Command(lister->ipc, LISTER_DO_RESELECT, 0, packet, packet, REPLY_NO_PORT))
 						FreeVec(packet);
 				}
-				else
+				else if (!side)
 					IPC_Command(lister->ipc, LISTER_DO_RESELECT, 0, (APTR)&reselect, 0, REPLY_NO_PORT);
 			}
 			FreeReselect(&reselect);
 		}
 
 		// Add to history list
-		lister_add_history(lister);
+		lister_add_history(lister, buffer);
 	}
 
 	// Refresh window display if read was successful
@@ -513,7 +539,7 @@ int read_dir(DirBuffer *buffer,
 
 	// Get things?
 	if (sniff != SNIFFF_NO_FILETYPES)
-		filetype_find_typelist(lister, sniff);
+		filetype_find_typelist(lister, buffer, sniff);
 
 	// Clear reading flag, set valid flag
 	buffer->flags &= ~DWF_READING;
@@ -656,8 +682,8 @@ void network_get_info(NetworkInfo *network,
 	*ptr = 0;
 }
 
-// Check sort format
-void readdir_check_format(Lister *lister, char *path, ListFormat *format, BOOL same)
+// Check sort format (side: 1-based dual panel, 0 = normal lister)
+void readdir_check_format(Lister *lister, ULONG side, char *path, ListFormat *format, BOOL same)
 {
 	position_rec *pos;
 
@@ -665,14 +691,14 @@ void readdir_check_format(Lister *lister, char *path, ListFormat *format, BOOL s
 	if (lister->more_flags & LISTERF_LOCK_FORMAT || same)
 	{
 		// Use current format
-		*format = lister->format;
+		lister_dual_get_format(lister, (short)side - 1, format);
 	}
 
 	// See if position is supplied
 	else if (!(pos = GetListerPosition(path, 0, 0, 0, 0, format, 0, 0, 0)) || !(pos->flags & POSITIONF_FORMAT))
 	{
 		// Use current format from lister
-		*format = lister->format;
+		lister_dual_get_format(lister, (short)side - 1, format);
 
 		// Gauge flag is preserved from lister->format as-is (already copied above)
 	}

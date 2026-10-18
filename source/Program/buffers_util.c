@@ -104,7 +104,7 @@ void buffer_copy(DirBuffer *source, DirBuffer *dest, Lister *dest_lister)
 
 		// Things to get?
 		if (flags != SNIFFF_NO_FILETYPES)
-			filetype_find_typelist(dest_lister, flags);
+			filetype_find_typelist(dest_lister, dest, flags);
 
 		// Do reselection
 		DoReselect(&reselect, dest_lister, 0);
@@ -243,6 +243,9 @@ void buffer_show_special(Lister *lister, char *title)
 {
 	if (!title)
 		title = "";
+
+	// One special buffer per lister: the other dual panel gives it up
+	lister_dual_release_special(lister);
 
 	// Free special dir contents
 	buffer_freedir(lister->special_buffer, 1);

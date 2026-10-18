@@ -45,8 +45,11 @@ BOOL function_launch(ULONG command,
 {
 	FunctionHandle *handle;
 	IPCData *ipc;
-	char *dual_dest_path = 0;
-	short dual_dest_side = -1;
+	short dual_dest_side;
+
+	// Take the dual panel a drop is aimed at first, so a failed launch
+	// cannot leave it behind for a later function
+	dual_dest_side = (dest_list) ? lister_dual_take_drop_side(dest_list) : -1;
 
 	// Allocate handle
 	if (!(handle = function_new_handle(0, 0)))
@@ -105,13 +108,21 @@ BOOL function_launch(ULONG command,
 			AddPart(handle->source_path, "", 512);
 	}
 
-	// Dual lister functions use the inactive side as destination.
-	if (source_list && !dest_list && !dest_path && (dual_dest_path = lister_dual_dest_path(source_list)) &&
-		dual_dest_path[0])
+	// Dual lister functions use the panel opposite the source panel as
+	// destination
+	if (source_list && !dest_list && !dest_path && (dual_dest_side = lister_dual_launch_side(source_list)) >= 0)
 	{
-		dest_path = dual_dest_path;
-		dest_list = source_list;
-		dual_dest_side = lister_dual_dest_index(source_list);
+		DirBuffer *buffer;
+
+		dual_dest_side = (dual_dest_side == LISTER_DUAL_LEFT) ? LISTER_DUAL_RIGHT : LISTER_DUAL_LEFT;
+		buffer = lister_dual_side_buffer(source_list, dual_dest_side);
+		if (buffer->buf_Path[0])
+		{
+			dest_path = buffer->buf_Path;
+			dest_list = source_list;
+		}
+		else
+			dual_dest_side = -1;
 	}
 
 	// Destination path
@@ -154,7 +165,8 @@ BOOL function_launch(ULONG command,
 		// Add destination path
 		if ((path = function_add_path(handle, &handle->dest_paths, handle->dest_lister, handle->dest_path)))
 		{
-			// Dual lister destination paths target the inactive panel.
+			// Dual lister destination paths target the inactive panel, or the
+			// panel something was dropped on
 			if (dual_dest_side >= 0)
 			{
 				path->dual_side = dual_dest_side;
@@ -165,14 +177,15 @@ BOOL function_launch(ULONG command,
 			if (handle->dest_lister && (data == FTTYPE_DRAG_DROP || data == FTTYPE_SHIFT_DRAGDROP ||
 										data == FTTYPE_CTRL_DRAGDROP || data == FTTYPE_ALT_DRAGDROP))
 			{
+				DirBuffer *buffer;
 				short len;
 
 				// Get lister path length
-				len = strlen(handle->dest_lister->cur_buffer->buf_Path);
+				buffer = function_path_buffer(path);
+				len = strlen(buffer->buf_Path);
 
 				// To a directory inside the lister?
-				if (strncmp(handle->dest_lister->cur_buffer->buf_Path, handle->dest_path, len) == 0 &&
-					handle->dest_path[len])
+				if (strncmp(buffer->buf_Path, handle->dest_path, len) == 0 && handle->dest_path[len])
 				{
 					// Mark node as having a changed path
 					path->flags |= LISTNF_CHANGED;
@@ -382,7 +395,8 @@ IPC_EntryCode(function_launch_code, static)
 			if ((source_list = function_lister_current(&handle->source_paths)))
 			{
 				// Read directory
-				function_read_directory(handle, source_list, handle->source_path);
+				function_read_directory(
+					handle, source_list, function_path_side(handle->source_paths.current), handle->source_path);
 
 				// If the lister is in icon mode, we don't refresh it
 				if (source_list->flags & (LISTERF_VIEW_ICONS | LISTERF_ICON_ACTION))
@@ -622,8 +636,6 @@ BOOL function_lock_paths(FunctionHandle *handle, PathList *list, int locker)
 		if (node->lister && !(node->flags & LISTNF_LOCKED))
 		{
 			Lister *lister;
-
-			function_apply_path_side(node);
 
 			// Validate the lister before dereferencing it. The stored pointer may be
 			// stale if the lister was closed while this function was pending; the
@@ -920,8 +932,9 @@ Lister *function_get_paths(FunctionHandle *handle, PathList *list, ULONG flags, 
 	// No first lister yet?
 	if (!first)
 	{
-		// Get default first
-		if ((first = lister_default(flags, (flags & LISTERF_DEST) ? TRUE : FALSE)))
+		// Get default first; a dual lister is the source if nothing else is
+		if ((first = lister_default(flags, (flags & LISTERF_DEST) ? TRUE : FALSE)) ||
+			(flags & LISTERF_SOURCE && (first = lister_dual_default())))
 		{
 			// Add to head of the list
 			if ((node = AllocMemH(handle->memory, sizeof(PathNode))))
@@ -989,6 +1002,35 @@ Lister *function_get_paths(FunctionHandle *handle, PathList *list, ULONG flags, 
 	return first;
 }
 
+// Does a lister buffer have a selected entry?
+static BOOL buffer_has_selection(DirBuffer *buffer)
+{
+	DirEntry *entry;
+	BOOL found = FALSE;
+
+	if (!buffer)
+		return FALSE;
+
+	// Lock buffer
+	buffer_lock(buffer, FALSE);
+
+	// Go through buffer
+	for (entry = (DirEntry *)buffer->entry_list.mlh_Head; entry->de_Node.dn_Succ;
+		 entry = (DirEntry *)entry->de_Node.dn_Succ)
+	{
+		// Selected?
+		if (entry->de_Flags & ENTF_SELECTED)
+		{
+			found = TRUE;
+			break;
+		}
+	}
+
+	// Unlock buffer
+	buffer_unlock(buffer);
+	return found;
+}
+
 // Check whether any source lister currently has a selection. This is the
 // precedence guard for the desktop selection fallback: when a lister already
 // provides entries, the desktop must not be snapshotted.
@@ -996,7 +1038,7 @@ BOOL lister_has_selection(void)
 {
 	Lister *lister;
 	IPCData *ipc;
-	BOOL found = FALSE;
+	BOOL found = FALSE, any_source = FALSE;
 
 	// Lock lister list
 	lock_listlock(&GUI->lister_list, FALSE);
@@ -1007,7 +1049,7 @@ BOOL lister_has_selection(void)
 		// Get lister
 		lister = IPCDATA(ipc);
 
-		// Dual lister sides are resolved locally by their launch path.
+		// Dual listers are only a source when no other lister is (below)
 		if (lister_dual_is_side(lister))
 			continue;
 
@@ -1016,6 +1058,7 @@ BOOL lister_has_selection(void)
 		if (!(lister->flags & LISTERF_SOURCE) || lister->flags & LISTERF_BUSY ||
 			(lister->flags & LISTERF_VIEW_ICONS && !(lister->flags & LISTERF_ICON_ACTION)))
 			continue;
+		any_source = TRUE;
 
 		// Icon mode: look for a selected backdrop object
 		if (lister->flags & (LISTERF_VIEW_ICONS | LISTERF_ICON_ACTION))
@@ -1047,31 +1090,7 @@ BOOL lister_has_selection(void)
 
 		// Normal mode: look for a selected buffer entry
 		else
-		{
-			DirBuffer *buffer;
-			DirEntry *entry;
-
-			if ((buffer = lister->cur_buffer))
-			{
-				// Lock buffer
-				buffer_lock(buffer, FALSE);
-
-				// Go through buffer
-				for (entry = (DirEntry *)buffer->entry_list.mlh_Head; entry->de_Node.dn_Succ;
-					 entry = (DirEntry *)entry->de_Node.dn_Succ)
-				{
-					// Selected?
-					if (entry->de_Flags & ENTF_SELECTED)
-					{
-						found = TRUE;
-						break;
-					}
-				}
-
-				// Unlock buffer
-				buffer_unlock(buffer);
-			}
-		}
+			found = buffer_has_selection(lister->cur_buffer);
 
 		// Found a selection?
 		if (found)
@@ -1080,6 +1099,10 @@ BOOL lister_has_selection(void)
 
 	// Unlock lister list
 	unlock_listlock(&GUI->lister_list);
+
+	// Otherwise the active panel of a dual lister is the source
+	if (!found && !any_source && (lister = lister_dual_default()) && !(lister->flags & LISTERF_BUSY))
+		found = buffer_has_selection(lister_dual_side_buffer(lister, lister_dual_active_index(lister)));
 
 	return found;
 }

@@ -185,7 +185,7 @@ BOOL ftype_icon_drop(struct AppMessage *, int, Lister *);
 
 IPCData *filetype_get_sniffer(void);
 void filetype_find_type(Lister *lister, DirBuffer *buffer, char *name, short flags);
-void filetype_find_typelist(Lister *lister, short flags);
+void filetype_find_typelist(Lister *lister, DirBuffer *buffer, short flags);
 
 Cfg_Filetype *filetype_find(char *desc, short type);
 BOOL filetype_check(Cfg_Filetype *match_type);

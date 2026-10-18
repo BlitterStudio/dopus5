@@ -56,7 +56,7 @@ DOPUS_FUNC(function_printdir)
 		DirEntry *entry;
 
 		// Lock lister buffer
-		buffer_lock((buffer = lister->cur_buffer), FALSE);
+		buffer_lock((buffer = function_path_buffer(path)), FALSE);
 
 		// Go through buffer
 		for (entry = (DirEntry *)buffer->entry_list.mlh_Head; entry->de_Node.dn_Succ;
@@ -64,8 +64,8 @@ DOPUS_FUNC(function_printdir)
 		{
 			short len;
 
-			// Build display string for this entry
-			builddisplaystring(entry, handle->work_buffer, lister);
+			// Build display string for this entry, in the captured panel's layout
+			builddisplaystring(entry, handle->work_buffer, lister, buffer);
 
 			// Find last character in string
 			for (len = strlen(handle->work_buffer) - 1; len >= 0; len--)

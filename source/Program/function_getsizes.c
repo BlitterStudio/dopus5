@@ -43,7 +43,7 @@ DOPUS_FUNC(function_getsizes)
 
 	// Get current lister
 	if ((lister = function_lister_current(&handle->source_paths)))
-		buffer = lister->cur_buffer;
+		buffer = function_path_buffer(handle->source_paths.current);
 
 	// Get source lister block size
 	if ((slock = Lock(buffer->buf_Path, ACCESS_READ)))

@@ -26,7 +26,6 @@ For more information on Directory Opus for Windows please see:
 #define DUALF_ONE_WINDOW (1 << 0)
 #define DUALF_SCROLLBARS_REMOVED (1 << 1)
 #define DUALF_PATHFIELD_OWNED (1 << 2)
-#define DUALF_SUPPRESS_POPUP_FRONT (1 << 3)
 #define DUALF_FRAME_REFRESH (1 << 4)
 
 #define DUAL_PATH_REL_FLAGS (GFLG_RELRIGHT | GFLG_RELBOTTOM | GFLG_RELWIDTH | GFLG_RELHEIGHT)
@@ -35,8 +34,14 @@ For more information on Directory Opus for Windows please see:
 typedef struct ListerDualState
 {
 	ULONG flags;
-	short active;
+	short active;		  // Panel the user selected (source)
+	short view;			  // Panel whose buffer and areas are loaded into the Lister
+	short drop_side;	  // Destination panel of a drop being launched, or -1
+	short highlight_side; // Panel holding the drag-over highlight
 	BOOL locked;
+	UBYTE rescan_sides; // Panels with a rescan queued while the lister was busy
+	ListFormat format[LISTER_DUAL_SIDES]; // Working format of each panel (lister->format for the shown one)
+	DirBuffer *old_buffer[LISTER_DUAL_SIDES]; // Buffer each panel returns to from a device list
 	DirBuffer *buffer[LISTER_DUAL_SIDES];
 	DirBuffer *offset_buffer[LISTER_DUAL_SIDES];
 	long vert_offset[LISTER_DUAL_SIDES];
@@ -65,6 +70,7 @@ typedef struct ListerDualState
 	struct Gadget *horiz_arrow_left[LISTER_DUAL_SIDES];
 	struct Gadget *horiz_arrow_right[LISTER_DUAL_SIDES];
 	APTR scroll_image[LISTER_DUAL_SIDES][4];
+	struct Rectangle scroll_rect[LISTER_DUAL_SIDES][3]; // Last scroller layout: vertical, horizontal, right arrow
 	APTR scroll_knob[LISTER_DUAL_SIDES];
 	struct Gadget *system_scroller;
 	struct Gadget *system_horiz_scroller;
@@ -147,6 +153,9 @@ static ListerDualState *lister_dual_ensure_state(Lister *lister)
 		if ((state = AllocVec(sizeof(ListerDualState), MEMF_CLEAR)))
 		{
 			state->active = LISTER_DUAL_LEFT;
+			state->view = LISTER_DUAL_LEFT;
+			state->drop_side = -1;
+			state->highlight_side = -1;
 			lister_dual_clear_title_boxes(state->title_boxes[LISTER_DUAL_LEFT]);
 			lister_dual_clear_title_boxes(state->title_boxes[LISTER_DUAL_RIGHT]);
 			lister_dual_set_state(lister, state);
@@ -164,8 +173,10 @@ static void lister_dual_free_state(Lister *lister)
 	{
 		lister_dual_restore_pathfield(lister, state);
 		lister_dual_remove_scrollbars(lister, state);
-		FreeVec(state);
+
+		// Unpublish the state before freeing it; other processes look it up
 		lister_dual_set_state(lister, 0);
+		FreeVec(state);
 	}
 }
 
@@ -224,11 +235,14 @@ static void lister_dual_capture_side_offsets(Lister *lister, ListerDualState *st
 	state->horiz_offset[side] = lister->cur_buffer->buf_HorizOffset;
 }
 
+// Load one panel's buffer and display areas into the Lister structure.
+// Lister process only: the display code reads these fields directly.
 static void lister_dual_apply_panel(Lister *lister, short side)
 {
 	ListerDualState *state;
 
-	if (!(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW))
+	if (!(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW) || side < 0 ||
+		side >= LISTER_DUAL_SIDES)
 		return;
 
 	if (!state->buffer[side])
@@ -236,7 +250,28 @@ static void lister_dual_apply_panel(Lister *lister, short side)
 
 	lister_dual_init_side_offsets(state, side);
 	lister_dual_apply_side_offsets(state, side);
+
+	// A buffer shown in both panels has one set of last-drawn offsets; after
+	// a panel change they describe the other panel, so scrolling must redraw
+	if (side != state->view && state->buffer[side] == state->buffer[lister_dual_other_side(side)])
+	{
+		state->buffer[side]->buf_OldVertOffset = -1;
+		state->buffer[side]->buf_OldHorizOffset = -1;
+	}
+
+	// Other processes pair view with cur_buffer (lister_dual_side_buffer)
+	// and write the shown panel's working format (lister_dual_set_format)
+	Forbid();
+	if (side != state->view)
+	{
+		state->format[state->view] = lister->format;
+		lister->format = state->format[side];
+		state->old_buffer[state->view] = lister->old_buffer;
+		lister->old_buffer = state->old_buffer[side];
+	}
+	state->view = side;
 	lister->cur_buffer = state->buffer[side];
+	Permit();
 	lister->name_area = state->name_area[side];
 	lister->status_area = state->close_area[side];
 	lister->command_area = state->command_area[side];
@@ -256,12 +291,40 @@ static void lister_dual_apply_panel(Lister *lister, short side)
 	lister_dual_role_flags(lister, state, side);
 }
 
+// Store the buffer and scroll offsets the Lister currently shows into the
+// panel they belong to. Lister code changes cur_buffer (reading a directory,
+// device lists, history) without knowing about panels, so this runs before
+// any other panel is loaded.
+static void lister_dual_capture_view(Lister *lister, ListerDualState *state)
+{
+	short other;
+
+	if (!state || !(state->flags & DUALF_ONE_WINDOW) || !lister->cur_buffer)
+		return;
+
+	state->buffer[state->view] = lister->cur_buffer;
+	lister_dual_capture_side_offsets(lister, state, state->view);
+	if (lister->cur_buffer == lister->special_buffer)
+	{
+		other = lister_dual_other_side(state->view);
+		if (!state->buffer[other] || (!state->buffer[other]->buf_Path[0] && !(state->buffer[other]->flags & DWF_VALID)))
+			state->buffer[other] = lister->cur_buffer;
+	}
+}
+
+// Capture the current panel, then load another one
+static void lister_dual_switch_view(Lister *lister, ListerDualState *state, short side)
+{
+	lister_dual_capture_view(lister, state);
+	lister_dual_apply_panel(lister, side);
+}
+
 static void lister_dual_apply_active(Lister *lister)
 {
 	ListerDualState *state;
 
 	if ((state = lister_dual_get_state(lister)) && state->flags & DUALF_ONE_WINDOW)
-		lister_dual_apply_panel(lister, state->active);
+		lister_dual_switch_view(lister, state, state->active);
 }
 
 static void lister_dual_update_title_mode(Lister *lister, ListerDualState *state)
@@ -295,24 +358,6 @@ static void lister_dual_update_title_mode(Lister *lister, ListerDualState *state
 	{
 		lister->more_flags &= ~LISTERF_TITLE;
 		lister->more_flags |= LISTERF_HIDE_TITLE;
-	}
-}
-
-static void lister_dual_capture_active_buffer(Lister *lister)
-{
-	ListerDualState *state;
-	short other;
-
-	if (!(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW) || !lister->cur_buffer)
-		return;
-
-	state->buffer[state->active] = lister->cur_buffer;
-	lister_dual_capture_side_offsets(lister, state, state->active);
-	if (lister->cur_buffer == lister->special_buffer)
-	{
-		other = lister_dual_other_side(state->active);
-		if (!state->buffer[other] || (!state->buffer[other]->buf_Path[0] && !(state->buffer[other]->flags & DWF_VALID)))
-			state->buffer[other] = lister->cur_buffer;
 	}
 }
 
@@ -807,13 +852,26 @@ static void lister_dual_scroll_rects(Lister *lister,
 		horiz->MaxX = horiz->MinX;
 }
 
-static void lister_dual_position_scrollbars(Lister *lister, ListerDualState *state, short side, BOOL attached)
+static BOOL lister_dual_same_rect(struct Rectangle *a, struct Rectangle *b)
+{
+	return (a->MinX == b->MinX && a->MinY == b->MinY && a->MaxX == b->MaxX && a->MaxY == b->MaxY) ? TRUE : FALSE;
+}
+
+// Move a panel's scrollers to the current layout; returns FALSE if attached
+// gadgets were already in place
+static BOOL lister_dual_position_scrollbars(Lister *lister, ListerDualState *state, short side, BOOL attached)
 {
 	struct Rectangle vert, up, down, horiz, left, right;
 	long pos = -1;
 
 	if (!state->vert_scroller[side])
-		return;
+		return FALSE;
+
+	lister_dual_scroll_rects(lister, state, side, &vert, &up, &down, &horiz, &left, &right);
+	if (attached && lister_dual_same_rect(&vert, &state->scroll_rect[side][0]) &&
+		lister_dual_same_rect(&horiz, &state->scroll_rect[side][1]) &&
+		lister_dual_same_rect(&right, &state->scroll_rect[side][2]))
+		return FALSE;
 
 	if (attached && lister_valid_window(lister))
 		pos = RemoveGList(lister->window, state->vert_scroller[side], 6);
@@ -825,19 +883,19 @@ static void lister_dual_position_scrollbars(Lister *lister, ListerDualState *sta
 	lister_dual_clear_gadget_box(lister, state->horiz_arrow_left[side]);
 	lister_dual_clear_gadget_box(lister, state->horiz_arrow_right[side]);
 
-	lister_dual_scroll_rects(lister, state, side, &vert, &up, &down, &horiz, &left, &right);
 	lister_dual_resize_gadget(lister, state->vert_scroller[side], &vert);
 	lister_dual_resize_gadget(lister, state->vert_arrow_up[side], &up);
 	lister_dual_resize_gadget(lister, state->vert_arrow_down[side], &down);
 	lister_dual_resize_bottom_gadget(lister, state->horiz_scroller[side], &horiz);
 	lister_dual_resize_bottom_gadget(lister, state->horiz_arrow_left[side], &left);
 	lister_dual_resize_bottom_gadget(lister, state->horiz_arrow_right[side], &right);
+	state->scroll_rect[side][0] = vert;
+	state->scroll_rect[side][1] = horiz;
+	state->scroll_rect[side][2] = right;
 
 	if (attached && lister_valid_window(lister))
-	{
 		AddGList(lister->window, state->vert_scroller[side], pos, 6, 0);
-		RefreshGList(state->vert_scroller[side], lister->window, 0, 6);
-	}
+	return TRUE;
 }
 
 static BOOL lister_dual_scroll_metrics_changed(Lister *lister, ListerDualState *state)
@@ -1154,11 +1212,10 @@ static BOOL lister_dual_ensure_scrollbars(Lister *lister, ListerDualState *state
 			lister_dual_remove_scrollbars(lister, state);
 			return FALSE;
 		}
-		RefreshGList(state->vert_scroller[side], lister->window, 0, 6);
 	}
 
-	lister->backdrop_info->vert_scroller = state->vert_scroller[state->active];
-	lister->backdrop_info->horiz_scroller = state->horiz_scroller[state->active];
+	lister->backdrop_info->vert_scroller = state->vert_scroller[state->view];
+	lister->backdrop_info->horiz_scroller = state->horiz_scroller[state->view];
 	lister_dual_store_scroll_metrics(lister, state);
 	return TRUE;
 }
@@ -1488,41 +1545,23 @@ static void lister_dual_draw_header(Lister *lister, ListerDualState *state, shor
 			 state->header_rect[side].MinY,
 			 state->header_rect[side].MaxX,
 			 state->header_rect[side].MaxY);
-	lister_show_name(lister);
 	select_show_info(lister, 0);
 	do3dbox(&lister->name_area.rast, &state->header_rect[side], 0);
 	lister_dual_draw_command_button(lister, state, side);
 	lister_dual_draw_close_button(lister, state, side);
 }
 
+// Draw one panel. The Lister is left showing the panel it showed before.
 static void lister_dual_draw_panel(Lister *lister, short side)
 {
 	ListerDualState *state;
-	DirBuffer *old_buffer;
-	GUI_Element old_name, old_status, old_command, old_parent, old_title, old_list, old_text;
-	UWORD old_text_width, old_text_height;
-	struct Rectangle old_scroll_border;
-	TitleBox old_title_boxes[16];
-	ULONG old_flags;
+	short old_view;
 
 	if (!(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW))
 		return;
 
-	old_buffer = lister->cur_buffer;
-	old_name = lister->name_area;
-	old_status = lister->status_area;
-	old_command = lister->command_area;
-	old_parent = lister->parent_area;
-	old_title = lister->title_area;
-	old_list = lister->list_area;
-	old_text = lister->text_area;
-	old_text_width = lister->text_width;
-	old_text_height = lister->text_height;
-	old_scroll_border = lister->scroll_border;
-	CopyMem(lister->title_boxes, old_title_boxes, sizeof(old_title_boxes));
-	old_flags = lister->flags;
-
-	lister_dual_apply_panel(lister, side);
+	old_view = state->view;
+	lister_dual_switch_view(lister, state, side);
 	lister_dual_draw_header(lister, state, side);
 	lister_dual_clear_title_boxes(lister->title_boxes);
 	if (lister->more_flags & LISTERF_TITLE &&
@@ -1538,25 +1577,84 @@ static void lister_dual_draw_panel(Lister *lister, short side)
 		lister_fix_horiz_len(lister);
 		lister_display_dir(lister);
 		lister_dual_capture_title_boxes(lister, state, side);
-		lister_dual_capture_side_offsets(lister, state, side);
 	}
 	else
 		lister_dual_clear_title_boxes(state->title_boxes[side]);
 	lister_dual_end_panel_clip(lister);
+	lister_dual_switch_view(lister, state, old_view);
+}
 
-	lister->cur_buffer = old_buffer;
-	lister->name_area = old_name;
-	lister->status_area = old_status;
-	lister->command_area = old_command;
-	lister->parent_area = old_parent;
-	lister->title_area = old_title;
-	lister->list_area = old_list;
-	lister->text_area = old_text;
-	lister->text_width = old_text_width;
-	lister->text_height = old_text_height;
-	lister->scroll_border = old_scroll_border;
-	CopyMem(old_title_boxes, lister->title_boxes, sizeof(old_title_boxes));
-	lister->flags = old_flags;
+// Redraw both panel headers (source/destination/busy colours and counts),
+// then set the window title and fuel gauge from the active panel
+static void lister_dual_draw_headers(Lister *lister, ListerDualState *state)
+{
+	short side;
+
+	if (!state)
+		return;
+	if (!lister_valid_window(lister))
+	{
+		lister_dual_switch_view(lister, state, state->active);
+		return;
+	}
+
+	for (side = 0; side < LISTER_DUAL_SIDES; side++)
+	{
+		lister_dual_switch_view(lister, state, side);
+		lister_dual_draw_header(lister, state, side);
+	}
+	lister_dual_switch_view(lister, state, state->active);
+	lister_show_name(lister);
+}
+
+// Make a panel the active (source) panel. Switching panels only changes the
+// header colours and the window title, so the file lists are not redrawn;
+// unless both panels show one buffer, whose selections and fields changed
+// while only the other panel was drawn.
+static void lister_dual_set_active(Lister *lister, ListerDualState *state, short side)
+{
+	if (side < 0 || side >= LISTER_DUAL_SIDES)
+		return;
+
+	if (side == state->active)
+	{
+		lister_dual_switch_view(lister, state, side);
+		return;
+	}
+
+	lister_dual_capture_view(lister, state);
+	state->active = side;
+	lister_dual_draw_headers(lister, state);
+	if (state->buffer[LISTER_DUAL_LEFT] == state->buffer[LISTER_DUAL_RIGHT] && lister_valid_window(lister))
+	{
+		lister_dual_draw_panel(lister, side);
+		lister_dual_switch_view(lister, state, side);
+	}
+}
+
+// Lay the panels out again after the field titles were shown or hidden
+// (lister_init_filelist() would give one panel the whole window)
+BOOL lister_dual_init_filelist(Lister *lister)
+{
+	ListerDualState *state;
+	ULONG old_title;
+	short view;
+
+	if (!lister_valid_window(lister) || !(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW))
+		return FALSE;
+
+	view = state->view;
+	lister_dual_capture_view(lister, state);
+	old_title = lister->more_flags & LISTERF_TITLE;
+	lister_dual_update_title_mode(lister, state);
+	lister_dual_layout(lister, state);
+
+	// Both panels move when the titles come or go
+	if ((lister->more_flags & LISTERF_TITLE) != old_title)
+		lister_dual_refresh(lister, LREFRESH_FULL);
+
+	lister_dual_switch_view(lister, state, view);
+	return TRUE;
 }
 
 BOOL lister_dual_update_pathfields(Lister *lister)
@@ -1568,6 +1666,8 @@ BOOL lister_dual_update_pathfields(Lister *lister)
 		!(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW))
 		return FALSE;
 
+	// The shown panel's slot is only updated when the Lister changes panel
+	lister_dual_capture_view(lister, state);
 	state->path_field[LISTER_DUAL_LEFT] = lister->path_field;
 	for (side = 0; side < LISTER_DUAL_SIDES; side++)
 	{
@@ -1617,8 +1717,7 @@ BOOL lister_dual_handle_path_gadget(Lister *lister, struct Gadget *gadget)
 	if (side >= LISTER_DUAL_SIDES)
 		return FALSE;
 
-	state->active = side;
-	lister_dual_apply_panel(lister, side);
+	lister_dual_set_active(lister, state, side);
 	path = lister_dual_path_buffer(lister, state, side);
 
 	if (lister->hot_name_req)
@@ -1678,7 +1777,7 @@ BOOL lister_dual_activate_pathfield(Lister *lister)
 	if (!gadget)
 		return FALSE;
 
-	lister_dual_apply_panel(lister, state->active);
+	lister_dual_switch_view(lister, state, state->active);
 	ActivateStrGad(gadget, lister->window);
 	return TRUE;
 }
@@ -1693,7 +1792,7 @@ BOOL lister_dual_update_sliders(Lister *lister, int which)
 		!(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW))
 		return FALSE;
 
-	lister_dual_capture_side_offsets(lister, state, state->active);
+	lister_dual_capture_side_offsets(lister, state, state->view);
 
 	for (side = 0; side < LISTER_DUAL_SIDES; side++)
 	{
@@ -1742,14 +1841,14 @@ BOOL lister_dual_update_sliders(Lister *lister, int which)
 		}
 	}
 
-	lister_dual_apply_side_offsets(state, state->active);
+	lister_dual_apply_side_offsets(state, state->view);
 	return TRUE;
 }
 
 BOOL lister_dual_handle_scroll_gadget(Lister *lister, struct Gadget *gadget, short which)
 {
 	ListerDualState *state;
-	short old_active, side, x_dir = 0, y_dir = 0;
+	short side, x_dir = 0, y_dir = 0;
 	BOOL found = FALSE;
 
 	if (!lister_valid_window(lister) || !(state = lister_dual_get_state(lister)) ||
@@ -1792,32 +1891,15 @@ BOOL lister_dual_handle_scroll_gadget(Lister *lister, struct Gadget *gadget, sho
 	if (!found)
 		return FALSE;
 
-	old_active = state->active;
-	state->active = side;
-	lister_dual_apply_panel(lister, side);
-	lister->backdrop_info->vert_scroller = state->vert_scroller[side];
-	lister->backdrop_info->horiz_scroller = state->horiz_scroller[side];
-	if (old_active != side && lister->cur_buffer)
-	{
-		lister->cur_buffer->buf_OldVertOffset = -1;
-		lister->cur_buffer->buf_OldHorizOffset = -1;
-	}
+	// Scroll the panel without changing which panel is the source
+	lister_dual_switch_view(lister, state, side);
 
 	if (x_dir || y_dir)
 		lister_scroll(lister, x_dir, y_dir);
 	else
 		lister_pos_slider(lister, which);
 
-	lister_dual_capture_side_offsets(lister, state, side);
-	if (old_active != side)
-	{
-		lister_dual_apply_panel(lister, LISTER_DUAL_LEFT);
-		lister_dual_draw_header(lister, state, LISTER_DUAL_LEFT);
-		lister_dual_apply_panel(lister, LISTER_DUAL_RIGHT);
-		lister_dual_draw_header(lister, state, LISTER_DUAL_RIGHT);
-		lister_dual_apply_panel(lister, side);
-		lister_update_pathfield(lister);
-	}
+	lister_dual_switch_view(lister, state, state->active);
 	return TRUE;
 }
 
@@ -1871,10 +1953,10 @@ void lister_dual_refresh(Lister *lister, unsigned short mode)
 	ListerDualState *state;
 	short side;
 
-	if (!lister_valid_window(lister) || !lister_dual_one_window(lister) || !(state = lister_dual_get_state(lister)))
+	if (!lister_valid_window(lister) || !(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW))
 		return;
 
-	lister_dual_capture_active_buffer(lister);
+	lister_dual_capture_view(lister, state);
 
 	if (mode & LREFRESH_REFRESH)
 		BeginRefresh(lister->window);
@@ -1891,7 +1973,7 @@ void lister_dual_refresh(Lister *lister, unsigned short mode)
 		lister_dual_draw_panel(lister, side);
 	lister_dual_draw_separator(lister, state);
 
-	lister_dual_apply_panel(lister, state->active);
+	lister_dual_switch_view(lister, state, state->active);
 	lister_fix_horiz_len(lister);
 	lister_update_slider(lister, SLIDER_VERT | SLIDER_HORZ);
 	if (lister->flags & LISTERF_PATH_FIELD)
@@ -1901,64 +1983,119 @@ void lister_dual_refresh(Lister *lister, unsigned short mode)
 			lister_dual_refresh_pathfields(lister, state);
 	}
 
+	// Window title and fuel gauge follow the active panel
+	lister_show_name(lister);
+
 	if (mode & LREFRESH_REFRESH)
 		EndRefresh(lister->window, TRUE);
 	lister_dual_finish_frame_refresh(lister);
 }
 
-static void lister_dual_refresh_active_panel(Lister *lister, ListerDualState *state, ULONG flags)
+// Resort the buffer the Lister currently shows, as lister_refresh_display does
+static void lister_dual_resort_view(Lister *lister, ULONG flags)
+{
+	lister_resort(lister, 0);
+	if (flags & REFRESHF_SORTSEL && lister->cur_buffer)
+		buffer_sort_selected(lister->cur_buffer);
+}
+
+// Refresh the panel the Lister currently shows, and the other panel if it
+// shows the same buffer
+static void lister_dual_refresh_view_panel(Lister *lister, ListerDualState *state, ULONG flags)
 {
 	short side;
 
-	if (!lister_valid_window(lister) || !state)
-		return;
-
-	side = state->active;
-	lister_dual_apply_panel(lister, side);
+	side = state->view;
+	lister_dual_capture_view(lister, state);
 
 	if (flags & REFRESHF_RESORT)
-		lister_resort(lister, (flags & REFRESHF_SORTSEL) ? 1 : 0);
+		lister_dual_resort_view(lister, flags);
+
+	if (!lister_valid_window(lister))
+		return;
 
 	if (flags & REFRESHF_UPDATE_NAME)
 		lister_refresh_name(lister);
-	else if (flags & REFRESHF_NAME)
-		lister_show_name(lister);
 
-	if (flags & REFRESHF_SLIDERS)
-		lister_fix_horiz_len(lister);
-	else if (lister->more_flags & LISTERF_NEED_RECALC)
+	if (flags & REFRESHF_SLIDERS || lister->more_flags & LISTERF_NEED_RECALC)
 		lister_fix_horiz_len(lister);
 
 	lister_dual_draw_panel(lister, side);
-	lister_dual_apply_panel(lister, side);
+	if (state->buffer[lister_dual_other_side(side)] == state->buffer[side])
+		lister_dual_draw_panel(lister, lister_dual_other_side(side));
 
 	if (flags & REFRESHF_SLIDERS)
 		lister_update_slider(lister, SLIDER_VERT | SLIDER_HORZ);
 	if (flags & REFRESHF_PATH)
 		lister_update_pathfield(lister);
+
+	// The title shows the active panel; a destination refresh must not take it
+	if (flags & (REFRESHF_UPDATE_NAME | REFRESHF_NAME))
+	{
+		lister_dual_switch_view(lister, state, state->active);
+		lister_show_name(lister);
+		lister_dual_switch_view(lister, state, side);
+	}
 }
 
-// Refresh the dual display from lower-level refresh paths
+// Refresh the dual display from lower-level refresh paths. Partial refreshes
+// apply to the panel the Lister currently shows (the lister process selects
+// the target panel before it refreshes).
 void lister_dual_refresh_display(Lister *lister, ULONG flags)
 {
 	ListerDualState *state;
 
-	if (!lister_dual_one_window(lister) || !(state = lister_dual_get_state(lister)))
+	if (!(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW))
 		return;
-
-	lister_dual_capture_active_buffer(lister);
-	lister_dual_apply_panel(lister, state->active);
 
 	if (flags & (REFRESHF_FULL | REFRESHF_REFRESH | REFRESHF_COLOUR))
 	{
 		if (flags & REFRESHF_RESORT)
-			lister_resort(lister, (flags & REFRESHF_SORTSEL) ? 1 : 0);
+		{
+			short side, view = state->view;
+
+			for (side = 0; side < LISTER_DUAL_SIDES; side++)
+			{
+				if (side == LISTER_DUAL_RIGHT && state->buffer[side] == state->buffer[LISTER_DUAL_LEFT])
+					break;
+				lister_dual_switch_view(lister, state, side);
+				lister_dual_resort_view(lister, flags);
+			}
+			lister_dual_switch_view(lister, state, view);
+		}
 
 		lister_dual_refresh(lister, (flags & REFRESHF_REFRESH) ? LREFRESH_REFRESH : LREFRESH_FULL);
 		return;
 	}
 
-	lister_dual_refresh_active_panel(lister, state, flags);
+	lister_dual_refresh_view_panel(lister, state, flags);
+}
+
+// Refresh both panels for a request that names no panel (ARexx "lister
+// refresh", module callbacks)
+BOOL lister_dual_refresh_all(Lister *lister, ULONG flags)
+{
+	ListerDualState *state;
+	short side;
+
+	if (!(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW))
+		return FALSE;
+
+	if (flags & (REFRESHF_FULL | REFRESHF_REFRESH | REFRESHF_COLOUR))
+	{
+		lister_refresh_display(lister, flags);
+		return TRUE;
+	}
+
+	for (side = 0; side < LISTER_DUAL_SIDES; side++)
+	{
+		if (side == LISTER_DUAL_RIGHT && state->buffer[side] == state->buffer[LISTER_DUAL_LEFT])
+			break;
+		lister_dual_switch_view(lister, state, side);
+		lister_refresh_display(lister, flags);
+	}
+	lister_dual_switch_view(lister, state, state->active);
+	return TRUE;
 }
 
 void lister_dual_close_display(Lister *lister)
@@ -1999,27 +2136,13 @@ BOOL lister_dual_handle_close_button(Lister *lister, UWORD x, UWORD y)
 	{
 		if (point_in_element(&state->close_area[side], x, y))
 		{
-			lister_dual_close_side(lister, side);
+			// A running function may use either panel's buffer
+			if (lister->flags & LISTERF_BUSY)
+				DisplayBeep(lister->window->WScreen);
+			else
+				lister_dual_close_side(lister, side);
 			return TRUE;
 		}
-	}
-
-	return FALSE;
-}
-
-// Is a mouse coordinate over a dual popup trigger?
-BOOL lister_dual_popup_at(Lister *lister, UWORD x, UWORD y)
-{
-	ListerDualState *state;
-	short side;
-
-	if (!(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW))
-		return FALSE;
-
-	for (side = 0; side < LISTER_DUAL_SIDES; side++)
-	{
-		if (point_in_element(&state->command_area[side], x, y))
-			return TRUE;
 	}
 
 	return FALSE;
@@ -2051,49 +2174,22 @@ BOOL lister_dual_help_at(Lister *lister, UWORD x, UWORD y)
 	return FALSE;
 }
 
-// Suppress the activation fronting caused by closing a dual popup menu
-void lister_dual_suppress_popup_front(Lister *lister)
-{
-	ListerDualState *state;
-
-	if ((state = lister_dual_get_state(lister)) && state->flags & DUALF_ONE_WINDOW)
-		state->flags |= DUALF_SUPPRESS_POPUP_FRONT;
-}
-
-// Consume a pending popup activation fronting suppression
-BOOL lister_dual_consume_popup_front(Lister *lister)
-{
-	ListerDualState *state;
-
-	if (!(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW) ||
-		!(state->flags & DUALF_SUPPRESS_POPUP_FRONT))
-		return FALSE;
-
-	state->flags &= ~DUALF_SUPPRESS_POPUP_FRONT;
-	return TRUE;
-}
-
 // Activate the panel under a mouse coordinate
 void lister_dual_activate_at(Lister *lister, UWORD x, UWORD y)
 {
 	ListerDualState *state;
-	short old_active, side;
+	short side;
 
 	if (!(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW))
 		return;
 
-	old_active = state->active;
 	for (side = 0; side < LISTER_DUAL_SIDES; side++)
 	{
 		if (point_in_element(&state->list_area[side], x, y) || point_in_element(&state->name_area[side], x, y) ||
 			point_in_element(&state->command_area[side], x, y) ||
 			point_in_element(&state->title_area[side], x, y))
 		{
-			state->active = side;
-			lister_dual_apply_panel(lister, side);
-			lister_update_pathfield(lister);
-			if (old_active != side)
-				lister_dual_refresh(lister, LREFRESH_FULL);
+			lister_dual_set_active(lister, state, side);
 			break;
 		}
 	}
@@ -2107,24 +2203,7 @@ void lister_dual_activate_other(Lister *lister)
 	if (!(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW))
 		return;
 
-	state->active = lister_dual_other_side(state->active);
-	lister_dual_apply_panel(lister, state->active);
-	lister_dual_refresh(lister, LREFRESH_FULL);
-}
-
-// Return the inactive panel path for dual commands
-char *lister_dual_dest_path(Lister *lister)
-{
-	ListerDualState *state;
-	DirBuffer *buffer;
-
-	if ((state = lister_dual_get_state(lister)) && state->flags & DUALF_ONE_WINDOW)
-	{
-		buffer = state->buffer[lister_dual_other_side(state->active)];
-		return (buffer) ? buffer->buf_Path : 0;
-	}
-
-	return 0;
+	lister_dual_set_active(lister, state, lister_dual_other_side(state->active));
 }
 
 // Return the inactive panel index for dual command destinations
@@ -2138,24 +2217,18 @@ short lister_dual_dest_index(Lister *lister)
 	return -1;
 }
 
-// Return the selected side for commands that are shared by both dual sides
+// Load the active panel into the Lister (lister process)
 Lister *lister_dual_active_side(Lister *lister)
 {
 	ListerDualState *state;
 
-	if (!lister_dual_is_side(lister))
-		return lister;
-
 	if ((state = lister_dual_get_state(lister)) && state->flags & DUALF_ONE_WINDOW)
-	{
-		lister_dual_apply_panel(lister, state->active);
-		return lister;
-	}
+		lister_dual_switch_view(lister, state, state->active);
 
 	return lister;
 }
 
-// Return the selected panel index for callers that need to snapshot it
+// Return the active panel index, or -1 for a normal lister
 short lister_dual_active_index(Lister *lister)
 {
 	ListerDualState *state;
@@ -2166,80 +2239,252 @@ short lister_dual_active_index(Lister *lister)
 	return -1;
 }
 
-// Apply a previously snapshotted panel index
-void lister_dual_apply_side(Lister *lister, short side)
+// Panel a function launched now works on: the panel the lister process has
+// loaded when it launches the function itself (a rescan of the destination,
+// say), otherwise the active panel
+short lister_dual_launch_side(Lister *lister)
 {
 	ListerDualState *state;
 
 	if (!(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW))
-		return;
-	lister_dual_capture_active_buffer(lister);
-	if (side < 0 || side >= LISTER_DUAL_SIDES)
-		return;
+		return -1;
 
-	state->active = side;
-	lister_dual_apply_panel(lister, side);
+	if (lister->ipc && (struct Task *)lister->ipc->proc == FindTask(0))
+		return state->view;
+
+	return state->active;
 }
 
-// Apply a panel temporarily; caller restores the previous selected/source side
-BOOL lister_dual_apply_side_temporary(Lister *lister, short side)
+// Load the panel that shows a buffer; FALSE if no panel shows it. For a
+// normal lister this only tests whether it shows the buffer.
+BOOL lister_dual_view_buffer(Lister *lister, DirBuffer *buffer)
+{
+	ListerDualState *state;
+
+	if (lister->cur_buffer == buffer)
+		return TRUE;
+
+	if ((state = lister_dual_get_state(lister)) && state->flags & DUALF_ONE_WINDOW &&
+		state->buffer[lister_dual_other_side(state->view)] == buffer)
+	{
+		lister_dual_switch_view(lister, state, lister_dual_other_side(state->view));
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+// Load a panel for one lister-process operation without changing the active
+// panel; lister_dual_active_side() returns to the active panel afterwards
+void lister_dual_view_side(Lister *lister, short side)
+{
+	ListerDualState *state;
+
+	if ((state = lister_dual_get_state(lister)) && state->flags & DUALF_ONE_WINDOW && side >= 0 &&
+		side < LISTER_DUAL_SIDES)
+		lister_dual_switch_view(lister, state, side);
+}
+
+// Buffer shown in a panel. Function and ARexx processes use this instead of
+// lister->cur_buffer, which only the lister process may switch between panels.
+DirBuffer *lister_dual_side_buffer(Lister *lister, short side)
+{
+	ListerDualState *state;
+	DirBuffer *buffer;
+
+	if (side < 0 || side >= LISTER_DUAL_SIDES)
+		return lister->cur_buffer;
+
+	Forbid();
+	buffer = lister->cur_buffer;
+	if ((state = lister_dual_get_state(lister)) && state->flags & DUALF_ONE_WINDOW && side != state->view &&
+		state->buffer[side])
+		buffer = state->buffer[side];
+	Permit();
+
+	// The panel the Lister shows may have a newer buffer than its slot, so
+	// that panel is read from cur_buffer
+	return buffer;
+}
+
+// Panel under a window-relative coordinate, or -1
+short lister_dual_side_at(Lister *lister, short x, short y)
 {
 	ListerDualState *state;
 
 	if (!(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW))
+		return -1;
+
+	if (y < state->header_rect[LISTER_DUAL_LEFT].MinY || y > state->separator.MaxY)
+		return -1;
+	if (x < state->separator.MinX)
+		return LISTER_DUAL_LEFT;
+	if (x > state->separator.MaxX)
+		return LISTER_DUAL_RIGHT;
+	return -1;
+}
+
+// Does the panel the Lister does not show display this buffer? A panel that
+// shows a device list still holds the buffer it will return to.
+BOOL lister_dual_other_side_shows(Lister *lister, DirBuffer *buffer)
+{
+	ListerDualState *state;
+	DirBuffer *other;
+
+	if (!buffer || !(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW))
 		return FALSE;
 
-	lister_dual_capture_active_buffer(lister);
-	if (side < 0 || side >= LISTER_DUAL_SIDES)
+	other = state->buffer[lister_dual_other_side(state->view)];
+	return (other == buffer ||
+			(other == lister->special_buffer && state->old_buffer[lister_dual_other_side(state->view)] == buffer))
+			   ? TRUE
+			   : FALSE;
+}
+
+// Mark the panel a drop is aimed at; function_launch() takes it for the
+// destination path of the function it starts
+void lister_dual_set_drop_side(Lister *lister, short side)
+{
+	ListerDualState *state;
+
+	if ((state = lister_dual_get_state(lister)) && state->flags & DUALF_ONE_WINDOW)
+		state->drop_side = side;
+}
+
+short lister_dual_take_drop_side(Lister *lister)
+{
+	ListerDualState *state;
+	short side;
+
+	if (!(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW))
+		return -1;
+
+	side = state->drop_side;
+	state->drop_side = -1;
+	return side;
+}
+
+// Panel that holds the drag-over highlight
+short lister_dual_highlight_side(Lister *lister)
+{
+	ListerDualState *state;
+
+	if (!(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW))
+		return -1;
+
+	return (state->highlight_side >= 0) ? state->highlight_side : state->active;
+}
+
+void lister_dual_set_highlight_side(Lister *lister, short side)
+{
+	ListerDualState *state;
+
+	if ((state = lister_dual_get_state(lister)) && state->flags & DUALF_ONE_WINDOW)
+		state->highlight_side = side;
+}
+
+// Remember that the panel the Lister shows needs a rescan once it is not busy
+void lister_dual_queue_rescan(Lister *lister)
+{
+	ListerDualState *state;
+
+	if ((state = lister_dual_get_state(lister)) && state->flags & DUALF_ONE_WINDOW)
+		state->rescan_sides |= 1 << state->view;
+}
+
+// Rescan a panel queued by lister_dual_queue_rescan(). Each rescan is a
+// function that locks the lister, so one panel is read at a time and the
+// lister is flagged to rescan again when it is free.
+BOOL lister_dual_do_rescans(Lister *lister)
+{
+	ListerDualState *state;
+	short side;
+
+	if (!(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW) || !state->rescan_sides)
 		return FALSE;
 
-	state->active = side;
-	lister_dual_apply_panel(lister, side);
+	for (side = 0; side < LISTER_DUAL_SIDES; side++)
+		if (state->rescan_sides & (1 << side))
+			break;
+
+	state->rescan_sides &= ~(1 << side);
+	if (state->rescan_sides)
+		lister->flags |= LISTERF_RESCAN;
+
+	lister_dual_switch_view(lister, state, side);
+	read_directory(lister, lister->cur_buffer->buf_Path, GETDIRF_RESELECT);
+	lister_dual_switch_view(lister, state, state->active);
 	return TRUE;
 }
 
-void lister_dual_restore_active(Lister *lister, short side)
+// Working format of a panel (side -1 or a normal lister: lister->format).
+// Function processes use these while the lister process shows either panel.
+void lister_dual_get_format(Lister *lister, short side, ListFormat *format)
 {
 	ListerDualState *state;
 
-	if (!(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW))
+	Forbid();
+	if (side >= 0 && side < LISTER_DUAL_SIDES && (state = lister_dual_get_state(lister)) &&
+		state->flags & DUALF_ONE_WINDOW && side != state->view)
+		*format = state->format[side];
+	else
+		*format = lister->format;
+	Permit();
+}
+
+void lister_dual_set_format(Lister *lister, short side, ListFormat *format)
+{
+	ListerDualState *state;
+
+	Forbid();
+	if (side >= 0 && side < LISTER_DUAL_SIDES && (state = lister_dual_get_state(lister)) &&
+		state->flags & DUALF_ONE_WINDOW && side != state->view)
+		state->format[side] = *format;
+	else
+		lister->format = *format;
+	Permit();
+}
+
+// The shown panel is about to show the special buffer (device or buffer
+// list). There is one special buffer per lister, so if the other panel shows
+// it, that panel returns to the directory it came from first.
+void lister_dual_release_special(Lister *lister)
+{
+	ListerDualState *state;
+	short other;
+
+	if (!(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW) ||
+		lister->cur_buffer == lister->special_buffer)
 		return;
 
-	if (lister->cur_buffer)
+	other = lister_dual_other_side(state->view);
+	if (state->buffer[other] != lister->special_buffer || !state->old_buffer[other])
+		return;
+
+	state->buffer[other] = state->old_buffer[other];
+	state->old_buffer[other] = 0;
+
+	// The handler was told the buffer went inactive when the list replaced it
+	if (state->buffer[other]->buf_CustomHandler[0])
+		buffer_active(state->buffer[other], 0);
+	if (lister_valid_window(lister))
+		lister_dual_draw_panel(lister, other);
+}
+
+// Show the busy/source/destination state of both panels
+void lister_dual_show_status(Lister *lister)
+{
+	ListerDualState *state;
+
+	if ((state = lister_dual_get_state(lister)) && state->flags & DUALF_ONE_WINDOW)
 	{
-		state->buffer[state->active] = lister->cur_buffer;
-		lister_dual_capture_side_offsets(lister, state, state->active);
-		lister_dual_capture_title_boxes(lister, state, state->active);
+		lister_dual_capture_view(lister, state);
+		lister_dual_draw_headers(lister, state);
 	}
-	if (side >= 0 && side < LISTER_DUAL_SIDES)
-		state->active = side;
-
-	lister_dual_apply_panel(lister, state->active);
-}
-
-// Store the current lister buffer as the active dual panel buffer
-void lister_dual_store_active_buffer(Lister *lister)
-{
-	ListerDualState *state;
-
-	if (!(state = lister_dual_get_state(lister)) || !(state->flags & DUALF_ONE_WINDOW))
-		return;
-
-	lister_dual_capture_active_buffer(lister);
-	lister_dual_apply_panel(lister, state->active);
-}
-
-// Bring the dual lister to the front.
-void lister_dual_to_front(Lister *lister)
-{
-	if (!lister_valid_window(lister))
-		return;
-
-	WindowToFront(lister->window);
 }
 
 // Detach a lister from dual mode without closing it
-void lister_dual_detach(Lister *lister)
+static void lister_dual_detach(Lister *lister)
 {
 	if (lister)
 	{
@@ -2248,10 +2493,39 @@ void lister_dual_detach(Lister *lister)
 	}
 }
 
-// Detach a closing dual lister
+// Normal buffer a panel the Lister does not show holds: its own, or the one it
+// returns to from a device list
+static DirBuffer *lister_dual_held_buffer(Lister *lister, ListerDualState *state, short side)
+{
+	return (state->buffer[side] == lister->special_buffer) ? state->old_buffer[side] : state->buffer[side];
+}
+
+// Release the lock a panel holds on a buffer the Lister no longer shows
+static void lister_dual_release_buffer(Lister *lister, DirBuffer *buffer, short arg)
+{
+	if (!buffer || buffer == lister->cur_buffer || buffer == lister->special_buffer ||
+		(buffer == lister->old_buffer && lister->cur_buffer == lister->special_buffer))
+		return;
+
+	lock_listlock(&GUI->buffer_list, TRUE);
+	if (buffer->buf_CurrentLister == lister)
+		buffer_clear_lock(buffer, arg);
+	unlock_listlock(&GUI->buffer_list);
+}
+
+// Detach a closing dual lister; lister_cleanup() unlocks the active buffer
 void lister_dual_detach_closing(Lister *lister)
 {
+	ListerDualState *state;
+	DirBuffer *other = 0;
+
+	if ((state = lister_dual_get_state(lister)) && state->flags & DUALF_ONE_WINDOW)
+	{
+		lister_dual_capture_view(lister, state);
+		other = lister_dual_held_buffer(lister, state, lister_dual_other_side(state->view));
+	}
 	lister_dual_detach(lister);
+	lister_dual_release_buffer(lister, other, 1);
 }
 
 // Remove external source/destination state while a dual lister owns local roles
@@ -2284,8 +2558,8 @@ static void lister_dual_set_roles(Lister *source, BOOL locked)
 	{
 		state->locked = locked;
 		lister_dual_clear_external_roles(source);
-		lister_dual_apply_panel(source, state->active);
-		lister_dual_refresh(source, LREFRESH_FULL);
+		lister_dual_switch_view(source, state, state->active);
+		lister_dual_draw_headers(source, state);
 		return;
 	}
 }
@@ -2296,7 +2570,7 @@ void lister_dual_activate(Lister *lister)
 	ListerDualState *state;
 
 	if ((state = lister_dual_get_state(lister)) && state->flags & DUALF_ONE_WINDOW)
-		lister_dual_apply_panel(lister, state->active);
+		lister_dual_switch_view(lister, state, state->active);
 }
 
 // Latch one side as source and the other side as destination; this is not a task lock.
@@ -2313,8 +2587,8 @@ void lister_dual_unlock(Lister *lister)
 	if ((state = lister_dual_get_state(lister)) && state->flags & DUALF_ONE_WINDOW)
 	{
 		state->locked = FALSE;
-		lister_dual_apply_panel(lister, state->active);
-		lister_dual_refresh(lister, LREFRESH_FULL);
+		lister_dual_switch_view(lister, state, state->active);
+		lister_dual_draw_headers(lister, state);
 		return;
 	}
 }
@@ -2327,8 +2601,8 @@ BOOL lister_dual_enter(Lister *lister)
 	if (!lister)
 		return FALSE;
 
-	// Dual listers are Name-mode only.
-	if (lister->flags & LISTERF_VIEW_ICONS)
+	// Dual listers are Name-mode only, and need the full window
+	if (lister->flags & LISTERF_VIEW_ICONS || lister->more_flags & LISTERF_TITLEBARRED)
 		return FALSE;
 
 	if (lister_dual_is_side(lister))
@@ -2342,9 +2616,12 @@ BOOL lister_dual_enter(Lister *lister)
 
 	state->flags |= DUALF_ONE_WINDOW;
 	state->active = LISTER_DUAL_LEFT;
+	state->view = LISTER_DUAL_LEFT;
 	state->locked = FALSE;
 	state->buffer[LISTER_DUAL_LEFT] = lister->cur_buffer;
 	state->buffer[LISTER_DUAL_RIGHT] = lister->cur_buffer;
+	state->format[LISTER_DUAL_LEFT] = state->format[LISTER_DUAL_RIGHT] = lister->format;
+	state->old_buffer[LISTER_DUAL_LEFT] = state->old_buffer[LISTER_DUAL_RIGHT] = lister->old_buffer;
 
 	lister->flags2 |= LISTERF2_DUAL;
 	lister_dual_apply_panel(lister, state->active);
@@ -2366,10 +2643,13 @@ void lister_dual_leave(Lister *lister)
 
 	if ((state = lister_dual_get_state(lister)) && state->flags & DUALF_ONE_WINDOW)
 	{
-		if (state->buffer[state->active])
-			lister->cur_buffer = state->buffer[state->active];
+		DirBuffer *dropped;
+
+		lister_dual_switch_view(lister, state, state->active);
+		dropped = lister_dual_held_buffer(lister, state, lister_dual_other_side(state->active));
 		lister->flags2 &= ~LISTERF2_DUAL;
 		lister_dual_free_state(lister);
+		lister_dual_release_buffer(lister, dropped, 0);
 
 		lister->flags |= LISTERF_SOURCE;
 		lister->flags &= ~(LISTERF_DEST | LISTERF_STORED_SOURCE | LISTERF_STORED_DEST | LISTERF_SOURCEDEST_LOCK);

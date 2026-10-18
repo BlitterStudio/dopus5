@@ -23,8 +23,21 @@ For more information on Directory Opus for Windows please see:
 
 #include "dopus.h"
 
-// Handle some dropped files
+static void lister_drop_on_panel(Lister *dest, DOpusAppMessage *msg, short side);
+
+// Handle some dropped files. On a dual lister they go to the panel under the
+// pointer, which is not necessarily the active one.
 void lister_receive_drop(Lister *dest, DOpusAppMessage *msg)
+{
+	short side;
+
+	if ((side = lister_dual_side_at(dest, msg->da_Msg.am_MouseX, msg->da_Msg.am_MouseY)) >= 0)
+		lister_dual_view_side(dest, side);
+	lister_drop_on_panel(dest, msg, side);
+	lister_dual_active_side(dest);
+}
+
+static void lister_drop_on_panel(Lister *dest, DOpusAppMessage *msg, short side)
 {
 	Lister *source = 0;
 	IPTR source_data = 0, flags = 0, over_entry_data = 0;
@@ -216,6 +229,14 @@ void lister_receive_drop(Lister *dest, DOpusAppMessage *msg)
 		else
 			action = FTTYPE_DRAG_DROP;
 
+		// Dual panel drop: the source panel stays active, the dropped-on
+		// panel becomes the destination of the function
+		if (side >= 0)
+		{
+			lister_dual_set_drop_side(dest, side);
+			lister_dual_active_side(dest);
+		}
+
 		// Do filetype action on a file
 		function_launch(func_type,
 						function,
@@ -257,13 +278,18 @@ DirEntry *lister_test_drag(Lister *our_lister, DragInfo *drag, short x, short y,
 				// Get lister pointer
 				if ((lister = (Lister *)IPCDATA(ipc)))
 				{
+					DirBuffer *buffer;
+
+					// Buffer of the dual panel under the pointer
+					buffer = lister_dual_side_buffer(
+						lister, lister_dual_side_at(lister, x - window->LeftEdge, y - window->TopEdge));
+
 					// If lister is busy, can't use it
 					if (lister->flags & LISTERF_BUSY)
 						lister = 0;
 
 					// Custom handler, not enabled?
-					else if (lister->cur_buffer->buf_CustomHandler[0] &&
-							 !(lister->cur_buffer->cust_flags & CUSTF_SUBDROP))
+					else if (buffer->buf_CustomHandler[0] && !(buffer->cust_flags & CUSTF_SUBDROP))
 						lister = 0;
 				}
 			}
@@ -335,8 +361,40 @@ DirEntry *lister_test_drag(Lister *our_lister, DragInfo *drag, short x, short y,
 	return entry;
 }
 
-// Highlight an entry if mouse is over it
+static DirEntry *lister_highlight_panel(Lister *lister, short x, short y, DragInfo *drag);
+
+// Highlight an entry if mouse is over it. A dual lister highlights in the
+// panel under the pointer. Called from the LISTER PROCESS.
 DirEntry *lister_highlight(Lister *lister, short x, short y, DragInfo *drag)
+{
+	DirEntry *entry;
+	short side = -1, old_side;
+
+	if ((old_side = lister_dual_highlight_side(lister)) < 0)
+		return lister_highlight_panel(lister, x, y, drag);
+
+	if (x > -1 && lister_valid_window(lister))
+		side = lister_dual_side_at(lister, x - lister->window->LeftEdge, y - lister->window->TopEdge);
+
+	// Moved to the other panel (or away)? Clear the old highlight there
+	if (lister->last_highlight && side != old_side)
+	{
+		lister_dual_view_side(lister, old_side);
+		lister_highlight_panel(lister, -1, -1, drag);
+	}
+
+	entry = 0;
+	if (side >= 0)
+	{
+		lister_dual_view_side(lister, side);
+		lister_dual_set_highlight_side(lister, side);
+		entry = lister_highlight_panel(lister, x, y, drag);
+	}
+	lister_dual_active_side(lister);
+	return entry;
+}
+
+static DirEntry *lister_highlight_panel(Lister *lister, short x, short y, DragInfo *drag)
 {
 	DirEntry *entry = 0;
 	short line = 0, scroll = 0;

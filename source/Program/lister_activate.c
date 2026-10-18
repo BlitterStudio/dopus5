@@ -106,6 +106,26 @@ Lister *lister_default(ULONG flags, BOOL valid)
 	return 0;
 }
 
+// Get a dual lister to act as the source of a function that found no other
+// source; its active panel is the source. Prefers the current lister.
+Lister *lister_dual_default(void)
+{
+	Lister *lister, *dual = 0;
+	IPCData *ipc;
+
+	lock_listlock(&GUI->lister_list, FALSE);
+	for (ipc = (IPCData *)GUI->lister_list.list.lh_Head; ipc->node.mln_Succ; ipc = (IPCData *)ipc->node.mln_Succ)
+	{
+		lister = IPCDATA(ipc);
+		if (lister_dual_one_window(lister) && !(lister->flags & LISTERF_LOCK) &&
+			(!dual || lister == GUI->current_lister))
+			dual = lister;
+	}
+	unlock_listlock(&GUI->lister_list);
+
+	return dual;
+}
+
 // Make sure there are no other sources except this one
 void lister_check_source(Lister *source)
 {

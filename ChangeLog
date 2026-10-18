@@ -1,3 +1,60 @@
+[dopus5 next] Dual Lister fixes
+Program change; version bump deferred.
+
+- Commands no longer change the source panel behind the user's back.  A
+  command that used the destination panel (Copy, None, any command with
+  a destination) left that panel selected inside the lister while the
+  display still showed the other one as the source.  The next command,
+  or Set Dual Off, then worked on the wrong panel, and both panel headers
+  could show as source.  Commands now read the panel they work on without
+  switching the lister to it.
+- The panel that was not active could lose its directory buffer while it
+  was on screen.  Another lister reading the same directory took over the
+  buffer (selections made in one showed in the other), FreeCaches or a
+  low-memory flush could free it, and a full buffer cache could re-use it
+  for another directory.  Both panels now keep their buffers until they
+  show something else; leaving dual mode or closing the lister releases
+  them, so no buffer stays locked to a closed lister.
+- Files dropped on a panel go to that panel's directory.  A drop on the
+  destination panel landed in the source panel's directory.  Dragging
+  files from one panel to the other copies or moves them; it did nothing
+  before.  Directories in either panel highlight and take drops as in any
+  lister.
+- Commands not started from a lister (button banks, hotkeys, ARexx
+  "command" without a lister) use a dual lister's active panel as the
+  source, and its other panel as the destination, when no other lister is
+  a source.  They did nothing before, which is why "Set Dual Off" sent from
+  ARexx had no effect.
+- Set Dual waits until a running command has finished with the lister; it
+  freed the panel state while the command was still using it.
+- The window title and fuel gauge show the active panel; they always
+  showed the right one.
+- A device list in one panel no longer blanks the other panel or leaves
+  the old path in the path field.
+- Scrolling a panel no longer makes it the source panel.
+- "lister refresh" from ARexx redraws both panels.
+- Clicking another window that overlaps a dual lister no longer switches
+  its active panel.
+- With title-bar zooming on, a dual lister zooms normally; shrinking it to
+  the title bar corrupted its gadget list.  Showing or hiding the fuel
+  gauge no longer misplaces the left path field.
+- DeviceList with "Open New Listers in Dual Mode" started a second device
+  list function in the new lister, which raced the first for it.
+- Switching panels, and the end of every file operation, redrew both
+  panels and removed, moved and redrew the twelve panel scroller gadgets
+  three times.  Now only the panel headers are redrawn, and the scrollers
+  are only moved when the window size changes.
+- Each panel keeps its own sort and display format.  Set SORT, Set
+  DISPLAY and the other format commands, and the format of a directory
+  read into a panel, changed whichever panel the lister happened to be
+  drawing.  Select COMPARE and PrintDir also use the panels the command
+  started with.
+- Opening a device or buffer list in one panel while the other panel
+  shows one returns that panel to its directory; both panels shared one
+  list and the panel opened first lost the directory it came from.
+- A panel's close button does nothing (the screen flashes) while a
+  command is running in the lister.
+
 [dopus5 next] Icon layout calls and scroll repaint
 Program change; version bump deferred.
 

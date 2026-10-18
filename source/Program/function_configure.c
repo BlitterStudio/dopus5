@@ -41,8 +41,8 @@ DOPUS_FUNC(function_configure)
 	if (!(lister = function_lister_current(&handle->source_paths)))
 		return 0;
 
-	// Get current format
-	format = lister->cur_buffer->buf_ListFormat;
+	// Get current format of the panel the command was started from
+	format = function_path_buffer(handle->source_paths.current)->buf_ListFormat;
 	default_format = environment->env->list_format;
 
 	// Open lister format module
@@ -88,6 +88,11 @@ DOPUS_FUNC(function_configure)
 		}
 	}
 
-	// Send message to say goodbye
-	return IPC_Command(lister->ipc, LISTER_CONFIGURE, 0, (APTR)(IPTR)ret, pass_format, 0);
+	// Send message to say goodbye; bits 8+ name the 1-based dual panel
+	return IPC_Command(lister->ipc,
+					   LISTER_CONFIGURE,
+					   function_path_side(handle->source_paths.current) << 8,
+					   (APTR)(IPTR)ret,
+					   pass_format,
+					   0);
 }

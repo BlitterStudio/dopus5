@@ -493,9 +493,10 @@ BOOL function_valid_path(PathNode *path);
 PathNode *function_add_path(FunctionHandle *, PathList *, Lister *, char *);
 void function_init_path_node(PathNode *);
 void function_capture_path_side(PathNode *);
-void function_apply_path_side(PathNode *);
+DirBuffer *function_path_buffer(PathNode *);
+ULONG function_path_side(PathNode *);
 
-void function_read_directory(FunctionHandle *handle, Lister *lister, char *);
+void function_read_directory(FunctionHandle *handle, Lister *lister, ULONG side, char *);
 void buffer_list_buffers(Lister *dest_lister);
 void build_device_list(Lister *lister);
 

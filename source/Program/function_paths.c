@@ -35,6 +35,9 @@ void function_init_path_node(PathNode *node)
 	node->flags = 0;
 }
 
+// Tie a path node to the panel of a dual lister it refers to. This only reads
+// the lister: functions run in their own process and must not switch the
+// panel the lister process displays.
 void function_capture_path_side(PathNode *node)
 {
 	short side;
@@ -44,18 +47,29 @@ void function_capture_path_side(PathNode *node)
 
 	node->flags &= ~LISTNF_DUAL_SIDE;
 	node->dual_side = -1;
-	if ((side = lister_dual_active_index(node->lister)) >= 0)
+	if ((side = lister_dual_launch_side(node->lister)) >= 0)
 	{
 		node->dual_side = side;
 		node->flags |= LISTNF_DUAL_SIDE;
-		lister_dual_apply_side(node->lister, side);
 	}
 }
 
-void function_apply_path_side(PathNode *node)
+// Buffer of the lister panel a path node refers to
+DirBuffer *function_path_buffer(PathNode *node)
 {
-	if (node && node->lister && node->flags & LISTNF_DUAL_SIDE)
-		lister_dual_apply_side(node->lister, node->dual_side);
+	if (!node || !node->lister)
+		return 0;
+
+	if (node->flags & LISTNF_DUAL_SIDE)
+		return lister_dual_side_buffer(node->lister, node->dual_side);
+
+	return node->lister->cur_buffer;
+}
+
+// 1-based panel number for lister IPC messages, 0 for a normal lister
+ULONG function_path_side(PathNode *node)
+{
+	return (node && node->flags & LISTNF_DUAL_SIDE) ? node->dual_side + 1 : 0;
 }
 
 // Add path
@@ -120,11 +134,9 @@ PathNode *function_path_current(PathList *list)
 	// Is there a current one?
 	if (list->current && list->current->node.mln_Succ)
 	{
-		function_apply_path_side(list->current);
-
 		// Make sure the path is right
 		if (list->current->lister && !(list->current->flags & LISTNF_CHANGED))
-			list->current->path = list->current->lister->cur_buffer->buf_Path;
+			list->current->path = function_path_buffer(list->current)->buf_Path;
 		else
 			list->current->path = list->current->path_buf;
 
@@ -140,7 +152,6 @@ Lister *function_lister_current(PathList *list)
 	// Is there a current one?
 	if (list->current && list->current->node.mln_Succ)
 	{
-		function_apply_path_side(list->current);
 		return list->current->lister;
 	}
 	return 0;
@@ -234,10 +245,8 @@ BOOL function_valid_path(PathNode *path)
 	// Lister pointer?
 	if (path->lister)
 	{
-		function_apply_path_side(path);
-
 		// Get path from lister
-		path->path = path->lister->cur_buffer->buf_Path;
+		path->path = function_path_buffer(path)->buf_Path;
 		return 1;
 	}
 

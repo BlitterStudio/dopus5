@@ -318,10 +318,8 @@ void function_abort(FunctionHandle *handle)
 	// Get current lister
 	if ((node = handle->source_paths.current) && node->node.mln_Succ)
 	{
-		function_apply_path_side(node);
-
 		// Display abort text
-		status_abort(node->lister);
+		status_text_side(node->lister, function_path_side(node), GetString(&locale, MSG_ABORTED));
 
 		// Set flag to save title
 		node->flags |= LISTNF_NO_TITLE;
@@ -336,10 +334,8 @@ void function_error_text(FunctionHandle *handle, int code)
 	// Get current lister
 	if ((node = handle->source_paths.current) && node->node.mln_Succ)
 	{
-		function_apply_path_side(node);
-
 		// Display abort text
-		status_display_error(node->lister, code);
+		status_display_error_side(node->lister, function_path_side(node), code);
 
 		// Set flag to save title
 		node->flags |= LISTNF_NO_TITLE;
@@ -354,10 +350,8 @@ void function_text(FunctionHandle *handle, char *text)
 	// Get current lister
 	if ((node = handle->source_paths.current) && node->node.mln_Succ)
 	{
-		function_apply_path_side(node);
-
 		// Display text
-		status_text(node->lister, text);
+		status_text_side(node->lister, function_path_side(node), text);
 
 		// Set flag to save title
 		node->flags |= LISTNF_NO_TITLE;
@@ -403,8 +397,6 @@ void function_cleanup(FunctionHandle *handle, PathNode *node, BOOL full)
 		DirBuffer *buffer = 0;
 		Lister *lister;
 
-		function_apply_path_side(node);
-
 		// Get lister
 		if ((lister = node->lister))
 		{
@@ -417,7 +409,7 @@ void function_cleanup(FunctionHandle *handle, PathNode *node, BOOL full)
 				return;
 
 			// Get source buffer and lock it
-			buffer = lister->cur_buffer;
+			buffer = function_path_buffer(node);
 			buffer_lock(buffer, TRUE);
 		}
 

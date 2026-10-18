@@ -24,9 +24,6 @@ For more information on Directory Opus for Windows please see:
 #include "dopus.h"
 
 static int function_run_instruction(FunctionHandle *handle, InstructionParsed *instruction);
-static Cfg_Function *function_dual_special_function(FunctionHandle *handle, ULONG *open_flags);
-
-enum { DUAL_DEVLIST_ARG_NEW, DUAL_DEVLIST_ARG_FULL, DUAL_DEVLIST_ARG_BRIEF };
 
 // Run a function
 void function_run_function(FunctionHandle *handle)
@@ -364,40 +361,34 @@ static int function_run_instruction(FunctionHandle *handle, InstructionParsed *i
 	return ret;
 }
 
-static Cfg_Function *function_dual_special_function(FunctionHandle *handle, ULONG *open_flags)
+// A dual lister that is the source supplies its inactive panel as destination
+static BOOL function_dual_dest(FunctionHandle *handle)
 {
-	InstructionParsed *instruction;
+	PathNode *source, *node;
+	DirBuffer *buffer;
+	short side;
 
-	if (!handle)
-		return 0;
+	if (IsListEmpty((struct List *)&handle->source_paths.list))
+		return FALSE;
 
-	for (instruction = (InstructionParsed *)handle->func_instructions.mlh_Head; instruction->node.mln_Succ;
-		 instruction = (InstructionParsed *)instruction->node.mln_Succ)
-	{
-		if (instruction->type != INST_COMMAND || !instruction->command)
-			continue;
+	// The destination is the panel opposite the one the source node captured;
+	// the active panel may have changed since
+	source = (PathNode *)handle->source_paths.list.mlh_Head;
+	if (!source->lister || !(source->flags & LISTNF_DUAL_SIDE) || !lister_dual_one_window(source->lister))
+		return FALSE;
+	side = (source->dual_side == LISTER_DUAL_LEFT) ? LISTER_DUAL_RIGHT : LISTER_DUAL_LEFT;
 
-		if (instruction->command->function == FUNC_DEVICELIST)
-		{
-			if (instruction->funcargs)
-			{
-				if (instruction->funcargs->FA_Arguments[DUAL_DEVLIST_ARG_FULL])
-					return def_function_devicelist_full;
-				if (instruction->funcargs->FA_Arguments[DUAL_DEVLIST_ARG_BRIEF])
-					return def_function_devicelist_brief;
-			}
-			if (open_flags)
-				*open_flags |= LISTERF_DEVICES;
-			return def_function_devicelist;
-		}
+	// The panel must show a directory (not a device list)
+	buffer = lister_dual_side_buffer(source->lister, side);
+	if (!buffer->buf_Path[0] && !buffer->buf_CustomHandler[0])
+		return FALSE;
 
-		if (instruction->command->function == FUNC_BUFFERLIST)
-			return def_function_cachelist;
+	if (!(node = function_add_path(handle, &handle->dest_paths, source->lister, 0)))
+		return FALSE;
 
-		break;
-	}
-
-	return 0;
+	node->dual_side = side;
+	node->flags |= LISTNF_DUAL_SIDE;
+	return TRUE;
 }
 
 // Check a function has the right paths
@@ -421,17 +412,12 @@ BOOL function_check_paths(FunctionHandle *handle)
 			{
 				Lister *lister;
 				ULONG open_flags = 0;
-				ULONG special_open_flags = 0;
 
 				// Create a new lister
 				if ((lister = lister_new(0)))
 				{
-					function_dual_special_function(handle, &special_open_flags);
 					if (environment->env->lister_options & LISTEROPTF_DUAL_DEFAULT)
-					{
-						open_flags |= special_open_flags;
 						open_flags |= LISTERF_DUAL;
-					}
 
 					// We want lister to be available for functions
 					lister->flags2 &= ~LISTERF2_UNAVAILABLE;
@@ -459,9 +445,12 @@ BOOL function_check_paths(FunctionHandle *handle)
 		// Don't already have destination?
 		if (!(handle->func_flags & FUNCF_GOT_DEST))
 		{
-			// Build list of destinations and lock it
+			// Build list of destinations and lock it; a dual lister that is the
+			// source supplies its inactive panel
 			if (!(handle->flags & FUNCF_ASK_DEST) &&
-				function_get_paths(handle, &handle->dest_paths, LISTERF_DEST, handle->func_flags & FUNCF_SINGLE_DEST))
+				(function_dual_dest(handle) ||
+				 function_get_paths(
+					 handle, &handle->dest_paths, LISTERF_DEST, handle->func_flags & FUNCF_SINGLE_DEST)))
 			{
 				handle->func_flags |= FUNCF_GOT_DEST;
 			}
@@ -559,7 +548,7 @@ short function_check_single(FunctionHandle *handle, long type, long usetype, sho
 		if (!(IsListEmpty((struct List *)list)) && current)
 		{
 			// Add the path we do have to lister
-			if ((node = Att_NewNode(list, current->lister->cur_buffer->buf_Path, (IPTR)current, ADDNODE_SORT)))
+			if ((node = Att_NewNode(list, function_path_buffer(current)->buf_Path, (IPTR)current, ADDNODE_SORT)))
 				sel = Att_FindNodeNumber(list, node);
 		}
 

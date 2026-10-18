@@ -206,7 +206,7 @@ DirBuffer *lister_buffer_find_empty(Lister *lister, char *path, struct DateStamp
 	check_special_buffer(lister, 1);
 
 	// If current buffer is empty, use that one
-	if (!(lister->cur_buffer->flags & DWF_VALID))
+	if (!(lister->cur_buffer->flags & DWF_VALID) && !lister_dual_other_side_shows(lister, lister->cur_buffer))
 	{
 		// Lock buffer
 		buffer_lock(lister->cur_buffer, TRUE);
@@ -268,8 +268,20 @@ DirBuffer *lister_buffer_find_empty(Lister *lister, char *path, struct DateStamp
 	// If nothing yet, use first unlocked buffer (if there is one)
 	if (!buffer && !(buffer = first_unlocked))
 	{
+		// The other dual panel may show the current buffer; it needs a new
+		// one, and without it there is no buffer to read into
+		if (lister_dual_other_side_shows(lister, lister->cur_buffer))
+		{
+			if (!(buffer = lister_new_buffer(lister)))
+			{
+				unlock_listlock(&GUI->buffer_list);
+				return 0;
+			}
+		}
+
 		// If not, re-use current buffer
-		buffer = lister->cur_buffer;
+		else
+			buffer = lister->cur_buffer;
 	}
 
 	// Lock buffer
@@ -362,8 +374,10 @@ void lister_show_buffer(Lister *lister, DirBuffer *buffer, int show, BOOL active
 		// End a direct edit
 		lister_end_edit(lister, 0);
 
-		// Clear lock pointer in current buffer
-		buffer_clear_lock(lister->cur_buffer, 0);
+		// Clear lock pointer in current buffer, unless the other panel of a
+		// dual lister still shows it
+		if (!lister_dual_other_side_shows(lister, lister->cur_buffer))
+			buffer_clear_lock(lister->cur_buffer, 0);
 
 		// Free icons
 		backdrop_free_list(lister->backdrop_info);
@@ -390,7 +404,7 @@ void lister_show_buffer(Lister *lister, DirBuffer *buffer, int show, BOOL active
 		}
 
 		// Add to history list
-		lister_add_history(lister);
+		lister_add_history(lister, lister->cur_buffer);
 	}
 
 	// Initialise path field

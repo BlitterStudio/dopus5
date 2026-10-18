@@ -407,43 +407,56 @@ void function_filechange_do(FunctionHandle *handle, BOOL strip)
 	for (ipc = (IPCData *)GUI->lister_list.list.lh_Head; ipc->node.mln_Succ; ipc = (IPCData *)ipc->node.mln_Succ)
 	{
 		BackdropInfo *info;
-		short old_side = -1, side, side_count = 1, substr;
+		short side, side_count = 1, substr;
+		BOOL dual;
 		FileChangeList *list;
 
 		// Get lister
 		lister = IPCDATA(ipc);
 
-		if (lister_dual_one_window(lister))
-		{
-			old_side = lister_dual_active_index(lister);
+		// Both panels of a dual lister take changes; this reads the panel
+		// buffers and leaves the panel the lister shows alone
+		if ((dual = lister_dual_one_window(lister)))
 			side_count = LISTER_DUAL_SIDES;
-		}
 
 		for (side = 0; side < side_count; side++)
 		{
 			BOOL show;
 			ULONG ref_flags;
 			DirEntry *show_file;
-
-			if (old_side != -1)
-				lister_dual_apply_side(lister, side);
+			DirBuffer *side_buffer;
+			Lister *owner;
 
 			show = FALSE;
 			ref_flags = REFRESHF_SLIDERS | REFRESHF_ICONS | REFRESHF_STATUS;
-			if (old_side != -1)
-				ref_flags |= REFRESHF_FULL;
 			show_file = NULL;
 			list = NULL;
 
-			// If lister has a custom buffer, skip it
-			if (lister->cur_buffer->buf_CustomHandler[0])
+			side_buffer = (dual) ? lister_dual_side_buffer(lister, side) : lister->cur_buffer;
+			owner = lister;
+			if (dual)
+			{
+				DirBuffer *other_buffer = lister_dual_side_buffer(lister, side ^ 1);
+
+				// A buffer shown in both panels takes its changes once
+				if (side > 0 && side_buffer == other_buffer)
+					continue;
+
+				// Changes addressed to the lister itself belong to its active panel
+				if (side != lister_dual_active_index(lister) && side_buffer != other_buffer)
+					owner = 0;
+			}
+
+			// If lister has a custom buffer, skip it; a panel that has no path
+			// (device list) only takes changes addressed to the lister
+			if (side_buffer->buf_CustomHandler[0] || (!owner && !side_buffer->buf_Path[0]))
 				continue;
 
 			// Get backdrop pointer
 			info = lister->backdrop_info;
 
 			// Any changes for this path?
-			while ((list = function_find_filechanges(handle, list, lister->cur_buffer->buf_Path, lister, &substr)))
+			while ((list = function_find_filechanges(handle, list, side_buffer->buf_Path, owner, &substr)))
 			{
 				FileChange *change;
 				DirBuffer *buffer;
@@ -454,7 +467,7 @@ void function_filechange_do(FunctionHandle *handle, BOOL strip)
 				++list->count;
 
 			// Get buffer pointer
-			buffer = lister->cur_buffer;
+			buffer = side_buffer;
 
 			// If we don't actually own this lister, only attempt to lock the buffer
 			if (lister->locker_ipc != handle->ipc)
@@ -749,27 +762,24 @@ void function_filechange_do(FunctionHandle *handle, BOOL strip)
 					IPC_Command(lister->ipc, LISTER_GET_ICON, 0, 0, 0, 0);
 				}
 
-				// Dual panels need the full redraw even while this function still owns the lister lock
-				if (old_side != -1 || lister->locker_ipc != handle->ipc || !handle->ipc)
+				// Refresh the panel now if this function does not own the lister;
+				// it owns only the panels in its paths, so dual panels refresh here
+				if (dual || lister->locker_ipc != handle->ipc || !handle->ipc)
 				{
-					ULONG refresh_side;
-
-					refresh_side = (old_side != -1) ? side + 1 : 0;
-
 					// Refresh lister
 					IPC_Command(lister->ipc,
 								LISTER_REFRESH_WINDOW,
 								ref_flags | REFRESHF_DATESTAMP,
-								(APTR)(IPTR)refresh_side,
+								(APTR)(IPTR)((dual) ? side + 1 : 0),
 								0,
 								0);
 				}
 
-				// File to show?
-				else if (show_file)
+				// File to show? Its entry is only safe while this function owns the lister
+				if (show_file && lister->locker_ipc == handle->ipc && handle->ipc)
 				{
 					// Tell lister to show this entry
-					IPC_Command(lister->ipc, LISTER_FIND_ENTRY, 0, show_file, 0, 0);
+					IPC_Command(lister->ipc, LISTER_FIND_ENTRY, (dual) ? side + 1 : 0, show_file, 0, 0);
 				}
 
 				// Fix icon selection count (for icon action mode)
@@ -777,9 +787,6 @@ void function_filechange_do(FunctionHandle *handle, BOOL strip)
 					backdrop_fix_count(lister->backdrop_info, 0);
 			}
 		}
-
-		if (old_side != -1)
-			lister_dual_apply_side(lister, old_side);
 	}
 
 	// Unlock lister list
