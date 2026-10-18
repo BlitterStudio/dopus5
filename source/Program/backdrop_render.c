@@ -188,41 +188,56 @@ void backdrop_scroll_objects(BackdropInfo *info, short off_x, short off_y)
 		// Got temporary region?
 		if (info->temp_region)
 		{
-			struct Rectangle rect;
+			struct Rectangle rect[2];
+			short count = 0, a;
 
-			// Get refresh region
-			rect.MinX = (off_x == 0) ? info->size.MinX : ((off_x > 0) ? info->size.MaxX - off_x : info->size.MinX);
-			rect.MaxX = (off_x == 0) ? info->size.MaxX : ((off_x > 0) ? info->size.MaxX : info->size.MinX - off_x);
-			rect.MinY = (off_y == 0) ? info->size.MinY : ((off_y > 0) ? info->size.MaxY - off_y : info->size.MinY);
-			rect.MaxY = (off_y == 0) ? info->size.MaxY : ((off_y > 0) ? info->size.MaxY : info->size.MinY - off_y);
-
-			// Bounds check region
-			if (rect.MinX < info->size.MinX)
-				rect.MinX = info->size.MinX;
-			if (rect.MinY < info->size.MinY)
-				rect.MinY = info->size.MinY;
-			if (rect.MaxX > info->size.MaxX)
-				rect.MaxX = info->size.MaxX;
-			if (rect.MaxY > info->size.MaxY)
-				rect.MaxY = info->size.MaxY;
-
-			// Add to damage list?
-			if (damage)
+			// Columns scrolled in. Only these need drawing: redrawing pixels that were
+			// already there changes them when icon edges are blended over the background
+			if (off_x)
 			{
-				// Or rectangle in
-				OrRectRegion(info->window->WLayer->DamageList, &rect);
+				rect[count].MinX = (off_x > 0) ? info->size.MaxX - off_x + 1 : info->size.MinX;
+				rect[count].MaxX = (off_x > 0) ? info->size.MaxX : info->size.MinX - off_x - 1;
+				rect[count].MinY = info->size.MinY;
+				rect[count].MaxY = info->size.MaxY;
+				++count;
 			}
 
-			// Manually refresh
-			else
+			// Rows scrolled in
+			if (off_y)
 			{
-				// Set refresh region
+				rect[count].MinX = info->size.MinX;
+				rect[count].MaxX = info->size.MaxX;
+				rect[count].MinY = (off_y > 0) ? info->size.MaxY - off_y + 1 : info->size.MinY;
+				rect[count].MaxY = (off_y > 0) ? info->size.MaxY : info->size.MinY - off_y - 1;
+				++count;
+			}
+
+			// No movement, refresh everything
+			if (!count)
+				rect[count++] = info->size;
+
+			// Set refresh region
+			if (!damage)
 				ClearRegion(info->temp_region);
-				OrRectRegion(info->temp_region, &rect);
+			for (a = 0; a < count; a++)
+			{
+				// Bounds check region
+				if (rect[a].MinX < info->size.MinX)
+					rect[a].MinX = info->size.MinX;
+				if (rect[a].MinY < info->size.MinY)
+					rect[a].MinY = info->size.MinY;
+				if (rect[a].MaxX > info->size.MaxX)
+					rect[a].MaxX = info->size.MaxX;
+				if (rect[a].MaxY > info->size.MaxY)
+					rect[a].MaxY = info->size.MaxY;
 
-				// Install region
-				InstallClipRegion(info->window->WLayer, info->temp_region);
+				// Add to damage list, or to the region we refresh manually
+				OrRectRegion((damage) ? info->window->WLayer->DamageList : info->temp_region, &rect[a]);
 			}
+
+			// Manual refresh? Install region
+			if (!damage)
+				InstallClipRegion(info->window->WLayer, info->temp_region);
 		}
 
 		// Manual refresh?

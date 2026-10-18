@@ -1,3 +1,19 @@
+[dopus5 next] Icon layout calls and scroll repaint
+Program change; version bump deferred.
+
+- Icons loaded through icon.library V44+ are already laid out for the
+  Opus screen, but Opus called LayoutIcon() on them a second time, and
+  released the layout twice when they were freed (FreeDiskObject() does
+  that itself).  Each icon now gets one layout and one release.  IconLib
+  had been skipping these extra calls on its own.
+- Scrolling an icon window in real time repainted one row (or column)
+  that was already on screen, besides the area scrolled in.  That is
+  harmless when an icon replaces the pixels under it, but an icon.library
+  that blends soft icon edges over what is on screen would blend that
+  row twice.  Opus now repaints only the area scrolled in, and when both
+  directions scroll at once the whole L-shaped area instead of just its
+  corner.
+
 [dopus5 next] AmigaOS 4, AROS: no unused icon masks
 Program change; version bump deferred.
 
