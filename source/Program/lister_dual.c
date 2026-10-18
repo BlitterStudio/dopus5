@@ -2456,6 +2456,10 @@ void lister_dual_release_special(Lister *lister)
 
 	state->buffer[other] = state->old_buffer[other];
 	state->old_buffer[other] = 0;
+
+	// The handler was told the buffer went inactive when the list replaced it
+	if (state->buffer[other]->buf_CustomHandler[0])
+		buffer_active(state->buffer[other], 0);
 	if (lister_valid_window(lister))
 		lister_dual_draw_panel(lister, other);
 }
