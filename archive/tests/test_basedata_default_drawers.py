@@ -142,6 +142,21 @@ class BasedataFiletypeTests(unittest.TestCase):
         self.assertLessEqual({"ascii", "amigaguide"}, installed)
         self.assertEqual(set(), installed & stored)
 
+    def test_filetype_icons_are_shipped(self):
+        # Icon lookups use the first matching filetype with an icon path; a
+        # path to a file that is not there (DOpus5:Icons/def/..., another
+        # system's ENVARC:Sys deficons) replaces the icon icon.library would
+        # have chosen with a failed load.
+        shipped = {m.lower() for m in drawer_files("DOpus5/")}
+        members = drawer_files("DOpus5/Filetypes/") + drawer_files("DOpus5/Storage/Filetypes/")
+
+        for member in members:
+            icon = filetype_tool.parse(archive_member(member))[0].icon.decode("latin-1")
+            if icon:
+                with self.subTest(member=member, icon=icon):
+                    self.assertTrue(icon.lower().startswith("dopus5:"))
+                    self.assertIn("dopus5/" + icon[len("dopus5:"):].lower(), shipped)
+
 
 class InstallerTests(unittest.TestCase):
     def setUp(self):

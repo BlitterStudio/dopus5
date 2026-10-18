@@ -1,3 +1,43 @@
+[dopus5 next] Contributed filetypes; Opus recognises its own files again
+Base archive and program change; version bump deferred.
+
+- DOpus5:Storage/Filetypes now holds the filetypes contributed in issue
+  #131 merged with the ones it had, 104 in all, named "Category,
+  Format" ("Graphics, Pic-GIF", "Prefs, Locale", "Archive, LhA").  New
+  are filetypes for every OS 3 preferences file (double-click opens the
+  editor), disk images (ADF through DAControl or MountDiskImage, DMS,
+  IPF, ISO) and disk image drives, file systems, Directory Opus themes
+  (double-click loads the theme) and group items, PDF, MP3, MED, BMP,
+  Tar, Kickstart ROMs, catalogs, datatypes, MUI classes, shell scripts
+  and more.  Where two filetypes described the same format they are
+  merged.
+- Recognition fixes: BMP also matches 16, 24 and 32-bit pictures; JPEG
+  matches Exif files; PageStream 3 matched one file size only; name
+  patterns that started with "*" only worked with the WILDSTAR option
+  and use "#?" now; ARexx scripts no longer need a .rexx name; ZIP, ARJ,
+  ZOO, DMS, IPF, ISO, PDF, MP3, MOD and catalogs are recognised by their
+  contents as well as their names.
+- The installed filetypes keep their names (an upgrade keeps the user's
+  copies) and nothing new is installed by default; the contributed
+  versions are merged into them.  All gains AnsiRead, HexRead and
+  MultiView menus and AnsiRead/HexRead on Ctrl/Alt double-click; a plain
+  double-click still goes to Opus's default (filetype sniffer, then
+  SmartRead).  Picture skips fonts.  No filetype points at an icon that
+  is not shipped any more: All and All, Directories pointed at
+  DOpus5:Icons/def/, which never existed, and the contributed
+  ENVARC:Sys/def_*.info icons exist only on some systems; without an icon
+  path Opus asks icon.library for the default icon.
+- Opus's built-in filetypes for button banks, start menus and
+  environments only recognised files saved as FORM OPUS.  These files
+  are saved as FORM EPUS now, so double-clicking one in a lister no
+  longer loaded it and "dopus getfiletype" called it "iff".  The
+  built-in filetypes recognise both forms again.
+- Upgrading with the installer removes the stored filetypes of 5.102 and
+  earlier under their old names once the new files are in place.
+- archive/tools/filetype_tool.py lint treats Opus sequences such as
+  {RdSelect destination:} as one word, so a requester title no longer
+  reads as an assign.
+
 [dopus5 next] Dual Lister fixes
 Program change; version bump deferred.
 
