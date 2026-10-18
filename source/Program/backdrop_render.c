@@ -1117,22 +1117,15 @@ void backdrop_get_masks(BackdropObject *object)
 			// Full transparency? (quicker)
 			if (environment->env->desktop_flags & DESKTOPF_TRANSPARENCY)
 			{
-				short plane, row, col, word, width, off;
+				UWORD *data = image->ImageData, *mask;
+				long planesize = ((image->Width + 15) >> 4) * image->Height, word;
+				short plane;
 
-				// Get width in words
-				width = (image->Width + 15) >> 4;
-
-				// Build shadow mask
-				for (plane = 0, off = 0; plane < image->Depth; plane++)
+				// Build shadow mask: OR of all planes
+				for (plane = 0; plane < image->Depth; plane++)
 				{
-					for (row = 0, word = 0; row < image->Height; row++)
-					{
-						for (col = 0; col < width; col++, word++, off++)
-						{
-							// Build mask
-							object->image_mask[a][word] |= image->ImageData[off];
-						}
-					}
+					for (word = 0, mask = object->image_mask[a]; word < planesize; word++)
+						*mask++ |= *data++;
 				}
 			}
 
