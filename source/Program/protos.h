@@ -106,9 +106,10 @@ void show_about(struct Screen *screen, IPCData *ipc);
 
 // status_text.c
 int status_display_error(Lister *lister, int errcode);
+int status_display_error_side(Lister *lister, ULONG side, int errcode);
 void status_text(Lister *lister, char *text);
+void status_text_side(Lister *lister, ULONG side, char *text);
 void status_okay(Lister *lister);
-void status_abort(Lister *lister);
 
 int function_copy_file(struct FileInfoBlock *s_info,
 					   struct FileInfoBlock *d_info,

@@ -1608,7 +1608,9 @@ static void lister_dual_draw_headers(Lister *lister, ListerDualState *state)
 }
 
 // Make a panel the active (source) panel. Switching panels only changes the
-// header colours and the window title, so the file lists are not redrawn.
+// header colours and the window title, so the file lists are not redrawn;
+// unless both panels show one buffer, whose selections and fields changed
+// while only the other panel was drawn.
 static void lister_dual_set_active(Lister *lister, ListerDualState *state, short side)
 {
 	if (side < 0 || side >= LISTER_DUAL_SIDES)
@@ -1623,6 +1625,11 @@ static void lister_dual_set_active(Lister *lister, ListerDualState *state, short
 	lister_dual_capture_view(lister, state);
 	state->active = side;
 	lister_dual_draw_headers(lister, state);
+	if (state->buffer[LISTER_DUAL_LEFT] == state->buffer[LISTER_DUAL_RIGHT] && lister_valid_window(lister))
+	{
+		lister_dual_draw_panel(lister, side);
+		lister_dual_switch_view(lister, state, side);
+	}
 }
 
 // Lay the panels out again after the field titles were shown or hidden

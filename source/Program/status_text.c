@@ -26,6 +26,12 @@ For more information on Directory Opus for Windows please see:
 // Display an error message
 int status_display_error(Lister *lister, int errcode)
 {
+	return status_display_error_side(lister, 0, errcode);
+}
+
+// Display an error message for a dual panel (1-based side, 0 = active)
+int status_display_error_side(Lister *lister, ULONG side, int errcode)
+{
 	static char error_text[80];
 
 	// Need to get error code ourselves?
@@ -40,12 +46,18 @@ int status_display_error(Lister *lister, int errcode)
 	Fault(errcode, GetString(&locale, MSG_DOS_ERROR), error_text, 80);
 
 	// Print error
-	status_text(lister, error_text);
+	status_text_side(lister, side, error_text);
 	return 1;
 }
 
 // Display status text
 void status_text(Lister *lister, char *text)
+{
+	status_text_side(lister, 0, text);
+}
+
+// Display status text, stored with a dual panel (1-based side, 0 = active)
+void status_text_side(Lister *lister, ULONG side, char *text)
 {
 	if (lister)
 	{
@@ -55,7 +67,7 @@ void status_text(Lister *lister, char *text)
 		if ((copy = AllocVec(strlen(text) + 1, 0)))
 			strcpy(copy, text);
 
-		IPC_Command(lister->ipc, LISTER_STATUS, 0, text, copy, 0);
+		IPC_Command(lister->ipc, LISTER_STATUS, side, text, copy, 0);
 	}
 }
 
@@ -63,10 +75,4 @@ void status_text(Lister *lister, char *text)
 void status_okay(Lister *lister)
 {
 	status_text(lister, GetString(&locale, MSG_OKAY));
-}
-
-// Display Aborted status text
-void status_abort(Lister *lister)
-{
-	status_text(lister, GetString(&locale, MSG_ABORTED));
 }

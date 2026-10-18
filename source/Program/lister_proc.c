@@ -1225,10 +1225,13 @@ IPC_EntryCode(lister_code)
 
 				// Show status text
 				case LISTER_STATUS:
+					// Status belongs to the panel the function captured
+					lister_proc_view_side(lister, flags);
 					if (lmsg->data_free)
 						lister_status(lister, (char *)lmsg->data_free);
 					else
 						lister_status(lister, (char *)data);
+					lister_dual_active_side(lister);
 					break;
 
 				// Progress indicator on

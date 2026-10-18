@@ -319,7 +319,7 @@ void function_abort(FunctionHandle *handle)
 	if ((node = handle->source_paths.current) && node->node.mln_Succ)
 	{
 		// Display abort text
-		status_abort(node->lister);
+		status_text_side(node->lister, function_path_side(node), GetString(&locale, MSG_ABORTED));
 
 		// Set flag to save title
 		node->flags |= LISTNF_NO_TITLE;
@@ -335,7 +335,7 @@ void function_error_text(FunctionHandle *handle, int code)
 	if ((node = handle->source_paths.current) && node->node.mln_Succ)
 	{
 		// Display abort text
-		status_display_error(node->lister, code);
+		status_display_error_side(node->lister, function_path_side(node), code);
 
 		// Set flag to save title
 		node->flags |= LISTNF_NO_TITLE;
@@ -351,7 +351,7 @@ void function_text(FunctionHandle *handle, char *text)
 	if ((node = handle->source_paths.current) && node->node.mln_Succ)
 	{
 		// Display text
-		status_text(node->lister, text);
+		status_text_side(node->lister, function_path_side(node), text);
 
 		// Set flag to save title
 		node->flags |= LISTNF_NO_TITLE;
