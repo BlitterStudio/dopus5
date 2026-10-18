@@ -1067,7 +1067,92 @@ void lock_layers(DragInfo *drag, BOOL lock)
 	}
 }
 
-// Build a transparent/opaque drag mask
+// Spread filled pixels towards higher x (lower bits) through clear pixels
+static UWORD drag_mask_fill_right(UWORD fill, UWORD clear)
+{
+	fill |= clear & (fill >> 1);
+	clear &= clear >> 1;
+	fill |= clear & (fill >> 2);
+	clear &= clear >> 2;
+	fill |= clear & (fill >> 4);
+	clear &= clear >> 4;
+	fill |= clear & (fill >> 8);
+	return fill;
+}
+
+// Spread filled pixels towards lower x (higher bits) through clear pixels
+static UWORD drag_mask_fill_left(UWORD fill, UWORD clear)
+{
+	fill |= clear & (UWORD)(fill << 1);
+	clear &= (UWORD)(clear << 1);
+	fill |= clear & (UWORD)(fill << 2);
+	clear &= (UWORD)(clear << 2);
+	fill |= clear & (UWORD)(fill << 4);
+	clear &= (UWORD)(clear << 4);
+	fill |= clear & (UWORD)(fill << 8);
+	return fill;
+}
+
+// Fill the outside area of one row along runs of clear pixels, in both
+// directions and across word boundaries
+static void drag_mask_fill_row(UWORD *outside, UWORD *solid, short columns, UWORD lastbits)
+{
+	UWORD carry, clear, fill;
+	short col;
+
+	// Left to right. Nothing to fill and all filled are common, skip those
+	for (carry = 0, col = 0; col < columns; col++)
+	{
+		clear = ~solid[col];
+		if (col == columns - 1)
+			clear &= lastbits;
+		if ((fill = (outside[col] | carry) & clear) && fill != clear)
+			fill = drag_mask_fill_right(fill, clear);
+		outside[col] = fill;
+		carry = (fill & 1) ? 0x8000 : 0;
+	}
+
+	// Right to left
+	for (carry = 0, col = columns - 1; col >= 0; col--)
+	{
+		clear = ~solid[col];
+		if (col == columns - 1)
+			clear &= lastbits;
+		if ((fill = (outside[col] | carry) & clear) && fill != clear)
+			fill = drag_mask_fill_left(fill, clear);
+		outside[col] = fill;
+		carry = (fill & 0x8000) ? 1 : 0;
+	}
+}
+
+// Does the outside area of row 'from' reach clear pixels of row 'to' that are
+// not outside yet? If 'take' is set, add them to row 'to'.
+static BOOL drag_mask_reach(UWORD *to, UWORD *to_solid, UWORD *from, short columns, UWORD lastbits, BOOL take)
+{
+	UWORD add;
+	BOOL reached = 0;
+	short col;
+
+	for (col = 0; col < columns; col++)
+	{
+		add = from[col] & ~to_solid[col] & ~to[col];
+		if (col == columns - 1)
+			add &= lastbits;
+		if (add)
+		{
+			if (!take)
+				return 1;
+			to[col] |= add;
+			reached = 1;
+		}
+	}
+	return reached;
+}
+
+// Build a transparent/opaque drag mask: the mask covers the image, and only
+// the background reaching the image from its edges stays transparent. This
+// is a flood fill of the clear pixels from the border (4-way, like Flood()),
+// done on the mask words with the CPU so the mask may be in any memory.
 BOOL LIBFUNC L_BuildTransDragMask(REG(a0, UWORD *mask),
 								  REG(a1, UWORD *image),
 								  REG(d0, short width),
@@ -1075,79 +1160,109 @@ BOOL LIBFUNC L_BuildTransDragMask(REG(a0, UWORD *mask),
 								  REG(d2, short depth),
 								  REG(d3, long flags))
 {
-	long x, word, off;
-	short plane, row, col, columns, tmpsize;
-	struct BitMap bm;
-	struct BitMap *maskbm;
-	struct RastPort rp;
-	struct TmpRas tmpras;
-	PLANEPTR tmprasbuf, temp;
+	long planesize, word;
+	short plane, row, col, columns, pass;
+	UWORD *outside, *data, *line, lastbits, lastbit, valid;
+	BOOL more;
+
+	// Nothing to mask?
+	if (width < 1 || height < 1)
+		return 1;
 
 	// Get plane size
 	columns = (width + 15) >> 4;
-	tmpsize = RASSIZE((width + 2), (height + 2));
+	planesize = (long)columns * height;
 
-	// Allocate a bitmap to build the mask, and a TmpRas buffer
-	if (!(maskbm = L_NewBitMap(width + 2, height + 2, 2, BMF_CLEAR, 0)) ||
-		!(tmprasbuf = (PLANEPTR)AllocVec(tmpsize, MEMF_CHIP)))
+	// Allocate the outside area, initially empty
+	if (!(outside = AllocVec(planesize * sizeof(UWORD), MEMF_ANY | MEMF_CLEAR)))
 	{
-		// Free what we got
-		L_DisposeBitMap(maskbm);
-
 		// Failed, fill the mask with ones (for non-custom)
 		if (!(flags & DRAGF_CUSTOM))
 		{
-			long planesize = columns * height;
-			for (x = 0; x < planesize; x++)
-				mask[x] = 0xffff;
+			for (word = 0; word < planesize; word++)
+				mask[word] = 0xffff;
 		}
 		return 0;
 	}
-
-	// Initialise RastPort and TmpRas for mask bitmap
-	InitRastPort(&rp);
-	rp.BitMap = maskbm;
-	InitTmpRas(&tmpras, tmprasbuf, tmpsize);
-	rp.TmpRas = &tmpras;
-
-	// Initialise dummy bitmap to point to mask
-	InitBitMap(&bm, 1, width, height);
-	bm.Planes[0] = (PLANEPTR)mask;
 
 	// Non-custom image
 	if (!(flags & DRAGF_CUSTOM))
 	{
 		// Build mask from image
-		for (plane = 0, off = 0; plane < depth; plane++)
-			for (row = 0, word = 0; row < height; row++)
-				for (col = 0; col < columns; col++)
-					mask[word++] |= image[off++];
+		for (plane = 0, data = image; plane < depth; plane++)
+		{
+			for (word = 0, line = mask; word < planesize; word++)
+				*line++ |= *data++;
+		}
 	}
 
-	// Blit mask into slightly bigger bitmap, leaving a one-pixel gap around the edge
-	BltBitMap(&bm, 0, 0, maskbm, 1, 1, width, height, 0xc0, 0x1, 0);
+#ifdef __AROS__
+	// Planar data is a big-endian byte stream; the fill shifts native words
+	for (word = 0; word < planesize; word++)
+		mask[word] = AROS_BE2WORD(mask[word]);
+#endif
 
-	// Fill into secondary plane only of mask bitmap
-	SetAPen(&rp, 2);
+	// Pixels of the last word inside the image, and the rightmost one
+	lastbits = (width & 15) ? (UWORD)(0xffff << (16 - (width & 15))) : 0xffff;
+	lastbit = lastbits & (UWORD)(~lastbits + 1);
 
-	// Flood fill the outside of the mask
-	Flood(&rp, 1, 0, 0);
+	// Clear pixels on the border are outside
+	for (row = 0, line = outside; row < height; row++, line += columns)
+	{
+		line[0] |= 0x8000 & ~mask[row * columns];
+		line[columns - 1] |= lastbit & ~mask[row * columns + columns - 1];
+	}
+	for (col = 0; col < columns; col++)
+	{
+		valid = (col == columns - 1) ? lastbits : 0xffff;
+		outside[col] |= ~mask[col] & valid;
+		outside[planesize - columns + col] |= ~mask[planesize - columns + col] & valid;
+	}
 
-	// Switch plane pointers in mask bitmap
-	temp = maskbm->Planes[0];
-	maskbm->Planes[0] = maskbm->Planes[1];
-	maskbm->Planes[1] = temp;
+	// Sweep down, filling each row from the one above
+	for (row = 0, line = outside; row < height; row++, line += columns)
+	{
+		if (row > 0)
+			drag_mask_reach(line, mask + (long)row * columns, line - columns, columns, lastbits, 1);
+		drag_mask_fill_row(line, mask + (long)row * columns, columns, lastbits);
+	}
 
-	// Copy from flooded mask plane and invert to get real mask
-	BltBitMap(maskbm, 1, 1, &bm, 0, 0, width, height, 0x30, 0x1, tmprasbuf);
+	// Then sweep up and down again while rows still grow. A row that grows
+	// may reach back into the row it was filled from, which needs another
+	// sweep the other way; a row that does not grow cannot.
+	for (pass = 1, more = 1; more; pass ^= 1)
+	{
+		more = 0;
+		for (row = 1; row < height; row++)
+		{
+			short y = (pass) ? height - 1 - row : row, from = (pass) ? y + 1 : y - 1;
 
-	// Wait for blitter
-	WaitBlit();
+			line = outside + (long)y * columns;
+			if (drag_mask_reach(line, mask + (long)y * columns, outside + (long)from * columns, columns, lastbits, 1))
+			{
+				drag_mask_fill_row(line, mask + (long)y * columns, columns, lastbits);
+				if (drag_mask_reach(
+						outside + (long)from * columns, mask + (long)from * columns, line, columns, lastbits, 0))
+					more = 1;
+			}
+		}
+	}
 
-	// Free work memory
-	L_DisposeBitMap(maskbm);
-	FreeVec(tmprasbuf);
+	// Everything not reached from outside is opaque; padding bits beyond the
+	// width keep their value
+	for (row = 0, word = 0; row < height; row++)
+	{
+		for (col = 0; col < columns; col++, word++)
+		{
+			valid = (col == columns - 1) ? lastbits : 0xffff;
+			mask[word] = (mask[word] & ~valid) | (~outside[word] & valid);
+#ifdef __AROS__
+			mask[word] = AROS_WORD2BE(mask[word]);
+#endif
+		}
+	}
 
+	FreeVec(outside);
 	return 1;
 }
 

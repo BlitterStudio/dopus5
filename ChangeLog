@@ -1,3 +1,21 @@
+[dopus5 next] Faster icon transparency masks
+dopus5.library and Program change; version bump deferred.
+
+- With "Full icon transparency" off (the default), Opus built the mask of
+  every borderless icon image with BuildTransDragMask(), which copied the
+  image into a chip memory bitmap, ran Flood() from the corner and blitted
+  the result back.  Each icon has two images, so a 50-icon drawer did this
+  100 times.  The fill now runs on the CPU over the mask words and gives
+  the same masks, bit for bit, without chip memory or the blitter.  Drag
+  images that use the same call get the faster masks too.
+- With full transparency on, the plane merge loop is simpler and no longer
+  uses a 16-bit index, which overflowed on 8-plane images bigger than
+  256x256 pixels and read before the image data.
+- OpenWin.rexx (from IconLib) opening Work:Audio, 50 icons, on an
+  emulated A4000/060 with JIT off, OS 3.2, icon.library 51.4 and a
+  32-bit ZZ9000 screen: 1.92 s per open before and 1.09 s after with the
+  default setting; 1.05 s and 0.92 s with full transparency.
+
 [dopus5 next] AppIcon render hooks: no flash on redraw
 Program change; version bump deferred.
 
