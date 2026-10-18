@@ -44,6 +44,16 @@ Program change; version bump deferred.
   panels and removed, moved and redrew the twelve panel scroller gadgets
   three times.  Now only the panel headers are redrawn, and the scrollers
   are only moved when the window size changes.
+- Each panel keeps its own sort and display format.  Set SORT, Set
+  DISPLAY and the other format commands, and the format of a directory
+  read into a panel, changed whichever panel the lister happened to be
+  drawing.  Select COMPARE and PrintDir also use the panels the command
+  started with.
+- Opening a device or buffer list in one panel while the other panel
+  shows one returns that panel to its directory; both panels shared one
+  list and the panel opened first lost the directory it came from.
+- A panel's close button does nothing (the screen flashes) while a
+  command is running in the lister.
 
 [dopus5 next] Icon layout calls and scroll repaint
 Program change; version bump deferred.
