@@ -72,7 +72,7 @@ ifeq ($(findstring x86_64-aros, $(MAKECMDGOALS)),x86_64-aros)
 endif
 ifeq ($(findstring aarch64-aros, $(MAKECMDGOALS)),aarch64-aros)
 	PLATFORM:= aros
-	arch:= aarch64
+override arch := aarch64
 	NAME:= $(arch)-$(PLATFORM) $(NAME)
 endif
 NAME := $(strip $(NAME))
@@ -264,6 +264,11 @@ endif
 	@cd $(RELEASE_DIR) && $(LHA) $(RELEASE_ARCDEST)/DOpus5$(VERSION)$(NAME)$(TYPE).lha DOpus5 "Install DOpus5" "Install DOpus5.info"
 	@$(REMOVE) $(RELEASE_DIR)
 	@echo ">>>>>Release date:" $(shell $(DATE) "+%m/%d/%Y")
+
+.PHONY : verify-aarch64-aros
+verify-aarch64-aros: program library
+	@sh check_aros_aarch64_relocations.sh \
+		bin.aarch64-aros/DirectoryOpus bin.aarch64-aros/dopus5.library
 
 ###########################################################
 

@@ -3,28 +3,25 @@ include makefile.objs
 SHELL:= sh
 NEWDATE  := $(shell date +%d.%m.%Y)
 
-# Enter debug=no on "Make" command line to disable debug output.
-include ../../makefile.aros-debug
-
 # TODO: add sanity checks
 ifdef arch
 ARCH := $(arch)
 else
 ARCH := $(shell uname -m)
 endif
+include ../../makefile.aros-common
 
 # NAME is assigned in makefile.objs
 DESTDIR  := ../../bin.$(ARCH)-aros
 TARGET   := $(DESTDIR)/$(NAME)
-OBJDIR  := .objects/$(if $(arch),$(arch)-aros,aros)
+OBJDIR  := .objects/$(AROS_OBJECT_ARCH)
 OPTIMIZE := -O2
 OPTIONS  := -DUSE_64BIT -DCOMPDATE=$(NEWDATE) -DARCH=$(ARCH)
-INCLUDES := -I../../Include -Iinit -Iinit/../ -I../../
-LDFLAGS  := -nostartfiles -Wl,-Map=$(TARGET).map
+INCLUDES := -I../../Include -Iinit -Iinit/../ -I../../ $(AROS_INCLUDES)
+LDFLAGS  := $(AROS_NOSTARTFILES) $(AROS_LDFLAGS) $(AROS_MAPFLAG)
 WARNINGS := -Wall -Wno-pointer-sign -fno-strict-aliasing -Werror-implicit-function-declaration
-CC       := $(ARCH)-aros-gcc
-CFLAGS   := $(OPTIONS) $(DEBUG) $(DEBUGSYM) $(OPTIMIZE)
-LIBS     := 
+CFLAGS   := $(OPTIONS) $(DEBUG) $(DEBUGSYM) $(OPTIMIZE) $(AROS_CFLAGS)
+LIBS     := $(AROS_LIBS)
 
 REMOVE = rm -f
 MAKEDIR := mkdir -p
@@ -37,7 +34,7 @@ all : $(TARGET)
 
 $(TARGET): $(OBJS)
 	$(MAKEDIR) $(DESTDIR)
-	$(CC) $^ $(LDFLAGS) $(LIBS) -o $@
+	$(LINK) $^ $(LDFLAGS) $(LIBS) -o $@
 
 $(OBJDIR)/%.o : %.c
 	@echo ">>>>>Compiling $<"

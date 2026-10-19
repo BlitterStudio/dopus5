@@ -136,7 +136,7 @@ void ChangeDir(struct xoData *data, struct Tree *cur)
 	UWORD dc = 0, fc = 0;
 	DOpusCallbackInfo *infoptr = &data->hook;
 
-	DC_CALL2(infoptr, dc_LockFileList, DC_REGA0, data->listh, DC_REGD0, TRUE);
+	DC_CALL2(infoptr, dc_LockFileList, DC_REGA0, (APTR)data->listh, DC_REGD0, TRUE);
 	// data->hook.dc_LockFileList(data->listh,TRUE);
 
 	if (data->cur)
@@ -144,7 +144,7 @@ void ChangeDir(struct xoData *data, struct Tree *cur)
 		tmp = data->cur->Child;
 		while (tmp)
 		{
-			DC_CALL2(infoptr, dc_RemoveFileEntry, DC_REGA0, data->listh, DC_REGA1, tmp->entry);
+			DC_CALL2(infoptr, dc_RemoveFileEntry, DC_REGA0, (APTR)data->listh, DC_REGA1, tmp->entry);
 			// data->hook.dc_RemoveFileEntry(data->listh,tmp->entry);
 			tmp = tmp->Next;
 		}
@@ -158,7 +158,7 @@ void ChangeDir(struct xoData *data, struct Tree *cur)
 	while (cur)
 	{
 		cur->entry = (APTR)DC_CALL3(
-			infoptr, dc_CreateFileEntry, DC_REGA0, data->listh, DC_REGA1, &cur->fib, DC_REGD0, (IPTR)NULL);
+			infoptr, dc_CreateFileEntry, DC_REGA0, (APTR)data->listh, DC_REGA1, &cur->fib, DC_REGD0, (BPTR)NULL);
 		// cur->entry=data->hook.dc_CreateFileEntry(data->listh, &cur->fib, NULL);
 		AddTail(&list, cur->entry);
 
@@ -170,9 +170,9 @@ void ChangeDir(struct xoData *data, struct Tree *cur)
 		cur = cur->Next;
 	}
 
-	DC_CALL4(infoptr, dc_SortFileList, DC_REGA0, data->listh, DC_REGA1, &list, DC_REGD0, fc, DC_REGD1, dc);
-	DC_CALL1(infoptr, dc_UnlockFileList, DC_REGA0, data->listh);
-	DC_CALL2(infoptr, dc_RefreshLister, DC_REGA0, data->listh, DC_REGD0, HOOKREFRESH_DATE | HOOKREFRESH_FULL);
+	DC_CALL4(infoptr, dc_SortFileList, DC_REGA0, (APTR)data->listh, DC_REGA1, &list, DC_REGD0, fc, DC_REGD1, dc);
+	DC_CALL1(infoptr, dc_UnlockFileList, DC_REGA0, (APTR)data->listh);
+	DC_CALL2(infoptr, dc_RefreshLister, DC_REGA0, (APTR)data->listh, DC_REGD0, HOOKREFRESH_DATE | HOOKREFRESH_FULL);
 	/*data->hook.dc_SortFileList(data->listh, &list, fc, dc);
 	data->hook.dc_UnlockFileList(data->listh);
 	data->hook.dc_RefreshLister(data->listh, HOOKREFRESH_DATE|HOOKREFRESH_FULL);*/
@@ -653,7 +653,7 @@ void _viewcommand(struct xoData *data, char *com, char *name)
 						 NULL,
 						 DC_REGD0,
 						 0);
-				DC_CALL2(infoptr, dc_RefreshLister, DC_REGA0, data->listh, DC_REGD0, 0);
+				DC_CALL2(infoptr, dc_RefreshLister, DC_REGA0, (APTR)data->listh, DC_REGD0, 0);
 				/*data->hook.dc_SendCommand(IPCDATA(data->ipc),data->buf,NULL,NULL);
 				data->hook.dc_RefreshLister(data->listh, NULL);*/
 				LaunchCommand(data, com, tf->FileName, "");
@@ -907,7 +907,7 @@ void _copy(struct xoData *data, char *name, char *Dest, BOOL CopyAs)
 						 NULL,
 						 DC_REGD0,
 						 0);
-				DC_CALL2(infoptr, dc_RefreshLister, DC_REGA0, data->listh, DC_REGD0, 0);
+				DC_CALL2(infoptr, dc_RefreshLister, DC_REGA0, (APTR)data->listh, DC_REGD0, 0);
 				/*data->hook.dc_SendCommand(IPCDATA(data->ipc),data->buf,NULL,NULL);
 				data->hook.dc_RefreshLister(data->listh, NULL);*/
 			}
@@ -1550,7 +1550,7 @@ int LIBFUNC L_Module_Entry(REG(a0, char *args),
 
 			sprintf(buf, "lister set %s title %s", data.lists, DOpusGetString(locale, MSG_READING_ARCHIVE));
 			DC_CALL4(infoptr, dc_SendCommand, DC_REGA0, IPCDATA(ipc), DC_REGA1, buf, DC_REGA2, NULL, DC_REGD0, 0);
-			DC_CALL2(infoptr, dc_RefreshLister, DC_REGA0, data.listh, DC_REGD0, HOOKREFRESH_FULL);
+			DC_CALL2(infoptr, dc_RefreshLister, DC_REGA0, (APTR)data.listh, DC_REGD0, HOOKREFRESH_FULL);
 			/*data.hook.dc_SendCommand(IPCDATA(ipc),buf,NULL,NULL);
 			data.hook.dc_RefreshLister(data.listh, HOOKREFRESH_FULL);*/
 
@@ -1577,7 +1577,7 @@ int LIBFUNC L_Module_Entry(REG(a0, char *args),
 					sprintf(buf, "lister set %s title XADopus: %s", data.lists, FilePart(arcname));
 					DC_CALL4(
 						infoptr, dc_SendCommand, DC_REGA0, IPCDATA(ipc), DC_REGA1, buf, DC_REGA2, NULL, DC_REGD0, 0);
-					DC_CALL2(infoptr, dc_RefreshLister, DC_REGA0, data.listh, DC_REGD0, HOOKREFRESH_FULL);
+					DC_CALL2(infoptr, dc_RefreshLister, DC_REGA0, (APTR)data.listh, DC_REGD0, HOOKREFRESH_FULL);
 					/*data.hook.dc_SendCommand(IPCDATA(ipc), buf, NULL, NULL);
 					data.hook.dc_RefreshLister(data.listh, HOOKREFRESH_FULL);*/
 
