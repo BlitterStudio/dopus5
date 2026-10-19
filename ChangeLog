@@ -1,5 +1,104 @@
-[dopus5 next] Fix AROS aarch64 loader compatibility
-All aarch64 binaries and CI change; version bump deferred.
+[dopus5 5.103] Release summary
+Program bumps to 5.103, library and modules to v73r7, commands to
+v65r5.  The release adds an Installer script, a MagicWB icon set, the
+contributed filetypes, Eject Disk and an AROS aarch64 package, starts
+faster, and fixes many Dual Lister, colour and 64-bit AROS problems.
+The detailed entries for each change follow this summary.
+
+New packages and installation:
+- New AROS aarch64 (ABIv11) package for the Raspberry Pi 3/4/5 64-bit
+  port, built with Clang for the AROS aarch64 loader.
+- Every archive has an "Install DOpus5" script.  It installs into a
+  DOpus5 drawer or upgrades the one DOpus5: points to, keeping the
+  configuration, and can start Opus manually, when Workbench starts
+  or (AmigaOS 3) instead of Workbench.
+- Archives carry a MagicWB set of images and icons for 8 and 16
+  colour screens in IconSets/MagicWB; the installer offers it (#122).
+- New command LoadDOpusLib loads dopus5.library at boot so the
+  AppIcons of WBStartup programs appear on the Opus desktop.
+
+Program:
+- Eject Disk in the Icons menu and the pop-up menu of disks (#163).
+- STARTUPDRAWER tool type and argument run another drawer instead of
+  SYS:WBStartup (#107).
+- The Buttons menu is a submenu of Settings (#111).
+- Startup is about three times faster: module commands are cached in
+  DOpus5:System/module-cache, filetypes are read in the background,
+  iconify icons are loaded when first needed and the backdrop picture
+  loads while the desktop icons are read.
+- Dual Lister: commands no longer switch the source panel, panels
+  keep their buffers and their own sort and display format, drops go
+  to the panel they land on, and drags between panels copy or move.
+- Custom lister colours are used for every lister element (#144).
+- Icon labels: closed outline, and the Text+Outline and Text+Shadow
+  modes of OS 3.2 and OS 4 Font prefs are used (#126).
+- AmigaOS 3.2: in-window scrollers use the system knob imagery (#153).
+- The lister toolbar height comes from its buttons, not from the
+  scroll arrow image (#168).
+- MagicWB pens are locked when Opus replaces Workbench (#11), and icons
+  are not remapped while "Set MagicWB Colors" is on.
+- Correct colours after moving from an RTG screen to a native one.
+- Icon masks are built on the CPU, kept in fast memory on RTG screens
+  and not built at all on AmigaOS 4 and AROS.  Icons are laid out once
+  and scrolling repaints only the area scrolled in.
+- AppIcons with render hooks (NewMeter) are drawn by their hook and no
+  longer flash; Workbench Tools menu items added through ARexx work.
+- Opus recognises its own button bank, start menu and environment
+  files (FORM EPUS) again.
+- Titlebar clock on AmigaOS 4 and MorphOS shows the time instead of a
+  row of one repeated character (#170).
+- AROS x86_64: Copy and Move to disk icons no longer crash (#145,
+  #147), and 64-bit attribute values no longer overwrite memory.
+
+dopus5.library:
+- Remapped button and toolbar images live in fast memory on RTG
+  screens and remapping obtains far fewer pens.
+- The padlock gadget is filled with the shine pen (#148).
+- RenderImage centres its crop on the image.
+- SaveFiletypeList creates missing drawers.
+- AmigaOS 3: the AddAppIcon patch passes the tag list in A4.
+
+Modules:
+- configopus: Palette presets and a visible Reset (#154), filetype
+  icon paths keep their assigns, custom lister colours, and filetypes
+  are stored in DOpus5:Storage/Filetypes.
+- xadopus: new XADOpenInLister command, no duplicate lister after an
+  archive drag and drop (#174), and archives open on MorphOS (#175).
+- ftp: no stack overflow when connecting (#182); module callbacks
+  work on MorphOS.
+- format: bootblocks are written big-endian on AROS.
+- show: ANIM-5 and ANIM-7 delta offsets on AROS.
+- diskcopy, play, themes: 64-bit AROS and MorphOS callback fixes.
+
+Commands:
+- LoadDB passes STARTUPDRAWER on to Directory Opus and builds its
+  command line in a larger buffer.
+- LoadDOpusLib is new.
+
+Filetypes:
+- 104 stored filetypes, merging the ones contributed in #131 with the
+  existing set and named "Category, Format".  ASCII and AmigaGuide are
+  installed by default.
+
+Documentation:
+- DOpus5.guide 58.19 and DOpusM2_ARexx.guide 57.8.
+
+Build:
+- OS3 builds use GCC 6.5.0b, OS4 GCC 11.5.0 and MorphOS GCC 15.2.0;
+  sources build with GCC 14 and 16.
+- The OS3 build warns about stack frames larger than 4 KB (#182).
+
+Versioning notes:
+- PROG_REVISION moves 102 -> 103.
+- Global LIB_REVISION moves 6 -> 7 (dopus5.library and all modules
+  ship at v73r7).
+- CMD_REVISION moves 4 -> 5 (DOpusRT5, LoadDB, LoadDOpusLib and
+  ViewFont ship at v65r5).
+
+2026-10-19 by Dimitris Panokostas <midwan@gmail.com>
+
+[dopus5 5.103] Fix AROS aarch64 loader compatibility
+All aarch64 binaries and CI change; ships in 5.103.
 
 - The aarch64 build uses Clang's large, non-PIC code model and the AROS
   collect-aros linker.  This produces the absolute address relocations
@@ -11,8 +110,8 @@ All aarch64 binaries and CI change; version bump deferred.
   lister handles use explicit types accepted by Clang without changing their
   values.
 
-[dopus5 next] Contributed filetypes; Opus recognises its own files again
-Base archive and program change; version bump deferred.
+[dopus5 5.103] Contributed filetypes; Opus recognises its own files again
+Base archive and program change; ships in 5.103.
 
 - DOpus5:Storage/Filetypes now holds the filetypes contributed in issue
   #131 merged with the ones it had, 104 in all, named "Category,
@@ -51,8 +150,8 @@ Base archive and program change; version bump deferred.
   {RdSelect destination:} as one word, so a requester title no longer
   reads as an assign.
 
-[dopus5 next] Dual Lister fixes
-Program change; version bump deferred.
+[dopus5 5.103] Dual Lister fixes
+Program change; ships in 5.103.
 
 - Commands no longer change the source panel behind the user's back.  A
   command that used the destination panel (Copy, None, any command with
@@ -108,8 +207,8 @@ Program change; version bump deferred.
 - A panel's close button does nothing (the screen flashes) while a
   command is running in the lister.
 
-[dopus5 next] Icon layout calls and scroll repaint
-Program change; version bump deferred.
+[dopus5 5.103] Icon layout calls and scroll repaint
+Program change; ships in 5.103.
 
 - Icons loaded through icon.library V44+ are already laid out for the
   Opus screen, but Opus called LayoutIcon() on them a second time, and
@@ -124,8 +223,8 @@ Program change; version bump deferred.
   directions scroll at once the whole L-shaped area instead of just its
   corner.
 
-[dopus5 next] AmigaOS 4, AROS: no unused icon masks
-Program change; version bump deferred.
+[dopus5 5.103] AmigaOS 4, AROS: no unused icon masks
+Program change; ships in 5.103.
 
 - On AmigaOS 4 and AROS, DrawIconState() draws the icons with their own
   transparency, but Opus still built two masks for every borderless icon
@@ -134,8 +233,8 @@ Program change; version bump deferred.
   test on the mask was disabled long ago.  They are no longer built,
   which saves the time and memory of two masks per icon.
 
-[dopus5 next] Faster icon transparency masks
-dopus5.library and Program change; version bump deferred.
+[dopus5 5.103] Faster icon transparency masks
+dopus5.library and Program change; ships in 5.103.
 
 - With "Full icon transparency" off (the default), Opus built the mask of
   every borderless icon image with BuildTransDragMask(), which copied the
@@ -152,8 +251,8 @@ dopus5.library and Program change; version bump deferred.
   32-bit ZZ9000 screen: 1.92 s per open before and 1.09 s after with the
   default setting; 1.05 s and 0.92 s with full transparency.
 
-[dopus5 next] AppIcon render hooks: no flash on redraw
-Program change; version bump deferred.
+[dopus5 5.103] AppIcon render hooks: no flash on redraw
+Program change; ships in 5.103.
 
 - Opus cleared an AppIcon to the desktop background before calling its
   render hook, so NewMeter's gauges flashed the wallpaper once a second
@@ -163,8 +262,8 @@ Program change; version bump deferred.
   the draw no longer erases or fills the image area of such an icon
   either; only the frame around it is filled when the icon has a border.
 
-[dopus5 next] AROS: Format Install and Show animations
-Module change (format, show); version bump deferred.
+[dopus5 5.103] AROS: Format Install and Show animations
+Module change (format, show); ships in 5.103.
 
 - Format's Install option wrote the bootblock in the CPU's byte order.
   On AROS (i386, x86_64 and aarch64 are all little-endian) the DOS type,
@@ -177,8 +276,8 @@ Module change (format, show); version bump deferred.
   each frame's data at the wrong place.  ANIM-7 with long words also
   stepped 8 bytes per word on 64-bit AROS.
 
-[dopus5 next] AROS x86_64: Copy and Move no longer crash (#145, #147)
-dopus5.library, Program and module change; version bump deferred.
+[dopus5 5.103] AROS x86_64: Copy and Move no longer crash (#145, #147)
+dopus5.library, Program and module change; ships in 5.103.
 
 - When Opus called a DOS, Exec, Intuition or Workbench function it had
   patched, it passed the library base as a C argument only.  AROS
@@ -206,8 +305,8 @@ dopus5.library, Program and module change; version bump deferred.
   never set.  Animated button images (ANIM operation 5) read their delta
   offsets 8 bytes apart instead of 4.
 
-[dopus5 next] MorphOS: XADOpus opens archives again (#175)
-Module change (xadopus, ftp, themes); version bump deferred.
+[dopus5 5.103] MorphOS: XADOpus opens archives again (#175)
+Module change (xadopus, ftp, themes); ships in 5.103.
 
 - On MorphOS a module's calls back into Opus put every A1-A4 and D0
   argument into A0, so only the last of them arrived.  XADOpus could not
@@ -217,8 +316,8 @@ Module change (xadopus, ftp, themes); version bump deferred.
 - XADOpus's progress hook now goes through HookEntry on MorphOS, so
   xadmaster.library can call it while extracting.
 
-[dopus5 next] STARTUPDRAWER: a startup drawer of its own (#107)
-Program and LoadDB change; version bump deferred.
+[dopus5 5.103] STARTUPDRAWER: a startup drawer of its own (#107)
+Program and LoadDB change; ships in 5.103.
 
 - New tool type and argument STARTUPDRAWER=<drawer>.  When Directory
   Opus runs the Workbench startup programs (WBSTARTUP=YES, or started
@@ -231,8 +330,8 @@ Program and LoadDB change; version bump deferred.
   and -DEBUG.  The command line it builds for Opus
   has a larger buffer, so long arguments no longer overrun it.
 
-[dopus5 next] AppIcons that draw themselves (NewMeter)
-dopus5.library and Program change; version bump deferred.
+[dopus5 5.103] AppIcons that draw themselves (NewMeter)
+dopus5.library and Program change; ships in 5.103.
 
 - On AmigaOS 3 the AddAppIcon patch passed the tag list to Workbench in
   D7 instead of A4, so Workbench read the program's tags from whatever
@@ -250,9 +349,9 @@ dopus5.library and Program change; version bump deferred.
   (WBAPPICONA_RenderHook) to draw it.  When the hook draws everything,
   Opus draws no image and no label, as Workbench does.
 
-[dopus5 next] Load dopus5.library at boot; Workbench Tools menu items
-dopus5.library, LoadDOpusLib (new command) and installer change; version
-bump deferred.
+[dopus5 5.103] Load dopus5.library at boot; Workbench Tools menu items
+dopus5.library, LoadDOpusLib (new command) and installer change; ships
+in 5.103.
 
 - The AddAppMenuItem patch refused items without a message port.
   Workbench's ARexx MENU ADD adds its own Tools menu items that way, so
@@ -272,8 +371,8 @@ bump deferred.
 - The guide describes the option, and the Display AppIcons text says
   which AppIcons Opus can show.
 
-[dopus5 next] No icon remapping with "Set MagicWB Colors" on
-Program change (OS3); version bump deferred.
+[dopus5 5.103] No icon remapping with "Set MagicWB Colors" on
+Program change (OS3); ships in 5.103.
 
 - With "Set MagicWB Colors" on in the Workbench preferences, pens 4-7
   of the Workbench screen hold the MagicWB colours and Workbench draws
@@ -287,8 +386,8 @@ Program change (OS3); version bump deferred.
 - The guide says where the Workbench screen gets its colours when Opus
   replaces Workbench, and what MagicWB icons need there.
 
-[dopus5 next] MagicWB images and icons (#122)
-Release archive change.
+[dopus5 5.103] MagicWB images and icons (#122)
+Release archive change; ships in 5.103.
 
 - Release archives carry a MagicWB set in IconSets/MagicWB, for 8 and
   16 colour screens: the MWB_DOpus 8 toolbar images by Trevor Morris and
@@ -318,8 +417,8 @@ Release archive change.
 - archive/tools/magicwb_iconset.py builds the set from MWB_DOpus8c.lha
   (Aminet pix/mwb).
 
-[dopus5 next] Filetype icon paths keep their assigns
-configopus.module change; version bump deferred.
+[dopus5 5.103] Filetype icon paths keep their assigns
+configopus.module change; ships in 5.103.
 
 - The File Type Editor no longer turns the icon path into the full path
   on the boot volume.  An icon picked through an assign keeps it
@@ -330,8 +429,8 @@ configopus.module change; version bump deferred.
   SYS: when they lie inside one, so filetypes can be shared between
   systems whose boot volumes have different names.
 
-[dopus5 next] Installer
-Release archive change.
+[dopus5 5.103] Installer
+Release archive change; ships in 5.103.
 
 - Every release archive now has an "Install DOpus5" script for the
   Installer program next to the DOpus5 drawer.  It installs Directory
@@ -364,9 +463,9 @@ Release archive change.
   points to the os3-68000 archive; the 68000 archive suggests the faster
   build on 68020 and newer processors.
 
-[dopus5 next] Default filetypes and filetype storage (issue #131)
+[dopus5 5.103] Default filetypes and filetype storage (issue #131)
 Base archive, dopus5.library, configopus.module and filetype.module
-change; version bump deferred.
+change; ships in 5.103.
 
 - The ASCII and AmigaGuide filetypes are installed by default, so
   double-clicking a text file or a guide shows it with SmartRead or
@@ -407,8 +506,8 @@ change; version bump deferred.
   saves to, and the Filetype Finder and Creator create DOpus5:Filetypes
   when it is missing.
 
-[dopus5 next] Colours after moving to a native screen
-Program change; version bump deferred.
+[dopus5 5.103] Colours after moving to a native screen
+Program change; ships in 5.103.
 
 - Two things went wrong when Opus moved from an RTG screen to a native
   one, for example by loading an environment with a native screen mode.
@@ -420,8 +519,8 @@ Program change; version bump deferred.
   screen is open fixes that, so Opus does that on a native screen of an
   RTG system.  Starting on an RTG screen is unchanged.
 
-[dopus5 next] Image planes in fast memory on RTG screens
-dopus5.library change; version bump deferred.
+[dopus5 5.103] Image planes in fast memory on RTG screens
+dopus5.library change; ships in 5.103.
 
 - On AmigaOS 3, button and toolbar images remapped for a Picasso96 or
   CyberGraphX screen now keep their remapped and original planes in fast
@@ -432,8 +531,8 @@ dopus5.library change; version bump deferred.
   47 KB of chip memory and now takes about 4 KB; on a native screen the
   chip memory use is unchanged.
 
-[dopus5 next] Icon masks in fast memory on RTG screens
-Program change; version bump deferred.
+[dopus5 5.103] Icon masks in fast memory on RTG screens
+Program change; ships in 5.103.
 
 - On a Picasso96 or CyberGraphX screen the transparency masks of
   borderless icons are now kept in fast memory instead of chip memory.
@@ -444,8 +543,8 @@ Program change; version bump deferred.
   of the mask, and the masks move to the right kind of memory when Opus
   reopens on a native or RTG screen.
 
-[dopus5 next] Eject Disk
-Program change; version bump deferred.
+[dopus5 5.103] Eject Disk
+Program change; ships in 5.103.
 
 - The Icons menu and the pop-up menu of a disk now have Eject Disk.  Opus
   inhibits every partition on the medium so that their filesystems write
@@ -455,8 +554,8 @@ Program change; version bump deferred.
   RAM:, assigns and other volumes without a device; fixed disks and drives
   without an eject command are reported as not ejectable (#163).
 
-[dopus5 next] Padlock gadget fill colour
-dopus5.library change; version bump deferred.
+[dopus5 5.103] Padlock gadget fill colour
+dopus5.library change; ships in 5.103.
 
 - On AmigaOS 3 the body of the lister title bar padlock is filled with
   the shine pen, as the iconify gadget's inner square is, instead of
@@ -464,8 +563,8 @@ dopus5.library change; version bump deferred.
   text to another colour, the padlock took that colour, for example
   blue or cyan (#148).
 
-[dopus5 next] Workbench outline and shadow label modes from Font prefs
-dopus5.library and Program change; version bump deferred.
+[dopus5 5.103] Workbench outline and shadow label modes from Font prefs
+dopus5.library and Program change; ships in 5.103.
 
 - LoadFonts now takes the Text+Outline and Text+Shadow icon text modes
   of AmigaOS 3.2 and AmigaOS 4 Font prefs, as does the upgrade of a very
@@ -473,8 +572,8 @@ dopus5.library and Program change; version bump deferred.
   separate field of font.prefs that Opus did not read, so the labels came
   out as plain text (#126).
 
-[dopus5 next] Closed outline for icon labels
-Program and configopus.module change; version bump deferred.
+[dopus5 5.103] Closed outline for icon labels
+Program and configopus.module change; ships in 5.103.
 
 - Outlined icon labels draw the outline at all eight neighbouring
   positions instead of only the four diagonals.  Thin fonts such as
@@ -486,8 +585,8 @@ Program and configopus.module change; version bump deferred.
   complement drawing, and Outline as a solid bar.  Older systems keep
   the Opus mode list.
 
-[dopus5 next] System scroller knobs on AmigaOS 3.2
-dopus5.library and Program change; version bump deferred.
+[dopus5 5.103] System scroller knobs on AmigaOS 3.2
+dopus5.library and Program change; ships in 5.103.
 
 - On AmigaOS 3.2 (Intuition 47.44 or newer) the scrollers inside
   windows draw their knob with the system's prop knob imagery, the
@@ -498,8 +597,8 @@ dopus5.library and Program change; version bump deferred.
   those of Workbench windows and are unchanged.  Older systems keep
   the previous look.
 
-[dopus5 next] Custom lister colours for every element
-Program and configopus.module change; version bump deferred.
+[dopus5 5.103] Custom lister colours for every element
+Program and configopus.module change; ships in 5.103.
 
 - Each lister element in Environment > Lister Colours has a custom
   colour, the square after the user pens with its own RGB sliders.
@@ -520,14 +619,14 @@ Program and configopus.module change; version bump deferred.
 - ARexx 'dopus set pens' for a lister element turns off that pen's
   custom colour, so the pen given is the one used.
 
-[dopus5 next] Buttons moved under Settings
-Program change; version bump deferred.
+[dopus5 5.103] Buttons moved under Settings
+Program change; ships in 5.103.
 
 - The standalone Buttons menu is now a Buttons submenu under Settings,
   freeing menu-bar space for user-defined menus (#111).
 
-[dopus5 next] Palette presets and visible Reset in the Environment editor
-configopus.module change; version bump deferred.
+[dopus5 5.103] Palette presets and visible Reset in the Environment editor
+configopus.module change; ships in 5.103.
 
 - Environment > Palette has a Presets button for the eight system
   colours of Opus's own screen: 'Workbench Screen' copies the
@@ -539,8 +638,8 @@ configopus.module change; version bump deferred.
   squares are now redrawn.
 - The Load button opens a file requester and is now labelled "Load...".
 
-[dopus5 next] Faster toolbar image remapping
-dopus5.library change; version bump deferred.
+[dopus5 5.103] Faster toolbar image remapping
+dopus5.library change; ships in 5.103.
 
 - RemapImage() called ObtainBestPen() for every colour of every image.
   Each call searches the screen's whole 256-entry colour map, also on
@@ -553,8 +652,8 @@ dopus5.library change; version bump deferred.
   built in under 2 seconds; screenshots of the toolbar show no visible
   difference.
 
-[dopus5 next] Module commands cached between starts
-Program change; version bump deferred.
+[dopus5 5.103] Module commands cached between starts
+Program change; ships in 5.103.
 
 - To learn the commands of a module, Opus opens it.  ftp.module opens
   codesets.library and xadopus.module opens xadmaster.library, which
@@ -567,24 +666,24 @@ Program change; version bump deferred.
   after an Opus update.  Modules that ask to be called at startup are
   still opened.
 
-[dopus5 next] Filetypes read in the background at startup
-Program change; version bump deferred.
+[dopus5 5.103] Filetypes read in the background at startup
+Program change; ships in 5.103.
 
 - The filetype files in DOpus5:Filetypes are read by a separate
   process while startup carries on.  It holds the filetype list
   locked until it is done, so anything that needs a filetype waits
   for the complete list.
 
-[dopus5 next] Iconify icons loaded when first needed
-Program change; version bump deferred.
+[dopus5 5.103] Iconify icons loaded when first needed
+Program change; ships in 5.103.
 
 - DOpus5:Icons/Lister and DOpus5:Icons/Buttons are only used to
   iconify listers and button banks.  They are now read the first time
   one is iconified instead of at startup, where the two colour icons
   took about 0.4 seconds to load.
 
-[dopus5 next] MagicWB icon colours when Opus replaces Workbench
-Program change (OS3); version bump deferred.
+[dopus5 5.103] MagicWB icon colours when Opus replaces Workbench
+Program change (OS3); ships in 5.103.
 
 - With "Set MagicWB Colors" on in the Workbench preferences, Workbench
   locks pens 4-7 of its screen to the MagicWB colours.  When Opus ran
@@ -596,8 +695,8 @@ Program change (OS3); version bump deferred.
 - The display palette is now allocated before the ARexx app icons are
   remapped, so they cannot take pens 4-7 first.
 
-[dopus5 next] Desktop backdrop picture shown sooner at startup
-Program change; version bump deferred.
+[dopus5 5.103] Desktop backdrop picture shown sooner at startup
+Program change; ships in 5.103.
 
 - The backdrop picture used to start loading only after the icons,
   button banks, listers and toolbar cache were set up, and the main
@@ -610,8 +709,8 @@ Program change; version bump deferred.
   and only opens SYS:Classes/DataTypes/picture.datatype when none is
   loaded.
 
-[dopus5 next] Build: warn about large stack frames
-Program and FTP module change; version bump deferred.
+[dopus5 5.103] Build: warn about large stack frames
+Program and FTP module change; ships in 5.103.
 
 - The OS3 build passes -Wframe-larger-than=4096 to the compiler and,
   since -flto lays out frames at link time, to the linker, so frames
@@ -621,8 +720,9 @@ Program and FTP module change; version bump deferred.
   line buffers instead of keeping them on the stack.
 - FTP: lister_getput() allocates its copy hook data (about 2.5 KB)
   instead of keeping it on the lister stack.
-[dopus5 next] FTP: no stack overflow when connecting
-FTP module change; version bump deferred.
+
+[dopus5 5.103] FTP: no stack overflow when connecting
+FTP module change; ships in 5.103.
 
 - Connecting to any FTP or SFTP site hung the machine when the module
   was built with GCC 16 (issue #182).  LTO inlined the SFTP host-key
@@ -632,8 +732,8 @@ FTP module change; version bump deferred.
   and FTP listers start with STACK_LARGE for the AmiSSL and libssh2
   code they run.
 
-[dopus5 next] Lister toolbar: no minimum height from the scroll arrow
-Program and dopus5.library change; version bump deferred.
+[dopus5 5.103] Lister toolbar: no minimum height from the scroll arrow
+Program and dopus5.library change; ships in 5.103.
 
 - The lister toolbar reserved at least the height of
   DOpus5:Images/ToolbarArrow.image (24 pixels in the shipped set) even
@@ -648,8 +748,8 @@ Program and dopus5.library change; version bump deferred.
   image in a 25 pixel bordered button).  The crop is now centred on
   the image.
 
-[dopus5 next] XADOpus: open archives in the same lister
-XADOpus module change; version bump deferred.
+[dopus5 5.103] XADOpus: open archives in the same lister
+XADOpus module change; ships in 5.103.
 
 - New module function XADOpenInLister.  Instead of opening a fresh
   lister, it takes over the source lister the archive was opened
@@ -684,8 +784,8 @@ XADOpus module change; version bump deferred.
 - The guide now has XADOpen, XADExtract and XADOpenInLister pages, with
   the steps to make double-clicking an archive open it in place.
 
-[dopus5 next] XADOpus: stop duplicate lister on archive drag&drop
-Program and XADOpus module behaviour change.
+[dopus5 5.103] XADOpus: stop duplicate lister on archive drag&drop
+Program and XADOpus module behaviour change; ships in 5.103.
 
 - Dragging an XAD archive (e.g. .lha) from one lister onto another
   extracted the archive and then opened a duplicate lister showing the
@@ -709,7 +809,7 @@ Program and XADOpus module behaviour change.
   the flag set. The destination lister re-reads its directory in
   place: extract, refresh, no extra lister.
 
-[dopus5 next] Pin OS4 CI to the amd64 manifest digest
+[dopus5 5.103] Pin OS4 CI to the amd64 manifest digest
 Build-system change; no existing program, library, module or command
 version changes.
 
@@ -721,7 +821,7 @@ version changes.
   same GCC 11.5.0 toolchain, a clean OS4 build, and a valid release
   archive.
 
-[dopus5 next] Revert OS3 builds to the GCC 6.5.0b toolchain
+[dopus5 5.103] Revert OS3 builds to the GCC 6.5.0b toolchain
 Build-system change; no existing program, library, module or command
 version changes.
 
@@ -736,7 +836,7 @@ version changes.
 - Keep the GCC 16 toolchain adoption on the toolchain/gcc16-os3 branch
   until binutils fixes the stub relocation upstream.
 
-[dopus5 next] Adopt amigadev PPC toolchains
+[dopus5 5.103] Adopt amigadev PPC toolchains
 Build-system change; no existing program, library, module or command
 version changes.
 
@@ -747,7 +847,7 @@ version changes.
 - Link the MorphOS FTP module with -lpthread: the newer SDK's shared
   libcrypto references pthread cancellation routines.
 
-[dopus5 next] Adopt validated amigadev OS3 toolchain
+[dopus5 5.103] Adopt validated amigadev OS3 toolchain
 Build-system / source-compatibility change; no existing program, library,
 module or command version changes.
 
@@ -760,7 +860,7 @@ module or command version changes.
   designated initializers and SDK-provided socket member-name aliases.
 - Use the SDK's SFS2 disk identifier when available instead of redefining it.
 
-[dopus5 next] GCC 14+/16 build compatibility for OS3
+[dopus5 5.103] GCC 14+/16 build compatibility for OS3
 Build-system / source-compatibility change; no runtime behavior change and
 no existing program, library, module or command version changes.
 
@@ -777,7 +877,7 @@ Compatibility with modern GCC (tested with GCC 16.2.0b m68k):
   bypasses the faulty old reload pass entirely; drop once a fixed GCC
   is verified.
 
-[dopus5 next] New AROS aarch64 build target
+[dopus5 5.103] New AROS aarch64 build target
 Ships in 5.103. Build-system / CI change; no existing program, library,
 module or command version changes.
 
@@ -789,6 +889,16 @@ New build targets:
   identification and debug logging.
 - Report ARM64 and FPU in the version substitutions instead of falling back
   to m68k CPU/FPU detection on aarch64.
+
+[dopus5 5.103] Titlebar clock on AmigaOS 4 and MorphOS (#170)
+Program change; ships in 5.103.
+
+- On a custom screen the titlebar clock showed one repeated character
+  where the time should be.  The FormatDate() putChar hook declared the
+  character as its second argument; locale.library passes it in A1,
+  the third, as in every hook.  On AmigaOS 3 register declarations hide
+  the order, but on AmigaOS 4 and MorphOS the hook got the locale
+  pointer and wrote its low byte for every character.
 
 [dopus5 5.102] Release summary
 Program bumps to 5.102, library and modules to v73r6, commands to

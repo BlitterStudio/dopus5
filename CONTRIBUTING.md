@@ -126,9 +126,9 @@ covers the full matrix on PR.
   The second line names what changes ("Program change", "configopus.module
   change", "Release archive change", "Build-system change; no existing
   program, library, module or command version changes", ...). The release
-  process does the version bumps and replaces the `next` entries with a
-  `[dopus5 <version>] Release summary`; see the existing `[dopus5 5.102]`
-  entries for an example.
+  process does the version bumps, renames the `next` entries to the
+  release version and adds a `[dopus5 <version>] Release summary` above
+  them; see the `[dopus5 5.103]` entries for an example.
 - Update `documents/DOpus5.guide` if your change affects user-facing
   behaviour and bump its `@$VER` line.
 - Bump the relevant `*_REVISION` constant in
