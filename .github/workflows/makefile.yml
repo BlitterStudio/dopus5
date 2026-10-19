@@ -93,6 +93,11 @@ jobs:
           docker run --rm -v ${{ github.workspace }}:/work ${{ matrix.platform.image }} sh -c "cd /work/source && make ${{ matrix.platform.name }} all ${{ matrix.variant.flags }}"
           docker run --rm -v ${{ github.workspace }}:/work ${{ matrix.platform.image }} sh -c "cd /work/source && make ${{ matrix.platform.name }} release-package ${{ matrix.variant.flags }}"
 
+      - name: Verify AROS aarch64 loader relocations (${{ matrix.variant.name }})
+        if: matrix.platform.name == 'aarch64-aros'
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/work ${{ matrix.platform.image }} sh -c "cd /work/source && make verify-aarch64-aros ${{ matrix.variant.flags }}"
+
       - uses: actions/upload-artifact@v7
         with:
           name: DOpus5_${{ matrix.platform.name }}${{ matrix.variant.suffix }}

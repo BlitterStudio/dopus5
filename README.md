@@ -97,8 +97,8 @@ copying the `DOpus5` drawer by hand also works for a new installation.
 
 ## Building
 
-The project builds with GCC-based cross-compilation toolchains. The
-recommended way is via the prebuilt Docker images used by CI:
+The project builds with cross-compilation toolchains. The recommended way is
+via the prebuilt Docker images used by CI:
 
 | Target              | Docker image                                 |
 | ------------------- | -------------------------------------------- |
@@ -123,8 +123,16 @@ binutils is fixed upstream.
 The OS4 and MorphOS images include the SDKs required by the FTP module
 (AmiSSL and codesets on OS4, codesets on MorphOS).
 
+The AROS aarch64 image uses Clang 18 with the large, non-PIC code model and
+links through AROS `collect-aros`; the other AROS images use GCC. The makefiles
+select the correct compiler, keep Clang objects separate from older GCC
+objects, and keep project include directories ahead of the AROS SDK headers.
+`make verify-aarch64-aros` builds the program and library, checks that both
+contain the absolute relocation sequences required by the AROS aarch64 loader,
+and rejects GOT relocations that the loader cannot apply.
+
 Native builds on Amiga / MorphOS / AROS are also possible if you have a
-working GCC + libc + AmigaOS SDK installed.
+working compiler, libc, and the platform SDK installed.
 
 ### Per-platform make targets
 

@@ -1,3 +1,16 @@
+[dopus5 next] Fix AROS aarch64 loader compatibility
+All aarch64 binaries and CI change; version bump deferred.
+
+- The aarch64 build uses Clang's large, non-PIC code model and the AROS
+  collect-aros linker.  This produces the absolute address relocations
+  required by the AROS aarch64 loader instead of GCC's rejected
+  PC-relative relocation model.
+- CI checks DirectoryOpus and dopus5.library for the required AArch64
+  absolute relocation sequences before publishing their package.
+- The icon module's replacement-character constants and XADopus's numeric
+  lister handles use explicit types accepted by Clang without changing their
+  values.
+
 [dopus5 next] Contributed filetypes; Opus recognises its own files again
 Base archive and program change; version bump deferred.
 

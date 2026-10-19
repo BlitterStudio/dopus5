@@ -1,0 +1,53 @@
+# Shared AROS compiler and linker configuration.
+
+# Enter debug=no on the make command line to disable debug output.
+ifeq ($(debug), no)
+DEBUG :=
+DEBUGSYM :=
+else
+DEBUG := -DDEBUG
+ifeq ($(ARCH), aarch64)
+DEBUGSYM := -g
+else
+DEBUGSYM := -gstabs
+endif
+endif
+
+# The aarch64 loader requires absolute MOVW_UABS address relocations. GCC 6.5
+# emits PC-relative ADR_PREL sequences instead, so use Clang's large non-PIC
+# model and link the resulting objects through the AROS collector. Keep the
+# SDK paths after each component's project includes; the two trees contain
+# different SDI_lib.h implementations.
+ifeq ($(ARCH), aarch64)
+AROS_SDK := $(shell $(ARCH)-aros-gcc -print-sysroot)
+AROS_LIBGCC_DIR := $(dir $(shell $(ARCH)-aros-gcc -print-libgcc-file-name))
+CC := clang --target=aarch64-aros
+LINK := collect-aros
+AROS_OBJECT_ARCH := $(ARCH)-aros-clang
+AROS_CFLAGS := --sysroot=$(AROS_SDK) -D__AROS__ -fno-pic -fno-pie -mcmodel=large
+AROS_INCLUDES := -I$(AROS_SDK)/include \
+	-idirafter $(AROS_SDK)/include/aros/posixc \
+	-idirafter $(AROS_SDK)/include/aros/stdc
+AROS_LDFLAGS := --sysroot=$(AROS_SDK) -m aarch64elf_aros \
+	-L$(AROS_SDK)/lib -L$(AROS_LIBGCC_DIR)
+AROS_MAPFLAG = -Map=$(TARGET).map
+AROS_NOSTARTFILES :=
+AROS_PROGRAM_STARTUP := $(AROS_SDK)/lib/startup.o
+AROS_LIBS := --start-group -lgcc -lmui -larossupport -lamiga -lposixc \
+	-lstdcio -lstdc -lcodesets -lkeymap -lexpansion -lcommodities \
+	-ldiskfont -lasl -lmuimaster -ldatatypes -lcybergraphics -lworkbench \
+	-licon -lintuition -lgadtools -llayers -laros -lpartition -liffparse \
+	-lgraphics -llocale -ldos -lutility -loop -lexec -lautoinit -llibinit \
+	--end-group -lgcc -lautoinit
+else
+CC := $(ARCH)-aros-gcc
+LINK := $(CC)
+AROS_OBJECT_ARCH := $(if $(arch),$(arch)-aros,aros)
+AROS_CFLAGS :=
+AROS_INCLUDES :=
+AROS_LDFLAGS :=
+AROS_MAPFLAG = -Wl,-Map=$(TARGET).map
+AROS_NOSTARTFILES := -nostartfiles
+AROS_PROGRAM_STARTUP :=
+AROS_LIBS :=
+endif
