@@ -696,12 +696,18 @@ void lister_show_icon(Lister *lister, BackdropObject *object)
 		// Found?
 		if (test == object)
 		{
-			// Other redraws may draw it from now on
-			object->flags &= ~BDOF_SHOW_PENDING;
-
-			// Show the icon; it is not on display yet, and goes on top
+			// Show the icon; it is not on display yet, and goes on top. That also lets
+			// other redraws draw it from now on
 			if (show)
 				backdrop_render_object(lister->backdrop_info, object, BRENDERF_CLIP | BRENDERF_NEW);
+
+			// Not drawing it: let the other redraws have it
+			else
+			{
+				GetSemaphore(&lister->backdrop_info->window_lock, SEMF_EXCLUSIVE, 0);
+				object->flags &= ~BDOF_SHOW_PENDING;
+				FreeSemaphore(&lister->backdrop_info->window_lock);
+			}
 			break;
 		}
 	}

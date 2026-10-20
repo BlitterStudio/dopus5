@@ -171,22 +171,39 @@ static BOOL backdrop_blends(BackdropObject *object)
 	return (BOOL)(object->icon && !(object->type == BDO_APP_ICON && ((AppEntry *)object->misc_data)->render_hook));
 }
 
-// Draw the objects that cover part of a cleared rectangle, clipped to it, bottom first
-// as in backdrop_show_objects(). skip is left out; DRAWIN_BELOW or DRAWIN_ABOVE only
-// draws the objects under or over it. Called with the window locked
-static void backdrop_draw_in_rect(BackdropInfo *info, struct Rectangle *rect, BackdropObject *skip, short which)
+// Make a region of a rectangle within the window's current clip region; 0 without memory
+static struct Region *backdrop_rect_region(BackdropInfo *info, struct Rectangle *rect)
 {
 	struct Layer *layer = info->window->WLayer;
-	struct Region *region, *old;
+	struct Region *region;
+
+	if ((region = NewRegion()))
+	{
+		if (!OrRectRegion(region, rect) || (layer->ClipRegion && !AndRegionRegion(layer->ClipRegion, region)))
+		{
+			DisposeRegion(region);
+			region = 0;
+		}
+	}
+	return region;
+}
+
+// Draw the objects that cover part of a cleared rectangle, clipped to it (region, from
+// backdrop_rect_region()), bottom first as in backdrop_show_objects(). skip is left out;
+// DRAWIN_BELOW or DRAWIN_ABOVE only draws the objects under or over it. Called with the
+// window locked
+static void backdrop_draw_in_rect(BackdropInfo *info,
+								  struct Rectangle *rect,
+								  struct Region *region,
+								  BackdropObject *skip,
+								  short which)
+{
+	struct Layer *layer = info->window->WLayer;
+	struct Region *old;
 	BackdropObject *object;
 	BOOL above = 0;
 
-	// Clip to the rectangle within the current clip region
-	if (!(region = NewRegion()))
-		return;
-	OrRectRegion(region, rect);
-	if (layer->ClipRegion)
-		AndRegionRegion(layer->ClipRegion, region);
+	// Clip to the rectangle
 	old = InstallClipRegion(layer, region);
 
 	// Go through backdrop list (backwards)
@@ -212,7 +229,6 @@ static void backdrop_draw_in_rect(BackdropInfo *info, struct Rectangle *rect, Ba
 	}
 
 	InstallClipRegion(layer, old);
-	DisposeRegion(region);
 }
 
 // Draw a blending object over what is on the display: clear its image area, then draw
@@ -221,6 +237,7 @@ static void backdrop_draw_in_rect(BackdropInfo *info, struct Rectangle *rect, Ba
 static void backdrop_draw_over(BackdropInfo *info, BackdropObject *object, UWORD flags)
 {
 	struct Rectangle rect;
+	struct Region *region = 0;
 	BackdropObject *test;
 	BOOL above = 1, over = 0, under = 0;
 
@@ -241,12 +258,22 @@ static void backdrop_draw_over(BackdropInfo *info, BackdropObject *object, UWORD
 		}
 	}
 
+	// Overlapping objects are redrawn clipped to the area. Without memory for that,
+	// draw over what is there rather than leave a hole
+	if ((under || over) && !(region = backdrop_rect_region(info, &rect)))
+	{
+		backdrop_draw_object(info, object, flags | BRENDERF_REAL, &info->rp, object->pos.Left, object->pos.Top);
+		return;
+	}
+
 	EraseRect(&info->rp, rect.MinX, rect.MinY, rect.MaxX, rect.MaxY);
 	if (under)
-		backdrop_draw_in_rect(info, &rect, object, DRAWIN_BELOW);
+		backdrop_draw_in_rect(info, &rect, region, object, DRAWIN_BELOW);
 	backdrop_draw_object(info, object, flags | BRENDERF_REAL | BRENDERF_ERASED, &info->rp, object->pos.Left, object->pos.Top);
 	if (over)
-		backdrop_draw_in_rect(info, &rect, object, DRAWIN_ABOVE);
+		backdrop_draw_in_rect(info, &rect, region, object, DRAWIN_ABOVE);
+	if (region)
+		DisposeRegion(region);
 }
 
 // Scroll the icons
@@ -600,6 +627,11 @@ void backdrop_render_object(BackdropInfo *info, BackdropObject *object, UWORD fl
 	// Lock window
 	GetSemaphore(&info->window_lock, SEMF_EXCLUSIVE, 0);
 
+	// First draw of an icon from LISTER_SHOW_ICON? Other redraws may draw it from now on;
+	// changed under the window lock, so none of them draws it before this does
+	if (flags & BRENDERF_NEW)
+		object->flags &= ~BDOF_SHOW_PENDING;
+
 	// Window open, and not an icon its LISTER_SHOW_ICON will draw?
 	if (info->window && (flags & BRENDERF_CLEAR || !(object->flags & BDOF_SHOW_PENDING)))
 	{
@@ -853,14 +885,6 @@ void backdrop_draw_object(BackdropInfo *info,
 					RectFill(rp, rect.MaxX - 3, rect.MinY + 3, rect.MaxX - 1, rect.MaxY - 4);
 #endif
 				}
-#ifdef USE_DRAWICONSTATE
-				// Same for a borderless icon: the hook draws over what is there, as on Workbench.
-				// Nothing to clear if the caller has just cleared the whole display
-				else if (!render_hook && !(flags & BRENDERF_ERASED))
-				{
-					EraseRect(rp, rect.MinX, rect.MinY, rect.MaxX, rect.MaxY);
-				}
-#endif
 			}
 
 			// Let the AppIcon draw itself. If the hook says it drew everything, Workbench
@@ -1368,17 +1392,28 @@ void backdrop_erase_icon(BackdropInfo *info, BackdropObject *object, UWORD flags
 	// Window open?
 	if (info->window)
 	{
+		struct Region *region;
+
 		// Install clip?
 		if (info->clip_region)
 			InstallClipRegion(info->window->WLayer, info->clip_region);
+
+		// Region to redraw the icons it covered in
+		region = backdrop_rect_region(info, &object->show_rect);
 
 		// Erase icon area
 		EraseRect(
 			&info->rp, object->show_rect.MinX, object->show_rect.MinY, object->show_rect.MaxX, object->show_rect.MaxY);
 
-		// Redraw the icons it covered, in their stacking order and only in that area,
-		// so their blended edges are not drawn twice
-		backdrop_draw_in_rect(info, &object->show_rect, object, DRAWIN_ALL);
+		// Redraw the icons it covered, in their stacking order and only in that area, so
+		// their blended edges are not drawn twice. Without memory, redraw them in full
+		backdrop_draw_in_rect(info,
+							  &object->show_rect,
+							  (region) ? region : (struct Region *)info->window->WLayer->ClipRegion,
+							  object,
+							  DRAWIN_ALL);
+		if (region)
+			DisposeRegion(region);
 
 		// Remove clip region
 		InstallClipRegion(info->window->WLayer, 0);
