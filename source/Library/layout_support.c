@@ -327,7 +327,8 @@ void LIBFUNC L_UpdateGadgetValue(REG(a0, ObjectList *list),
 				(fontsize_gad = L_GetObject(list, object->control_id + 1)))
 			{
 				ULONG *pen_storage = 0;
-				ULONG pen_table = 0, pen_count = 0;
+				IPTR pen_table = 0;
+				ULONG pen_count = 0;
 				BOOL fixed_only = 0;
 				char *mode_list[4];
 
