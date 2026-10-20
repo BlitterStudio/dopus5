@@ -15,6 +15,29 @@
 #define LayersBase		(data->func_startup.layers_base)
 */
 
+#ifdef USE_DRAWICONSTATE
+// Get the icon a filetype icon path names.  The path normally ends in .info,
+// which is stripped; an empty name would crash the AROS icon.library
+static struct DiskObject *filetypeed_get_icon(char *path)
+{
+	struct DiskObject *icon = 0;
+	char *path_copy;
+	int len;
+
+	if (!path || !(len = strlen(path)) || !(path_copy = AllocMemH(0, len + 1)))
+		return 0;
+
+	if (len > 5 && stricmp(path + len - 5, ".info") == 0)
+		len -= 5;
+	stccpy(path_copy, path, len + 1);
+
+	if (*path_copy)
+		icon = GetCachedDiskObject(path_copy, 0);
+	FreeMemH(path_copy);
+	return icon;
+}
+#endif
+
 // Icon paths inside one of these are stored relative to it, so a filetype
 // also works on a system whose boot volume has another name
 static char *filetypeed_icon_assigns[] = {"DOpus5:", "ENVARC:", "SYS:", 0};
@@ -174,17 +197,7 @@ void FiletypeEditor(void)
 	if (data->type->icon_path)
 	{
 #ifdef USE_DRAWICONSTATE
-		{
-			char *path_copy;
-			data->icon_image = NULL;
-			if ((path_copy = AllocMemH(0, strlen(data->type->icon_path) + 1)))
-			{
-				// icon_path is guaranteed to have a .info at the end
-				stccpy(path_copy, data->type->icon_path, strlen(data->type->icon_path) - 4);
-				data->icon_image = GetCachedDiskObject(path_copy, 0);
-				FreeMemH(path_copy);
-			}
-		}
+		data->icon_image = filetypeed_get_icon(data->type->icon_path);
 #else
 		data->icon_image = OpenImage(data->type->icon_path, 0);
 #endif
@@ -614,17 +627,7 @@ void FiletypeEditor(void)
 
 						// Try to get image
 #ifdef USE_DRAWICONSTATE
-					{
-						char *path_copy;
-						image = NULL;
-						if ((path_copy = AllocMemH(0, strlen(name) + 1)))
-						{
-							// icon_path is guaranteed to have a .info at the end
-							stccpy(path_copy, name, strlen(name) - 4);
-							image = GetCachedDiskObject(path_copy, 0);
-							FreeMemH(path_copy);
-						}
-					}
+					image = filetypeed_get_icon(name);
 #else
 					image = OpenImage(name, 0);
 #endif
@@ -1066,7 +1069,7 @@ void filetypeed_show_icon(filetype_ed_data *data)
 #else
 	// Fill out render tags
 	tags[0].ti_Tag = IM_Rectangle;
-	tags[0].ti_Data = (ULONG)&bounds;
+	tags[0].ti_Data = (IPTR)&bounds;
 	tags[1].ti_Tag = TAG_DONE;
 
 	// Remap the icon
@@ -1187,17 +1190,7 @@ BOOL filetypeed_pick_icon(filetype_ed_data *data)
 		// Get new image
 		if (path[0])
 #ifdef USE_DRAWICONSTATE
-		{
-			char *path_copy;
-			data->icon_image = NULL;
-			if ((path_copy = AllocMemH(0, strlen(path) + 1)))
-			{
-				// icon_path is guaranteed to have a .info at the end
-				stccpy(path_copy, path, strlen(path) - 4);
-				data->icon_image = GetCachedDiskObject(path_copy, 0);
-				FreeMemH(path_copy);
-			}
-		}
+			data->icon_image = filetypeed_get_icon(path);
 #else
 			data->icon_image = OpenImage(path, 0);
 #endif

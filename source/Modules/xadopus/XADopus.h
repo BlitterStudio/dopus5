@@ -67,7 +67,7 @@ struct xoData
 	char lists[24], listpath[512], rootpath[108];
 	struct xadArchiveInfo *ArcInf;
 	struct MsgPort *mp;
-	char mp_name[20];
+	char mp_name[11 + sizeof(APTR) * 2];  // "XADopus_0x" + %p digits + NUL
 	IPCData *ipc;
 	struct Screen *screen;
 	struct Tree *root, *cur;
@@ -94,13 +94,6 @@ struct TempFile
 {
 	struct MinNode node;
 	char FileName[110];
-};
-
-struct MyPacket
-{
-	struct Message sp_Msg;
-	struct DosPacket sp_Pkt;
-	char *a7, *a8;
 };
 
 #ifndef __amigaos3__
