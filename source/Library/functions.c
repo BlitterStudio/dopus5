@@ -164,9 +164,9 @@ void LIBFUNC L_BtoCStr(REG(a0, BSTR bstr), REG(a1, char *cstr), REG(d0, int len)
 	*cstr = 0;
 }
 
-ULONG LIBFUNC L_DivideU(REG(d0, unsigned long num),
-						REG(d1, unsigned long div),
-						REG(a0, unsigned long *rem),
+ULONG LIBFUNC L_DivideU(REG(d0, ULONG num),
+						REG(d1, ULONG div),
+						REG(a0, ULONG *rem),
 						REG(a1, struct Library *lib))
 {
 	ULONG quotient;

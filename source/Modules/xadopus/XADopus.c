@@ -23,11 +23,11 @@ char *viewcmds = "Read Play Show HexRead AnsiRead IconInfo";
 
 LIBFUNC ULONG ASM SAVEDS L_ProgressHook(REG(a0, struct Hook *), REG(a2, int skip), REG(a1, struct xadProgressInfo *));
 
-// xadmaster calls the progress hook through CallHookPkt(), which on MorphOS needs
-// the HookEntry gate in h_Entry and the native function in h_SubEntry
+// xadmaster calls the progress hook through CallHookPkt(), which needs
+// the HookEntry gate for AROS and MorphOS native callbacks
 static void xad_init_progress_hook(struct Hook *hook, struct xoData *data)
 {
-#if defined(__MORPHOS__)
+#if defined(__AROS__) || defined(__MORPHOS__)
 	hook->h_Entry = (HOOKFUNC)HookEntry;
 	hook->h_SubEntry = (HOOKFUNC)L_ProgressHook;
 #else
@@ -363,7 +363,7 @@ BOOL AllocPort(struct xoData *data)
 		AddPort(data->mp);
 		Permit();
 #else
-		sprintf(data->mp_name, "XADopus_%p", data->mp);	 // this is guaranteed to be unique
+		snprintf(data->mp_name, sizeof(data->mp_name), "XADopus_%p", data->mp);  // unique while the port exists
 		AddPort(data->mp);
 #endif
 
@@ -1187,7 +1187,7 @@ int LIBFUNC L_Module_Entry(REG(a0, char *args),
 	ULONG err, total;
 	STRPTR filename;
 
-	struct MyPacket *pkt;
+	struct RexxMsg *pkt;
 	BOOL over = FALSE;
 	char *a0, *a2, *a3, *a5, *a6, *a7;
 
@@ -1584,14 +1584,16 @@ int LIBFUNC L_Module_Entry(REG(a0, char *args),
 					while (!over)
 					{
 						Wait(1L << data.mp->mp_SigBit);
-						while ((!over) && (pkt = (struct MyPacket *)GetMsg(data.mp)))
+						while ((!over) && (pkt = (struct RexxMsg *)GetMsg(data.mp)))
 						{
-							a0 = (char *)pkt->sp_Pkt.dp_Arg1;
-							a2 = (char *)pkt->sp_Pkt.dp_Arg3;
-							a3 = (char *)pkt->sp_Pkt.dp_Arg4;
-							a5 = (char *)pkt->sp_Pkt.dp_Arg6;
-							a6 = (char *)pkt->sp_Pkt.dp_Arg7;
-							a7 = pkt->a7;
+							// Opus sends custom handlers ARexx messages; on 64-bit
+							// a DosPacket overlay is shifted by one argument
+							a0 = (char *)pkt->rm_Args[0];
+							a2 = (char *)pkt->rm_Args[2];
+							a3 = (char *)pkt->rm_Args[3];
+							a5 = (char *)pkt->rm_Args[5];
+							a6 = (char *)pkt->rm_Args[6];
+							a7 = (char *)pkt->rm_Args[7];
 
 							if (!strcmp(a0, "inactive"))
 							{

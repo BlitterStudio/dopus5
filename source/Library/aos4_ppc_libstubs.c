@@ -28,9 +28,9 @@ For more information on Directory Opus for Windows please see:
 
 LIBSTUB(L_DivideU,
 		ULONG,
-		REG(d0, unsigned long num),
-		REG(d1, unsigned long div),
-		REG(a0, unsigned long *rem),
+		REG(d0, ULONG num),
+		REG(d1, ULONG div),
+		REG(a0, ULONG *rem),
 		REG(a1, struct Library *lib))
 {
 	return L_DivideU(num, div, rem, lib);
@@ -591,7 +591,7 @@ LIBSTUB(L_Att_NewNode,
 		Att_Node *,
 		REG(a0, Att_List *list),
 		REG(a1, char *name),
-		REG(d0, ULONG data),
+		REG(d0, IPTR data),
 		REG(d1, ULONG flags))
 {
 	return L_Att_NewNode(list, name, data, flags);
@@ -622,12 +622,12 @@ LIBSTUB(L_Att_NodeNumber, long, REG(a0, Att_List *list), REG(a1, char *name))
 	return L_Att_NodeNumber(list, name);
 }
 
-LIBSTUB(L_Att_FindNodeData, Att_Node *, REG(a0, Att_List *list), REG(d0, ULONG data))
+LIBSTUB(L_Att_FindNodeData, Att_Node *, REG(a0, Att_List *list), REG(d0, IPTR data))
 {
 	return L_Att_FindNodeData(list, data);
 }
 
-LIBSTUB(L_Att_NodeDataNumber, long, REG(a0, Att_List *list), REG(d0, ULONG data))
+LIBSTUB(L_Att_NodeDataNumber, long, REG(a0, Att_List *list), REG(d0, IPTR data))
 {
 	return L_Att_NodeDataNumber(list, data);
 }
@@ -940,9 +940,9 @@ LIBSTUB(L_IPC_Launch,
 		REG(a0, struct ListLock *list),
 		REG(a1, IPCData **storage),
 		REG(a2, char *name),
-		REG(d0, ULONG entry),
+		REG(d0, IPTR entry),
 		REG(d1, ULONG stack),
-		REG(d2, ULONG data),
+		REG(d2, IPTR data),
 		REG(a3, struct Library *dos_base),
 		REG(a6, struct MyLibrary *libbase))
 {
@@ -955,10 +955,10 @@ LIBSTUB(L_IPC_Startup, int, REG(a0, IPCData *ipc), REG(a1, APTR data), REG(a2, s
 }
 
 LIBSTUB(L_IPC_Command,
-		ULONG,
+		IPTR,
 		REG(a0, IPCData *ipc),
 		REG(d0, ULONG command),
-		REG(d1, ULONG flags),
+		REG(d1, IPTR flags),
 		REG(a1, APTR data),
 		REG(a2, APTR data_free),
 		REG(a3, struct MsgPort *reply))
@@ -981,14 +981,14 @@ LIBSTUB(L_IPC_FindProc,
 		REG(a0, struct ListLock *list),
 		REG(a1, char *name),
 		REG(d0, BOOL activate),
-		REG(d1, ULONG data))
+		REG(d1, IPTR data))
 {
 	return L_IPC_FindProc(list, name, activate, data);
 }
 
 LIBSTUB(L_IPC_ProcStartup,
 		IPCData *,
-		REG(a0, ULONG *data),
+		REG(a0, IPTR *data),
 		REG(a1, ULONG (*ASM code)(REG(a0, IPCData *), REG(a1, APTR))))
 {
 	return L_IPC_ProcStartup(data, code);
@@ -1009,7 +1009,7 @@ LIBSTUB(L_IPC_Goodbye, void, REG(a0, IPCData *ipc), REG(a1, IPCData *owner), REG
 	return L_IPC_Goodbye(ipc, owner, goodbye_flags);
 }
 
-LIBSTUB(L_IPC_GetGoodbye, ULONG, REG(a0, IPCMessage *msg))
+LIBSTUB(L_IPC_GetGoodbye, IPTR, REG(a0, IPCMessage *msg))
 {
 	return L_IPC_GetGoodbye(msg);
 }
@@ -1033,8 +1033,8 @@ LIBSTUB(L_IPC_ListCommand,
 		void,
 		REG(a0, struct ListLock *list),
 		REG(d0, ULONG command),
-		REG(d1, ULONG flags),
-		REG(d2, ULONG data),
+		REG(d1, IPTR flags),
+		REG(d2, IPTR data),
 		REG(d3, BOOL wait))
 {
 	return L_IPC_ListCommand(list, command, flags, data, wait);
@@ -1183,7 +1183,7 @@ LIBSTUB(L_AnimDecodeRIFFSet,
 }
 
 // palette
-LIBSTUB(L_LoadPalette32, void, REG(a0, struct ViewPort *vp), REG(a1, unsigned long *palette))
+LIBSTUB(L_LoadPalette32, void, REG(a0, struct ViewPort *vp), REG(a1, ULONG *palette))
 {
 	return L_LoadPalette32(vp, palette);
 }
@@ -1191,7 +1191,7 @@ LIBSTUB(L_LoadPalette32, void, REG(a0, struct ViewPort *vp), REG(a1, unsigned lo
 LIBSTUB(L_GetPalette32,
 		void,
 		REG(a0, struct ViewPort *vp),
-		REG(a1, unsigned long *palette),
+		REG(a1, ULONG *palette),
 		REG(d0, unsigned short count),
 		REG(d1, short first))
 {
@@ -1934,10 +1934,10 @@ LIBSTUB(L_UpdateGadgetList, void, REG(a0, ObjectList *list), REG(a6, struct MyLi
 }
 
 LIBSTUB(L_IPC_SafeCommand,
-		ULONG,
+		IPTR,
 		REG(a0, IPCData *ipc),
 		REG(d0, ULONG command),
-		REG(d1, ULONG flags),
+		REG(d1, IPTR flags),
 		REG(a1, APTR data),
 		REG(a2, APTR data_free),
 		REG(a3, struct MsgPort *reply),
@@ -2112,7 +2112,7 @@ LIBSTUB(L_OpenEnvironment, BOOL, REG(a0, char *name), REG(a1, struct OpenEnviron
 
 LIBSTUB(L_PopUpNewHandle,
 		PopUpHandle *,
-		REG(d0, ULONG userdata),
+		REG(d0, IPTR userdata),
 		REG(a0, REF_CALLBACK(callback)),
 		REG(a1, struct DOpusLocale *locale))
 {
@@ -2127,7 +2127,7 @@ LIBSTUB(L_PopUpFreeHandle, void, REG(a0, PopUpHandle *handle))
 LIBSTUB(L_PopUpNewItem,
 		PopUpItem *,
 		REG(a0, PopUpHandle *handle),
-		REG(d0, ULONG string),
+		REG(d0, IPTR string),
 		REG(d1, ULONG id),
 		REG(d2, ULONG flags))
 {

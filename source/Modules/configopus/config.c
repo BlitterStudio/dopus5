@@ -119,13 +119,13 @@ BOOL config_filereq(struct Window *window, ULONG title, char *path, char *defpat
 	return ok;
 }
 
-long LIBFUNC L_Config_ListerButtons(REG(a0, char *bank_name),
-									REG(a1, IPCData *ipc),
-									REG(a2, IPCData *owner_ipc),
-									REG(a3, struct Screen *screen),
-                                    REG(d0, Cfg_ButtonBank *def_bank),
-                                    REG(d1, IPTR command_list),
-                                    REG(d2, LONG initial))
+ULONG LIBFUNC L_Config_ListerButtons(REG(a0, char *bank_name),
+									 REG(a1, IPCData *ipc),
+									 REG(a2, IPCData *owner_ipc),
+									 REG(a3, struct Screen *screen),
+									 REG(d0, Cfg_ButtonBank *def_bank),
+									 REG(d1, IPTR command_list),
+									 REG(d2, LONG initial))
 {
 	return 0;
 }

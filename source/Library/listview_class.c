@@ -1190,6 +1190,19 @@ IPTR LIBFUNC listview_dispatch(REG(a0, Class *cl), REG(a2, Object *obj), REG(a1,
 	return retval;
 }
 
+#ifdef __AROS__
+AROS_UFH3(IPTR,
+		  listview_dispatch_entry,
+		  AROS_UFHA(Class *, cl, A0),
+		  AROS_UFHA(Object *, obj, A2),
+		  AROS_UFHA(Msg, msg, A1))
+{
+	AROS_USERFUNC_INIT
+	return listview_dispatch(cl, obj, msg);
+	AROS_USERFUNC_EXIT
+}
+#endif
+
 // Render listview
 void listview_render(Class *cl, struct Gadget *gadget, ListViewData *data, struct gpRender *render)
 {

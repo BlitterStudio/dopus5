@@ -297,7 +297,7 @@ typedef ULONG _sfdc_vararg;
       , DOPUS_BASE_NAME)
 
 #define Att_NewNode(___list, ___name, ___data, ___flags) \
-      LP4(0x1bc, Att_Node *, Att_NewNode , Att_List *, ___list, a0, char *, ___name, a1, ULONG, ___data, d0, ULONG, ___flags, d1,\
+      LP4(0x1bc, Att_Node *, Att_NewNode , Att_List *, ___list, a0, char *, ___name, a1, IPTR, ___data, d0, ULONG, ___flags, d1,\
       , DOPUS_BASE_NAME)
 
 #define Att_RemNode(___node) \
@@ -321,11 +321,11 @@ typedef ULONG _sfdc_vararg;
       , DOPUS_BASE_NAME)
 
 #define Att_FindNodeData(___list, ___data) \
-      LP2(0x1e0, Att_Node *, Att_FindNodeData , Att_List *, ___list, a0, ULONG, ___data, d0,\
+      LP2(0x1e0, Att_Node *, Att_FindNodeData , Att_List *, ___list, a0, IPTR, ___data, d0,\
       , DOPUS_BASE_NAME)
 
 #define Att_NodeDataNumber(___list, ___data) \
-      LP2(0x1e6, long, Att_NodeDataNumber , Att_List *, ___list, a0, ULONG, ___data, d0,\
+      LP2(0x1e6, long, Att_NodeDataNumber , Att_List *, ___list, a0, IPTR, ___data, d0,\
       , DOPUS_BASE_NAME)
 
 #define Att_NodeName(___list, ___number) \
@@ -369,7 +369,7 @@ typedef ULONG _sfdc_vararg;
       , DOPUS_BASE_NAME)
 
 #define IPC_Command(___ipc, ___command, ___flags, ___data, ___data_free, ___reply) \
-      LP6(0x228, ULONG, IPC_Command , IPCData *, ___ipc, a0, ULONG, ___command, d0, ULONG, ___flags, d1, APTR, ___data, a1, APTR, ___data_free, a2, struct MsgPort *, ___reply, a3,\
+      LP6(0x228, IPTR, IPC_Command , IPCData *, ___ipc, a0, ULONG, ___command, d0, IPTR, ___flags, d1, APTR, ___data, a1, APTR, ___data_free, a2, struct MsgPort *, ___reply, a3,\
       , DOPUS_BASE_NAME)
 
 #define IPC_Reply(___msg) \
@@ -381,7 +381,7 @@ typedef ULONG _sfdc_vararg;
       , DOPUS_BASE_NAME)
 
 #define IPC_FindProc(___list, ___name, ___act, ___data) \
-      LP4(0x23a, IPCData *, IPC_FindProc , struct ListLock *, ___list, a0, char *, ___name, a1, BOOL, ___act, d0, ULONG, ___data, d1,\
+      LP4(0x23a, IPCData *, IPC_FindProc , struct ListLock *, ___list, a0, char *, ___name, a1, BOOL, ___act, d0, IPTR, ___data, d1,\
       , DOPUS_BASE_NAME)
 
 #define IPC_Quit(___ipc, ___flags, ___wait) \
@@ -397,7 +397,7 @@ typedef ULONG _sfdc_vararg;
       , DOPUS_BASE_NAME)
 
 #define IPC_GetGoodbye(___msg) \
-      LP1(0x252, ULONG, IPC_GetGoodbye , IPCMessage *, ___msg, a0,\
+      LP1(0x252, IPTR, IPC_GetGoodbye , IPCMessage *, ___msg, a0,\
       , DOPUS_BASE_NAME)
 
 #define IPC_ListQuit(___list, ___owner, ___flags, ___wait) \
@@ -409,7 +409,7 @@ typedef ULONG _sfdc_vararg;
       , DOPUS_BASE_NAME)
 
 #define IPC_ListCommand(___list, ___command, ___flags, ___data, ___wait) \
-      LP5NR(0x264, IPC_ListCommand , struct ListLock *, ___list, a0, ULONG, ___command, d0, ULONG, ___flags, d1, IPTR, ___data, d2, BOOL, ___wait, d3,\
+      LP5NR(0x264, IPC_ListCommand , struct ListLock *, ___list, a0, ULONG, ___command, d0, IPTR, ___flags, d1, IPTR, ___data, d2, BOOL, ___wait, d3,\
       , DOPUS_BASE_NAME)
 
 #define IPC_ProcStartup(___data, ___code) \
@@ -1365,7 +1365,7 @@ typedef ULONG _sfdc_vararg;
       , DOPUS_BASE_NAME)
 
 #define IPC_SafeCommand(___ipc, ___command, ___flags, ___data, ___data_free, ___reply, ___list) \
-      LP7A4(0x7c2, ULONG, IPC_SafeCommand , IPCData *, ___ipc, a0, ULONG, ___command, d0, ULONG, ___flags, d1, APTR, ___data, a1, APTR, ___data_free, a2, struct MsgPort *, ___reply, a3, struct ListLock *, ___list, d7,\
+      LP7A4(0x7c2, IPTR, IPC_SafeCommand , IPCData *, ___ipc, a0, ULONG, ___command, d0, IPTR, ___flags, d1, APTR, ___data, a1, APTR, ___data_free, a2, struct MsgPort *, ___reply, a3, struct ListLock *, ___list, d7,\
       , DOPUS_BASE_NAME)
 
 #define ClearFiletypeCache() \
@@ -1542,7 +1542,7 @@ typedef ULONG _sfdc_vararg;
       , DOPUS_BASE_NAME)
 
 #define PopUpNewHandle(___data, ___callback, ___locale) \
-      LP3(0x8c4, PopUpHandle *, PopUpNewHandle , ULONG, ___data, d0, REF_CALLBACK, ___callback, a0, struct DOpusLocale *, ___locale, a1,\
+      LP3(0x8c4, PopUpHandle *, PopUpNewHandle , IPTR, ___data, d0, REF_CALLBACK, ___callback, a0, struct DOpusLocale *, ___locale, a1,\
       , DOPUS_BASE_NAME)
 
 #define PopUpFreeHandle(___handle) \
@@ -1550,7 +1550,7 @@ typedef ULONG _sfdc_vararg;
       , DOPUS_BASE_NAME)
 
 #define PopUpNewItem(___handle, ___string, ___id, ___flags) \
-      LP4(0x8d0, PopUpItem *, PopUpNewItem , PopUpHandle *, ___handle, a0, ULONG, ___string, d0, ULONG, ___id, d1, ULONG, ___flags, d2,\
+      LP4(0x8d0, PopUpItem *, PopUpNewItem , PopUpHandle *, ___handle, a0, IPTR, ___string, d0, ULONG, ___id, d1, ULONG, ___flags, d2,\
       , DOPUS_BASE_NAME)
 
 #define PopUpSeparator(___handle) \

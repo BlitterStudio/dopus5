@@ -744,6 +744,19 @@ IPTR LIBFUNC button_dispatch(REG(a0, Class *cl), REG(a2, Object *obj), REG(a1, M
 	return retval;
 }
 
+#ifdef __AROS__
+AROS_UFH3(IPTR,
+		  button_dispatch_entry,
+		  AROS_UFHA(Class *, cl, A0),
+		  AROS_UFHA(Object *, obj, A2),
+		  AROS_UFHA(Msg, msg, A1))
+{
+	AROS_USERFUNC_INIT
+	return button_dispatch(cl, obj, msg);
+	AROS_USERFUNC_EXIT
+}
+#endif
+
 // Render button
 void button_render(Class *cl, struct Gadget *gadget, ButtonData *data, struct gpRender *render)
 {

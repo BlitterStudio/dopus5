@@ -672,9 +672,9 @@ LIBPROTO(L_ClearFiletypeCache, void, REG(a6, struct MyLibrary *lib));
 // functions.c (few of them was on ASM):
 LIBPROTO(L_DivideU,
 		 ULONG,
-		 REG(d0, unsigned long num),
-		 REG(d1, unsigned long div),
-		 REG(a0, unsigned long *rem),
+		 REG(d0, ULONG num),
+		 REG(d1, ULONG div),
+		 REG(a0, ULONG *rem),
 		 REG(a1, struct Library *lib));
 
 LIBPROTO(L_BtoCStr, void, REG(a0, BSTR bstr), REG(a1, char *cstr), REG(d0, int len));
@@ -1238,12 +1238,12 @@ LIBPROTO(L_SetNotifyRequest,
 		 REG(a6, struct MyLibrary *libbase));
 
 // palette_routines.c
-LIBPROTO(L_LoadPalette32, void, REG(a0, struct ViewPort *vp), REG(a1, unsigned long *palette));
+LIBPROTO(L_LoadPalette32, void, REG(a0, struct ViewPort *vp), REG(a1, ULONG *palette));
 
 LIBPROTO(L_GetPalette32,
 		 void,
 		 REG(a0, struct ViewPort *vp),
-		 REG(a1, unsigned long *palette),
+		 REG(a1, ULONG *palette),
 		 REG(d0, unsigned short count),
 		 REG(d1, short first));
 

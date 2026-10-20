@@ -33,7 +33,7 @@ HookData *LIBFUNC L_GetEditHook(REG(d0, ULONG type), REG(d1, ULONG flags), REG(a
 	if ((hook = AllocVec(sizeof(HookData), MEMF_ANY)))
 	{
 // Fill out hook
-#if defined(__MORPHOS__)
+#if defined(__AROS__) || defined(__MORPHOS__)
 		hook->hook.h_Entry = (HOOKFUNC)HookEntry;
 		hook->hook.h_SubEntry = (HOOKFUNC)string_edit_hook;
 #else

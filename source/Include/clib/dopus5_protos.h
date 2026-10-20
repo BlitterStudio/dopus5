@@ -67,7 +67,7 @@ short SimpleRequest(struct Window *, char *, char *, char *, char *, APTR, long,
 #ifdef __GNUC__
 #define SimpleRequestTags(window, title, buttons, message, tags...)                 \
         ({                                                                          \
-            ULONG _tags[] = {tags};                                                \
+            IPTR _tags[] = {tags};                                                 \
             SimpleRequest(window, title, buttons, message, 0, (APTR)&_tags, 0, 0);  \
         })
 #endif //__GNUC__

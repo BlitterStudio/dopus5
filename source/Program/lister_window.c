@@ -113,9 +113,9 @@ struct Window *lister_open_window(Lister *lister, struct Screen *screen)
 		dims->Height = lister->win_limits.Top;
 
 // Initialise backfill pattern
-#if defined(__MORPHOS__)
+#if defined(__AROS__) || defined(__MORPHOS__)
 	lister->pattern.hook.h_Entry = (HOOKFUNC)HookEntry;
-	lister->pattern.hook.h_SubEntry = (ULONG(*)())PatternBackfill;
+	lister->pattern.hook.h_SubEntry = (HOOKFUNC)PatternBackfill;
 #else
 	lister->pattern.hook.h_Entry = (ULONG(*)())PatternBackfill;
 #endif

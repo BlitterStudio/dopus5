@@ -236,7 +236,11 @@ int stccpy(char *p, const char *q, int n);
 			IPTR vargs[] = {DOPUS_VARIADIC_IPTR(__VA_ARGS__)};    \
 			RawDoFmt((STRPTR)(IPTR)fmt, (APTR)&vargs, NULL, (APTR)buf); \
 		})
-	#define LSprintf(buffer, string, data) RawDoFmt(string, data, NULL, buffer)
+	#ifdef __AROS__
+		#define LSprintf(buffer, string, data) RawDoFmt(string, (RAWARG)data, NULL, buffer)
+	#else
+		#define LSprintf(buffer, string, data) RawDoFmt(string, data, NULL, buffer)
+	#endif
 #endif
 
 #endif /* DOPUS_COMMON_H */

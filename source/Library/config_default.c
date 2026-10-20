@@ -404,17 +404,30 @@ void LIBFUNC L_UpdateEnvironment(REG(a0, CFG_ENVR *env))
 			while (L_IFFNextChunk(iff, ID_FONT))
 			{
 				struct FontPrefs font;
-
-				// Read chunk
-				L_IFFReadChunkBytes(iff, &font, sizeof(font));
+				BOOL got_font = FALSE;
 
 #ifdef __AROS__
-				font.fp_Type = AROS_BE2WORD(font.fp_Type);
-				font.fp_TextAttr.ta_YSize = AROS_BE2WORD(font.fp_TextAttr.ta_YSize);
-#endif
+				// FONT chunks contain the 32-bit, 156-byte FontPrefs layout.
+				UBYTE font_data[156];
 
+				if (L_IFFChunkSize(iff) >= sizeof(font_data) &&
+					L_IFFReadChunkBytes(iff, font_data, sizeof(font_data)) == sizeof(font_data))
+				{
+					memset(&font, 0, sizeof(font));
+					font.fp_Type = ((UWORD)font_data[14] << 8) | font_data[15];
+					font.fp_FrontPen = font_data[16];
+					font.fp_BackPen = font_data[17];
+					font.fp_DrawMode = font_data[18];
+					font.fp_TextAttr.ta_YSize = ((UWORD)font_data[24] << 8) | font_data[25];
+					CopyMem(font_data + 28, font.fp_Name, sizeof(font.fp_Name));
+					got_font = TRUE;
+				}
+#else
+				if (L_IFFReadChunkBytes(iff, &font, sizeof(font)))
+					got_font = TRUE;
+#endif
 				// Workbench font?
-				if (font.fp_Type == FP_WBFONT)
+				if (got_font && font.fp_Type == FP_WBFONT)
 				{
 					// Get icon font
 					strcpy(env->font_name[FONT_ICONS], font.fp_Name);

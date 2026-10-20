@@ -176,7 +176,7 @@ IPTR ASM SAVEDS palette_dispatch(REG(a0, Class *cl), REG(a2, Object *obj), REG(a
 		// Need to recalculate?
 		if (recalc || msg->MethodID == OM_NEW)
 		{
-			unsigned long rem_h, rem_v;
+			ULONG rem_h, rem_v;
 
 			// If gadget width is twice the height or more, bias is towards horizontal
 			if (gadget->Width >= gadget->Height << 1)
@@ -237,7 +237,7 @@ IPTR ASM SAVEDS palette_dispatch(REG(a0, Class *cl), REG(a2, Object *obj), REG(a
 			// Pen selection
 			if ((tag = FindTagItem(DPG_Pen, tags)))
 			{
-				unsigned long rem;
+				ULONG rem;
 				short old_pen;
 
 				// Get pen
@@ -395,7 +395,7 @@ IPTR ASM SAVEDS palette_dispatch(REG(a0, Class *cl), REG(a2, Object *obj), REG(a
 			if (data->pen_array)
 				*get->opg_Storage = (ULONG)data->pen_array[data->pen_sel];
 			else
-				*get->opg_Storage = (ULONG)-1;
+				*get->opg_Storage = (IPTR)-1;
 			break;
 
 		// Selected pen
@@ -571,13 +571,26 @@ IPTR ASM SAVEDS palette_dispatch(REG(a0, Class *cl), REG(a2, Object *obj), REG(a
 	return retval;
 }
 
+#ifdef __AROS__
+AROS_UFH3(IPTR,
+		  palette_dispatch_entry,
+		  AROS_UFHA(Class *, cl, A0),
+		  AROS_UFHA(Object *, obj, A2),
+		  AROS_UFHA(Msg, msg, A1))
+{
+	AROS_USERFUNC_INIT
+	return palette_dispatch(cl, obj, msg);
+	AROS_USERFUNC_EXIT
+}
+#endif
+
 // Render palette button
 void palette_render(Class *cl, struct Gadget *gadget, PaletteData *data, struct gpRender *render)
 {
 	struct RastPort *rp;
 	UWORD *pens;
 	unsigned short ghost[2];
-	unsigned long row, col;
+	ULONG row, col;
 	short draw_one = -1;
 
 	// Get ghosting pattern

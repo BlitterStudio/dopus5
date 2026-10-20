@@ -43,9 +43,9 @@ int errno;	// just temporarily defined here
 
 LIBSTUB_4(L_DivideU,
 		  ULONG,
-		  REG(d0, unsigned long num),
-		  REG(d1, unsigned long div),
-		  REG(a0, unsigned long *rem),
+		  REG(d0, ULONG num),
+		  REG(d1, ULONG div),
+		  REG(a0, ULONG *rem),
 		  REG(a1, struct Library *lib))
 
 // functions.a
@@ -292,15 +292,15 @@ LIBSTUB_4(L_Att_NewNode,
 		  Att_Node *,
 		  REG(a0, Att_List *list),
 		  REG(a1, char *name),
-		  REG(d0, ULONG data),
+		  REG(d0, IPTR data),
 		  REG(d1, ULONG flags))
 LIBSTUB_1(L_Att_RemNode, void, REG(a0, Att_Node *node))
 LIBSTUB_3(L_Att_PosNode, void, REG(a0, Att_List *list), REG(a1, Att_Node *node), REG(a2, Att_Node *before))
 LIBSTUB_2(L_Att_RemList, void, REG(a0, Att_List *list), REG(d0, long flags))
 LIBSTUB_2(L_Att_FindNode, Att_Node *, REG(a0, Att_List *list), REG(d0, long number))
 LIBSTUB_2(L_Att_NodeNumber, long, REG(a0, Att_List *list), REG(a1, char *name))
-LIBSTUB_2(L_Att_FindNodeData, Att_Node *, REG(a0, Att_List *list), REG(d0, ULONG data))
-LIBSTUB_2(L_Att_NodeDataNumber, long, REG(a0, Att_List *list), REG(d0, ULONG data))
+LIBSTUB_2(L_Att_FindNodeData, Att_Node *, REG(a0, Att_List *list), REG(d0, IPTR data))
+LIBSTUB_2(L_Att_NodeDataNumber, long, REG(a0, Att_List *list), REG(d0, IPTR data))
 LIBSTUB_2(L_Att_NodeName, char *, REG(a0, Att_List *list), REG(d0, long number))
 LIBSTUB_1(L_Att_NodeCount, long, REG(a0, Att_List *list))
 LIBSTUB_2(L_Att_ChangeNodeName, void, REG(a0, Att_Node *node), REG(a1, char *name))
@@ -417,18 +417,18 @@ LIBSTUB_8(L_IPC_Launch,
 		  REG(a0, struct ListLock *list),
 		  REG(a1, IPCData **storage),
 		  REG(a2, char *name),
-		  REG(d0, ULONG entry),
+		  REG(d0, IPTR entry),
 		  REG(d1, ULONG stack),
-		  REG(d2, ULONG data),
+		  REG(d2, IPTR data),
 		  REG(a3, struct Library *dos_base),
 		  REG(a6, struct MyLibrary *libbase))
 LIBSTUB_3(L_IPC_Startup, int, REG(a0, IPCData *ipc), REG(a1, APTR data), REG(a2, struct MsgPort *reply))
 
 LIBSTUB_6(L_IPC_Command,
-		  ULONG,
+		  IPTR,
 		  REG(a0, IPCData *ipc),
 		  REG(d0, ULONG command),
-		  REG(d1, ULONG flags),
+		  REG(d1, IPTR flags),
 		  REG(a1, APTR data),
 		  REG(a2, APTR data_free),
 		  REG(a3, struct MsgPort *reply))
@@ -442,11 +442,11 @@ LIBSTUB_4(L_IPC_FindProc,
 		  REG(a0, struct ListLock *list),
 		  REG(a1, char *name),
 		  REG(d0, BOOL activate),
-		  REG(d1, ULONG data))
+		  REG(d1, IPTR data))
 
 LIBSTUB_2(L_IPC_ProcStartup,
 		  IPCData *,
-		  REG(a0, ULONG *data),
+		  REG(a0, IPTR *data),
 		  REG(a1, ULONG (*ASM code)(REG(a0, IPCData *), REG(a1, APTR))))
 
 LIBSTUB_3(L_IPC_Quit, void, REG(a0, IPCData *ipc), REG(d0, ULONG quit_flags), REG(d1, BOOL wait))
@@ -455,7 +455,7 @@ LIBSTUB_2(L_IPC_Hello, void, REG(a0, IPCData *ipc), REG(a1, IPCData *owner))
 
 LIBSTUB_3(L_IPC_Goodbye, void, REG(a0, IPCData *ipc), REG(a1, IPCData *owner), REG(d0, ULONG goodbye_flags))
 
-LIBSTUB_1(L_IPC_GetGoodbye, ULONG, REG(a0, IPCMessage *msg))
+LIBSTUB_1(L_IPC_GetGoodbye, IPTR, REG(a0, IPCMessage *msg))
 
 LIBSTUB_4(L_IPC_ListQuit,
 		  ULONG,
@@ -470,8 +470,8 @@ LIBSTUB_5(L_IPC_ListCommand,
 		  void,
 		  REG(a0, struct ListLock *list),
 		  REG(d0, ULONG command),
-		  REG(d1, ULONG flags),
-		  REG(d2, ULONG data),
+		  REG(d1, IPTR flags),
+		  REG(d2, IPTR data),
 		  REG(d3, BOOL wait))
 
 LIBSTUB_3(L_IPC_QuitName, void, REG(a0, struct ListLock *list), REG(a1, char *name), REG(d0, ULONG quit_flags))
@@ -557,12 +557,12 @@ LIBSTUB_4(L_AnimDecodeRIFFSet,
 		  REG(d1, unsigned short sourcebytes))
 
 // palette
-LIBSTUB_2(L_LoadPalette32, void, REG(a0, struct ViewPort *vp), REG(a1, unsigned long *palette))
+LIBSTUB_2(L_LoadPalette32, void, REG(a0, struct ViewPort *vp), REG(a1, ULONG *palette))
 
 LIBSTUB_4(L_GetPalette32,
 		  void,
 		  REG(a0, struct ViewPort *vp),
-		  REG(a1, unsigned long *palette),
+		  REG(a1, ULONG *palette),
 		  REG(d0, unsigned short count),
 		  REG(d1, short first))
 
@@ -928,10 +928,10 @@ LIBSTUB_2(L_CompareListFormat, ULONG, REG(a0, ListFormat *format1), REG(a1, List
 LIBSTUB_2(L_UpdateGadgetList, void, REG(a0, ObjectList *list), REG(a6, struct MyLibrary *libbase))
 
 LIBSTUB_7(L_IPC_SafeCommand,
-		  ULONG,
+		  IPTR,
 		  REG(a0, IPCData *ipc),
 		  REG(d0, ULONG command),
-		  REG(d1, ULONG flags),
+		  REG(d1, IPTR flags),
 		  REG(a1, APTR data),
 		  REG(a2, APTR data_free),
 		  REG(a3, struct MsgPort *reply),
@@ -1027,7 +1027,7 @@ LIBSTUB_2(L_OpenEnvironment, BOOL, REG(a0, char *name), REG(a1, struct OpenEnvir
 
 LIBSTUB_3(L_PopUpNewHandle,
 		  PopUpHandle *,
-		  REG(d0, ULONG userdata),
+		  REG(d0, IPTR userdata),
 		  REG(a0, REF_CALLBACK(callback)),
 		  REG(a1, struct DOpusLocale *locale))
 
@@ -1035,7 +1035,7 @@ LIBSTUB_1(L_PopUpFreeHandle, void, REG(a0, PopUpHandle *handle))
 LIBSTUB_4(L_PopUpNewItem,
 		  PopUpItem *,
 		  REG(a0, PopUpHandle *handle),
-		  REG(d0, ULONG string),
+		  REG(d0, IPTR string),
 		  REG(d1, ULONG id),
 		  REG(d2, ULONG flags))
 LIBSTUB_1(L_PopUpSeparator, void, REG(a0, PopUpHandle *handle))

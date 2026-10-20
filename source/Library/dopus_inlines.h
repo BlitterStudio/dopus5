@@ -28,7 +28,7 @@
 		char *,                              \
 		name,                                \
 		a1,                                  \
-		ULONG,                               \
+		IPTR,                                \
 		data,                                \
 		d0,                                  \
 		ULONG,                               \
@@ -135,7 +135,7 @@
 
 #define IPC_Command(ipc, command, flags, data, data_free, reply) \
 	LP6a(0x228,                                                  \
-		 ULONG,                                                  \
+		 IPTR,                                                   \
 		 IPC_Command,                                            \
 		 IPCData *,                                              \
 		 ipc,                                                    \
@@ -143,7 +143,7 @@
 		 ULONG,                                                  \
 		 command,                                                \
 		 d0,                                                     \
-		 ULONG,                                                  \
+		 IPTR,                                                   \
 		 flags,                                                  \
 		 d1,                                                     \
 		 APTR,                                                   \

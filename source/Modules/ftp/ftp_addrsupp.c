@@ -437,7 +437,7 @@ BOOL export_sites(struct display_globals *dg, struct Window *win)
 
 		if (do_filereq(win, path, MSG_FTP_SAVE_SITES, FRF_DOSAVEMODE))
 		{
-			long err = 0;
+			LONG err = 0;
 			// Save TRUE == ok
 			if (do_export_sites(dg, path, &err))
 				ret = TRUE;
@@ -898,7 +898,7 @@ BOOL save_sites(struct display_globals *dg, struct Window *win, short gadgetid)
 		// Ok to save?
 		if (ok)
 		{
-			long err = 0;
+			LONG err = 0;
 			// Save TRUE == ok
 			if (do_save_sites_iff(dg, path, &err))
 			{
@@ -972,7 +972,7 @@ BOOL save_options(struct window_params *wp, int opt_type, short gadgetid)
 		// Ok to save?
 		if (ok)
 		{
-			long err = 0;
+			LONG err = 0;
 			// Save options TRUE == ok
 			if (do_save_options_iff(wp, path, type, &err))
 			{

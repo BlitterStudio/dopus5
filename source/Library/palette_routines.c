@@ -26,7 +26,7 @@ For more information on Directory Opus for Windows please see:
 #include <Program/dopus_config.h>
 
 // Load a 32 bit palette, even under <39
-void LIBFUNC L_LoadPalette32(REG(a0, struct ViewPort *vp), REG(a1, unsigned long *palette))
+void LIBFUNC L_LoadPalette32(REG(a0, struct ViewPort *vp), REG(a1, ULONG *palette))
 {
 	// Under 39 pass to Gfx library
 	if (((struct Library *)GfxBase)->lib_Version >= 39)
@@ -66,7 +66,7 @@ void LIBFUNC L_LoadPalette32(REG(a0, struct ViewPort *vp), REG(a1, unsigned long
 
 // Get a 32 bit palette, even under <39
 void LIBFUNC L_GetPalette32(REG(a0, struct ViewPort *vp),
-							REG(a1, unsigned long *palette),
+							REG(a1, ULONG *palette),
 							REG(d0, unsigned short count),
 							REG(d1, short first))
 {
@@ -78,7 +78,7 @@ void LIBFUNC L_GetPalette32(REG(a0, struct ViewPort *vp),
 	else
 	{
 		unsigned short pen;
-		unsigned long colour;
+		ULONG colour;
 
 		// Go through each pen
 		for (pen = 0; pen < count; pen++)

@@ -30,6 +30,10 @@ For more information on Directory Opus for Windows please see:
 static void font_build_text(font_data *data);
 static void font_append_text(font_data *data, short *pos, short first, short last);
 
+#ifdef __AROS__
+static IPTR font_refresh_entry(struct Hook *, APTR, APTR);
+#endif
+
 int main(int argc, char **argv)
 {
 	font_data *data;
@@ -69,9 +73,9 @@ int main(int argc, char **argv)
 		font_get_name(data, (char *)data->arg_array[ARG_FONT]);
 
 	// Got a font size?
-	if (data->arg_array[ARG_SIZE] && *((long *)data->arg_array[ARG_SIZE]))
+	if (data->arg_array[ARG_SIZE] && *((LONG *)data->arg_array[ARG_SIZE]))
 	{
-		data->font_size = *((long *)data->arg_array[ARG_SIZE]);
+		data->font_size = *((LONG *)data->arg_array[ARG_SIZE]);
 		data->first = TRUE;
 	}
 
@@ -115,7 +119,11 @@ int main(int argc, char **argv)
 	font_show_font(data, FALSE);
 
 	// Initialise refresh hook
+#ifdef __AROS__
+	data->refresh_hook.h_Entry = (HOOKFUNC)font_refresh_entry;
+#else
 	data->refresh_hook.h_Entry = (ULONG(*)())font_refresh;
+#endif
 	data->refresh_hook.h_Data = data;
 
 	// Event loop
@@ -938,6 +946,20 @@ ULONG ASM SAVEDS font_refresh(REG(a0, struct Hook *hook), REG(a1, struct IntuiMe
 
 	return (IPTR)msg;
 }
+
+#ifdef __AROS__
+AROS_UFH3S(IPTR,
+		  font_refresh_entry,
+		  AROS_UFHA(struct Hook *, hook, A0),
+		  AROS_UFHA(APTR, object, A2),
+		  AROS_UFHA(APTR, message, A1))
+{
+	AROS_USERFUNC_INIT
+	(void)object;
+	return font_refresh(hook, (struct IntuiMessage *)message);
+	AROS_USERFUNC_EXIT
+}
+#endif
 
 // Get next font size
 short font_get_size(font_data *data, short dir)

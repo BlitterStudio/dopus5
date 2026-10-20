@@ -957,6 +957,7 @@ void backdrop_scroll(BackdropInfo *info, short dx, short dy)
 void backdrop_pos_slider(BackdropInfo *info, short which)
 {
 	short old_x, old_y;
+	IPTR pos;
 
 	// Lock window
 	GetSemaphore(&info->window_lock, SEMF_EXCLUSIVE, 0);
@@ -973,7 +974,8 @@ void backdrop_pos_slider(BackdropInfo *info, short which)
 		if (which & SLIDER_HORZ)
 		{
 			// Get horizontal position
-			GetAttr(PGA_Top, (Object *)info->horiz_scroller, (ULONG *)&info->offset_x);
+			GetAttr(PGA_Top, (Object *)info->horiz_scroller, &pos);
+			info->offset_x = pos;
 			info->offset_x += info->area.MinX;
 		}
 
@@ -981,7 +983,8 @@ void backdrop_pos_slider(BackdropInfo *info, short which)
 		if (which & SLIDER_VERT)
 		{
 			// Get vertical position
-			GetAttr(PGA_Top, (Object *)info->vert_scroller, (ULONG *)&info->offset_y);
+			GetAttr(PGA_Top, (Object *)info->vert_scroller, &pos);
+			info->offset_y = pos;
 			info->offset_y += info->area.MinY;
 		}
 

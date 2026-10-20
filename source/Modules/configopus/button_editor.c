@@ -1107,14 +1107,15 @@ void buttoned_end_drag(ButtonEdData *data, BOOL ok)
 // Get drop position
 short buttoned_get_drop(ButtonEdData *data, short x, short y)
 {
-	long top, item;
+	IPTR top;
+	long item;
 
 	// Valid drop within the list?
 	if (!(CheckObjectArea(data->lister, x, y)))
 		return -1;
 
 	// Get top item
-	GetAttr(DLV_Top, (Object *)GADGET(data->lister), (ULONG *)&top);
+	GetAttr(DLV_Top, (Object *)GADGET(data->lister), &top);
 
 	// Get item we dropped over
 	item = UDivMod32((y - data->lister->dims.Top), data->window->RPort->TxHeight) + top;

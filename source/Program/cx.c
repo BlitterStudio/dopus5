@@ -245,11 +245,14 @@ STATIC void SAVEDS cx_right_button(register CxMsg *cxm, CxObj *co)
 	// Get InputEvent from CxMsg
 	ie = (struct InputEvent *)CxMsgData(cxm);
 
-	// Get data pointer
-	data = (CxData *)(IPTR)CxMsgID(cxm);
+	// Get data pointer (the 32-bit CxMsgID() can't carry a 64-bit pointer)
+	data = GUI->cx;
 
-	// Trap mouse events when not iconified
-	if (ie->ie_Class == IECLASS_RAWMOUSE && GUI->screen_pointer)
+	// Trap mouse events when not iconified; tablets and virtual machines
+	// report pointer moves as IECLASS_NEWPOINTERPOS, which a menu opened in
+	// an inactive window needs as well
+	if ((ie->ie_Class == IECLASS_RAWMOUSE || (ie->ie_Class == IECLASS_NEWPOINTERPOS && data->right_down)) &&
+		GUI->screen_pointer)
 	{
 		// Mouse button push?
 		if (!(ie->ie_Code & IECODE_UP_PREFIX) && !data->right_down)
@@ -667,6 +670,9 @@ STATIC void SAVEDS cx_right_button(register CxMsg *cxm, CxObj *co)
 		{
 			struct IntuiMessage *msg;
 
+			// DisposeCxMsg() can free the event (AROS does), so keep its code
+			UWORD code = ie->ie_Code;
+
 			// Allocate message
 			if ((msg = AllocVec(sizeof(struct IntuiMessage), MEMF_CLEAR)))
 			{
@@ -691,29 +697,29 @@ STATIC void SAVEDS cx_right_button(register CxMsg *cxm, CxObj *co)
 				PutMsg(window->UserPort, (struct Message *)msg);
 
 				// Dispose of the event if it's a button one
-				if (ie->ie_Code != IECODE_NOBUTTON)
+				if (code != IECODE_NOBUTTON)
 					DisposeCxMsg(cxm);
 
 				// Button gone down?
-				if (!(ie->ie_Code & IECODE_UP_PREFIX) && !data->right_down)
+				if (!(code & IECODE_UP_PREFIX) && !data->right_down)
 				{
 					// Store button code
-					data->right_down = ie->ie_Code | IECODE_UP_PREFIX;
+					data->right_down = code | IECODE_UP_PREFIX;
 
 					// Store window
 					data->button_window = window;
 
 					// Get qualifier for this button
-					if (ie->ie_Code == IECODE_LBUTTON)
+					if (code == IECODE_LBUTTON)
 						data->qual_down = IEQUALIFIER_LEFTBUTTON;
-					else if (ie->ie_Code == IECODE_RBUTTON)
+					else if (code == IECODE_RBUTTON)
 						data->qual_down = IEQUALIFIER_RBUTTON;
-					else if (ie->ie_Code == IECODE_MBUTTON)
+					else if (code == IECODE_MBUTTON)
 						data->qual_down = IEQUALIFIER_MIDBUTTON;
 				}
 
 				// Or gone up?
-				else if (ie->ie_Code == data->right_down)
+				else if (code == data->right_down)
 				{
 					struct Layer *layer;
 					BOOL ok = 1;
@@ -853,7 +859,7 @@ void cx_install_popup(CxData *cx)
 
 	// Install right-button filter if wanted
 	if ((environment->env->settings.general_flags & GENERALF_MOUSE_HOOK) &&
-		(cx->rmb_hook = CxCustom(GET_CX_FUNC(cx_right_button), (long)cx)))
+		(cx->rmb_hook = CxCustom(GET_CX_FUNC(cx_right_button), 0)))
 	{
 		// Activate filter
 		AttachCxObj(cx->broker, cx->rmb_hook);
