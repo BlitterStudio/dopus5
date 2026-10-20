@@ -280,11 +280,16 @@ void lister_get_icons(FunctionHandle *handle, Lister *lister, char *add_name, sh
 						else
 							lister_show_icon(lister, object);
 
-						// Shown, or no message on the way that would show it
+						// Not queued: the lister has handled it, or it never got there. Then
+						// it was not drawn, and the window is drawn again at the end
 						if (!queued)
 						{
 							lock_listlock(&info->objects, 1);
-							object->flags &= ~BDOF_SHOW_PENDING;
+							if (object->flags & BDOF_SHOW_PENDING)
+							{
+								object->flags &= ~BDOF_SHOW_PENDING;
+								--shown_icons;
+							}
 							unlock_listlock(&info->objects);
 						}
 					}

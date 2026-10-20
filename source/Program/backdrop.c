@@ -762,7 +762,8 @@ void backdrop_calc_virtual(BackdropInfo *info)
 	struct Rectangle rect;
 	BOOL virtual_ok = 0;
 
-	// Lock window
+	// Lock backdrop list, then window (the order every drawing path takes them in)
+	lock_listlock(&info->objects, 0);
 	GetSemaphore(&info->window_lock, SEMF_EXCLUSIVE, 0);
 
 	// Non-backdrop window open?
@@ -779,14 +780,8 @@ void backdrop_calc_virtual(BackdropInfo *info)
 	// Ok to calculate?
 	if (virtual_ok)
 	{
-		// Lock backdrop list
-		lock_listlock(&info->objects, 0);
-
 		// Calculate size
 		backdrop_calc_virtual_size(info, &rect);
-
-		// Unlock backdrop list
-		unlock_listlock(&info->objects);
 	}
 
 	// Otherwise
@@ -836,8 +831,9 @@ void backdrop_calc_virtual(BackdropInfo *info)
 		}
 	}
 
-	// Unlock window
+	// Unlock window and backdrop list
 	FreeSemaphore(&info->window_lock);
+	unlock_listlock(&info->objects);
 
 	// Update position from sliders
 	if (virtual_ok)
