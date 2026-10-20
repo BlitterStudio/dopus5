@@ -242,15 +242,16 @@ void lister_get_icons(FunctionHandle *handle, Lister *lister, char *add_name, sh
 						{
 							++count;
 
-							// Newest on top: an icon is drawn over the others as it is read, and
-							// the head of the list is drawn last and hit first
-							Remove(&object->node);
-							AddHead(&info->objects.list, &object->node);
-
 							// Shown now if it has a position. Until the lister has drawn it,
 							// other redraws leave it out, or it would be drawn twice
 							if (!(object->flags & BDOF_NO_POSITION))
 							{
+								// Newest on top: it is drawn over the others, and the head
+								// of the list is drawn last and hit first. Icons without a
+								// position stay in directory order for the cleanup
+								Remove(&object->node);
+								AddHead(&info->objects.list, &object->node);
+
 								object->flags |= BDOF_SHOW_PENDING;
 								show_icon = 1;
 								++shown_icons;
