@@ -236,14 +236,20 @@ void lister_get_icons(FunctionHandle *handle, Lister *lister, char *add_name, sh
 
 						// Otherwise, increment count
 						else
+						{
 							++count;
+
+							// Shown now if it has a position; the redraw at the end skips it
+							if (!(object->flags & BDOF_NO_POSITION))
+								object->flags |= BDOF_SHOWN;
+						}
 					}
 
 					// Unlock list
 					unlock_listlock(&info->objects);
 
 					// Tell lister to show icon
-					if (object && !(object->flags & BDOF_NO_POSITION))
+					if (object && object->flags & BDOF_SHOWN)
 					{
 						if (handle)
 						{
@@ -364,10 +370,18 @@ void lister_get_icons(FunctionHandle *handle, Lister *lister, char *add_name, sh
 		// Arrange unpositioned icons
 		if (!backdrop_cleanup(info, BSORT_NORM, CLEANUPF_CHECK_POS))
 		{
-			// Icons weren't shown by the cleanup, so show now
-			backdrop_show_objects(info, BDSF_RECALC);
+			// Icons weren't shown by the cleanup, so show now. Skip the ones shown as they
+			// were read: drawing them again would double the soft edges of alpha icons
+			backdrop_show_objects(info, BDSF_RECALC | BDSF_SKIP_SHOWN);
 			shown = 1;
 		}
+
+		// Clear the shown flags
+		lock_listlock(&info->objects, 1);
+		for (object = (BackdropObject *)info->objects.list.lh_Head; object->node.ln_Succ;
+			 object = (BackdropObject *)object->node.ln_Succ)
+			object->flags &= ~BDOF_SHOWN;
+		unlock_listlock(&info->objects);
 	}
 
 	// Recalculate after a remove?

@@ -367,11 +367,16 @@ void backdrop_show_objects(BackdropInfo *info, UWORD flags)
 					}
 				}
 
-				// Valid position?
-				if (!(object->flags & BDOF_NO_POSITION))
+				// Valid position, and not on display already?
+				if (!(object->flags & BDOF_NO_POSITION) && !(flags & BDSF_SKIP_SHOWN && object->flags & BDOF_SHOWN))
 				{
 					// Render this object
-					backdrop_draw_object(info, object, BRENDERF_REAL, &info->rp, object->pos.Left, object->pos.Top);
+					backdrop_draw_object(info,
+										 object,
+										 BRENDERF_REAL | ((flags & BDSF_CLEAR) ? BRENDERF_ERASED : 0),
+										 &info->rp,
+										 object->pos.Left,
+										 object->pos.Top);
 				}
 			}
 		}
@@ -634,11 +639,14 @@ void backdrop_draw_object(BackdropInfo *info,
 			flags &= ~BRENDERF_CLEAR;
 	}
 
-	// Object state changed?
-	else if (object->flags & BDOF_STATE_CHANGE)
+	// Object state changed, or drawing a borderless image over the display? The image is
+	// blended with what is under it (soft alpha edges with IconLib on RTG, PNG icons on
+	// MorphOS), so drawing it over itself doubles those edges. Clear first unless the
+	// caller has just cleared the whole display
+	else if (object->flags & BDOF_STATE_CHANGE ||
+			 (draw && (flags & (BRENDERF_REAL | BRENDERF_ERASED)) == BRENDERF_REAL && !has_border && !render_hook))
 	{
 #ifndef USE_DRAWICONSTATE
-	// Need to clear if transparent
 	#if !defined(__MORPHOS__)
 		if (!has_border)
 	#endif
@@ -694,8 +702,9 @@ void backdrop_draw_object(BackdropInfo *info,
 #endif
 				}
 #ifdef USE_DRAWICONSTATE
-				// Same for a borderless icon: the hook draws over what is there, as on Workbench
-				else if (!render_hook)
+				// Same for a borderless icon: the hook draws over what is there, as on Workbench.
+				// Nothing to clear if the caller has just cleared the whole display
+				else if (!render_hook && !(flags & BRENDERF_ERASED))
 				{
 					EraseRect(rp, rect.MinX, rect.MinY, rect.MaxX, rect.MaxY);
 				}
