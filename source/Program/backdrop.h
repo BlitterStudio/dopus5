@@ -173,7 +173,7 @@ enum {
 #define BDOF_DESKTOP_FOLDER (1 << 20)  // In desktop folder
 #define BDOF_GHOSTED (1 << 21)		   // Icon to be rendered ghosted
 #define BDOF_REMAPPED (1 << 22)		   // Icon has been remapped at least once
-#define BDOF_SHOWN (1 << 23)		   // Shown while its icons were being read
+#define BDOF_SHOW_PENDING (1 << 23)   // LISTER_SHOW_ICON will draw it first
 
 #define BDOF_TEMP_FLAG (1 << 26)	 // A temporary flag
 #define BDOF_REFRESH (1 << 27)		 // Icon needs to be refreshed
@@ -258,7 +258,6 @@ typedef struct
 #define BDSF_IN_REFRESH (1 << 5)
 #define BDSF_RESET (1 << 6)
 #define BDSF_NO_CLIP (1 << 7)
-#define BDSF_SKIP_SHOWN (1 << 8)  // Skip objects marked BDOF_SHOWN
 
 #define BDNF_CD (1 << 0)
 #define BDNF_KEEP (1 << 1)
@@ -454,6 +453,7 @@ void backdrop_get_font(BackdropInfo *info);
 #define BRENDERF_LABEL (1 << 2)
 #define BRENDERF_REAL (1 << 3)
 #define BRENDERF_ERASED (1 << 4)  // Display under the object was just cleared
+#define BRENDERF_NEW (1 << 5)	  // Object is not on display yet; draw it on top
 
 unsigned short *backdrop_space_array(BackdropInfo *info, Point *size);
 void backdrop_space_add_icon(BackdropInfo *, unsigned short *array, BackdropObject *icon, Point *size);

@@ -39,6 +39,7 @@ void lister_get_icons(FunctionHandle *handle, Lister *lister, char *add_name, sh
 	Att_Node *icon_node = 0;
 	BackdropInfo *info = lister->backdrop_info;
 	BOOL shown = 0;
+	long shown_icons = 0;
 	char *path;
 	struct MsgPort *icon_reply_port = 0;
 	long icons_pending = 0;
@@ -173,6 +174,8 @@ void lister_get_icons(FunctionHandle *handle, Lister *lister, char *add_name, sh
 				// Don't already have it?
 				if (!object)
 				{
+					BOOL show_icon = 0;
+
 					// Lock icon list for writing
 					lock_listlock(&info->objects, 1);
 
@@ -239,9 +242,19 @@ void lister_get_icons(FunctionHandle *handle, Lister *lister, char *add_name, sh
 						{
 							++count;
 
-							// Shown now if it has a position; the redraw at the end skips it
+							// Newest on top: an icon is drawn over the others as it is read, and
+							// the head of the list is drawn last and hit first
+							Remove(&object->node);
+							AddHead(&info->objects.list, &object->node);
+
+							// Shown now if it has a position. Until the lister has drawn it,
+							// other redraws leave it out, or it would be drawn twice
 							if (!(object->flags & BDOF_NO_POSITION))
-								object->flags |= BDOF_SHOWN;
+							{
+								object->flags |= BDOF_SHOW_PENDING;
+								show_icon = 1;
+								++shown_icons;
+							}
 						}
 					}
 
@@ -249,13 +262,15 @@ void lister_get_icons(FunctionHandle *handle, Lister *lister, char *add_name, sh
 					unlock_listlock(&info->objects);
 
 					// Tell lister to show icon
-					if (object && object->flags & BDOF_SHOWN)
+					if (show_icon)
 					{
+						BOOL queued = 0;
+
 						if (handle)
 						{
 							if (icon_reply_port)
 							{
-								if (IPC_Command(lister->ipc, LISTER_SHOW_ICON, 0, object, 0, icon_reply_port))
+								if ((queued = (IPC_Command(lister->ipc, LISTER_SHOW_ICON, 0, object, 0, icon_reply_port) != 0)))
 									++icons_pending;
 							}
 							else
@@ -263,6 +278,14 @@ void lister_get_icons(FunctionHandle *handle, Lister *lister, char *add_name, sh
 						}
 						else
 							lister_show_icon(lister, object);
+
+						// Shown, or no message on the way that would show it
+						if (!queued)
+						{
+							lock_listlock(&info->objects, 1);
+							object->flags &= ~BDOF_SHOW_PENDING;
+							unlock_listlock(&info->objects);
+						}
 					}
 				}
 			}
@@ -367,21 +390,35 @@ void lister_get_icons(FunctionHandle *handle, Lister *lister, char *add_name, sh
 	// Any new objects?
 	if (count > 0)
 	{
-		// Arrange unpositioned icons
-		if (!backdrop_cleanup(info, BSORT_NORM, CLEANUPF_CHECK_POS))
+		BOOL only_new = 0;
+
+		// Arrange unpositioned icons (this sorts the list)
+		if (shown_icons < count)
+			backdrop_cleanup(info, BSORT_NORM, CLEANUPF_CHECK_POS);
+
+		// Nothing in the list but new icons?
+		else
 		{
-			// Icons weren't shown by the cleanup, so show now. Skip the ones shown as they
-			// were read: drawing them again would double the soft edges of alpha icons
-			backdrop_show_objects(info, BDSF_RECALC | BDSF_SKIP_SHOWN);
-			shown = 1;
+			long objects = 0;
+
+			lock_listlock(&info->objects, 0);
+			for (object = (BackdropObject *)info->objects.list.lh_Head; object->node.ln_Succ;
+				 object = (BackdropObject *)object->node.ln_Succ)
+				++objects;
+			unlock_listlock(&info->objects);
+			only_new = (objects == count);
 		}
 
-		// Clear the shown flags
-		lock_listlock(&info->objects, 1);
-		for (object = (BackdropObject *)info->objects.list.lh_Head; object->node.ln_Succ;
-			 object = (BackdropObject *)object->node.ln_Succ)
-			object->flags &= ~BDOF_SHOWN;
-		unlock_listlock(&info->objects);
+		// All of them were shown as they were read, newest on top as the list stacks
+		// them; drawing them again would double the soft edges of alpha icons
+		if (only_new)
+			backdrop_calc_virtual(info);
+
+		// Otherwise draw everything in the list's order. Icons are cleared before they
+		// are drawn, so the ones shown already are not doubled
+		else
+			backdrop_show_objects(info, BDSF_RECALC);
+		shown = 1;
 	}
 
 	// Recalculate after a remove?
@@ -641,27 +678,30 @@ short backdrop_check_icons_ok(BackdropInfo *info)
 void lister_show_icon(Lister *lister, BackdropObject *object)
 {
 	BackdropObject *test;
+	BOOL show;
 
-	// Is the window open, or not in icon mode?
-	if (!lister_valid_window(lister) || !(lister->flags & LISTERF_VIEW_ICONS))
-		return;
+	// Is the window open, and in icon mode?
+	show = (lister_valid_window(lister) && lister->flags & LISTERF_VIEW_ICONS);
 
 	// Lock icon list
 	lock_listlock(&lister->backdrop_info->objects, 0);
 
-	// Walk the list from the tail: new icons are AddTail'd during populate,
-	// so the one we're looking for is almost always at TailPred. That makes
-	// the common populate path O(1) per incoming icon instead of O(N), where
-	// calling this N times during a drawer-open cost O(N^2).
-	for (test = (BackdropObject *)lister->backdrop_info->objects.list.lh_TailPred;
-		 test->node.ln_Pred;
-		 test = (BackdropObject *)test->node.ln_Pred)
+	// Walk the list from the head: lister_get_icons() puts each new icon there, so
+	// the one we're looking for is almost always near it. That makes the common
+	// populate path O(1) per incoming icon instead of O(N), where calling this N
+	// times during a drawer-open cost O(N^2).
+	for (test = (BackdropObject *)lister->backdrop_info->objects.list.lh_Head; test->node.ln_Succ;
+		 test = (BackdropObject *)test->node.ln_Succ)
 	{
 		// Found?
 		if (test == object)
 		{
-			// Show the icon
-			backdrop_render_object(lister->backdrop_info, object, BRENDERF_CLIP);
+			// Other redraws may draw it from now on
+			object->flags &= ~BDOF_SHOW_PENDING;
+
+			// Show the icon; it is not on display yet, and goes on top
+			if (show)
+				backdrop_render_object(lister->backdrop_info, object, BRENDERF_CLIP | BRENDERF_NEW);
 			break;
 		}
 	}

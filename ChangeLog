@@ -7,12 +7,15 @@ Program changes; version bump deferred.
   icons (PNG icons with IconLib on an RTG screen) with what is already
   on the screen, so the second pass doubled them.  Scrolling redrew
   the icons once, so they changed after scrolling (reported by Peter
-  Keunecke).
-- A borderless icon drawn over the display clears its area first.
-  Running a command in an icon lister, and other redraws that do not
-  clear the whole window, also drew every icon over itself.  The OS4
-  and AROS builds already did this through DrawIconState(), and now
-  skip it when the whole window was just cleared.
+  Keunecke).  New icons go on top of the others, as they are drawn
+  while loading.  If some still need a place, the window is drawn
+  once more after the cleanup, clearing each icon first.
+- An icon drawn over the display clears its area first and redraws
+  the icons it overlaps there, in their stacking order.  Running a
+  command in an icon lister, selecting icons and other redraws that do
+  not clear the whole window drew every icon over itself, and clearing
+  for a selected icon wiped the parts of icons underneath it.
+  AppIcons with a render hook still draw over what is there.
 
 [dopus5 next] AROS 64-bit: archive browsing, frozen pop-up menus, 64-bit sweep
 Program, dopus5.library, configopus and most modules change; version
