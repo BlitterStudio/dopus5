@@ -36,8 +36,8 @@ struct TimerIFace *ITimer = NULL;
 #ifdef DO_64BIT
 	#define PW_FILESIZE PW_FileSize64
 	#define PW_FILEDONE PW_FileDone64
-	#define FSIZE (ULONG) & filesize
-	#define PDONE (ULONG) & progtotal
+	#define FSIZE (IPTR)&filesize
+	#define PDONE (IPTR)&progtotal
 #else
 	#define PW_FILESIZE PW_FileSize
 	#define PW_FILEDONE PW_FileDone

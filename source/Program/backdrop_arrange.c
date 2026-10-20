@@ -932,10 +932,12 @@ void backdrop_make_visible(BackdropInfo *info, BackdropObject *object)
 	if (scroll_x || scroll_y)
 	{
 		long oldpos;
+		IPTR pos;
 		short which;
 
 		// Get old horizontal position
-		GetAttr(PGA_Top, info->horiz_scroller, (ULONG *)&oldpos);
+		GetAttr(PGA_Top, (Object *)info->horiz_scroller, &pos);
+		oldpos = pos;
 
 		// Add scroll factor
 		oldpos += scroll_x;
@@ -946,7 +948,8 @@ void backdrop_make_visible(BackdropInfo *info, BackdropObject *object)
 		SetGadgetAttrs(info->horiz_scroller, info->window, 0, PGA_Top, oldpos, TAG_END);
 
 		// Get old vertical position
-		GetAttr(PGA_Top, info->vert_scroller, (ULONG *)&oldpos);
+		GetAttr(PGA_Top, (Object *)info->vert_scroller, &pos);
+		oldpos = pos;
 
 		// Add scroll factor
 		oldpos += scroll_y;

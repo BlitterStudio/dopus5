@@ -244,7 +244,7 @@ ULONG LIBFUNC L_Config_Scripts(
 							if (data->drag = GetDragInfo(data->window, 0, width, height, 1))
 							{
 								ListViewDraw draw;
-								ULONG ptr;
+								IPTR ptr;
 
 								// Fill out draw packet
 								draw.rp = &data->drag->drag_rp;
@@ -260,7 +260,7 @@ ULONG LIBFUNC L_Config_Scripts(
 								data->drag->flags |= DRAGF_OPAQUE;
 
 								// Draw image
-								ptr = (ULONG)&draw;
+								ptr = (IPTR)&draw;
 								GetAttr(DLV_DrawLine, (Object *)GetTagData(DLV_Object, 0, tags), &ptr);
 								GetDragMask(data->drag);
 

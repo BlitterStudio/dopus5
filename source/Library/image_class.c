@@ -574,3 +574,16 @@ void image_draw(Class *cl, struct Image *image, BoopsiImageData *data, struct im
 	break;
 	}
 }
+
+#ifdef __AROS__
+AROS_UFH3(IPTR,
+		  image_dispatch_entry,
+		  AROS_UFHA(Class *, cl, A0),
+		  AROS_UFHA(Object *, obj, A2),
+		  AROS_UFHA(Msg, msg, A1))
+{
+	AROS_USERFUNC_INIT
+	return image_dispatch(cl, obj, msg);
+	AROS_USERFUNC_EXIT
+}
+#endif

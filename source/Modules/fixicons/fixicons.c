@@ -109,7 +109,7 @@ BPTR open_temp_file(char *filename, IPCData *ipc)
 {
 	unsigned short a;
 	ULONG micros, secs;
-	int temp_key;
+	IPTR temp_key;
 	BPTR file = 0;
 
 	// Get temporary key

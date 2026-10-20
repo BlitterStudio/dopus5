@@ -462,7 +462,7 @@ BOOL backdrop_idcmp(BackdropInfo *info, struct IntuiMessage *msg, unsigned short
 			long newpos, diff;
 
 			// Get old position
-			GetAttr(PGA_Top, info->vert_scroller, &oldpos);
+			GetAttr(PGA_Top, (Object *)info->vert_scroller, &oldpos);
 
 			// Get new position
 			newpos = info->offset_y - info->area.MinY;
@@ -477,7 +477,7 @@ BOOL backdrop_idcmp(BackdropInfo *info, struct IntuiMessage *msg, unsigned short
 			SetGadgetAttrs(info->vert_scroller, info->window, 0, PGA_Top, newpos, TAG_END);
 
 			// Get new position
-			GetAttr(PGA_Top, info->vert_scroller, &pos);
+			GetAttr(PGA_Top, (Object *)info->vert_scroller, &pos);
 
 			// Change?
 			diff = oldpos - pos;
@@ -499,14 +499,14 @@ BOOL backdrop_idcmp(BackdropInfo *info, struct IntuiMessage *msg, unsigned short
 			long diff;
 
 			// Get old position
-			GetAttr(PGA_Top, info->horiz_scroller, &oldpos);
+			GetAttr(PGA_Top, (Object *)info->horiz_scroller, &oldpos);
 
 			// Update gadget
 			SetGadgetAttrs(
 				info->horiz_scroller, info->window, 0, PGA_Top, (msg->Code == HOME) ? 0 : 0xfffffff, TAG_END);
 
 			// Get new position
-			GetAttr(PGA_Top, info->horiz_scroller, &pos);
+			GetAttr(PGA_Top, (Object *)info->horiz_scroller, &pos);
 
 			// Change?
 			diff = oldpos - pos;

@@ -575,9 +575,9 @@ void start_show(StartMenu *menu, struct Screen *screen)
 		GetPattern(&menu->pattern_data, screen, 0);
 
 // Initialise backfill hook
-#if defined(__MORPHOS__)
+#if defined(__AROS__) || defined(__MORPHOS__)
 		menu->pattern.hook.h_Entry = (HOOKFUNC)HookEntry;
-		menu->pattern.hook.h_SubEntry = (ULONG(*)())PatternBackfill;
+		menu->pattern.hook.h_SubEntry = (HOOKFUNC)PatternBackfill;
 #else
 		menu->pattern.hook.h_Entry = (ULONG(*)())PatternBackfill;
 #endif

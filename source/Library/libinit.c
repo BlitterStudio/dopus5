@@ -1356,33 +1356,33 @@ int UserLibInit(REG(a6, struct MyLibrary *libbase))
 
 	// Initialise boopsi classes
 	if (!(image_class = init_class(
-			  data, "dopusiclass", "imageclass", (IPTR (*)())image_dispatch, sizeof(BoopsiImageData))) ||
+			  data, "dopusiclass", "imageclass", (IPTR (*)())BOOPSI_DISPATCHER_ENTRY(image_dispatch), sizeof(BoopsiImageData))) ||
 
 		!(button_class = init_class(
-			  data, "dopusbuttongclass", "gadgetclass", (IPTR (*)())button_dispatch, sizeof(ButtonData))) ||
+			  data, "dopusbuttongclass", "gadgetclass", (IPTR (*)())BOOPSI_DISPATCHER_ENTRY(button_dispatch), sizeof(ButtonData))) ||
 
 		!(string_class = init_class(
-			  data, "dopusstrgclass", "strgclass", (IPTR (*)())button_dispatch, sizeof(StringData))) ||
+			  data, "dopusstrgclass", "strgclass", (IPTR (*)())BOOPSI_DISPATCHER_ENTRY(button_dispatch), sizeof(StringData))) ||
 
 		!(check_class = init_class(
-			  data, "dopuscheckgclass", "gadgetclass", (IPTR (*)())button_dispatch, sizeof(CheckData))) ||
+			  data, "dopuscheckgclass", "gadgetclass", (IPTR (*)())BOOPSI_DISPATCHER_ENTRY(button_dispatch), sizeof(CheckData))) ||
 
 		!(view_class = init_class(
-			  data, "dopusviewgclass", "gadgetclass", (IPTR (*)())button_dispatch, sizeof(ButtonData))) ||
+			  data, "dopusviewgclass", "gadgetclass", (IPTR (*)())BOOPSI_DISPATCHER_ENTRY(button_dispatch), sizeof(ButtonData))) ||
 
 		!(palette_class = init_class(
-			  data, "dopuspalettegclass", "gadgetclass", (IPTR (*)())palette_dispatch, sizeof(PaletteData))) ||
+			  data, "dopuspalettegclass", "gadgetclass", (IPTR (*)())BOOPSI_DISPATCHER_ENTRY(palette_dispatch), sizeof(PaletteData))) ||
 
 		!(frame_class = init_class(
-			  data, "dopusframeclass", "gadgetclass", (IPTR (*)())button_dispatch, sizeof(ButtonData))) ||
+			  data, "dopusframeclass", "gadgetclass", (IPTR (*)())BOOPSI_DISPATCHER_ENTRY(button_dispatch), sizeof(ButtonData))) ||
 
 		!(gauge_class = init_class(
-			  data, "dopusgaugeclass", "gadgetclass", (IPTR (*)())button_dispatch, sizeof(GaugeData))) ||
+			  data, "dopusgaugeclass", "gadgetclass", (IPTR (*)())BOOPSI_DISPATCHER_ENTRY(button_dispatch), sizeof(GaugeData))) ||
 
 		!(listview_class = init_class(data,
 									  "dopuslistviewgclass",
 									  "gadgetclass",
-									  (IPTR (*)())listview_dispatch,
+									  (IPTR (*)())BOOPSI_DISPATCHER_ENTRY(listview_dispatch),
 									  sizeof(ListViewData))))
 		return 1;
 

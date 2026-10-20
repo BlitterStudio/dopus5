@@ -1,3 +1,45 @@
+[dopus5 next] AROS 64-bit: archive browsing, frozen pop-up menus, 64-bit sweep
+Program, dopus5.library, configopus and most modules change; version
+bump deferred.
+
+- Opening a ZIP, LHA or other archive in a lister no longer crashes on
+  AROS 64-bit.  XADopus named its message port "XADopus_<address>" in a
+  20-byte buffer; a 64-bit address overran it into the IPC pointer that
+  follows, and the next lister command crashed in WaitPort().
+- Archive listers on AROS 64-bit enter folders, open files and end the
+  XADopus process when they close.  XADopus read the lister's ARexx
+  handler messages through a DosPacket overlay that is one argument out
+  on 64-bit, so it never saw double-clicks, drops or "inactive".
+- Right-clicking a button bank, lister or other Opus window that is not
+  the active window no longer leaves a dead pop-up menu on AROS.  The
+  mouse hook that passes the button to the inactive window read the
+  event after DisposeCxMsg(), which frees it on AROS, so it lost track
+  of the button: the menu got no mouse moves or release, choosing Save
+  from a bank's menu did nothing, and later clicks could be swallowed.
+  The hook now also passes on the absolute pointer moves of tablets and
+  virtual machines, and no longer takes its data pointer from the 32-bit
+  commodity ID.
+- Editing a filetype without an icon, such as ASCII, no longer crashes
+  on AROS: the editor asked icon.library for an icon with an empty name.
+- 64-bit AROS sweep:
+  - Command-list pointers passed to the configuration editors (buttons,
+    filetypes, menus, scripts, function editor) and module data passed to
+    module entry points are no longer cut to 32 bits.
+  - GetAttr() results land in pointer-sized variables (scrollers, list
+    positions, button editor drops, text viewer).
+  - Gadget call-backs, string edit hooks, backfill hooks, the locale
+    formatting hook, the XAD progress hook and the custom BOOPSI classes
+    are called with the AROS hook calling convention.  The button
+    editor's call-backs used to get the wrong arguments.
+  - Workbench font.prefs FONT chunks are decoded from their fixed 32-bit
+    layout, so the icon and screen fonts are read correctly.
+  - Icon disk revision and position fields, palette tables, DivideU(),
+    font pen tables, temporary file name keys, Filetype editor reader
+    handles, Join progress values and FTP error codes use the right
+    widths.
+  - SimpleRequestTags() and the inline/stub wrappers for Att_*, IPC and
+    pop-up calls pass full-width values.
+
 [dopus5 5.103] Release summary
 Program bumps to 5.103, library and modules to v73r7, commands to
 v65r5.  The release adds an Installer script, a MagicWB icon set, the

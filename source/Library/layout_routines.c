@@ -966,19 +966,26 @@ ObjectList *LIBFUNC L_AddObjectList(REG(a0, struct Window *window),
 			lasttag = 0;
 			while ((tag = FindTagItem(GTCustom_CallBack, taglist)))
 			{
-				struct Hook hook;
-
 				// Check that this tag hasn't been found before
 				if (lasttag == tag)
 					break;
 
-				// Fill out a hook
-				hook.h_Entry = (ULONG(*)())tag->ti_Data;
-				hook.h_SubEntry = 0;
-				hook.h_Data = 0;
+#ifdef __AROS__
+				// Call the call-back with its real arguments
+				((void (*)(struct TagItem *, struct Window *))(IPTR)tag->ti_Data)(tag, window);
+#else
+				{
+					struct Hook hook;
 
-				// Call the hook
-				CallHookPkt(&hook, (void *)window, (void *)tag);
+					// Fill out a hook
+					hook.h_Entry = (ULONG(*)())tag->ti_Data;
+					hook.h_SubEntry = 0;
+					hook.h_Data = 0;
+
+					// Call the hook
+					CallHookPkt(&hook, (void *)window, (void *)tag);
+				}
+#endif
 
 				// Remember this tag
 				lasttag = tag;
@@ -1084,7 +1091,7 @@ ObjectList *LIBFUNC L_AddObjectList(REG(a0, struct Window *window),
 					struct TagItem *tag;
 
 // Fill out hook
-#if defined(__MORPHOS__)
+#if defined(__AROS__) || defined(__MORPHOS__)
 					hook->hook.h_Entry = (HOOKFUNC)HookEntry;
 					hook->hook.h_SubEntry = (HOOKFUNC)string_edit_hook;
 #else

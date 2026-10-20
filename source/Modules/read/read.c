@@ -68,7 +68,7 @@ int LIBFUNC L_Module_Entry(REG(a0, struct List *files),
 						   REG(a2, IPCData *ipc),
 						   REG(a3, IPCData *main_ipc),
 						   REG(d0, IPTR mod_id),
-						   REG(d1, ULONG mod_data))
+						   REG(d1, IPTR mod_data))
 {
 	read_data *data;
 	struct Node *node, *next;
@@ -1576,10 +1576,10 @@ BOOL read_view(read_data *data)
 					{
 					// Vertical slider
 					case GAD_VERT_SCROLLER: {
-						unsigned long top;
+						IPTR top;
 
 						// Get new top
-						GetAttr(PGA_Top, (Object *)data->vert_scroller, (ULONG *)&top);
+						GetAttr(PGA_Top, (Object *)data->vert_scroller, &top);
 						if (data->slider_div > 1)
 						{
 							top = UMult32(top, data->slider_div);
@@ -1607,10 +1607,10 @@ BOOL read_view(read_data *data)
 
 					// Horizontal slider
 					case GAD_HORIZ_SCROLLER: {
-						long top;
+						IPTR top;
 
 						// Get new top
-						GetAttr(PGA_Top, (Object *)data->horiz_scroller, (ULONG *)&top);
+						GetAttr(PGA_Top, (Object *)data->horiz_scroller, &top);
 
 						// Scroll display
 						if (top != data->left)

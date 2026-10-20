@@ -1,5 +1,37 @@
 #include "config_lib.h"
 #include "config_filetypes.h"
+static IPTR classed_parse_handle(const char *text)
+{
+	UQUAD value = 0;
+
+	if (!text)
+		return 0;
+
+	while (*text >= '0' && *text <= '9')
+	{
+		value = (value * 10) + (*text - '0');
+		++text;
+	}
+
+	return (IPTR)value;
+}
+
+static void classed_format_handle(char *buf, IPTR handle)
+{
+	char tmp[32];
+	int pos = sizeof(tmp) - 1;
+	UQUAD value = (UQUAD)handle;
+
+	tmp[pos] = 0;
+	do
+	{
+		tmp[--pos] = '0' + (value % 10);
+		value /= 10;
+	} while (value && pos > 0);
+
+	strcpy(buf, tmp + pos);
+}
+
 
 /*#define DOpusBase		(data->dopus_base)
 #define DOSBase			(data->dos_base)
@@ -366,7 +398,9 @@ void SAVEDS FileclassEditor(void)
 		ReaderNode *next = (ReaderNode *)node->node.mln_Succ;
 
 		// Build quit command
-		lsprintf(command, "dopus read %ld quit", node->handle);
+		strcpy(command, "dopus read ");
+		classed_format_handle(command + 11, node->handle);
+		strcat(command, " quit");
 
 		// Send command
 		classed_send_rexx(data, command, 0);
@@ -781,7 +815,7 @@ void classed_send_rexx(fileclass_ed_data *data, char *command, short open)
 	// Was message sent?
 	if (!msg)
 	{
-		ULONG handle = 0;
+		IPTR handle = 0;
 
 		// Wait for reply
 		WaitPort(data->reply_port);
@@ -794,7 +828,7 @@ void classed_send_rexx(fileclass_ed_data *data, char *command, short open)
 		{
 			// Get handle
 			if (msg->rm_Result2)
-				handle = (ULONG)atoi((char *)msg->rm_Result2);
+				handle = classed_parse_handle((char *)msg->rm_Result2);
 
 			// Opened viewer?
 			if (handle)

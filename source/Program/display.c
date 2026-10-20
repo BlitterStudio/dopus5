@@ -342,9 +342,9 @@ BOOL display_open(long flags)
 		GetSemaphore(&GUI->backdrop->window_lock, SEMF_EXCLUSIVE, 0);
 
 // Initialise backfill hook
-#if defined(__MORPHOS__)
+#if defined(__AROS__) || defined(__MORPHOS__)
 		GUI->main_pattern.hook.h_Entry = (HOOKFUNC)HookEntry;
-		GUI->main_pattern.hook.h_SubEntry = (ULONG(*)())PatternBackfill;
+		GUI->main_pattern.hook.h_SubEntry = (HOOKFUNC)PatternBackfill;
 #else
 		GUI->main_pattern.hook.h_Entry = (ULONG(*)())PatternBackfill;
 #endif

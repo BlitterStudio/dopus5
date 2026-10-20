@@ -437,7 +437,7 @@ void LIBFUNC L_DivideToString(REG(a0, char *string),
 							  REG(d3, char sep))
 {
 	unsigned long whole;
-	unsigned long remainder;
+	ULONG remainder;
 
 	// Zero?
 	if (div == 0)

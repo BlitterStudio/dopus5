@@ -1638,8 +1638,8 @@ BOOL WriteClipString(struct ClipHandle *, char *, long);
 long ReadClipString(struct ClipHandle *, char *, long);
 
 // palette
-void LoadPalette32(struct ViewPort *, unsigned long *);
-void GetPalette32(struct ViewPort *, unsigned long *, unsigned short, short);
+void LoadPalette32(struct ViewPort *, ULONG *);
+void GetPalette32(struct ViewPort *, ULONG *, unsigned short, short);
 
 // buffered_io
 APTR OpenBuf(char *name, long mode, long buffer_size);
@@ -1660,7 +1660,7 @@ struct Gadget *CreateTitleGadget(struct Screen *, struct List *, BOOL, short, sh
 struct Gadget *FindGadgetType(struct Gadget *, UWORD);
 void FixTitleGadgets(struct Window *);
 
-ULONG DivideU(unsigned long, unsigned long, unsigned long *, struct Library *);
+ULONG DivideU(ULONG, ULONG, ULONG *, struct Library *);
 BOOL SerialValid(serial_data *);
 BOOL SerialCheck(char *, ULONG *);
 ULONG ChecksumFile(char *, ULONG);

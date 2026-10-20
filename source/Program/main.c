@@ -631,9 +631,9 @@ void startup_init_gui()
 		quit(0);
 
 // Initialise requester pattern
-#if defined(__MORPHOS__)
+#if defined(__AROS__) || defined(__MORPHOS__)
 	GUI->req_pattern.hook.h_Entry = (HOOKFUNC)HookEntry;
-	GUI->req_pattern.hook.h_SubEntry = (ULONG(*)())PatternBackfill;
+	GUI->req_pattern.hook.h_SubEntry = (HOOKFUNC)PatternBackfill;
 #else
 	GUI->req_pattern.hook.h_Entry = (ULONG(*)())PatternBackfill;
 #endif

@@ -274,10 +274,11 @@ void get_screen_data(DOpusScreenData *data)
 }
 
 // Locale print-f
-static unsigned long ASM printf_hook(REG(a0, struct Hook *hook), REG(a2, ULONG dummy), REG(d0, char ch))
+static IPTR ASM printf_hook(REG(a0, struct Hook *hook), REG(a2, APTR dummy), REG(a1, IPTR ch))
 {
 	char *ptr = (char *)hook->h_Data;
-	*ptr++ = ch;
+	(void)dummy;
+	*ptr++ = (char)ch;
 	hook->h_Data = (APTR)ptr;
 	return 0;
 }
@@ -289,11 +290,11 @@ void STDARGS SAVEDS v_loc_printf(char *buffer, char *string, APTR data)
 	struct Hook hook;
 
 // Fill out hook
-#if defined(__MORPHOS__)
+#if defined(__AROS__) || defined(__MORPHOS__)
 	hook.h_Entry = (HOOKFUNC)HookEntry;
-	hook.h_SubEntry = (unsigned long (*)())printf_hook;
+	hook.h_SubEntry = (HOOKFUNC)printf_hook;
 #else
-	hook.h_Entry = (unsigned long (*)())printf_hook;
+	hook.h_Entry = (ULONG(*)())printf_hook;
 #endif
 	hook.h_Data = (APTR)buffer;
 	FormatString(locale.li_Locale, string, data, &hook);

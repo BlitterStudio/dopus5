@@ -26,11 +26,11 @@ LIBPROTO(L_Config_Environment,
 		 REG(a1, struct Screen *screen),
 		 REG(a2, UWORD *pen_table),
 		 REG(a3, IPCData *ipc),
-         REG(d0, IPCData *main_ipc),
-         REG(d1, UWORD pen_alloc),
-         REG(d2, ULONG *change_flags),
-         REG(d3, char *settings_name),
-         REG(d4, Att_List *script_list));
+         REG(a4, IPCData *main_ipc),
+         REG(d0, UWORD pen_alloc),
+         REG(d1, ULONG *change_flags),
+         REG(d2, char *settings_name),
+         REG(d3, Att_List *script_list));
 
 LIBPROTO(L_Config_Buttons,
 		 int,
@@ -51,7 +51,7 @@ LIBPROTO(L_Config_Filetypes,
 		 REG(a3, char *name));
 
 LIBPROTO(L_Config_ListerButtons,
-		 long,
+		 ULONG,
 		 REG(a0, char *bank_name),
 		 REG(a1, IPCData *ipc),
          REG(a2, IPCData *owner_ipc),

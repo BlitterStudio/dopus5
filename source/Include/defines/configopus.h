@@ -18,7 +18,7 @@
 			 AROS_LCA(IPCData *, (___ipc), A1),                          \
 			 AROS_LCA(IPCData *, (___owner), A2),                        \
 			 AROS_LCA(struct Screen *, (___screen), A3),                 \
-			 AROS_LCA(ULONG, (___cmdlist), D0),                          \
+			 AROS_LCA(IPTR, (___cmdlist), D0),                           \
 			 struct Library *,                                           \
 			 CONFIGOPUS_BASE_NAME,                                       \
 			 8,                                                          \
@@ -31,8 +31,8 @@
 			 AROS_LCA(IPCData *, (___opus), A1),                                        \
 			 AROS_LCA(struct Window *, (___window), A2),                                \
 			 AROS_LCA(Cfg_Function *, (___func), A3),                                   \
-			 AROS_LCA(APTR, (___memory), A4),                                           \
-			 AROS_LCA(ULONG, (___cmdlist), D0),                                         \
+			 AROS_LCA(APTR, (___memory), D0),                                           \
+			 AROS_LCA(IPTR, (___cmdlist), D1),                                          \
 			 struct Library *,                                                          \
 			 CONFIGOPUS_BASE_NAME,                                                      \
 			 15,                                                                        \
@@ -47,9 +47,9 @@
 			 AROS_LCA(IPCData *, (___ipc), A3),                                                                       \
 			 AROS_LCA(IPCData *, (___mainipc), A4),                                                                   \
 			 AROS_LCA(UWORD, (___alloc), D0),                                                                         \
-			 AROS_LCA(ULONG *, (___change), A5),                                                                      \
-			 AROS_LCA(char *, (___name), D1),                                                                         \
-			 AROS_LCA(Att_List *, (___scripts), D2),                                                                  \
+			 AROS_LCA(ULONG *, (___change), D1),                                                                      \
+			 AROS_LCA(char *, (___name), D2),                                                                         \
+			 AROS_LCA(Att_List *, (___scripts), D3),                                                                  \
 			 struct Library *,                                                                                        \
 			 CONFIGOPUS_BASE_NAME,                                                                                    \
 			 6,                                                                                                       \
@@ -61,7 +61,7 @@
 			 AROS_LCA(struct Screen *, (___screen), A0),                   \
 			 AROS_LCA(IPCData *, (___ipc), A1),                            \
 			 AROS_LCA(IPCData *, (___owner), A2),                          \
-			 AROS_LCA(ULONG, (___cmdlist), D0),                            \
+			 AROS_LCA(IPTR, (___cmdlist), D0),                             \
 			 AROS_LCA(char *, (___name), A3),                              \
 			 struct Library *,                                             \
 			 CONFIGOPUS_BASE_NAME,                                         \
@@ -75,9 +75,9 @@
 			 AROS_LCA(IPCData *, (___ipc), A1),                                                  \
 			 AROS_LCA(IPCData *, (___owner), A2),                                                \
 			 AROS_LCA(struct Screen *, (___screen), A3),                                         \
-			 AROS_LCA(Cfg_ButtonBank *, (___bank), A4),                                          \
-			 AROS_LCA(ULONG, (___cmdlist), D0),                                                  \
-			 AROS_LCA(LONG, (___init), D1),                                                      \
+			 AROS_LCA(Cfg_ButtonBank *, (___bank), D0),                                          \
+			 AROS_LCA(IPTR, (___cmdlist), D1),                                                 \
+			 AROS_LCA(LONG, (___init), D2),                                                      \
 			 struct Library *,                                                                   \
 			 CONFIGOPUS_BASE_NAME,                                                               \
 			 11,                                                                                 \
@@ -91,12 +91,12 @@
 			  AROS_LCA(IPCData *, (___ipc), A1),                                                         \
 			  AROS_LCA(IPCData *, (___owner), A2),                                                       \
 			  AROS_LCA(struct Screen *, (___screen), A3),                                                \
-			  AROS_LCA(Cfg_ButtonBank *, (___bank), A4),                                                 \
-			  AROS_LCA(char *, (___title), A5),                                                          \
-			  AROS_LCA(ULONG, (___cmdlist), D0),                                                         \
-			  AROS_LCA(char *, (___def), D1),                                                            \
-			  AROS_LCA(short, (___hotkeys), D2),                                                         \
-			  AROS_LCA(Att_List *, (___scripts), D3),                                                    \
+			  AROS_LCA(Cfg_ButtonBank *, (___bank), D0),                                                 \
+			  AROS_LCA(char *, (___title), D1),                                                          \
+			  AROS_LCA(IPTR, (___cmdlist), D2),                                                          \
+			  AROS_LCA(char *, (___def), D3),                                                            \
+			  AROS_LCA(short, (___hotkeys), D4),                                                         \
+			  AROS_LCA(Att_List *, (___scripts), D5),                                                    \
 			  struct Library *,                                                                          \
 			  CONFIGOPUS_BASE_NAME,                                                                      \
 			  12,                                                                                        \

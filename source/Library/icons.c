@@ -293,7 +293,7 @@ BOOL LIBFUNC L_WriteIcon(REG(a0, char *name), REG(a1, struct DiskObject *icon), 
 
 		// Fix revision
 		if ((((IPTR)write_obj.do_Gadget.UserData) & WB_DISKREVISIONMASK) == 0)
-			*((ULONG *)&write_obj.do_Gadget.UserData) |= WB_DISKREVISION;
+			write_obj.do_Gadget.UserData = (APTR)((IPTR)write_obj.do_Gadget.UserData | WB_DISKREVISION);
 
 		// Clear SpecialInfo field so we won't get stuck in a loop
 		write_obj.do_Gadget.SpecialInfo = 0;
@@ -317,7 +317,7 @@ BOOL LIBFUNC L_WriteIcon(REG(a0, char *name), REG(a1, struct DiskObject *icon), 
 	{
 		// Fix revision
 		if ((((IPTR)icon->do_Gadget.UserData) & WB_DISKREVISIONMASK) == 0)
-			*((ULONG *)&icon->do_Gadget.UserData) |= WB_DISKREVISION;
+			icon->do_Gadget.UserData = (APTR)((IPTR)icon->do_Gadget.UserData | WB_DISKREVISION);
 
 		//#define IconBase	(data->icon_base)
 
@@ -419,7 +419,7 @@ void LIBFUNC L_SetIconPosition(REG(a0, struct DiskObject *icon), REG(d0, short x
 		return;
 
 	// Set position
-	*((ULONG *)&icon->do_Gadget.MutualExclude) = (x << 16) | y;
+	icon->do_Gadget.MutualExclude = (IPTR)(((ULONG)(UWORD)x << 16) | (UWORD)y);
 }
 
 // Get the icon type

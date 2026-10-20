@@ -123,7 +123,7 @@ typedef struct
 typedef struct
 {
 	struct MinNode node;
-	ULONG handle;
+	IPTR handle;
 } ReaderNode;
 #ifndef __amigaos3__
 	#pragma pack()

@@ -702,9 +702,9 @@ BOOL backdrop_show_group(GroupData *group)
 		group->dimensions.Height = 80;
 
 // Initialise backfill pattern
-#if defined(__MORPHOS__)
+#if defined(__AROS__) || defined(__MORPHOS__)
 	group->pattern.hook.h_Entry = (HOOKFUNC)HookEntry;
-	group->pattern.hook.h_SubEntry = (ULONG(*)())PatternBackfill;
+	group->pattern.hook.h_SubEntry = (HOOKFUNC)PatternBackfill;
 #else
 	group->pattern.hook.h_Entry = (ULONG(*)())PatternBackfill;
 #endif

@@ -45,7 +45,29 @@ DOPUS_FUNC(function_loadfonts)
 			while ((chunk = IFFNextChunk(iff, ID_FONT)) == ID_FONT)
 			{
 				struct FontPrefs fonts;
+				BOOL got_font = FALSE;
+
+#ifdef __AROS__
+				// FONT chunks contain the 32-bit, 156-byte FontPrefs layout.
+				UBYTE font_data[156];
+
+				if (IFFChunkSize(iff) >= sizeof(font_data) &&
+					IFFReadChunkBytes(iff, font_data, sizeof(font_data)) == sizeof(font_data))
+				{
+					memset(&fonts, 0, sizeof(fonts));
+					fonts.fp_Type = ((UWORD)font_data[14] << 8) | font_data[15];
+					fonts.fp_FrontPen = font_data[16];
+					fonts.fp_BackPen = font_data[17];
+					fonts.fp_DrawMode = font_data[18];
+					fonts.fp_TextAttr.ta_YSize = ((UWORD)font_data[24] << 8) | font_data[25];
+					CopyMem(font_data + 28, fonts.fp_Name, sizeof(fonts.fp_Name));
+					got_font = TRUE;
+				}
+#else
 				if (IFFReadChunkBytes(iff, &fonts, sizeof(struct FontPrefs)))
+					got_font = TRUE;
+#endif
+				if (got_font)
 				{
 					// Icon label font?
 					if (fonts.fp_Type == FP_WBFONT)

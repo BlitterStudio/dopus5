@@ -136,9 +136,9 @@ BOOL buttons_open(Buttons *buttons, struct Screen *screen, short flags)
 		GetPattern(&buttons->pattern_data, screen, 0);
 
 // Initialise backfill hook
-#if defined(__MORPHOS__)
+#if defined(__AROS__) || defined(__MORPHOS__)
 		buttons->pattern.hook.h_Entry = (HOOKFUNC)HookEntry;
-		buttons->pattern.hook.h_SubEntry = (ULONG(*)())PatternBackfill;
+		buttons->pattern.hook.h_SubEntry = (HOOKFUNC)PatternBackfill;
 #else
 		buttons->pattern.hook.h_Entry = (ULONG(*)())PatternBackfill;
 #endif

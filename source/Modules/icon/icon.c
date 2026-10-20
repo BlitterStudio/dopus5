@@ -61,7 +61,7 @@ int LIBFUNC L_Module_Entry(REG(a0, struct List *files),
 						   REG(a2, IPCData *ipc),
 						   REG(a3, IPCData *main_ipc),
 						   REG(d0, IPTR mod_id),
-						   REG(d1, ULONG mod_data))
+						   REG(d1, IPTR mod_data))
 {
 	icon_data *data;
 	struct Node *node;
@@ -709,7 +709,10 @@ int openwindow(icon_data *data, int next)
 	// Bytes
 	if (lock)
 #ifdef USE_64BIT
-		ItoaU64(&GETFIBSIZE(&data->fib), buf, sizeof(buf), data->decimal_sep);
+	{
+		UQUAD size = GETFIBSIZE(&data->fib);
+		ItoaU64(&size, buf, sizeof(buf), data->decimal_sep);
+	}
 #else
 		Itoa(data->fib.fib_Size, buf, data->decimal_sep);
 #endif
@@ -1149,7 +1152,7 @@ BPTR open_temp_file(char *filename, IPCData *ipc)
 {
 	unsigned short a;
 	ULONG micros, secs;
-	int temp_key;
+	IPTR temp_key;
 	BPTR file = 0;
 
 	// Get temporary key
@@ -2849,7 +2852,7 @@ void icon_draw_icon(icon_data *data)
 // Fix tooltype gadgets
 void icon_fix_toolgads(icon_data *data, Att_Node *sel)
 {
-	unsigned long seconds, micros;
+	ULONG seconds, micros;
 
 	// Get double-click time
 	CurrentTime(&seconds, &micros);

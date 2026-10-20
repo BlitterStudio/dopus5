@@ -136,10 +136,6 @@ void SavePositions(struct List *list, char *name)
 	if (!(iff = IFFOpen(name, IFF_WRITE | IFF_SAFE, ID_OPUS)))
 		return;
 
-#ifdef __AROS__
-	#warning horrible hack...
-	list = &GUI->positions.list;
-#endif
 
 	// Go through entries
 	for (node = list->lh_Head; node->ln_Succ; node = node->ln_Succ)

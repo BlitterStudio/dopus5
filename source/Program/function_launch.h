@@ -262,7 +262,7 @@ typedef struct _FunctionHandle
 
 	BPTR recurse_cd;  // Current dir for recursing
 
-	ULONG temp_key;	 // Key for temp files
+	IPTR temp_key;	// Key for temp files
 
 	ULONG special_flags;  // Special flags
 

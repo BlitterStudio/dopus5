@@ -66,7 +66,7 @@ DOPUS_FUNC(function_iconinfo)
 		function_build_source(handle, entry, handle->work_buffer);
 
 		// Add entry to list
-		Att_NewNode(list, handle->work_buffer, (ULONG)entry, 0);
+		Att_NewNode(list, handle->work_buffer, (IPTR)entry, 0);
 
 		// Get next entry
 		function_end_entry(handle, entry, 1);

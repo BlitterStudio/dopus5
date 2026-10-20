@@ -115,7 +115,7 @@ int LIBFUNC L_Module_Entry(REG(a0, struct List *disks),
 						   REG(a2, IPCData *ipc),
 						   REG(a3, IPCData *main_ipc),
 						   REG(d0, IPTR mod_id),
-						   REG(d1, ULONG mod_data))
+						   REG(d1, IPTR mod_data))
 {
 	format_data *data;
 	short ret = 1;

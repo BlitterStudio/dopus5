@@ -326,8 +326,8 @@ void LIBFUNC L_UpdateGadgetValue(REG(a0, ObjectList *list),
 			if ((fontname_gad = L_GetObject(list, object->control_id)) &&
 				(fontsize_gad = L_GetObject(list, object->control_id + 1)))
 			{
-				unsigned long *pen_storage = 0;
-				unsigned long pen_table = 0, pen_count = 0;
+				ULONG *pen_storage = 0;
+				ULONG pen_table = 0, pen_count = 0;
 				BOOL fixed_only = 0;
 				char *mode_list[4];
 
@@ -339,7 +339,7 @@ void LIBFUNC L_UpdateGadgetValue(REG(a0, ObjectList *list),
 				if (object->tags)
 				{
 					// Get storage
-					pen_storage = (unsigned long *)(IPTR)GetTagData(GTCustom_FontPens, 0, object->tags);
+					pen_storage = (ULONG *)(IPTR)GetTagData(GTCustom_FontPens, 0, object->tags);
 
 					// Pen count and table
 					pen_count = GetTagData(GTCustom_FontPenCount, 8, object->tags);

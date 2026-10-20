@@ -232,6 +232,16 @@ IPTR ASM button_dispatch(REG(a0, Class *cl), REG(a2, Object *obj), REG(a1, Msg m
 IPTR ASM listview_dispatch(REG(a0, Class *cl), REG(a2, Object *obj), REG(a1, Msg msg));
 IPTR ASM palette_dispatch(REG(a0, Class *cl), REG(a2, Object *obj), REG(a1, Msg msg));
 
+#ifdef __AROS__
+IPTR image_dispatch_entry(Class *, Object *, Msg);
+IPTR button_dispatch_entry(Class *, Object *, Msg);
+IPTR listview_dispatch_entry(Class *, Object *, Msg);
+IPTR palette_dispatch_entry(Class *, Object *, Msg);
+#define BOOPSI_DISPATCHER_ENTRY(name) name##_entry
+#else
+#define BOOPSI_DISPATCHER_ENTRY(name) name
+#endif
+
 void image_draw(Class *, struct Image *, BoopsiImageData *, struct impDraw *);
 void button_render(Class *, struct Gadget *, ButtonData *, struct gpRender *);
 void listview_render(Class *, struct Gadget *, ListViewData *, struct gpRender *);

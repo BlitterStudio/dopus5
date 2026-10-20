@@ -98,13 +98,13 @@
 		char *,                                              \
 		__p2,                                                \
 		a2,                                                  \
-		ULONG,                                               \
+		IPTR,                                                \
 		__p3,                                                \
 		d0,                                                  \
 		ULONG,                                               \
 		__p4,                                                \
 		d1,                                                  \
-		ULONG,                                               \
+		IPTR,                                                \
 		__p5,                                                \
 		d2,                                                  \
 		struct Library *,                                    \
@@ -417,10 +417,10 @@
 		  ULONG,                                      \
 		  __p1,                                       \
 		  d0,                                         \
-		  ULONG,                                      \
+		  IPTR,                                       \
 		  __p2,                                       \
 		  d1,                                         \
-		  ULONG,                                      \
+		  IPTR,                                       \
 		  __p3,                                       \
 		  d2,                                         \
 		  BOOL,                                       \
@@ -625,7 +625,7 @@
 
 #define IPC_Command(__p0, __p1, __p2, __p3, __p4, __p5) \
 	LP6(552,                                            \
-		ULONG,                                          \
+		IPTR,                                           \
 		IPC_Command,                                    \
 		IPCData *,                                      \
 		__p0,                                           \
@@ -633,7 +633,7 @@
 		ULONG,                                          \
 		__p1,                                           \
 		d0,                                             \
-		ULONG,                                          \
+		IPTR,                                            \
 		__p2,                                           \
 		d1,                                             \
 		APTR,                                           \
@@ -748,7 +748,7 @@
 		char *,                             \
 		__p1,                               \
 		a1,                                 \
-		ULONG,                              \
+		IPTR,                               \
 		__p2,                               \
 		d0,                                 \
 		ULONG,                              \
@@ -764,7 +764,7 @@
 		0)
 
 #define IPC_GetGoodbye(__p0) \
-	LP1(594, ULONG, IPC_GetGoodbye, IPCMessage *, __p0, a0, , DOPUS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+	LP1(594, IPTR, IPC_GetGoodbye, IPCMessage *, __p0, a0, , DOPUS_BASE_NAME, 0, 0, 0, 0, 0, 0)
 
 #define FreeWindowMenus(__p0) \
 	LP1NR(384, FreeWindowMenus, struct Window *, __p0, a0, , DOPUS_BASE_NAME, 0, 0, 0, 0, 0, 0)
@@ -908,7 +908,7 @@
 		0)
 
 #define Att_FindNodeData(__p0, __p1) \
-	LP2(480, Att_Node *, Att_FindNodeData, Att_List *, __p0, a0, ULONG, __p1, d0, , DOPUS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+	LP2(480, Att_Node *, Att_FindNodeData, Att_List *, __p0, a0, IPTR, __p1, d0, , DOPUS_BASE_NAME, 0, 0, 0, 0, 0, 0)
 
 #define QualValid(__p0) LP1(1452, UWORD, QualValid, UWORD, __p0, d0, , DOPUS_BASE_NAME, 0, 0, 0, 0, 0, 0)
 
@@ -1814,7 +1814,7 @@
 		0)
 
 #define Att_NodeDataNumber(__p0, __p1) \
-	LP2(486, long, Att_NodeDataNumber, Att_List *, __p0, a0, ULONG, __p1, d0, , DOPUS_BASE_NAME, 0, 0, 0, 0, 0, 0)
+	LP2(486, long, Att_NodeDataNumber, Att_List *, __p0, a0, IPTR, __p1, d0, , DOPUS_BASE_NAME, 0, 0, 0, 0, 0, 0)
 
 #define NewButtonWithFunc(__p0, __p1, __p2) \
 	LP3(1686,                               \
@@ -2766,7 +2766,7 @@
 
 #define IPC_SafeCommand(__p0, __p1, __p2, __p3, __p4, __p5, __p6) \
 	LP7(1986,                                                     \
-		ULONG,                                                    \
+		IPTR,                                                     \
 		IPC_SafeCommand,                                          \
 		IPCData *,                                                \
 		__p0,                                                     \
@@ -2774,7 +2774,7 @@
 		ULONG,                                                    \
 		__p1,                                                     \
 		d0,                                                       \
-		ULONG,                                                    \
+		IPTR,                                                     \
 		__p2,                                                     \
 		d1,                                                       \
 		APTR,                                                     \
@@ -2830,7 +2830,7 @@
 		PopUpHandle *,                       \
 		__p0,                                \
 		a0,                                  \
-		ULONG,                               \
+		IPTR,                                \
 		__p1,                                \
 		d0,                                  \
 		ULONG,                               \
@@ -2942,7 +2942,7 @@
 		BOOL,                                \
 		__p2,                                \
 		d0,                                  \
-		ULONG,                               \
+		IPTR,                                \
 		__p3,                                \
 		d1,                                  \
 		,                                    \
@@ -3021,7 +3021,7 @@
 	LP3(2244,                            \
 		PopUpHandle *,                   \
 		PopUpNewHandle,                  \
-		ULONG,                           \
+		IPTR,                            \
 		__p0,                            \
 		d0,                              \
 		REF_CALLBACK,                    \
