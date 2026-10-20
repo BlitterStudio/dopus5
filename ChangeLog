@@ -1,3 +1,22 @@
+[dopus5 next] Icons are drawn once, so soft alpha edges are not doubled
+Program changes; version bump deferred.
+
+- Icon-mode listers draw each icon once when they open.  Opus drew
+  every icon as it was read and then all of them again when the
+  directory was done.  icon.library blends the soft edges of alpha
+  icons (PNG icons with IconLib on an RTG screen) with what is already
+  on the screen, so the second pass doubled them.  Scrolling redrew
+  the icons once, so they changed after scrolling (reported by Peter
+  Keunecke).  New icons go on top of the others, as they are drawn
+  while loading.  If some still need a place, the window is drawn
+  once more after the cleanup, clearing each icon first.
+- An icon drawn over the display clears its area first and redraws
+  the icons it overlaps there, in their stacking order.  Running a
+  command in an icon lister, selecting icons and other redraws that do
+  not clear the whole window drew every icon over itself, and clearing
+  for a selected icon wiped the parts of icons underneath it.
+  AppIcons with a render hook still draw over what is there.
+
 [dopus5 next] AROS 64-bit: archive browsing, frozen pop-up menus, 64-bit sweep
 Program, dopus5.library, configopus and most modules change; version
 bump deferred.

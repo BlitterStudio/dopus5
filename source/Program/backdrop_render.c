@@ -106,6 +106,176 @@ static BOOL backdrop_blit_icon_mask(struct BitMap *bitmap,
 }
 #endif
 
+#define DRAWIN_ALL 0
+#define DRAWIN_BELOW 1
+#define DRAWIN_ABOVE 2
+
+// Get the window rectangle of an object's image, with its border if it has one,
+// when it is drawn at left/top
+static void backdrop_image_rect(BackdropInfo *info,
+								BackdropObject *object,
+								short left,
+								short top,
+								struct Rectangle *rect)
+{
+	short border_x = 0, border_y_top = 0, border_y_bottom = 0;
+
+	// Border?
+	if (backdrop_icon_border(object))
+	{
+		// Use default border
+		border_x = ICON_BORDER_X;
+		border_y_top = ICON_BORDER_Y_TOP;
+		border_y_bottom = ICON_BORDER_Y_BOTTOM;
+	}
+
+	rect->MinX = left - border_x + info->size.MinX - info->offset_x;
+	rect->MinY = top - border_y_top + info->size.MinY - info->offset_y;
+	rect->MaxX = left + object->pos.Width + border_x - 1 + info->size.MinX - info->offset_x;
+	rect->MaxY = top + object->pos.Height + border_y_bottom - 1 + info->size.MinY - info->offset_y;
+}
+
+// Get the rectangle of an object's label as last drawn; FALSE if it has none
+static BOOL backdrop_label_rect(BackdropObject *object, struct Rectangle *rect)
+{
+	if (object->show_rect.MaxY <= object->image_rect.MaxY)
+		return FALSE;
+	rect->MinX = object->show_rect.MinX;
+	rect->MinY = object->image_rect.MaxY + 1;
+	rect->MaxX = object->show_rect.MaxX;
+	rect->MaxY = object->show_rect.MaxY;
+	return TRUE;
+}
+
+// Is this a positioned object with its image or label in part of a rectangle?
+static BOOL backdrop_object_in_rect(BackdropInfo *info, BackdropObject *object, struct Rectangle *rect)
+{
+	struct Rectangle part;
+
+	if (!object->icon || object->flags & (BDOF_NO_POSITION | BDOF_SHOW_PENDING))
+		return FALSE;
+
+	// Image where it is now, or label as last drawn
+	backdrop_image_rect(info, object, object->pos.Left, object->pos.Top, &part);
+	if (geo_box_intersect(&part, rect))
+		return TRUE;
+	return (BOOL)(backdrop_label_rect(object, &part) && geo_box_intersect(&part, rect));
+}
+
+// Does this object blend its image with what is under it? Icon images can (the soft
+// alpha edges with IconLib on RTG, PNG icons on MorphOS; a border only frames the image),
+// so drawing one over itself doubles those edges and the area under it is cleared
+// first. AppIcons with a render hook paint their own area
+static BOOL backdrop_blends(BackdropObject *object)
+{
+	return (BOOL)(object->icon && !(object->type == BDO_APP_ICON && ((AppEntry *)object->misc_data)->render_hook));
+}
+
+// Make a region of a rectangle within the window's current clip region; 0 without memory
+static struct Region *backdrop_rect_region(BackdropInfo *info, struct Rectangle *rect)
+{
+	struct Layer *layer = info->window->WLayer;
+	struct Region *region;
+
+	if ((region = NewRegion()))
+	{
+		if (!OrRectRegion(region, rect) || (layer->ClipRegion && !AndRegionRegion(layer->ClipRegion, region)))
+		{
+			DisposeRegion(region);
+			region = 0;
+		}
+	}
+	return region;
+}
+
+// Draw the objects that cover part of a cleared rectangle, clipped to it (region, from
+// backdrop_rect_region()), bottom first as in backdrop_show_objects(). skip is left out;
+// DRAWIN_BELOW or DRAWIN_ABOVE only draws the objects under or over it. Called with the
+// window locked
+static void backdrop_draw_in_rect(BackdropInfo *info,
+								  struct Rectangle *rect,
+								  struct Region *region,
+								  BackdropObject *skip,
+								  short which)
+{
+	struct Layer *layer = info->window->WLayer;
+	struct Region *old;
+	BackdropObject *object;
+	BOOL above = 0;
+
+	// Clip to the rectangle
+	old = InstallClipRegion(layer, region);
+
+	// Go through backdrop list (backwards)
+	for (object = (BackdropObject *)info->objects.list.lh_TailPred; object->node.ln_Pred;
+		 object = (BackdropObject *)object->node.ln_Pred)
+	{
+		// Objects after this one in the walk are over it
+		if (object == skip)
+		{
+			above = 1;
+			continue;
+		}
+		if ((which == DRAWIN_BELOW && above) || (which == DRAWIN_ABOVE && !above))
+			continue;
+
+		if (backdrop_object_in_rect(info, object, rect))
+			backdrop_draw_object(info,
+								 object,
+								 BRENDERF_REAL | BRENDERF_ERASED,
+								 &info->rp,
+								 object->pos.Left,
+								 object->pos.Top);
+	}
+
+	InstallClipRegion(layer, old);
+}
+
+// Draw a blending object over what is on the display: clear its image area, then draw
+// it and the objects overlapping that area in their stacking order. Called with the
+// window locked
+static void backdrop_draw_over(BackdropInfo *info, BackdropObject *object, UWORD flags)
+{
+	struct Rectangle rect;
+	struct Region *region = 0;
+	BackdropObject *test;
+	BOOL above = 1, over = 0, under = 0;
+
+	backdrop_image_rect(info, object, object->pos.Left, object->pos.Top, &rect);
+
+	// Find overlapping objects; the ones before it in the list are over it
+	for (test = (BackdropObject *)info->objects.list.lh_Head; test->node.ln_Succ;
+		 test = (BackdropObject *)test->node.ln_Succ)
+	{
+		if (test == object)
+			above = 0;
+		else if (backdrop_object_in_rect(info, test, &rect))
+		{
+			if (above)
+				over = 1;
+			else
+				under = 1;
+		}
+	}
+
+	// Overlapping objects are redrawn clipped to the area. Without memory for that,
+	// draw over what is there rather than leave a hole
+	if ((under || over) && !(region = backdrop_rect_region(info, &rect)))
+	{
+		backdrop_draw_object(info, object, flags | BRENDERF_REAL, &info->rp, object->pos.Left, object->pos.Top);
+		return;
+	}
+
+	EraseRect(&info->rp, rect.MinX, rect.MinY, rect.MaxX, rect.MaxY);
+	if (under)
+		backdrop_draw_in_rect(info, &rect, region, object, DRAWIN_BELOW);
+	backdrop_draw_object(info, object, flags | BRENDERF_REAL | BRENDERF_ERASED, &info->rp, object->pos.Left, object->pos.Top);
+	if (over)
+		backdrop_draw_in_rect(info, &rect, region, object, DRAWIN_ABOVE);
+	if (region)
+		DisposeRegion(region);
+}
+
 // Scroll the icons
 void backdrop_scroll_objects(BackdropInfo *info, short off_x, short off_y)
 {
@@ -352,6 +522,23 @@ void backdrop_show_objects(BackdropInfo *info, UWORD flags)
 		// Not just clearing?
 		if ((flags & BDSF_CLEAR_ONLY) != BDSF_CLEAR_ONLY)
 		{
+			// Drawing over the display? Clear under the blending images first. Every
+			// object is drawn below, in order, so overlapping ones come back too
+			if (!(flags & BDSF_CLEAR))
+			{
+				for (object = (BackdropObject *)info->objects.list.lh_Head; object->node.ln_Succ;
+					 object = (BackdropObject *)object->node.ln_Succ)
+				{
+					struct Rectangle rect;
+
+					if (!(object->flags & (BDOF_NO_POSITION | BDOF_SHOW_PENDING)) && backdrop_blends(object))
+					{
+						backdrop_image_rect(info, object, object->pos.Left, object->pos.Top, &rect);
+						EraseRect(&info->rp, rect.MinX, rect.MinY, rect.MaxX, rect.MaxY);
+					}
+				}
+			}
+
 			// Go through backdrop list (backwards)
 			for (object = (BackdropObject *)info->objects.list.lh_TailPred; object->node.ln_Pred;
 				 object = (BackdropObject *)object->node.ln_Pred)
@@ -367,11 +554,12 @@ void backdrop_show_objects(BackdropInfo *info, UWORD flags)
 					}
 				}
 
-				// Valid position?
-				if (!(object->flags & BDOF_NO_POSITION))
+				// Valid position, and not waiting to be shown?
+				if (!(object->flags & (BDOF_NO_POSITION | BDOF_SHOW_PENDING)))
 				{
 					// Render this object
-					backdrop_draw_object(info, object, BRENDERF_REAL, &info->rp, object->pos.Left, object->pos.Top);
+					backdrop_draw_object(
+						info, object, BRENDERF_REAL | BRENDERF_ERASED, &info->rp, object->pos.Left, object->pos.Top);
 				}
 			}
 		}
@@ -433,18 +621,31 @@ void backdrop_show_objects(BackdropInfo *info, UWORD flags)
 // Render an object to the main window
 void backdrop_render_object(BackdropInfo *info, BackdropObject *object, UWORD flags)
 {
+	// Lock backdrop list (overlapping objects may be redrawn too)
+	lock_listlock(&info->objects, 0);
+
 	// Lock window
 	GetSemaphore(&info->window_lock, SEMF_EXCLUSIVE, 0);
 
-	// Window open?
-	if (info->window)
+	// First draw of an icon from LISTER_SHOW_ICON? Other redraws may draw it from now on;
+	// changed under the window lock, so none of them draws it before this does
+	if (flags & BRENDERF_NEW)
+		object->flags &= ~BDOF_SHOW_PENDING;
+
+	// Window open, and not an icon its LISTER_SHOW_ICON will draw?
+	if (info->window && (flags & BRENDERF_CLEAR || !(object->flags & BDOF_SHOW_PENDING)))
 	{
 		// Install clip?
 		if (flags & BRENDERF_CLIP && info->clip_region)
 			InstallClipRegion(info->window->WLayer, info->clip_region);
 
+		// Blending image drawn over itself on the display?
+		if (!(flags & (BRENDERF_CLEAR | BRENDERF_NEW)) && !(object->flags & BDOF_NO_POSITION) && backdrop_blends(object))
+			backdrop_draw_over(info, object, flags);
+
 		// Draw object
-		backdrop_draw_object(info, object, flags | BRENDERF_REAL, &info->rp, object->pos.Left, object->pos.Top);
+		else
+			backdrop_draw_object(info, object, flags | BRENDERF_REAL, &info->rp, object->pos.Left, object->pos.Top);
 
 		// Remove clip region
 		if (flags & BRENDERF_CLIP && info->clip_region)
@@ -453,6 +654,9 @@ void backdrop_render_object(BackdropInfo *info, BackdropObject *object, UWORD fl
 
 	// Unlock window
 	FreeSemaphore(&info->window_lock);
+
+	// Unlock backdrop list
+	unlock_listlock(&info->objects);
 }
 
 // Call an AppIcon's Workbench render hook (WBAPPICONA_RenderHook).
@@ -572,28 +776,14 @@ void backdrop_draw_object(BackdropInfo *info,
 	// Get object position
 	if (flags & BRENDERF_REAL)
 	{
-		short border_x = 0, border_y_top = 0, border_y_bottom = 0;
-
-		// Border?
-		if (has_border)
-		{
-			// Use default border
-			border_x = ICON_BORDER_X;
-			border_y_top = ICON_BORDER_Y_TOP;
-			border_y_bottom = ICON_BORDER_Y_BOTTOM;
-		}
+		// Get image rectangle
+		backdrop_image_rect(info, object, left, top, &rect);
 
 		// Calculate full size
-		object->full_size.MinX = left - border_x;
-		object->full_size.MinY = top - border_y_top;
-		object->full_size.MaxX = left + object->pos.Width + border_x - 1;
-		object->full_size.MaxY = top + object->pos.Height + border_y_bottom - 1;
-
-		// Get image rectangle
-		rect.MinX = object->full_size.MinX + (info->size.MinX - info->offset_x);
-		rect.MinY = object->full_size.MinY + (info->size.MinY - info->offset_y);
-		rect.MaxX = object->full_size.MaxX + (info->size.MinX - info->offset_x);
-		rect.MaxY = object->full_size.MaxY + (info->size.MinY - info->offset_y);
+		object->full_size.MinX = rect.MinX - (info->size.MinX - info->offset_x);
+		object->full_size.MinY = rect.MinY - (info->size.MinY - info->offset_y);
+		object->full_size.MaxX = rect.MaxX - (info->size.MinX - info->offset_x);
+		object->full_size.MaxY = rect.MaxY - (info->size.MinY - info->offset_y);
 
 		// Store position
 		object->show_rect = rect;
@@ -634,13 +824,15 @@ void backdrop_draw_object(BackdropInfo *info,
 			flags &= ~BRENDERF_CLEAR;
 	}
 
-	// Object state changed?
+	// Object state changed? A borderless image is blended with what is under it, so
+	// clear that first, unless the caller just did
 	else if (object->flags & BDOF_STATE_CHANGE)
 	{
 #ifndef USE_DRAWICONSTATE
-	// Need to clear if transparent
 	#if !defined(__MORPHOS__)
-		if (!has_border)
+		if (!has_border && !(flags & BRENDERF_ERASED))
+	#else
+		if (!(flags & BRENDERF_ERASED))
 	#endif
 			EraseRect(rp, rect.MinX, rect.MinY, rect.MaxX, rect.MaxY);
 #endif
@@ -693,13 +885,6 @@ void backdrop_draw_object(BackdropInfo *info,
 					RectFill(rp, rect.MaxX - 3, rect.MinY + 3, rect.MaxX - 1, rect.MaxY - 4);
 #endif
 				}
-#ifdef USE_DRAWICONSTATE
-				// Same for a borderless icon: the hook draws over what is there, as on Workbench
-				else if (!render_hook)
-				{
-					EraseRect(rp, rect.MinX, rect.MinY, rect.MaxX, rect.MaxY);
-				}
-#endif
 			}
 
 			// Let the AppIcon draw itself. If the hook says it drew everything, Workbench
@@ -1198,8 +1383,6 @@ void backdrop_region_bounds(BackdropInfo *info)
 // Erase an icon
 void backdrop_erase_icon(BackdropInfo *info, BackdropObject *object, UWORD flags)
 {
-	BackdropObject *icon;
-
 	// Lock icon list
 	lock_listlock(&info->objects, FALSE);
 
@@ -1209,33 +1392,28 @@ void backdrop_erase_icon(BackdropInfo *info, BackdropObject *object, UWORD flags
 	// Window open?
 	if (info->window)
 	{
+		struct Region *region;
+
 		// Install clip?
 		if (info->clip_region)
 			InstallClipRegion(info->window->WLayer, info->clip_region);
+
+		// Region to redraw the icons it covered in
+		region = backdrop_rect_region(info, &object->show_rect);
 
 		// Erase icon area
 		EraseRect(
 			&info->rp, object->show_rect.MinX, object->show_rect.MinY, object->show_rect.MaxX, object->show_rect.MaxY);
 
-		// Got through icons
-		for (icon = (BackdropObject *)info->objects.list.lh_Head; icon->node.ln_Succ;
-			 icon = (BackdropObject *)icon->node.ln_Succ)
-		{
-			// Valid position?
-			if (icon->flags & BDOF_NO_POSITION)
-				continue;
-
-			// Not the one we just removed?
-			if (icon == object)
-				continue;
-
-			// Did its box intersect the one we removed?
-			if (geo_box_intersect(&object->show_rect, &icon->show_rect))
-			{
-				// ReDraw object
-				backdrop_draw_object(info, icon, BRENDERF_REAL, &info->rp, icon->pos.Left, icon->pos.Top);
-			}
-		}
+		// Redraw the icons it covered, in their stacking order and only in that area, so
+		// their blended edges are not drawn twice. Without memory, redraw them in full
+		backdrop_draw_in_rect(info,
+							  &object->show_rect,
+							  (region) ? region : (struct Region *)info->window->WLayer->ClipRegion,
+							  object,
+							  DRAWIN_ALL);
+		if (region)
+			DisposeRegion(region);
 
 		// Remove clip region
 		InstallClipRegion(info->window->WLayer, 0);
