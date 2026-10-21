@@ -3,7 +3,7 @@
 ## language español
 ;
 MSG_ICON_TITLE
-Icono : %s (%s)
+%s%s (%s)
 ; %s : %s (%s)
 ;
 MSG_ICON_SAVE
@@ -11,7 +11,7 @@ _Guardar
 ; _Save
 ;
 MSG_ICON_NEXT
-Sigui_ente
+_Siguiente
 ; Ne_xt
 ;
 MSG_ICON_CANCEL
@@ -22,16 +22,12 @@ MSG_BLOCKS
 Bloques:
 ; Blocks:
 ;
-MSG_BYTES
-Bytes:
-; Bytes:
-;
 MSG_STACK
-Pila:
+Stac_k:
 ; St_ack:
 ;
 MSG_LAST_CHANGED
-Ultimo Cambio:
+Ultimo cambio:
 ; Last Changed:
 ;
 MSG_COMMENT
@@ -39,7 +35,7 @@ Co_mentario:
 ; Co_mment:
 ;
 MSG_TOOLTYPES
-_Tool Types:
+_Argumentos:
 ; _Tool Types:
 ;
 MSG_NEW
@@ -51,7 +47,7 @@ _Borrar
 ; _Delete
 ;
 MSG_DEFAULT_TOOL
-Herrta. por defecto:
+_Herramienta:
 ; Defau_lt Tool:
 ;
 MSG_SIZE
@@ -59,15 +55,15 @@ Tamaño:
 ; Size:
 ;
 MSG_USED
-Usado:
+Usados:
 ; Used:
 ;
 MSG_FREE
-Libre:
+Libres:
 ; Free:
 ;
 MSG_FILE_SYSTEM
-Sist.Fich:
+Formato:
 ; F.Sys:
 ;
 MSG_CREATED
@@ -75,7 +71,7 @@ Creado:
 ; Created:
 ;
 MSG_VOLUME_IS
-El volumen es de
+Estado:
 ; Volume is
 ;
 MSG_ICON_DISK
@@ -83,7 +79,7 @@ Volumen
 ; Volume
 ;
 MSG_ICON_DRAWER
-Cajón
+Directorio
 ; Drawer
 ;
 MSG_ICON_TOOL
@@ -94,20 +90,16 @@ MSG_ICON_PROJECT
 Proyecto
 ; Project
 ;
-MSG_ICON_SCRIPT
-Script
-; Script
-;
 MSG_ICON_ARCHIVED
 Archivado
 ; Archived
 ;
 MSG_ICON_READABLE
-Legible
+Lectura
 ; Readable
 ;
 MSG_ICON_WRITABLE
-Escribible
+Escritura
 ; Writable
 ;
 MSG_ICON_EXECUTABLE
@@ -123,254 +115,138 @@ Validando
 ; Validating
 ;
 MSG_WRITE_PROTECTED
-Solo lectura
+Solo Lectura
 ; Read Only
 ;
 MSG_READ_WRITE
-Lectura/escritura
+Lectura/Escritura
 ; Read/Write
 ;
 MSG_UNREADABLE
 Ilegible
 ; Unreadable
 ;
-MSG_OFS
-OFS
-; OFS
-;
-MSG_FFS
-FFS
-; FFS
-;
-MSG_IOFS
-OFS (I)
-; OFS (I)
-;
-MSG_IFFS
-FFS (I)
-; FFS (I)
-;
-MSG_COFS
-OFS (C)
-; OFS (C)
-;
-MSG_CFFS
-FFS (C)
-; FFS (C)
-;
 MSG_NDOS
 No-DOS
 ; Non-DOS
 ;
-MSG_MSDOS
-MS-DOS
-; MS-DOS
-;
-MSG_UNKNOWN
-???
-; ???
-;
 MSG_ICONINFO_DESC
-Mostrar/editar la información del icono
+Ver/Editar icono
 ; Show/edit icon information
 ;
-MSG_AFS
-AFS
-; AFS
-;
 MSG_PFS1
-PFS(1)
+PFS
 ; PFS(1)
 ;
 MSG_SPECIAL_MENU
-Special
+Especial
 ; Special
 ;
 MSG_AUTHOR
-  Author : %s
+  Autor: %s
 ;   Author : %s
 ;
 MSG_STRIP_NEWICONS
-Strip NewIcons Image
+Eliminar Imagen NewIcons
 ; Strip NewIcons Image
 ;
 MSG_OK
-Ok
+Aceptar
 ; Ok
 ;
 MSG_STRIP_WARNING
-This will permanently remove the NewIcon image\n\
-; from this icon. Are you sure?
-; This will permanently remove the NewIcon image\n\
-; from this icon. Are you sure?
+Esto eliminará PERMANENTEMENTE la imagen\nNewIcons del icono. ¿Está seguro?
+; This will permanently remove the NewIcon image\nfrom this icon. Are you sure?
 ;
 MSG_OK_CANCEL
-Ok|Cancel
+Aceptar|Cancelar
 ; Ok|Cancel
 ;
 MSG_LOCATION
-Location:
+Ubicación:
 ; Location:
 ;
 MSG_ICON_GARBAGE
-Trashcan
+Papelera
 ; Trashcan
 ;
 MSG_ICON_DEVICE
-Device
+Disco
 ; Device
 ;
-MSG_ICON_KICK
-Kickstart
-; Kickstart
-;
 MSG_STRIP_OLD
-Strip Original Image
+Eliminar imagen original
 ; Strip Original Image
 ;
 MSG_NEWICONS
-Show NewIcons Image
+Ver imagen NewIcons
 ; Show NewIcons Image
 ;
 MSG_OLDICONS
-Show Original Image
+Ver imagen original
 ; Show Original Image
 ;
 MSG_STRIP_WARNING_OLD
-This will permanently remove the original image\n\
-; from this icon. Are you sure?
-; This will permanently remove the original image\n\
-; from this icon. Are you sure?
+Esto eliminará PERMANENTEMENTE la imagen\noriginal del icono. ¿Está seguro?
+; This will permanently remove the original image\nfrom this icon. Are you sure?
 ;
 MSG_BORDER_MENU
-Icon Border
+Ver bordes del icono
 ; Icon Border
 ;
 MSG_LABEL_MENU
-Icon Label
+Ver etiqueta del icono
 ; Icon Label
 ;
 MSG_EDIT
-Edit
+Editar
 ; Edit
 ;
 MSG_PICK_EDITOR
-Pick Editor...
+Elegir editor...
 ; Pick Editor...
 ;
 MSG_COPY_OLDICON
-Copy Original Image
+Copiar imagen icono
 ; Copy Original Image
 ;
 MSG_COPY_NEWICON
-Copy NewIcons Image
+Copiar imagen NewIcons
 ; Copy NewIcons Image
 ;
 MSG_COPY_BOTHICONS
-Copy Both Images
+Copiar ambas imágenes
 ; Copy Both Images
 ;
 MSG_COPY_TOOLTYPES
-Copy Tooltypes
+Copiar argumentos
 ; Copy Tooltypes
 ;
-MSG_ICON_NEWICON
-NewIcon
-; NewIcon
-;
 MSG_ICON_OLDICON
-Standard Icon
+Icono estándar: 
 ; Standard Icon
 ;
 MSG_ENTER_FUNCTION
-Enter function to call icon editor\n(To use IconEdit you must\ntick the AppMessage box)
+Comando para ejecutar editor:\n(si usa IconEdit active la\nopción AppMessage)
 ; Enter function to call icon editor\n(To use IconEdit you must\ntick the AppMessage box)
 ;
 MSG_USE_ICONEDIT
-Send AppMessage
+Enviar AppMessage
 ; Send AppMessage
 ;
 MSG_USE
-Use
+Usar
 ; Use
 ;
 MSG_ICON_DONT_SAVE
-Don't Save
+No Guardar Icono
 ; Don't Save
 ;
 MSG_ICON_MODIFIED
-Icon has been modified.\nDo you wish to save it first?
+Se ha modificado el icono.\n¿Quiere guardarlo?
 ; Icon has been modified.\nDo you wish to save it first?
 ;
 MSG_SORT
-S_ort
+_Ordenar
 ; S_ort
-;
-MSG_PFS2
-PFS(2)
-; PFS(2)
-;
-MSG_PFS3
-PFS(3)
-; PFS(3)
-;
-MSG_PFS3_MULTI
-muPF
-; muPF
-;
-MSG_FFS7
-FFS(7)
-; FFS(7)
-;
-MSG_VP255
-DOS(9)
-; DOS(9)
-;
-MSG_SFS0
-SFS(0)
-; SFS(0)
-;
-MSG_SFS1
-SFS(1)
-; SFS(1)
-;
-MSG_SFS2
-SFS(2)
-; SFS(2)
-;
-MSG_SFS3
-SFS(3)
-; SFS(3)
-;
-MSG_JXFS
-JXFS
-; JXFS
-;
-MSG_SWAP
-SWAP
-; SWAP
-;
-MSG_BOX
-BOX(0)
-; BOX(0)
-;
-MSG_FAT32
-FAT32
-; FAT32
-;
-MSG_EXFAT
-EXFAT
-; EXFAT
-;
-MSG_EXT2FS
-EXT2FS
-; EXT2FS
-;
-MSG_HFS
-HFS
-; HFS
-;
-MSG_NTFS
-NTFS
-; NTFS
 ;

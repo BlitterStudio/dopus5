@@ -1,0 +1,116 @@
+## version $VER: listerformat.catalog 56.0 (08.07.97) © Marcin Orîowski <carlos@wfmh.man.szczecin.pl>
+## codeset 0
+## language polski
+;
+MSG_LISTER_FORMAT_TITLE
+Edycja formatu
+; List Format
+;
+MSG_LISTER_AVAILABLE_DISPLAY_ITEMS
+Dostëpne...
+; Available...
+;
+MSG_LISTER_SELECTED_DISPLAY_ITEMS
+Wyôwietl/Sortuj...
+; Display/Sort...
+;
+MSG_LISTER_LIST_FILENAME
+Nazwa pliku
+; File Name
+;
+MSG_LISTER_LIST_FILESIZE
+Dîugoôê pliku
+; File Size
+;
+MSG_LISTER_LIST_PROTECTION
+Atrybuty
+; Protection
+;
+MSG_LISTER_LIST_DATE
+Data modyfikacji
+; File Date
+;
+MSG_LISTER_LIST_COMMENT
+Komentarz
+; Comment
+;
+MSG_LISTER_LIST_FILETYPE
+Rodzaj pliku
+; File Type
+;
+MSG_LISTER_LIST_OWNER
+Wîaôciciel
+; Owner
+;
+MSG_LISTER_LIST_GROUP
+Grupa
+; Group
+;
+MSG_LISTER_LIST_NETPROTECTION
+Dostëp sieciowy
+; Net Access
+;
+MSG_LISTER_ENTRY_SEPARATION
+Wyôwi_etlaj
+; _Entry Separation
+;
+MSG_LISTER_REVERSE_SORTING
+So_rtuj malejâco
+; _Reverse Sorting
+;
+MSG_LISTER_SEPARATION_MIX
+Pomieszane
+; Mix Files/Dirs
+;
+MSG_LISTER_SEPARATION_DIRS
+Najpierw katalogi
+; Directories First
+;
+MSG_LISTER_SEPARATION_FILES
+Najpierw pliki
+; Files First
+;
+MSG_LISTER_SHOW
+_Pokazuj
+; _Show Filter
+;
+MSG_LISTER_HIDE
+Sc_howaj
+; _Hide Filter
+;
+MSG_LISTER_REJECT_ICONS
+Schowaj _ikonki
+; _Filter Icons
+;
+MSG_LISTER_HIDDEN_BIT
+Uwzgl. _atr. H
+; H_idden
+;
+MSG_LISTER_USE
+_Uûyj
+; _Use
+;
+MSG_LISTER_CANCEL
+Ponie_chaj
+; _Cancel
+;
+MSG_LISTER_LIST_VERSION
+Wersja
+; Version
+;
+MSG_LISTER_SAVE
+Zapi_sz
+; S_ave
+;
+MSG_DEFAULTS
+Us_tawienia standardowe
+; Reset to _Defaults
+;
+MSG_FTP_DEFAULTS
+Wsk. zajëtoôci d_ysku
+; Reset FTP Defaults
+;
+MSG_LISTER_FUEL_GAUGE
+D_ziedzicz
+; Free Space _Gauge
+;

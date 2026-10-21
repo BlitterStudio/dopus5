@@ -2,10 +2,6 @@
 ## codeset 0
 ## language norsk
 ;
-MSG_OK
-OK
-; OK
-;
 MSG_SELECT_FILE
 Velg Fil
 ; Select File
@@ -30,14 +26,6 @@ MSG_FONT_FIELD_TEXT
 Tekst+Felt
 ; Text+Field
 ;
-MSG_SIZE_FIT
-9999%%
-; 9999%%
-;
-MSG_SIZE
-%ld%%
-; %ld%%
-;
 MSG_ABORT
 Avbryt
 ; Abort
@@ -59,8 +47,7 @@ Greide ikke åpne verktøyet '%s'
 ; Unable to open your tool '%s'
 ;
 MSG_SICK_OF_WAITING
-Opus er drittlei av å vente på '%s'\n\
-Vente lengre?
+Opus er drittlei av å vente på '%s'\nVente lengre?
 ; Opus is sick of waiting for '%s' to return.\nWait some more?
 ;
 MSG_WAIT_CANCEL

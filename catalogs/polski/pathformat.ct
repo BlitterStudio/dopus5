@@ -1,0 +1,52 @@
+## version $VER: pathformat.catalog 56.0 (08.07.97) © Marcin Orîowski <carlos@wfmh.man.szczecin.pl>
+## codeset 0
+## language polski
+;
+MSG_PATHFORMAT_TITLE
+Edycja ôcieûek
+; Edit Paths
+;
+MSG_PATHFORMAT_SAVE
+Zapi_sz
+; _Save
+;
+MSG_PATHFORMAT_CANCEL
+Ponie_chaj
+; _Cancel
+;
+MSG_PATHFORMAT_KEY
+_Klawisz
+; _Key
+;
+MSG_PATHFORMAT_ADD
+Dod_aj
+; _Add
+;
+MSG_PATHFORMAT_REMOVE
+S_kasuj
+; _Remove
+;
+MSG_PATHFORMAT_EDIT
+_Edytuj
+; _Edit
+;
+MSG_PATHFORMAT_PATH
+Ôc_ieûka
+; _Path
+;
+MSG_PATHFORMAT_NEW_LISTER
+Tryb _nowego listera
+; _New lister mode
+;
+MSG_MODE_NONE
+Ûaden
+; None
+;
+MSG_MODE_NAME
+Lista plików
+; Name
+;
+MSG_MODE_ICON
+Ikonki
+; Icon
+;

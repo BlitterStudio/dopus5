@@ -30,14 +30,6 @@ MSG_FONT_FIELD_TEXT
 Tekst+Tîo
 ; Text+Field
 ;
-MSG_SIZE_FIT
-9999%%
-; 9999%%
-;
-MSG_SIZE
-%ld%%
-; %ld%%
-;
 MSG_ABORT
 _Przerwij
 ; Abort
@@ -59,9 +51,7 @@ Nie mogë uruchomiê programu "%s"
 ; Unable to open your tool '%s'
 ;
 MSG_SICK_OF_WAITING
-Program "%s"\n\
-jeszcze nie skoïczyî pracy.\n\
-Czy mam dîuûej poczekaê?
+Program "%s"\njeszcze nie skoïczyî pracy.\nCzy mam dîuûej poczekaê?
 ; Opus is sick of waiting for '%s' to return.\nWait some more?
 ;
 MSG_WAIT_CANCEL

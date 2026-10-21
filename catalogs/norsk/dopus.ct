@@ -1,8 +1,6 @@
 ## version $VER: dopus.catalog 5.62 (10.08.97)
 ## codeset 0
 ## language norsk
-; Catalog updates Copyright 2023-2026 Dimitris Panokostas
-;
 ;
 MSG_ABORTED
 Avbrutt...
@@ -59,10 +57,6 @@ Nei
 MSG_CONTINUE
 Fortsett
 ; Continue
-;
-MSG_OKAY
-OK
-; OK
 ;
 MSG_CANCEL
 Avbryt
@@ -137,33 +131,27 @@ MSG_UNKNOWN_TYPE
 ; <unknown>
 ;
 MSG_SNIFF_CONFIRMATION
-Filen '%s' kunne ikke bli gjenkjent.\n\
-Start Filtype Snuseren for å undersøke?
-; The file '%s' could not be identified.\n\
-; Launch Filetype Sniffer to investigate?
+Filen '%s' kunne ikke bli gjenkjent.\nStart Filtype Snuseren for å undersøke?
+; The file '%s' could not be identified.\nLaunch Filetype Sniffer to investigate?
 ;
 MSG_SNIFF
 Snus!
 ; Sniff!
 ;
 MSG_SCRIPTS_CHANGED
-Du har forandret scriptene dine og\n\
-ikke lagret dem. Vil du?
+Du har forandret scriptene dine og\nikke lagret dem. Vil du?
 ; You have modified your scripts and not\nsaved them. Would you like to?
 ;
 MSG_LISTER_MENU_CHANGED
-Du har forandret listermenyen din og\n\
-ikke lagret den. Vil du?
+Du har forandret listermenyen din og\nikke lagret den. Vil du?
 ; You have modified your lister menu and not\nsaved it. Would you like to?
 ;
 MSG_USER_MENU_CHANGED
-Du har forandret brukermenyene dine og\n\
-ikke lagret dem. Vil du?
+Du har forandret brukermenyene dine og\nikke lagret dem. Vil du?
 ; You have modified your user menus and not\nsaved them. Would you like to?
 ;
 MSG_HOTKEYS_CHANGED
-Du har forandret hurtigtastene dine og\n\
-ikke lagret dem. Vil du?
+Du har forandret hurtigtastene dine og\nikke lagret dem. Vil du?
 ; You have modified your hotkeys and not\nsaved them. Would you like to?
 ;
 MSG_OPEN_NEW_WINDOW
@@ -195,13 +183,11 @@ Katalog
 ; Directory 
 ;
 MSG_SELECT_UNPROTECT
-\n\
-Velg Ubeskytte for å sette 'kan slettes' flagget
+\nVelg Ubeskytte for å sette 'kan slettes' flagget
 ; \nSelect Unprotect to set the deletion bit.
 ;
 MSG_FOUND_A_MATCH
-Fant et treff i filen\n\
-'%s'
+Fant et treff i filen\n'%s'
 ; Found a match in the file\n'%s'
 ;
 MSG_COMMENTING
@@ -257,327 +243,280 @@ Directory Opus Forespørsel
 ; Directory Opus Request
 ;
 MSG_MULTI_DRAG
-Avbryt
+Multi-dra - %ld filer, %ld skuffer valgte
 ; Multi-drag - %ld files, %ld dirs selected
 ;
 MSG_PRESS_MOUSE_BUTTON
-Erstatt
+Klikk lukke-knappen for å fortsette...
 ; Click close button to continue...
 ;
 MSG_COMMENT
-Hopp over
+kommentar
 ; comment
 ;
 MSG_PROTECT
-Hopp over alle
+beskytt
 ; protect
 ;
 MSG_DATESTAMP
-Alle
+datostempel
 ; date stamp
 ;
 MSG_PROGRESS_OPERATION_MOVING
-Avslutt
+Flytter...
 ; Moving...
 ;
 MSG_PROGRAM_LOADING
-Lagre
+Opus 5 lastes inn... Vennligst vent.
 ; Opus 5 loading... please wait.
 ;
 MSG_OPEN_MENU
-Lukke
+Åpne...
 ; Load...
 ;
 MSG_SAVE_MENU
-Ja
+Lagre
 ; Save
 ;
 MSG_SAVEAS_MENU
-Nei
+Lagre Som...
 ; Save As...
 ;
 MSG_ACT_RECURSIVELY
-Fortsett
+Utfør også på filer i under-kataloger? 
 ; Act on files in sub-directories?
 ;
 MSG_PROGRESS_OPERATION_COMMENT
-Setting comments...
+Setter kommentarer...
 ; Setting comments...
 ;
 MSG_PROGRESS_OPERATION_PROTECT
-Avbryt
+Setter beskyttelses flagg...
 ; Setting protections...
 ;
 MSG_PROGRESS_OPERATION_DATESTAMP
-Erstatt Alle
+Setter datostempler...
 ; Setting datestamps...
 ;
 MSG_SET_PROTECT_OLD
-Fortsett
+Gjeldende
 ; Current
 ;
 MSG_SET_PROTECT_SET
-Flytt
+Sett
 ; Set
 ;
 MSG_SET_PROTECT_CLEAR
-Kaste
+Fjern
 ; Clear
 ;
-MSG_OK_BUTTON
-blokker
-; _OK
-;
 MSG_ALL_BUTTON
-ledig
+A_lle
 ; A_ll
 ;
 MSG_SKIP_BUTTON
-LagLink
+Hopp O_ver
 ; S_kip
 ;
 MSG_ABORT_BUTTON
-Velg Fil
+_Avbryt
 ; A_bort
 ;
 MSG_PROGRESS_OPERATION_ENCRYPTING
-Velg Katalog
+Krypterer...
 ; Encrypting...
 ;
 MSG_USER_MENU
-Oppgi Filnavn
+Bruker
 ; User
 ;
 MSG_LISTER_MENU_TITLE
-Åpne...
+Lister Hopp-Opp Meny
 ; Lister Pop-Up Menu
 ;
 MSG_USER_MENU_TITLE
-Standard-verdier
+Brukermeny
 ; User Menus
 ;
 MSG_EMPTY
-Sist Lagret
+tom
 ; empty
 ;
 MSG_CANCEL_BUTTON
-Gjenopprett
+_Avbryt
 ; _Cancel
 ;
 MSG_OPEN_BUTTON
-Prosjekt
+_Åpne
 ; _Open
 ;
 MSG_NEW_BUTTON
-Editer
+_Ny
 ; _New
 ;
 MSG_PARENT
-<ukjent>
+Forrige Katalog
 ; Parent Directory
 ;
 MSG_ROOT
-Filen '%s' kunne ikke bli gjenkjent.\n\
-Start Filtype Snuseren for å undersøke?
+Rot Katalog
 ; Root Directory
 ;
 MSG_DEVICE_LIST
-Snus!
+Enhetsliste
 ; Device List
 ;
 MSG_SCANNING_DIRECTORIES
-Du har forandret scriptene dine og\n\
-ikke lagret dem. Vil du?
+Scanner kataloger...
 ; Scanning directories...
 ;
 MSG_READING_DIRECTORY
-Du har forandret listermenyen din og\n\
-ikke lagret den. Vil du?
+Leser katalog...
 ; Reading directory...
 ;
 MSG_CHECK_FIT_RESULTS
-Du har forandret brukermenyene dine og\n\
-ikke lagret dem. Vil du?
+Resultater fra 'sjekk plass':\n
 ; Results of fit test:\n
 ;
 MSG_FIT
-Du har forandret hurtigtastene dine og\n\
-ikke lagret dem. Vil du?
+passer
 ; fit
 ;
 MSG_BLOCKS_NEEDED
-Åpne i ny lister
+blokker behøvd.
 ; blocks needed.
 ;
 MSG_EXECUTE_ENTER_COMMAND
-Åpne med...
+Oppgi kommando og dens argumenter.
 ; Enter command and arguments.
 ;
 MSG_TOOL_MENU
-Velg applikasjon til å åpne '%s'
+Verktøy
 ; Tools
 ;
 MSG_BUFFER_LIST
-Åpne med
+Cacheliste
 ; Cache List
 ;
 MSG_REREAD_DIR
-Andre...
+Ajourfør Katalog
 ; Re-read Directory
 ;
-MSG_ASSIGN
-Assign
-; Assign
-;
-MSG_FULL
-full
-; full
-;
 MSG_USED
-in use
+i bruk
 ; in use
 ;
 MSG_VALIDATING
-disk validating
+disk validatering
 ; disk validating
 ;
 MSG_ENTER_FILTER_STRING
-Directories selected - enter filter pattern.
+Katalog(er) valgt - oppgi fil mønster.
 ; Directories selected - enter filter pattern.
 ;
 MSG_VOLUME
-Volume
+Volum
 ; Volume
 ;
 MSG_SELECT_SOURCE
-Select Source
+Velg Kilde
 ; Select Source
 ;
 MSG_SELECT_DESTINATION
-Select Destination
+Velg Destinasjon
 ; Select Destination
 ;
 MSG_NO_OWNER
-<No Owner>
+<Ingen Eier>
 ; <No Owner>
 ;
 MSG_NO_GROUP
-<No Group>
+<Ingen Gruppe>
 ; <No Group>
 ;
 MSG_SCRIPTS_TITLE
-Scripts
+Skript
 ; Scripts
 ;
 MSG_PROGRESS_OPERATION_LINKING
-Making Links...
+Oppretter Linker...
 ; Making Links...
 ;
 MSG_LINKING
-making a link to
+oppretter en link til
 ; making a link to
 ;
 MSG_DECRYPT
-_Decrypt files
+_Dekryptere filer
 ; _Decrypt files
 ;
 MSG_EMPTY_TRASH
-Empty Trash
+Tøm Søppel
 ; Empty Trash
 ;
 MSG_REALLY_EMPTY_TRASH
-The contents of the trashcan will be lost!\nDo you really want to empty it?
+Innholdet i søppelbøtten vil gå tapt!\nVil du virkelig tømme den?
 ; The contents of the trashcan will be lost!\nDo you really want to empty it?
 ;
 MSG_ENTER_ASSIGN_NAME
-Enter name to assign to '%s'
+Oppgi navn å assigne til '%s'
 ; Enter name to assign to '%s'
 ;
 MSG_ADD
-Add
+Legg til
 ; Add
 ;
 MSG_PATH
-Path
+Sti
 ; Path
 ;
-MSG_DEFER
-Defer
-; Defer
-;
 MSG_ASSIGNING
-assigning
+assigner
 ; assigning
 ;
 MSG_CHANGE_NEEDS_RESET
-Some changes you made will not be\neffective until you next reboot.
+Noen forandringer vil ikke bli\nsatt i effekt før neste varmstart.
 ; Some changes you made will not be\neffective until you next reboot.
 ;
 MSG_OPENING
-opening
+åpner
 ; opening
 ;
 MSG_LIBRARY_ERROR
-Unable to open %s (%s)
+Greide ikke å åpne %s (%s)
 ; Unable to open %s (%s)
 ;
 MSG_LIBRARY_ANY_VERSION
-any version
+uansett versjon
 ; any version
 ;
-MSG_CLI
-CLI
-; CLI
-;
 MSG_CX_DESC
-The Complete Workbench Replacement!
+Den Komplette Workbench Erstatning!
 ; The Complete Workbench Replacement!
 ;
 MSG_ABORT_STARTUP
-Do you want to abort startup?
+Vil du avbryte oppstart?
 ; Do you want to abort startup?
 ;
 MSG_ABORT_STARTUP_BUTTONS
-Continue|Abort
+Fortsett|Avbryt
 ; Continue|Abort
 ;
 MSG_PROTECT_TITLE
-Protect
+Beskytt
 ; Protect
 ;
 MSG_DATESTAMP_TITLE
-Datestamp
+Datostempel
 ; Datestamp
 ;
 MSG_COMMENT_TITLE
-Comment
+Kommentar
 ; Comment
 ;
 MSG_PATTERN_OFF
-The backdrop picture is disabled in the Environment.\n\
-; Would you like it enabled?
-; The backdrop picture is disabled in the Environment.\n\
-; Would you like it enabled?
-;
-MSG_THEMES_MENU
-Themes
-; Themes
-;
-MSG_THEMES_LOAD
-Load Theme...
-; Load Theme...
-;
-MSG_THEMES_SAVE
-Save Theme...
-; Save Theme...
-;
-MSG_THEMES_BUILD
-Build Theme...
-; Build Theme...
-;
-MSG_ADDICONING
-adding icons to
-; adding icons to
+Bakgrunnsbildet er skrudd av i Arbeidsmiljø-innstillingene.\nØnsker du å skru det på?
+; The backdrop picture is disabled in the Environment.\nWould you like it enabled?
 ;
 MSG_REGISTERED_TO
 Denne kopien er registrert på:
@@ -684,8 +623,7 @@ Legger til ikoner...
 ; Adding icons...
 ;
 MSG_ICON_ALREADY_EXISTS
-Et ikon eksisterer allerede for '%s'.\n\
-Vil du erstatte det?
+Et ikon eksisterer allerede for '%s'.\nVil du erstatte det?
 ; An icon already exists for '%s'.\nDo you wish to replace it?
 ;
 MSG_ICON_REPLACE_IMAGE
@@ -701,8 +639,7 @@ Kopierer...
 ; Copying...
 ;
 MSG_CANT_OVERCOPY_FILES
-Kilde og destinasjons kataloger\n\
-må være forskjellige for å kopiere filer.
+Kilde og destinasjons kataloger\nmå være forskjellige for å kopiere filer.
 ; Source and destination directories\nmust be different to copy files.
 ;
 MSG_COPY
@@ -726,8 +663,7 @@ flytter
 ; moving
 ;
 MSG_CANT_OVERLINK_FILES
-Kilde og destinasjons kataloger må\n\
-være forskjellige for å opprette linker.
+Kilde og destinasjons kataloger må\nvære forskjellige for å opprette linker.
 ; Source and destination directories\nmust be different to make links.
 ;
 MSG_CANT_LINK_DIR_INTO_ITSELF
@@ -741,10 +677,6 @@ Fra '%s' til '%s'
 MSG_FROM
 Fra '%s'
 ; From '%s'
-;
-MSG_PROJECT_MENU
-Opus
-; Opus
 ;
 MSG_BACKDROP_MENU
 Bakgrunnsvindu
@@ -765,10 +697,6 @@ Avslutt...
 MSG_EXECUTE_MENU
 Utfør kommando...
 ; Execute Command...
-;
-MSG_NEWSHELL_MENU
-NewShell...
-; NewShell...
 ;
 MSG_HELP_MENU
 Hjelp!
@@ -910,10 +838,6 @@ MSG_OPEN_PARENT_MENU
 Åpne Forrige
 ; Open Parent
 ;
-MSG_LISTER_RESTORE
-Restore
-; Restore
-;
 MSG_ICONS_MENU
 Ikoner
 ; Icons
@@ -967,96 +891,64 @@ Glem plassering
 ; Un-Snapshot
 ;
 MSG_ICON_COPY
-Prøv Igjen
+Ta Kopi
 ; Copy
 ;
 MSG_ICONS_NEW_MENU
-Prøv Igjen
+Ny
 ; New
 ;
 MSG_ICONS_MAKEDIR_MENU
-Avbryt
+Skuff...
 ; Drawer...
 ;
 MSG_ICONS_NEWGROUP_MENU
-Erstatt
+Gruppe...
 ; Group...
 ;
 MSG_ICON_COPY_RAM
-Hopp over
+til RAM:
 ; to RAM:
 ;
 MSG_ICON_COPY_DF0
-Hopp over alle
+til DF0:
 ; to DF0:
 ;
 MSG_ICON_COPY_OTHER
-Alle
+til annen...
 ; to other...
 ;
 MSG_ICON_COPY2
-Avslutt
+Ta Kopi...
 ; Copy...
 ;
 MSG_ICON_COPY_TO
-Lagre
+til
 ; to
 ;
 MSG_ICONS_NEWCOMMAND_MENU
-Lukke
+Kommando...
 ; Command...
 ;
 MSG_ICONS_SHORTCUT_MENU
-Ja
+Opprett varmtast
 ; Create Shortcut
 ;
 MSG_DESKTOP_POPUP_LEFTOUT
-Nei
+Gjør 'utlagt'
 ; Create Left-out
 ;
 MSG_DESKTOP_POPUP_COPY
-Fortsett
+Kopiér til Desktop
 ; Copy to Desktop
 ;
 MSG_DESKTOP_POPUP_MOVE
-Move to Desktop
+Flytt til Desktop
 ; Move to Desktop
 ;
 MSG_ICON_COPY_DESKTOP
-Avbryt
+til Desktop
 ; to Desktop
-;
-MSG_ICON_LINEUP
-Erstatt Alle
-; Line Up
-;
-MSG_ICON_SNAPSHOT_LISTER
-Fortsett
-; Snapshot Lister
-;
-MSG_ICON_SNAPSHOT_ICONS
-Flytt
-; Snapshot Icons
-;
-MSG_ICON_SNAPSHOT_ALL
-Kaste
-; Snapshot All
-;
-MSG_ICON_SNAPSHOT_WINDOW
-blokker
-; Snapshot Window
-;
-MSG_ICON_EJECT
-Eject Disk
-; Eject Disk
-;
-MSG_EJECTING
-ejecting
-; ejecting
-;
-MSG_EJECT_UNSUPPORTED
-%s cannot be ejected.
-; %s cannot be ejected.
 ;
 MSG_BUTTONS_MENU
 Knapper
@@ -1115,44 +1007,28 @@ Opsjoner...
 ; Options...
 ;
 MSG_DEFPUBSCR_MENU
-Prøv Igjen
+Standard Offentlig skjerm
 ; Default PubScreen
 ;
 MSG_MENU_HOTKEYS
-Prøv Igjen
+Hurtigtaster...
 ; Hotkeys...
 ;
 MSG_HOTKEYS_TITLE
-Prøv Igjen
+Hurtigtaster
 ; Hotkeys
 ;
 MSG_MENU_SCRIPTS
-Avbryt
+Skript...
 ; Scripts...
 ;
 MSG_MENU_SYSMENU
-Erstatt
+System-menyer...
 ; System Menus...
 ;
 MSG_MENU_ICONPOS
-Hopp over
+Ikon Plassering...
 ; Icon Positioning...
-;
-MSG_ENVIRONMENT_SAVE_LAYOUT_NEW
-Hopp over alle
-; Save Layout
-;
-MSG_ENVIRONMENT_EDIT
-Alle
-; Environment...
-;
-MSG_ENVIRONMENT_LOAD_NEW
-Avslutt
-; Load Environment...
-;
-MSG_ENVIRONMENT_SAVE_NEW
-Lagre
-; Save Environment
 ;
 MSG_SELECT_TITLE
 Filutvalg
@@ -1161,10 +1037,6 @@ Filutvalg
 MSG_SELECT_IGNORE
 Ignorer
 ; Ignore
-;
-MSG_SELECT_MATCH
-Match
-; Match
 ;
 MSG_SELECT_NOMATCH
 Ikke Match
@@ -1251,8 +1123,7 @@ Feil %ld
 ; Error %ld
 ;
 MSG_ERROR_OCCURED
-En feil oppsto %s '%s'\n\
-%s
+En feil oppsto %s '%s'\n%s
 ; An error occured %s '%s'\n%s
 ;
 MSG_ERROR_DEST_IS_DIRECTORY
@@ -1264,73 +1135,71 @@ Destinasjon '%s' er en fil.
 ; Destination '%s' is a file.
 ;
 MSG_ERROR_UNKNOWN_CODE
-Prøv Igjen
+Ukjent feilkode
 ; Unknown error code
 ;
 MSG_BUTTONS_ERROR_SAVING
-Prøv Igjen
+Feil ved lagring av knapperad!
 ; Error saving button bank!
 ;
 MSG_BUTTONS_ERROR_LOADING
-Avbryt
+Feil ved henting av knapperad!
 ; Error loading button bank!
 ;
 MSG_ERROR_CREATING_DIRECTORY
-Erstatt
-; creating the directory
+oppretter katalogen
+; Error creating the directory
 ;
 MSG_CUSTPORT_NOT_FOUND
-Hopp over
+Bruker-spesifisert ny 'handler port'\n'%s'\nkunne ikke finnes!
 ; User-specified custom handler port\n'%s'\ncould not be found!
 ;
 MSG_ALREADY_RUNNING
-Hopp over alle
-; Directory Opus appears to be already running!\n\
-; Running a second copy has the potential to cause\n\
-; problems, and it is recommended that you do not.
+Det virker som om Directory Opus allerede kjører.\nÅ starte en ny kopi har potensiale til å skape\nproblemer, og det er anbefalt at du ikke gjør det.
+; Directory Opus appears to be already running!\nRunning a second copy has the potential to cause\nproblems, and it is recommended that you do not.
 ;
 MSG_ALREADY_RUNNING_BUTTONS
-Alle
+Avbryt|Kjør Omigjen
 ; Cancel|Run Again
 ;
 MSG_UNABLE_TO_CLOSE_SCREEN
-Avslutt
+Directory Opus greier ikke å lukke skjermen sin.\nVennligst lukk alle vinduer og prøv på nytt.
 ; Directory Opus is unable to close its screen.\nPlease close all windows and try again.
 ;
 MSG_ERROR_INVALID_DATE
-Lagre
+Ugyldig dato streng oppgitt!
 ; Invalid date string entered!
 ;
 MSG_UNABLE_TO_OPEN_SCREEN
-Lukke
+Kan ikke åpne skjerm!
 ; Can't open screen!
 ;
 MSG_AN_ERROR_OCCURED
-Ja
+En feil har oppstått
 ; An error occured 
 ;
 MSG_ERROR
-Nei
+Feil 
 ; Error 
 ;
 MSG_SIZE
-Fortsett
+Størrelse
 ; Size
 ;
 MSG_DATE
-Date
+Dato
 ; Date
 ;
 MSG_OLD
-Avbryt
+Gammel
 ; Old
 ;
 MSG_NEW
-Erstatt Alle
+Ny
 ; New
 ;
 MSG_FILE_EXISTS
-Fortsett
+Filen '%s' eksisterer allerede!
 ; File '%s' already exists!
 ;
 MSG_PROGRESS_OPERATION_DELETING
@@ -1338,12 +1207,8 @@ Sletter...
 ; Deleting...
 ;
 MSG_DELETE_CONFIRM
-Advarsel: du kan ikke få tilbake\n\
-hva du sletter! OK å slette:\n\n\
-%ld fil(er) og\n\
-%ld skuff(er) (og deres innhold)?
-; Warning: you cannot get back\nwhat you delete! OK to delete:\n\n\
-; %ld file(s) and\n%ld drawer(s) (and their contents)?
+Advarsel: du kan ikke få tilbake\nhva du sletter! OK å slette:\n\n%ld fil(er) og\n%ld skuff(er) (og deres innhold)?
+; Warning: you cannot get back\nwhat you delete! OK to delete:\n\n%ld file(s) and\n%ld drawer(s) (and their contents)?
 ;
 MSG_DELETE
 Slett
@@ -1358,15 +1223,12 @@ Slett '%s'?
 ; Delete '%s'?
 ;
 MSG_DELETE_DIR_CONFIRM
-'%s' er en katalog.\n\
-Fortsette sletting?
+'%s' er en katalog.\nFortsette sletting?
 ; '%s' is a directory.\nProceed with delete operation?
 ;
 MSG_DELETE_PROTECTED
-'%s' er beskyttet mot sletting.\n\
-Fjerne beskyttelse og prøve igjen?
-; '%s' is protected against deletion.\n\
-; Unprotect and try again?
+'%s' er beskyttet mot sletting.\nFjerne beskyttelse og prøve igjen?
+; '%s' is protected against deletion.\nUnprotect and try again?
 ;
 MSG_UNPROTECT
 Ubeskytt
@@ -1417,8 +1279,7 @@ Lagrer arbeidsmiljø fil...
 ; Saving environment file...
 ;
 MSG_BUTTONS_CHANGE_WARNING
-Knapperad '%s' er endret.\n\
-Ønsker du å lagre den?
+Knapperad '%s' er endret.\nØnsker du å lagre den?
 ; Button bank '%s' has been modified.\nDo you wish to save it?
 ;
 MSG_BUTTONS_CREATE_WHICH_TYPE
@@ -1481,10 +1342,6 @@ MSG_LISTER_STATUS_SOURCE
 KILDE
 ; SRCE
 ;
-MSG_LISTER_STATUS_DEST
-DEST
-; DEST
-;
 MSG_LISTER_STATUS_BUSY
 VENT
 ; BUSY
@@ -1498,18 +1355,12 @@ Oppgi søkemønster for filer.
 ; Enter file pattern to search for.
 ;
 MSG_HUNT_FOUND_FILE
-Fant filen '%s' i katalogen\n\
-'%s'\n\
-Åpne katalog?
+Fant filen '%s' i katalogen\n'%s'\nÅpne katalog?
 ; Found the file '%s' in the directory\n'%s'\nShall I go there?
 ;
 MSG_NEW_LISTER
 Ny Lister
 ; New Lister
-;
-MSG_SEARCH_COMMENTS
-Search file comments
-; Search file comments
 ;
 MSG_FUNC_DESC_ADDICON
 Legg til ikon på filer
@@ -1747,20 +1598,12 @@ MSG_FUNC_DESC_SETBACKGROUND
 Sett som bakgrunnsbilde
 ; Set as background picture
 ;
-MSG_FUNC_DESC_RESET
-Reset Things
-; Reset Things
-;
-MSG_FUNC_DESC_STOPSNIFFER
-Stop Filetype Sniffer
-; Stop Filetype Sniffer
-;
 MSG_ICON_GROUP
 Programgrupper
 ; Program Groups
 ;
 MSG_GROUP_ENTER_NAME
-Prøv Igjen
+Oppgi navn på ny Programgruppe
 ; Enter Program Group Name
 ;
 MSG_RXERR_1
@@ -1808,8 +1651,7 @@ Ukjent feil kode
 ; Unknown error code
 ;
 MSG_DESKTOP_REALLY_DELETE
-Advarsel: du kan ikke få tilbake\n\
-hva du sletter! OK å slette:\n\n
+Advarsel: du kan ikke få tilbake\nhva du sletter! OK å slette:\n\n
 ; Warning: you cannot get back\nwhat you delete! OK to delete:\n\n
 ;
 MSG_DESKTOP_DELETE_GROUPS
@@ -1817,28 +1659,24 @@ MSG_DESKTOP_DELETE_GROUPS
 ; %ld program group(s)
 ;
 MSG_DESKTOP_DELETE_ASSIGNS
-Avbryt
+%ld assign(er)
 ; %ld assign(s)
 ;
 MSG_DESKTOP_DELETE_GROUP_OBJECTS
-Erstatt
+%ld gruppe objekt(er)
 ; %ld group object(s)
 ;
 MSG_DESKTOP_DELETE_DESKTOP_FILES
-Hopp over
+%ld fil(er)
 ; %ld file(s)
 ;
 MSG_DESKTOP_DELETE_DESKTOP_DIRS
-Hopp over alle
+%ld katalog(er)
 ; %ld dir(s)
 ;
 MSG_REPLACE_SAME
 De to filene virker til å være den samme.
 ; The two files appear to be the same.
-;
-MSG_REPLACE_VERSION_SAME
-Begge filer er samme versjon (%ld.%ld.%ld).
-; Both files are the same version (%ld.%ld.%ld).
 ;
 MSG_REPLACE_VERSION_NEWER
 Den nye filen er av senere versjon (%ld.%ld.%ld).
@@ -1877,20 +1715,8 @@ Filen '%s' eksisterer og vil bli erstattet.\n
 ; File '%s' exists and would be replaced.\n
 ;
 MSG_BRIEF_FILE_EXISTS
-Filen '%s' eksisterer allerede. Erstatte den?\n\n\
-Ny     - Størrelse : %7ld  Dato : %19s%s\n\
-Gammel - Størrelse : %7ld  Dato : %19s%s
-; File '%s' already exists. Replace it?\n\n\
-; New - Size : %7ld  Date : %19s%s\n\
-; Old - Size : %7ld  Date : %19s%s
-;
-MSG_REPLACE_VER
-  Ver : %ld.%ld.%ld
-;   Ver : %ld.%ld.%ld
-;
-MSG_REPLACE_VER_UNKNOWN
-  Ver : ?????
-;   Ver : ?????
+Filen '%s' eksisterer allerede. Erstatte den?\n\nNy     - Størrelse : %7ld  Dato : %19s%s\nGammel - Størrelse : %7ld  Dato : %19s%s
+; File '%s' already exists. Replace it?\n\nNew - Size : %7ld  Date : %19s%s\nOld - Size : %7ld  Date : %19s%s
 ;
 MSG_GET_VERSION
 Versjon
@@ -1920,10 +1746,6 @@ MSG_LISTER_TITLE_COMMENT
 Kommentar
 ; Comment
 ;
-MSG_LISTER_TITLE_FILETYPE
-Type
-; Type
-;
 MSG_LISTER_TITLE_OWNER
 Eier
 ; Owner
@@ -1931,10 +1753,6 @@ Eier
 MSG_LISTER_TITLE_GROUP
 Gruppe
 ; Group
-;
-MSG_LISTER_TITLE_NETPROT
-Net
-; Net
 ;
 MSG_LISTER_TITLE_VERSION
 Versjon
@@ -1948,10 +1766,6 @@ MSG_LISTER_TITLE_DEVICE
 Enhet
 ; Device
 ;
-MSG_LISTER_TITLE_FULL
-Full
-; Full
-;
 MSG_LISTER_TITLE_FREE
 Ledig
 ; Free
@@ -1961,20 +1775,8 @@ I bruk
 ; In Use
 ;
 MSG_CLI_HELP
-Skriv 'help list' for en liste over kommandoer,\n\
-eller 'help <kommando>' for en kommando beskrivelse.\n\
-Skriv 'quit' for å avslutte CLI.\n\n\
-Oppgi en intern kommando med argumenter for\n\
-å utføre den. For å utføre en DOpus ARexx kommando,\n\
-oppgi et + symbol før kommandoen. Legg til en &\n\
-hvis du vil at kommandoen skal være asynkron.\n
-; Type 'help list' for a list of commands,\n\
-; or 'help <command>' for a command template.\n\
-; Type 'quit' to exit the CLI.\n\n\
-; Enter an internal command with arguments to\n\
-; execute it. To execute a DOpus ARexx command,\n\
-; enter a + symbol before the command. Append a &\n\
-; if you want the command to be asynchronous.\n
+Skriv 'help list' for en liste over kommandoer,\neller 'help <kommando>' for en kommando beskrivelse.\nSkriv 'quit' for å avslutte CLI.\n\nOppgi en intern kommando med argumenter for\nå utføre den. For å utføre en DOpus ARexx kommando,\noppgi et + symbol før kommandoen. Legg til en &\nhvis du vil at kommandoen skal være asynkron.\n
+; Type 'help list' for a list of commands,\nor 'help <command>' for a command template.\nType 'quit' to exit the CLI.\n\nEnter an internal command with arguments to\nexecute it. To execute a DOpus ARexx command,\nenter a + symbol before the command. Append a &\nif you want the command to be asynchronous.\n
 ;
 MSG_CLI_NO_TEMPLATE
 Kommandoen har ingen beskrivelse.
@@ -1993,10 +1795,8 @@ Ikon plasserings område
 ; Icon positioning area
 ;
 MSG_ICONPOS_INSTRUCTIONS
-Klikk og dra for å markere områder hvor ikoner kan bli plassert.\n\
-Klikk OK eller Avbryt når ferdig.
-; Click and drag to mark areas where icons can be positioned.\n\
-; Click OK or Cancel when finished.
+Klikk og dra for å markere områder hvor ikoner kan bli plassert.\nKlikk OK eller Avbryt når ferdig.
+; Click and drag to mark areas where icons can be positioned.\nClick OK or Cancel when finished.
 ;
 MSG_ICONPOS_APPICON
 AppIkoner
@@ -2034,14 +1834,6 @@ MSG_EDIT_COMMAND
 Editer Kommando...
 ; Edit Command...
 ;
-MSG_COMMAND_DESCRIPTION
-Enter a description for this command.
-; Enter a description for this command.
-;
-MSG_COMMAND_LEAVEOUT
-Leave out on desktop
-; Leave out on desktop
-;
 MSG_START_APPEARANCE
 Utseende
 ; Appearance
@@ -2075,44 +1867,36 @@ Oppgi tittel for Startmeny.
 ; Enter label for Start Menu.
 ;
 MSG_OPEN_STARTMENU_MENU
-Prøv Igjen
+Hent Startmeny...
 ; Load Start Menu...
 ;
 MSG_START_SELECT_MENU
-Prøv Igjen
+Velg Startmeny å hente
 ; Select Start Menu To Load
 ;
 MSG_START_FONT
-Avbryt
+Bytt font...
 ; Change Font...
 ;
 MSG_START_SELECT_FONT
-Erstatt
+Velg Font For Startmeny
 ; Select Font For Start Menu
 ;
 MSG_START_SCALING
-Hopp over
+Skalér Bilder
 ; Scale Images
 ;
 MSG_START_DRAGBAR
-Hopp over alle
+Drastrek
 ; Drag Bar
 ;
 MSG_START_DRAGBAR_OFF
-Alle
+Av
 ; Off
 ;
 MSG_START_LABEL_FONT
-Avslutt
+Bytt tittelfont...
 ; Change Label Font...
-;
-MSG_START_PICTURE
-Lagre
-; Change Background...
-;
-MSG_START_SELECT_PICTURE
-Lukke
-; Select Background Picture For Start Menu
 ;
 MSG_KEYFINDER_TITLE
 Finn Tastetrykk

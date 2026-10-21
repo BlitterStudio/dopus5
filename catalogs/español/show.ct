@@ -3,7 +3,7 @@
 ## language español
 ;
 MSG_OK
-_OK
+_Aceptar
 ; _OK
 ;
 MSG_INFO_TITLE
@@ -15,7 +15,7 @@ Fichero:
 ; File:
 ;
 MSG_INFO_IMAGE_SIZE
-Tamaño de la imagen:
+Dimensiones:
 ; Image Size:
 ;
 MSG_INFO_COLOURS
@@ -23,39 +23,39 @@ Colores:
 ; Colours:
 ;
 MSG_INFO_MODE
-Modo de pantalla:
+Modo:
 ; Display Mode:
 ;
 MSG_INFO_FRAME
-Frame:
+Fotograma:
 ; Frame:
 ;
 MSG_INFO_ANIM
-Tipo de animación:
+Tipo:
 ; Anim Type:
 ;
 MSG_INFO_FRAME_NUM
-%ld de %ld @ %ld/seg
+%ld de %ld a %ld/seg
 ; %ld of %ld @ %ld/sec
 ;
 MSG_PRINT_ASPECT
-_Aspecto:
+_Orientación:
 ; _Aspect:
 ;
 MSG_PRINT_IMAGE
-_Imagen:
+Image_n:
 ; _Image:
 ;
 MSG_PRINT_SHADE
-_Sombra:
+_Sombreado:
 ; _Shade:
 ;
 MSG_PRINT_PLACEMENT
-P_osición:
+_Posición:
 ; P_lacement:
 ;
 MSG_PRINT_FORM_FEED
-Salto de página
+E_xpulsar página
 ; _Form Feed
 ;
 MSG_PRINT_PRINT_TITLE
@@ -63,15 +63,15 @@ Imprimir _Título
 ; Print _Title
 ;
 MSG_PRINT
-Im_primir
+_Imprimir
 ; _Print
 ;
 MSG_PRINT_ASPECT_PORTRAIT
-Retrato
+Normal
 ; Portrait
 ;
 MSG_PRINT_ASPECT_LANDSCAPE
-Apaisado
+Apaisada
 ; Landscape
 ;
 MSG_PRINT_IMAGE_POSITIVE
@@ -83,11 +83,11 @@ Negativo
 ; Negative
 ;
 MSG_PRINT_SHADE_BW
-Blanco y negro
+Blanco y Negro
 ; Black & White
 ;
 MSG_PRINT_SHADE_GREY
-Escala de grises
+Grises
 ; Gray Scale
 ;
 MSG_PRINT_SHADE_COLOUR
@@ -95,7 +95,7 @@ Color
 ; Colour
 ;
 MSG_PRINT_PLACEMENT_CENTER
-Centro
+Centrada
 ; Centre
 ;
 MSG_PRINT_PLACEMENT_LEFT
@@ -103,7 +103,7 @@ Izquierda
 ; Left
 ;
 MSG_OPENING_PRINTER
-Abriendo impresora...
+Espere por favor...
 ; Opening printer...
 ;
 MSG_INITIALISING_PRINTER
@@ -115,22 +115,22 @@ Imprimiendo imagen...
 ; Printing picture...
 ;
 MSG_ABORTING_PRINT
-Abortando...
+Interrumpiendo impresión...
 ; Aborting...
 ;
 MSG_ANIM_TITLE
-Animación : %s\tFrame %ld de %ld\t%ld x %ld x %ld\n\n
+Animación: %s\tFotograma %ld de %ld\t%ld×%ld×%ld\n\n
 ; Animation : %s\tFrame %ld of %ld\t%ld x %ld x %ld\n\n
 ;
 MSG_ILBM_TITLE
-Imagen : %s\t%ld x %ld x %ld\n\n
+Imagen: %s\t%ld×%ld×%ld\n\n
 ; Picture : %s\t%ld x %ld x %ld\n\n
 ;
 MSG_INFO_TYPE
-Tipo de imagen:
+Formato:
 ; Picture Type:
 ;
 MSG_SHOW_DESC
-Mostrar imagen
+Visualizar imágenes
 ; Show pictures
 ;

@@ -2,10 +2,6 @@
 ## codeset 0
 ## language nederlands
 ;
-MSG_ICON_TITLE
-Icoon : %s (%s)
-; %s : %s (%s)
-;
 MSG_ICON_SAVE
 _Bewaar
 ; _Save
@@ -21,10 +17,6 @@ _Annuleer
 MSG_BLOCKS
 Blokken:
 ; Blocks:
-;
-MSG_BYTES
-Bytes:
-; Bytes:
 ;
 MSG_STACK
 _Stack:
@@ -74,29 +66,9 @@ MSG_CREATED
 Aangemaakt:
 ; Created:
 ;
-MSG_VOLUME_IS
-Volume is
-; Volume is
-;
-MSG_ICON_DISK
-Volume
-; Volume
-;
 MSG_ICON_DRAWER
 Lade
 ; Drawer
-;
-MSG_ICON_TOOL
-Tool
-; Tool
-;
-MSG_ICON_PROJECT
-Project
-; Project
-;
-MSG_ICON_SCRIPT
-Script
-; Script
 ;
 MSG_ICON_ARCHIVED
 Archief
@@ -134,243 +106,63 @@ MSG_UNREADABLE
 Onleesbaar
 ; Unreadable
 ;
-MSG_OFS
-OFS
-; OFS
-;
-MSG_FFS
-FFS
-; FFS
-;
-MSG_IOFS
-OFS (I)
-; OFS (I)
-;
-MSG_IFFS
-FFS (I)
-; FFS (I)
-;
-MSG_COFS
-OFS (C)
-; OFS (C)
-;
-MSG_CFFS
-FFS (C)
-; FFS (C)
-;
 MSG_NDOS
 Non­DOS
 ; Non-DOS
-;
-MSG_MSDOS
-MS-DOS
-; MS-DOS
-;
-MSG_UNKNOWN
-???
-; ???
 ;
 MSG_ICONINFO_DESC
 Toon/bewerk icooninformatie
 ; Show/edit icon information
 ;
-MSG_AFS
-AFS
-; AFS
-;
-MSG_PFS1
-PFS(1)
-; PFS(1)
-;
 MSG_SPECIAL_MENU
-Special
+Speciaal
 ; Special
 ;
 MSG_AUTHOR
-  Author : %s
+  Auteur : %s
 ;   Author : %s
 ;
 MSG_STRIP_NEWICONS
-Strip NewIcons Image
+Strip NewIcons­afbeelding
 ; Strip NewIcons Image
 ;
-MSG_OK
-Ok
-; Ok
-;
 MSG_STRIP_WARNING
-This will permanently remove the NewIcon image\n\
-; from this icon. Are you sure?
-; This will permanently remove the NewIcon image\n\
-; from this icon. Are you sure?
+Dit zal permanent de NewIcon­afbeelding van\nhet icoon verwijderen. Weet u het zeker?
+; This will permanently remove the NewIcon image\nfrom this icon. Are you sure?
 ;
 MSG_OK_CANCEL
-Ok|Cancel
+Ok|Annuleer
 ; Ok|Cancel
 ;
 MSG_LOCATION
-Location:
+_Locatie:
 ; Location:
 ;
 MSG_ICON_GARBAGE
-Trashcan
+Prullenbak
 ; Trashcan
 ;
-MSG_ICON_DEVICE
-Device
-; Device
-;
-MSG_ICON_KICK
-Kickstart
-; Kickstart
-;
 MSG_STRIP_OLD
-Strip Original Image
+Strip originele afbeelding
 ; Strip Original Image
 ;
 MSG_NEWICONS
-Show NewIcons Image
+Toon NewIcons­afbeelding
 ; Show NewIcons Image
 ;
 MSG_OLDICONS
-Show Original Image
+Toon originele afbeelding
 ; Show Original Image
 ;
 MSG_STRIP_WARNING_OLD
-This will permanently remove the original image\n\
-; from this icon. Are you sure?
-; This will permanently remove the original image\n\
-; from this icon. Are you sure?
+Dit zal permanent de originele afbeelding van\nhet icoon verwijderen. Weet u het zeker?
+; This will permanently remove the original image\nfrom this icon. Are you sure?
 ;
 MSG_BORDER_MENU
-Icon Border
+Icoonkader
 ; Icon Border
 ;
 MSG_LABEL_MENU
-Icon Label
+Icoonlabel
 ; Icon Label
-;
-MSG_EDIT
-Edit
-; Edit
-;
-MSG_PICK_EDITOR
-Pick Editor...
-; Pick Editor...
-;
-MSG_COPY_OLDICON
-Copy Original Image
-; Copy Original Image
-;
-MSG_COPY_NEWICON
-Copy NewIcons Image
-; Copy NewIcons Image
-;
-MSG_COPY_BOTHICONS
-Copy Both Images
-; Copy Both Images
-;
-MSG_COPY_TOOLTYPES
-Copy Tooltypes
-; Copy Tooltypes
-;
-MSG_ICON_NEWICON
-NewIcon
-; NewIcon
-;
-MSG_ICON_OLDICON
-Standard Icon
-; Standard Icon
-;
-MSG_ENTER_FUNCTION
-Enter function to call icon editor\n(To use IconEdit you must\ntick the AppMessage box)
-; Enter function to call icon editor\n(To use IconEdit you must\ntick the AppMessage box)
-;
-MSG_USE_ICONEDIT
-Send AppMessage
-; Send AppMessage
-;
-MSG_USE
-Use
-; Use
-;
-MSG_ICON_DONT_SAVE
-Don't Save
-; Don't Save
-;
-MSG_ICON_MODIFIED
-Icon has been modified.\nDo you wish to save it first?
-; Icon has been modified.\nDo you wish to save it first?
-;
-MSG_SORT
-S_ort
-; S_ort
-;
-MSG_PFS2
-PFS(2)
-; PFS(2)
-;
-MSG_PFS3
-PFS(3)
-; PFS(3)
-;
-MSG_PFS3_MULTI
-muPF
-; muPF
-;
-MSG_FFS7
-FFS(7)
-; FFS(7)
-;
-MSG_VP255
-DOS(9)
-; DOS(9)
-;
-MSG_SFS0
-SFS(0)
-; SFS(0)
-;
-MSG_SFS1
-SFS(1)
-; SFS(1)
-;
-MSG_SFS2
-SFS(2)
-; SFS(2)
-;
-MSG_SFS3
-SFS(3)
-; SFS(3)
-;
-MSG_JXFS
-JXFS
-; JXFS
-;
-MSG_SWAP
-SWAP
-; SWAP
-;
-MSG_BOX
-BOX(0)
-; BOX(0)
-;
-MSG_FAT32
-FAT32
-; FAT32
-;
-MSG_EXFAT
-EXFAT
-; EXFAT
-;
-MSG_EXT2FS
-EXT2FS
-; EXT2FS
-;
-MSG_HFS
-HFS
-; HFS
-;
-MSG_NTFS
-NTFS
-; NTFS
 ;

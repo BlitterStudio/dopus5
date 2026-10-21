@@ -3,15 +3,15 @@
 ## language español
 ;
 MSG_READING_FILE
-Leyendo el fichero '%s'...
+Leyendo '%s'...
 ; Reading file '%s'...
 ;
 MSG_CANT_OPEN_FILE
-No se puede abrir el fichero '%s'!
+¡No puedo abrir '%s'!
 ; Unable to open file '%s'!
 ;
 MSG_FILE_TITLE
-%s  %s  %ld líneas, %ld bytes   modo=%s, tab=%ld
+%s  %s  %ld líneas, %ld bytes   modo=%s, tab.=%ld
 ; %s  %s  %ld lines, %ld bytes   mode=%s, tab=%ld
 ;
 MSG_MENU_FILE
@@ -27,7 +27,7 @@ Buscar...
 ; Search...
 ;
 MSG_MENU_REPEAT
-Repetir la búsqueda
+Repetir búsqueda
 ; Repeat Search  
 ;
 MSG_MENU_PRINT
@@ -39,39 +39,39 @@ Salir
 ; Quit
 ;
 MSG_MENU_SETTINGS
-Preferencias
+Ajustes
 ; Settings
 ;
 MSG_MENU_TAB
-Tamaño del tabulador
+Tamaño tabulador
 ; Tab Size
 ;
 MSG_MENU_SAVE
-Guardar preferencias
+Guardar ajustes
 ; Save Settings
 ;
 MSG_ENTER_SEARCH_STRING
-Introducir texto a buscar...
+Cadena de caracteres a buscar:
 ; Enter text to search for.
 ;
 MSG_SEARCH_NO_CASE
-_Ignorar mayúsculas
+Ignorar _MAY./min.
 ; _Ignore Case
 ;
 MSG_SEARCH_WILD
-_Plantilla
+_Comodín
 ; _Wildcards
 ;
 MSG_SEARCH_ONLYWORD
-_Solo palabras
+Caden_a exacta
 ; _Only Words
 ;
 MSG_SEARCH_REVERSE
-_Búsqueda inversa
+Búsqueda _inversa
 ; _Reverse Search
 ;
 MSG_OK_BUTTON
-OK
+Aceptar
 ; OK
 ;
 MSG_CANCEL_BUTTON
@@ -90,32 +90,20 @@ MSG_MENU_MODE
 Modo
 ; Mode
 ;
-MSG_MENU_MODE_NORMAL
-Normal
-; Normal
-;
-MSG_MENU_MODE_ANSI
-ANSI
-; ANSI
-;
-MSG_MENU_MODE_HEX
-Hex
-; Hex
-;
 MSG_MENU_USE_SCREEN
-Usar pantalla
+Pantalla propia
 ; Use Screen
 ;
 MSG_MENU_SCREEN_MODE
-Escoger modo de pantalla...
+Modo de pantalla...
 ; Pick Screen Mode...
 ;
 MSG_MENU_SELECT_FONT
-Escoger Font...
+Elegir fuente...
 ; Pick Font...
 ;
 MSG_SCREEN_TITLE
-Visualizador de texto Directory Opus
+Visualizador de Texto de DOpus
 ; Directory Opus Text Viewer
 ;
 MSG_MENU_SAVE_AS
@@ -123,11 +111,11 @@ Guardar como...
 ; Save As...
 ;
 MSG_ENTER_FILENAME
-Introduzca nombre de fichero
+Guardar fichero como...
 ; Enter Filename
 ;
 MSG_IO_ERROR
-Error de entrada/salida
+Error E/S
 ; IO Error
 ;
 MSG_ERROR_CODE
@@ -135,19 +123,19 @@ Error DOS %ld
 ; DOS error %ld
 ;
 MSG_MENU_TO_EDITOR
-Al editor...
+Editar...
 ; To Editor...
 ;
 MSG_MENU_SELECT_EDITOR
-Escoger Editor...
+Elegir editor
 ; Pick Editor...
 ;
 MSG_OK_CANCEL_BUTTON
-OK|Cancelar
+Aceptar|Cancelar
 ; OK|Cancel
 ;
 MSG_SELECT_EDITOR
-Introduzca la función para llamar al editor de texto
+Comando/Función para ejecutar editor:
 ; Enter function to call text editor
 ;
 MSG_READING_FILE_TITLE
@@ -159,6 +147,6 @@ Contando líneas...
 ; Counting lines...
 ;
 MSG_CLOSE
-Close
+Cerrar
 ; Close
 ;

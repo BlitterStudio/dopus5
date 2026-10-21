@@ -83,21 +83,15 @@ Kopiowanie nie powiodîo sië.
 ; Diskcopy failed.
 ;
 MSG_READ_ERROR
-Bîâd odczytu dysku w urzâdzeniu %s\n\
-na ôcieûce %ld.\n\
-%s
+Bîâd odczytu dysku w urzâdzeniu %s\nna ôcieûce %ld.\n%s
 ; Error reading %s track %ld\n%s
 ;
 MSG_WRITE_ERROR
-Bîâd zapisu dysku w urzâdzeniu %s\n\
-na ôcieûce %ld.\n\
-%s
+Bîâd zapisu dysku w urzâdzeniu %s\nna ôcieûce %ld.\n%s
 ; Error writing %s track %ld\n%s
 ;
 MSG_VERIFY_ERROR
-Bîâd weryfikacji w urzâdzeniu %s\n\
-na ôcieûce %ld.\n\
-%s
+Bîâd weryfikacji w urzâdzeniu %s\nna ôcieûce %ld.\n%s
 ; Error verifying %s track %ld\n%s
 ;
 MSG_DISKCOPY_READING
@@ -145,8 +139,7 @@ Modyfikujë nazwë dysku...
 ; Bumping names...
 ;
 MSG_INCOMPATIBLE
-Dyski nie sâ tego samego typu\n\
-i nie mogâ zostaê skopiowane.
+Dyski nie sâ tego samego typu\ni nie mogâ zostaê skopiowane.
 ; Disks are of incompatible types and can not be copied.
 ;
 MSG_OK

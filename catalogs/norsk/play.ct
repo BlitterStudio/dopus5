@@ -22,26 +22,6 @@ MSG_LENGTH
 Lengde:
 ; Length:
 ;
-MSG_TYPE
-Type:
-; Type:
-;
-MSG_TYPE_STEREO
-Stereo
-; Stereo
-;
-MSG_TYPE_MONO
-Mono
-; Mono
-;
-MSG_TYPE_RAW
-Raw
-; Raw
-;
-MSG_STATUS
-Status:
-; Status:
-;
 MSG_STATUS_LOADING
 Leser fil...
 ; Reading file...

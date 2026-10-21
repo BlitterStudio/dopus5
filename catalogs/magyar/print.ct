@@ -62,21 +62,9 @@ MSG_PRINT_QUALITY_LETTER
 Levél
 ; Letter
 ;
-MSG_PRINT_SPACING_6
-6 LPI
-; 6 LPI
-;
-MSG_PRINT_SPACING_8
-8 LPI
-; 8 LPI
-;
 MSG_PRINT_PITCH_PICA
 Ciceró
 ; Pica
-;
-MSG_PRINT_PITCH_ELITE
-Elite
-; Elite
 ;
 MSG_PRINT_PITCH_FINE
 Sûrû
@@ -129,10 +117,6 @@ Aláhúzott
 MSG_ABORT
 Mégsem
 ; Abort
-;
-MSG_OK
-OK
-; OK
 ;
 MSG_OPENING_PRINTER
 Megnyitom a nyomtatót...

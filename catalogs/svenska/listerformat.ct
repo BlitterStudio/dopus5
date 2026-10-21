@@ -1,0 +1,112 @@
+## version $VER: listerformat.catalog 1.1 (23.6.97)
+## codeset 0
+## language svenska
+;
+MSG_LISTER_FORMAT_TITLE
+Listarformat
+; List Format
+;
+MSG_LISTER_AVAILABLE_DISPLAY_ITEMS
+Tillgängliga...
+; Available...
+;
+MSG_LISTER_SELECTED_DISPLAY_ITEMS
+Visa/sortera...
+; Display/Sort...
+;
+MSG_LISTER_LIST_FILENAME
+Namn
+; File Name
+;
+MSG_LISTER_LIST_FILESIZE
+Storlek
+; File Size
+;
+MSG_LISTER_LIST_PROTECTION
+Skyddsflaggor
+; Protection
+;
+MSG_LISTER_LIST_DATE
+Datum
+; File Date
+;
+MSG_LISTER_LIST_COMMENT
+Kommentar
+; Comment
+;
+MSG_LISTER_LIST_FILETYPE
+Filtyp
+; File Type
+;
+MSG_LISTER_LIST_OWNER
+Ägare
+; Owner
+;
+MSG_LISTER_LIST_GROUP
+Grupp
+; Group
+;
+MSG_LISTER_LIST_NETPROTECTION
+Nätåtkomst
+; Net Access
+;
+MSG_LISTER_ENTRY_SEPARATION
+_Postseparering
+; _Entry Separation
+;
+MSG_LISTER_REVERSE_SORTING
+Sort. _baklänges
+; _Reverse Sorting
+;
+MSG_LISTER_SEPARATION_MIX
+Blanda filer/lådor
+; Mix Files/Dirs
+;
+MSG_LISTER_SEPARATION_DIRS
+Lådor först
+; Directories First
+;
+MSG_LISTER_SEPARATION_FILES
+Filer först
+; Files First
+;
+MSG_LISTER_SHOW
+V_isa
+; _Show Filter
+;
+MSG_LISTER_HIDE
+_Dölj
+; _Hide Filter
+;
+MSG_LISTER_REJECT_ICONS
+Filtrera i_koner
+; _Filter Icons
+;
+MSG_LISTER_HIDDEN_BIT
+_Gömda
+; H_idden
+;
+MSG_LISTER_USE
+_Använd
+; _Use
+;
+MSG_LISTER_CANCEL
+A_vbryt
+; _Cancel
+;
+MSG_LISTER_SAVE
+_Spara
+; S_ave
+;
+MSG_DEFAULTS
+_Förinställda värden
+; Reset to _Defaults
+;
+MSG_FTP_DEFAULTS
+_Utrymmesmätare
+; Reset FTP Defaults
+;
+MSG_LISTER_FUEL_GAUGE
+Ä_rv
+; Free Space _Gauge
+;

@@ -3,19 +3,19 @@
 ## language español
 ;
 MSG_OK
-OK
+Aceptar
 ; OK
 ;
 MSG_SELECT_FILE
-Seleccionar Fichero
+Elija fichero...
 ; Select File
 ;
 MSG_SELECT_DIRECTORY
-Seleccionar Directorio
+Elija directorio...
 ; Select Directory
 ;
 MSG_SELECT_FONT
-Seleccionar Font
+Elija fuente...
 ; Select Font
 ;
 MSG_FONT_DRAWMODE
@@ -27,16 +27,8 @@ Texto
 ; Text
 ;
 MSG_FONT_FIELD_TEXT
-Texto+Campo
+Texto+Fondo
 ; Text+Field
-;
-MSG_SIZE_FIT
-9999%%
-; 9999%%
-;
-MSG_SIZE
-%ld%%
-; %ld%%
 ;
 MSG_ABORT
 Abortar
@@ -51,19 +43,18 @@ MSG_FILE
 ; %ld of %ld
 ;
 MSG_DIRECTORY_OPUS_REQUEST
-Directory Opus
+DOpus: Ventana de Petición
 ; Directory Opus Request
 ;
 MSG_UNABLE_TO_OPEN_TOOL
-No se puede abrir su herramienta '%s'
+No puedo abrir herramienta '%s'.
 ; Unable to open your tool '%s'
 ;
 MSG_SICK_OF_WAITING
-Opus está cansado de esperar a que  '%s' regrese.\n\
-¿Esperar más?
+Opus se ha cansado de esperar\na la aplicación '%s'.
 ; Opus is sick of waiting for '%s' to return.\nWait some more?
 ;
 MSG_WAIT_CANCEL
-Esperar|Cancelar
+Esperar más|Cancelar
 ; Wait|Cancel
 ;

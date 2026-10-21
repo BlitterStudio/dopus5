@@ -22,21 +22,9 @@ MSG_FONT_DRAWMODE
 Modus:
 ; Mode:
 ;
-MSG_FONT_TEXT
-Text
-; Text
-;
 MSG_FONT_FIELD_TEXT
 Text+Feld
 ; Text+Field
-;
-MSG_SIZE_FIT
-9999%%
-; 9999%%
-;
-MSG_SIZE
-%ld%%
-; %ld%%
 ;
 MSG_ABORT
 Abbruch
@@ -59,8 +47,7 @@ Kann Program '%s' nicht öffnen
 ; Unable to open your tool '%s'
 ;
 MSG_SICK_OF_WAITING
-Opus hat lange genug auf '%s' gewartet.\n\
-Noch länger warten?
+Opus hat lange genug auf '%s' gewartet.\nNoch länger warten?
 ; Opus is sick of waiting for '%s' to return.\nWait some more?
 ;
 MSG_WAIT_CANCEL

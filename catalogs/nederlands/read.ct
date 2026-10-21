@@ -30,10 +30,6 @@ MSG_MENU_REPEAT
 Herhaal zoeken
 ; Repeat Search  
 ;
-MSG_MENU_PRINT
-Print...
-; Print...
-;
 MSG_MENU_QUIT
 Einde
 ; Quit
@@ -94,14 +90,6 @@ MSG_MENU_MODE_NORMAL
 Normaal
 ; Normal
 ;
-MSG_MENU_MODE_ANSI
-ANSI
-; ANSI
-;
-MSG_MENU_MODE_HEX
-Hex
-; Hex
-;
 MSG_MENU_USE_SCREEN
 Gebruik scherm
 ; Use Screen
@@ -157,8 +145,4 @@ Lees bestand in...
 MSG_COUNTING_LINES
 Tel regels...
 ; Counting lines...
-;
-MSG_CLOSE
-Close
-; Close
 ;

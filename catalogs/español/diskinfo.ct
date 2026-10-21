@@ -3,206 +3,110 @@
 ## language español
 ;
 MSG_DISKINFO_TITLE
-Información sobre el disco
+%b [%s]
 ; %b (%s) Information
 ;
 MSG_DISKINFO_DESC
-Mostrar información sobre un dispositivo
+Mostrar información del dispositivo
 ; Show information about a device
 ;
 MSG_OK
-Dispositivo:
+_Aceptar
 ; _OK
 ;
 MSG_CANCEL
-Nombre:
+_Cancelar
 ; _Cancel
 ;
 MSG_NAME
-Tamaño:
+_Nombre:
 ; _Name:
 ;
 MSG_HANDLER
-Usado:
+Controlador:
 ; Handler:
 ;
 MSG_TYPE
-Libre:
+Formato:
 ; Type:
 ;
 MSG_STATE
-Porcent.:
+Estado:
 ; State:
 ;
 MSG_USED
-Densidad:
+Usados:
 ; Used:
 ;
 MSG_FREE
-Errores:
+Libres:
 ; Free:
 ;
 MSG_CAPACITY
-Status:
+Totales:
 ; Total:
 ;
 MSG_UNIT
-Fecha:
+unidad
 ; unit
 ;
 MSG_UNKNOWN
-Sist. Fich.:
+desconocido
 ; unknown
 ;
 MSG_READ_WRITE
-bytes
+Lectura/Escritura
 ; Read/Write
 ;
 MSG_READ_ONLY
-bloques
+Solo Lectura
 ; Read Only
 ;
 MSG_VALIDATING
-lleno
+Validando
 ; Validating
 ;
 MSG_BYTES
 libre
 ;  bytes
 ;
-MSG_ERROR
-bytes/bloque
-; %ld error
-;
 MSG_ERRORS
-%ld errors
+%ld errores
 ; %ld errors
 ;
 MSG_DOSTYPE_1
-Old File System
+OldFileSystem
 ; Old File System
 ;
 MSG_DOSTYPE_2
-Fast File System
+FastFileSystem
 ; Fast File System
 ;
 MSG_DOSTYPE_3
-Old File System (International)
+OFS (Internacional)
 ; Old File System (International)
 ;
 MSG_DOSTYPE_4
-Fast File System (International)
+FFS (Internacional)
 ; Fast File System (International)
 ;
 MSG_DOSTYPE_5
-Old File System (Dir-Caching)
+OFS (Dir-Cache)
 ; Old File System (Dir-Caching)
 ;
 MSG_DOSTYPE_6
-Fast File System (Dir-Caching)
+FFS (Dir-Cache)
 ; Fast File System (Dir-Caching)
 ;
-MSG_DOSTYPE_7
-MS-DOS (CrossDOS)
-; MS-DOS (CrossDOS)
-;
-MSG_DOSTYPE_8
-Ami-FileSafe Pro
-; Ami-FileSafe Pro
-;
-MSG_DOSTYPE_9
-Ami-FileSafe User
-; Ami-FileSafe User
-;
-MSG_DOSTYPE_10
-Ami-FileSafe Multi
-; Ami-FileSafe Multi
-;
 MSG_DOSTYPE_11
-PFS Floppy
+Disquete PFS
 ; PFS Floppy
 ;
 MSG_DOSTYPE_12
-PFS Hard Drive
+Disco Duro PFS
 ; PFS Hard Drive
 ;
 MSG_DOSTYPE_13
-Envoy Network Volume
+Volumen de Red Envoy
 ; Envoy Network Volume
-;
-MSG_DOSTYPE_14
-Personal File System 2
-; Personal File System 2
-;
-MSG_DOSTYPE_15
-Personal File System 3
-; Personal File System 3
-;
-MSG_DOSTYPE_16
-Personal File System 2 SCSI
-; Personal File System 2 SCSI
-;
-MSG_DOSTYPE_17
-Personal File System 3 SCSI
-; Personal File System 3 SCSI
-;
-MSG_DOSTYPE_18
-Personal File System Multiuser
-; Personal File System Multiuser
-;
-MSG_DOSTYPE_19
-Fast File System (FFS-LNFS)
-; Fast File System (FFS-LNFS)
-;
-MSG_DOSTYPE_20
-Vector Based File System
-; Vector Based File System
-;
-MSG_DOSTYPE_21
-Smart File System 0
-; Smart File System 0
-;
-MSG_DOSTYPE_22
-Smart File System 1
-; Smart File System 1
-;
-MSG_DOSTYPE_23
-Smart File System 2
-; Smart File System 2
-;
-MSG_DOSTYPE_24
-Smart File System 3
-; Smart File System 3
-;
-MSG_DOSTYPE_25
-JX File System
-; JX File System
-;
-MSG_DOSTYPE_26
-Box File System
-; Box File System
-;
-MSG_DOSTYPE_27
-FAT32 File System
-; FAT32 File System
-;
-MSG_DOSTYPE_28
-exFat File System
-; exFat File System
-;
-MSG_DOSTYPE_29
-FUSE ext2 File System
-; FUSE ext2 File System
-;
-MSG_DOSTYPE_30
-FUSE HFS
-; FUSE HFS
-;
-MSG_DOSTYPE_31
-NTFS
-; NTFS
-;
-MSG_DOSTYPE_32
-Swap
-; Swap
 ;

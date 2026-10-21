@@ -2,10 +2,6 @@
 ## codeset 5
 ## language magyar
 ;
-MSG_OK
-OK
-; OK
-;
 MSG_SELECT_FILE
 Állomány kiválasztása
 ; Select File
@@ -30,14 +26,6 @@ MSG_FONT_FIELD_TEXT
 Szöveg+Háttér
 ; Text+Field
 ;
-MSG_SIZE_FIT
-9999%%
-; 9999%%
-;
-MSG_SIZE
-%ld%%
-; %ld%%
-;
 MSG_ABORT
 Hagyd abba
 ; Abort
@@ -59,8 +47,7 @@ Nem tudom megnyitni a(z) "%s" programot
 ; Unable to open your tool '%s'
 ;
 MSG_SICK_OF_WAITING
-Az Opus unatkozva vár a(z) "%s" programra.\n\
-Várjak még egy kicsit?
+Az Opus unatkozva vár a(z) "%s" programra.\nVárjak még egy kicsit?
 ; Opus is sick of waiting for '%s' to return.\nWait some more?
 ;
 MSG_WAIT_CANCEL

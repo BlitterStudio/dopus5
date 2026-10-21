@@ -54,33 +54,9 @@ MSG_PRINT_TAB_SIZE
 _Tabulator
 ; _Tab Size
 ;
-MSG_PRINT_QUALITY_DRAFT
-Draft
-; Draft
-;
 MSG_PRINT_QUALITY_LETTER
 Listowa
 ; Letter
-;
-MSG_PRINT_SPACING_6
-6 LPI
-; 6 LPI
-;
-MSG_PRINT_SPACING_8
-8 LPI
-; 8 LPI
-;
-MSG_PRINT_PITCH_PICA
-Pica
-; Pica
-;
-MSG_PRINT_PITCH_ELITE
-Elite
-; Elite
-;
-MSG_PRINT_PITCH_FINE
-Fine
-; Fine
 ;
 MSG_PRINT_CONFIGURATION
 _Nagîówek/Stopka

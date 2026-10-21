@@ -14,10 +14,6 @@ MSG_PLAY_TITLE
 Suona
 ; Play
 ;
-MSG_FILENAME
-File:
-; File:
-;
 MSG_LENGTH
 Durata:
 ; Length:
@@ -29,14 +25,6 @@ Tipo:
 MSG_TYPE_STEREO
 Stero
 ; Stereo
-;
-MSG_TYPE_MONO
-Mono
-; Mono
-;
-MSG_TYPE_RAW
-Raw
-; Raw
 ;
 MSG_STATUS
 Stato:

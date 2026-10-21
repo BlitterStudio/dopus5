@@ -14,10 +14,6 @@ MSG_FILE_TITLE
 %s  %s  %ld linee, %ld bytes   modo=%s, tab=%ld
 ; %s  %s  %ld lines, %ld bytes   mode=%s, tab=%ld
 ;
-MSG_MENU_FILE
-File
-; File
-;
 MSG_MENU_NEXT
 Successivo
 ; Next
@@ -94,10 +90,6 @@ MSG_MENU_MODE_NORMAL
 Normale
 ; Normal
 ;
-MSG_MENU_MODE_ANSI
-ANSI
-; ANSI
-;
 MSG_MENU_MODE_HEX
 Esadecimale
 ; Hex
@@ -157,8 +149,4 @@ Sto leggendo il file...
 MSG_COUNTING_LINES
 Sto contando le linee...
 ; Counting lines...
-;
-MSG_CLOSE
-Close
-; Close
 ;

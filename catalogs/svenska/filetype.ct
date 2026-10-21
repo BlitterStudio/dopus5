@@ -10,14 +10,6 @@ MSG_FIND_TITLE
 Filtypshittare
 ; Filetype Finder
 ;
-MSG_FIND_PRI
-Pri
-; Pri
-;
-MSG_FIND_ID
-ID
-; ID
-;
 MSG_FIND_FILETYPE
 Filtyp
 ; Filetype
@@ -66,22 +58,6 @@ MSG_NONE_FOUND_3
 filtyp för den här filen?
 ; wish to create a new filetype for
 ;
-MSG_NONE_FOUND_4
-\x00
-; this file?
-;
-MSG_NONE_FOUND_5
-
-; 
-;
-MSG_NONE_FOUND_6
-
-; 
-;
-MSG_NONE_FOUND_7
-
-; 
-;
 MSG_STORED_FOUND_1
 Ingen installerad filtyp motsvarar den
 ; No installed filetype matches the
@@ -101,14 +77,6 @@ Vill du installera den filtypen nu,
 MSG_STORED_FOUND_5
 eller vill du skapa en ny?
 ; now or create a new one?
-;
-MSG_STORED_FOUND_6
-
-; 
-;
-MSG_STORED_FOUND_7
-
-; 
 ;
 MSG_BETTER_FOUND_1
 Det finns en filtyp i "Storage" som
@@ -153,18 +121,6 @@ använda den filtypen, eller vill du
 MSG_INSTALLED_FOUND_4
 skapa en ny?
 ; or create a new one?
-;
-MSG_INSTALLED_FOUND_5
-
-; 
-;
-MSG_INSTALLED_FOUND_6
-
-; 
-;
-MSG_INSTALLED_FOUND_7
-
-; 
 ;
 MSG_CREATE_DESC
 Skapar en ny filtyp
@@ -239,10 +195,7 @@ Lägg till en fil...
 ; Add a file...
 ;
 MSG_CREATE_WARN_EDITED
-Varning!\n\n\
-Du har ändrat bland filtyperna.\n\
-Om du fortsätter kommer dina\n\
-ändringar att försvinna.
+Varning!\n\nDu har ändrat bland filtyperna.\nOm du fortsätter kommer dina\nändringar att försvinna.
 ; WARNING\n\nYou have used the editor.\nIf you continue your changes will be lost...
 ;
 MSG_CREATE_CONTINUE_CANCEL
@@ -254,7 +207,6 @@ Ersätt|Avbryt
 ; Replace|Cancel
 ;
 MSG_FILETYPE_EXISTS
-Filtypen "%s"\n\
-finns redan. Vill du ersätta den?
+Filtypen "%s"\nfinns redan. Vill du ersätta den?
 ; Filetype '%s' exists.\nDo you wish to replace it?
 ;

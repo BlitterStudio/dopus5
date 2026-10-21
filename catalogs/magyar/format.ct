@@ -22,10 +22,6 @@ MSG_FORMAT_NAME
 _Név:
 ; _Name
 ;
-MSG_FORMAT_FFS
-F_ast File System
-; F_ast File System
-;
 MSG_FORMAT_INTERNATIONAL
 _Nemzetközi mód
 ; _International Mode
@@ -83,12 +79,8 @@ Tovább|Mégsem
 ; Proceed|Cancel
 ;
 MSG_DISK_NOT_BLANK
-A(z) "%s" meghajtóban lévõ lemez nem üres\n\
- (a(z) "%s" lemez %s adatot tartalmaz).\n\
-Formázáskor minden adat elvész!\n\
-Válassza a Tovább gombot a folytatáshoz.
-; Disk in drive %s is not blank!\nVolume '%s' contains %s.\n\
-; All data will be erased.\nChoose Proceed to continue.
+A(z) "%s" meghajtóban lévõ lemez nem üres\n (a(z) "%s" lemez %s adatot tartalmaz).\nFormázáskor minden adat elvész!\nVálassza a Tovább gombot a folytatáshoz.
+; Disk in drive %s is not blank!\nVolume '%s' contains %s.\nAll data will be erased.\nChoose Proceed to continue.
 ;
 MSG_ABORTED
 Megszakítva.
@@ -103,38 +95,38 @@ Formázom a lemezt...
 ; Formatting...
 ;
 MSG_FORMAT_FORMATERROR
-Format error on track %ld.
+Formázási hiba a(z) %ld sávon
 ; Format error on track %ld.
 ;
 MSG_FORMAT_VERIFYERROR
-Verify error on track %ld.
+Ellenõrzési hiba a(z) %ld sávon
 ; Verify error on track %ld.
 ;
 MSG_FORMAT_SUCCESSFUL
-Format successful!
+A formázás sikeres volt.
 ; Format successful!
 ;
 MSG_FORMAT_FAILED
-Format failed.
+A formázás sikertelen volt.
 ; Format failed.
 ;
 MSG_FORMAT_SETTING_UP
-Setting up...
+Dolgozom...
 ; Setting up...
 ;
 MSG_FORMAT_CLEANING_UP
-Cleaning up...
+Takarítok magam után...
 ; Cleaning up...
 ;
 MSG_FORMAT_MAKING_TRASH
-Making Trashcan...
+Létrehozom a szemetest...
 ; Making Trashcan...
 ;
 MSG_INSTALLING_DISK
-Installing Bootblock...
+Felírom az indítóblokkokat...
 ; Installing Bootblock...
 ;
 MSG_FORMAT_DESC
-Format disks
+Lemezek formázása
 ; Format disks
 ;

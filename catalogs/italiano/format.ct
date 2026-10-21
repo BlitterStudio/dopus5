@@ -22,10 +22,6 @@ MSG_FORMAT_NAME
 _Nome
 ; _Name
 ;
-MSG_FORMAT_FFS
-F_ast File System
-; F_ast File System
-;
 MSG_FORMAT_INTERNATIONAL
 Modo _Internazionale
 ; _International Mode
@@ -83,12 +79,8 @@ Procedi|Annulla
 ; Proceed|Cancel
 ;
 MSG_DISK_NOT_BLANK
-Il disco nell'unità %s non è vuoto!\n\
-Il voulme '%s' contiene %s\n\
-Tutti i dati saranno cancellati\n\
-Seleziona Procedi per continuare.
-; Disk in drive %s is not blank!\nVolume '%s' contains %s.\n\
-; All data will be erased.\nChoose Proceed to continue.
+Il disco nell'unità %s non è vuoto!\nIl voulme '%s' contiene %s\nTutti i dati saranno cancellati\nSeleziona Procedi per continuare.
+; Disk in drive %s is not blank!\nVolume '%s' contains %s.\nAll data will be erased.\nChoose Proceed to continue.
 ;
 MSG_ABORTED
 Interrotto.
@@ -103,38 +95,38 @@ Formattazione...
 ; Formatting...
 ;
 MSG_FORMAT_FORMATERROR
-Format error on track %ld.
+Errore nel formattare la traccia %ld.
 ; Format error on track %ld.
 ;
 MSG_FORMAT_VERIFYERROR
-Verify error on track %ld.
+Errore di verifica sulla traccia %ld.
 ; Verify error on track %ld.
 ;
 MSG_FORMAT_SUCCESSFUL
-Format successful!
+Formattazione completata!
 ; Format successful!
 ;
 MSG_FORMAT_FAILED
-Format failed.
+Formattazione fallita!
 ; Format failed.
 ;
 MSG_FORMAT_SETTING_UP
-Setting up...
+Preparazione in cosro...
 ; Setting up...
 ;
 MSG_FORMAT_CLEANING_UP
-Cleaning up...
+Riordino...
 ; Cleaning up...
 ;
 MSG_FORMAT_MAKING_TRASH
-Making Trashcan...
+Sto creando il Cestino...
 ; Making Trashcan...
 ;
 MSG_INSTALLING_DISK
-Installing Bootblock...
+Sto installando il Bootblock...
 ; Installing Bootblock...
 ;
 MSG_FORMAT_DESC
-Format disks
+Formatta dischi...
 ; Format disks
 ;

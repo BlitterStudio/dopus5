@@ -1,29 +1,21 @@
 ## version $VER: Play.catalog 5.61 (08.07.1997)
 ## codeset 0
 ## language français
-; ************************************************* 
-; Catalog description file for play.module
-; ************************************************* 
-;
 ;
 MSG_NEXT
-_Suivant\x00
+_Suivant
 ; _Next
 ;
 MSG_ABORT
-_Annuler\x00
+_Annuler
 ; _Abort
-;
-MSG_PLAY_TITLE
-
-; Play
 ;
 MSG_FILENAME
 Fichier :
 ; File:
 ;
 MSG_LENGTH
-Taille :\x00
+Taille :
 ; Length:
 ;
 MSG_TYPE
@@ -34,16 +26,12 @@ MSG_TYPE_STEREO
 Stéréo
 ; Stereo
 ;
-MSG_TYPE_MONO
-
-; Mono
-;
 MSG_TYPE_RAW
-Brut\x00
+Brut
 ; Raw
 ;
 MSG_STATUS
-Statut :\x00
+Statut :
 ; Status:
 ;
 MSG_STATUS_LOADING
@@ -51,13 +39,12 @@ Lecture du fichier...
 ; Reading file...
 ;
 MSG_STATUS_DECOMPRESSING
-Décompression...\x00
+Décompression...
 ; Decompressing...
 ;
 MSG_STATUS_PLAYING
 Lecture du son...
 ; Playing sound...
-;
 ;
 MSG_PLAY_DESC
 Joue des sons

@@ -1,0 +1,48 @@
+## version $VER: viewfont.catalog 56.0 (08.07.97) © Marcin Orîowski <carlos@wfmh.man.szczecin.pl>
+## codeset 0
+## language polski
+;
+MSG_FONT_TITLE
+Przeglâdarka do czcionek
+; Font Viewer
+;
+MSG_FONT_FONT
+_Czcionka
+; _Font
+;
+MSG_FONT_SIZE
+_Rozmiar
+; _Size
+;
+MSG_FONT_PRINT
+_Wydrukuj
+; _Print
+;
+MSG_VIEWFONT_DESC
+Przeglâdarka do czcionek
+; View a font
+;
+MSG_FONT_SELECT
+Wybierz czcionkë
+; Select Font
+;
+MSG_MENU_PROJECT
+Projekt
+; Project
+;
+MSG_MENU_OPEN_FONT
+Otwórz czcionkë...
+; Open Font...
+;
+MSG_MENU_SAVE_SETTINGS
+Zapisz ustawienia
+; Save Settings
+;
+MSG_MENU_QUIT
+Skoïcz
+; Quit
+;
+MSG_MENU_ABOUT
+O programie...
+; About...
+;

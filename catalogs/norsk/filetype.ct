@@ -10,14 +10,6 @@ MSG_FIND_TITLE
 Filtype Finner
 ; Filetype Finder
 ;
-MSG_FIND_PRI
-Pri
-; Pri
-;
-MSG_FIND_ID
-ID
-; ID
-;
 MSG_FIND_FILETYPE
 Filtype
 ; Filetype
@@ -70,18 +62,6 @@ MSG_NONE_FOUND_4
 denne filen?
 ; this file?
 ;
-MSG_NONE_FOUND_5
-
-; 
-;
-MSG_NONE_FOUND_6
-
-; 
-;
-MSG_NONE_FOUND_7
-
-; 
-;
 MSG_STORED_FOUND_1
 Ingen installert filtype matcher
 ; No installed filetype matches the
@@ -101,14 +81,6 @@ MSG_STORED_FOUND_4
 MSG_STORED_FOUND_5
 nå eller å opprette en ny?
 ; now or create a new one?
-;
-MSG_STORED_FOUND_6
-
-; 
-;
-MSG_STORED_FOUND_7
-
-; 
 ;
 MSG_BETTER_FOUND_1
 Det er en filtype i oppbevaring som
@@ -153,18 +125,6 @@ MSG_INSTALLED_FOUND_3
 MSG_INSTALLED_FOUND_4
 eller opprette en ny?
 ; or create a new one?
-;
-MSG_INSTALLED_FOUND_5
-
-; 
-;
-MSG_INSTALLED_FOUND_6
-
-; 
-;
-MSG_INSTALLED_FOUND_7
-
-; 
 ;
 MSG_CREATE_DESC
 Opprett en ny filtype
@@ -239,9 +199,7 @@ Legg til en fil...
 ; Add a file...
 ;
 MSG_CREATE_WARN_EDITED
-ADVARSEL\n\n\
-Du har brukt editoren.\n\
-Hvis du forsetter vil endringene dine forsvinne...
+ADVARSEL\n\nDu har brukt editoren.\nHvis du forsetter vil endringene dine forsvinne...
 ; WARNING\n\nYou have used the editor.\nIf you continue your changes will be lost...
 ;
 MSG_CREATE_CONTINUE_CANCEL
@@ -253,7 +211,6 @@ Erstatt|Avbryt
 ; Replace|Cancel
 ;
 MSG_FILETYPE_EXISTS
-Filtypen '%s' eksisterer.\n\
-Ønsker du å erstatte den?
+Filtypen '%s' eksisterer.\nØnsker du å erstatte den?
 ; Filetype '%s' exists.\nDo you wish to replace it?
 ;

@@ -1,17 +1,13 @@
 ## version $VER: Show.catalog 5.61 (08.07.1997)
 ## codeset 0
 ## language français
-; ************************************************* 
-; Catalog description file for show.module
-; ************************************************* 
-;
 ;
 MSG_OK
 _Okay
 ; _OK
 ;
 MSG_INFO_TITLE
-Informations sur l'image\x00
+Informations sur l'image
 ; Picture Information
 ;
 MSG_INFO_FILE
@@ -19,7 +15,7 @@ Fichier :
 ; File:
 ;
 MSG_INFO_IMAGE_SIZE
-Taille :\x00
+Taille :
 ; Image Size:
 ;
 MSG_INFO_COLOURS
@@ -27,7 +23,7 @@ Couleurs :
 ; Colours:
 ;
 MSG_INFO_MODE
-Mode écran :\x00
+Mode écran :
 ; Display Mode:
 ;
 MSG_INFO_FRAME
@@ -47,11 +43,11 @@ _Aspect :
 ; _Aspect:
 ;
 MSG_PRINT_IMAGE
-_Image :\x00
+_Image :
 ; _Image:
 ;
 MSG_PRINT_SHADE
-_Ombre :\x00
+_Ombre :
 ; _Shade:
 ;
 MSG_PRINT_PLACEMENT
@@ -70,20 +66,12 @@ MSG_PRINT
 _Imprimer
 ; _Print
 ;
-MSG_PRINT_ASPECT_PORTRAIT
-
-; Portrait
-;
 MSG_PRINT_ASPECT_LANDSCAPE
 Paysage
 ; Landscape
 ;
-MSG_PRINT_IMAGE_POSITIVE
-
-; Positive
-;
 MSG_PRINT_IMAGE_NEGATIVE
-Négative\x00
+Négative
 ; Negative
 ;
 MSG_PRINT_SHADE_BW
@@ -91,7 +79,7 @@ Noir et blanc
 ; Black & White
 ;
 MSG_PRINT_SHADE_GREY
-Niv. de gris\x00
+Niv. de gris
 ; Gray Scale
 ;
 MSG_PRINT_SHADE_COLOUR
@@ -103,11 +91,11 @@ Centrée
 ; Centre
 ;
 MSG_PRINT_PLACEMENT_LEFT
-A gauche\x00
+A gauche
 ; Left
 ;
 MSG_OPENING_PRINTER
-Ouverture de l'imprimante...\x00
+Ouverture de l'imprimante...
 ; Opening printer...
 ;
 MSG_INITIALISING_PRINTER
@@ -115,7 +103,7 @@ Initialisation de l'imprimante...
 ; Initialising printer...
 ;
 MSG_PRINTING_PICTURE
-Impression de l'image...\x00
+Impression de l'image...
 ; Printing picture...
 ;
 MSG_ABORTING_PRINT
@@ -127,13 +115,12 @@ Animation : %s\tTrame %ld sur %ld\t%ld x %ld x %ld\n\n
 ; Animation : %s\tFrame %ld of %ld\t%ld x %ld x %ld\n\n
 ;
 MSG_ILBM_TITLE
-Image : %s\t%ld x %ld x %ld\n\n\x00
+Image : %s\t%ld x %ld x %ld\n\n
 ; Picture : %s\t%ld x %ld x %ld\n\n
 ;
 MSG_INFO_TYPE
 Type d'image :
 ; Picture Type:
-;
 ;
 MSG_SHOW_DESC
 Affiche les images

@@ -62,26 +62,6 @@ MSG_PRINT_QUALITY_LETTER
 Brev
 ; Letter
 ;
-MSG_PRINT_SPACING_6
-6 LPI
-; 6 LPI
-;
-MSG_PRINT_SPACING_8
-8 LPI
-; 8 LPI
-;
-MSG_PRINT_PITCH_PICA
-Pica
-; Pica
-;
-MSG_PRINT_PITCH_ELITE
-Elite
-; Elite
-;
-MSG_PRINT_PITCH_FINE
-Fine
-; Fine
-;
 MSG_PRINT_CONFIGURATION
 innstillin_ger
 ; c_onfiguration...
@@ -110,10 +90,6 @@ MSG_PRINT_STYLE
 St_il
 ; St_yle
 ;
-MSG_PRINT_STYLE_NORMAL
-Normal
-; Normal
-;
 MSG_PRINT_STYLE_BOLD
 Halvfet
 ; Bold
@@ -129,10 +105,6 @@ Understreket
 MSG_ABORT
 Avbryt
 ; Abort
-;
-MSG_OK
-OK
-; OK
 ;
 MSG_OPENING_PRINTER
 Åpner skriver...

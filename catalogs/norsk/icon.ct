@@ -2,10 +2,6 @@
 ## codeset 0
 ## language norsk
 ;
-MSG_ICON_TITLE
-Ikon : %s (%s)
-; %s : %s (%s)
-;
 MSG_ICON_SAVE
 _Lagre
 ; _Save
@@ -21,10 +17,6 @@ _Avbryt
 MSG_BLOCKS
 Blokker:
 ; Blocks:
-;
-MSG_BYTES
-Bytes:
-; Bytes:
 ;
 MSG_STACK
 Sta_kk:
@@ -134,243 +126,67 @@ MSG_UNREADABLE
 Uleslig
 ; Unreadable
 ;
-MSG_OFS
-OFS
-; OFS
-;
-MSG_FFS
-FFS
-; FFS
-;
-MSG_IOFS
-OFS (I)
-; OFS (I)
-;
-MSG_IFFS
-FFS (I)
-; FFS (I)
-;
-MSG_COFS
-OFS (C)
-; OFS (C)
-;
-MSG_CFFS
-FFS (C)
-; FFS (C)
-;
 MSG_NDOS
 Ikke-DOS
 ; Non-DOS
-;
-MSG_MSDOS
-MS-DOS
-; MS-DOS
-;
-MSG_UNKNOWN
-???
-; ???
 ;
 MSG_ICONINFO_DESC
 Vis/editer ikon informasjon
 ; Show/edit icon information
 ;
-MSG_AFS
-AFS
-; AFS
-;
-MSG_PFS1
-PFS(1)
-; PFS(1)
-;
 MSG_SPECIAL_MENU
-Special
+Spesial
 ; Special
 ;
 MSG_AUTHOR
-  Author : %s
+  Forfatter : %s
 ;   Author : %s
 ;
 MSG_STRIP_NEWICONS
-Strip NewIcons Image
+Stripp NewIcons Bilde
 ; Strip NewIcons Image
 ;
-MSG_OK
-Ok
-; Ok
-;
 MSG_STRIP_WARNING
-This will permanently remove the NewIcon image\n\
-; from this icon. Are you sure?
-; This will permanently remove the NewIcon image\n\
-; from this icon. Are you sure?
+Dette vil fjerne NewIcon-bildet for godt\nfra dette ikonet. Er du sikker?
+; This will permanently remove the NewIcon image\nfrom this icon. Are you sure?
 ;
 MSG_OK_CANCEL
-Ok|Cancel
+Ok|Avbryt
 ; Ok|Cancel
 ;
 MSG_LOCATION
-Location:
+Beliggenhet:
 ; Location:
 ;
 MSG_ICON_GARBAGE
-Trashcan
+Søppelbøtte
 ; Trashcan
 ;
 MSG_ICON_DEVICE
-Device
+Enhet
 ; Device
 ;
-MSG_ICON_KICK
-Kickstart
-; Kickstart
-;
 MSG_STRIP_OLD
-Strip Original Image
+Stripp Opprinnelig Bilde
 ; Strip Original Image
 ;
 MSG_NEWICONS
-Show NewIcons Image
+Vis NewIcons bilde
 ; Show NewIcons Image
 ;
 MSG_OLDICONS
-Show Original Image
+Vis opprinnelig bilde
 ; Show Original Image
 ;
 MSG_STRIP_WARNING_OLD
-This will permanently remove the original image\n\
-; from this icon. Are you sure?
-; This will permanently remove the original image\n\
-; from this icon. Are you sure?
+Dette vil fjerne det opprinnelige bilder for godt\nfra dette ikonet. Er du sikker?
+; This will permanently remove the original image\nfrom this icon. Are you sure?
 ;
 MSG_BORDER_MENU
-Icon Border
+Ikon Ramme
 ; Icon Border
 ;
 MSG_LABEL_MENU
-Icon Label
+Ikon Tittel
 ; Icon Label
-;
-MSG_EDIT
-Edit
-; Edit
-;
-MSG_PICK_EDITOR
-Pick Editor...
-; Pick Editor...
-;
-MSG_COPY_OLDICON
-Copy Original Image
-; Copy Original Image
-;
-MSG_COPY_NEWICON
-Copy NewIcons Image
-; Copy NewIcons Image
-;
-MSG_COPY_BOTHICONS
-Copy Both Images
-; Copy Both Images
-;
-MSG_COPY_TOOLTYPES
-Copy Tooltypes
-; Copy Tooltypes
-;
-MSG_ICON_NEWICON
-NewIcon
-; NewIcon
-;
-MSG_ICON_OLDICON
-Standard Icon
-; Standard Icon
-;
-MSG_ENTER_FUNCTION
-Enter function to call icon editor\n(To use IconEdit you must\ntick the AppMessage box)
-; Enter function to call icon editor\n(To use IconEdit you must\ntick the AppMessage box)
-;
-MSG_USE_ICONEDIT
-Send AppMessage
-; Send AppMessage
-;
-MSG_USE
-Use
-; Use
-;
-MSG_ICON_DONT_SAVE
-Don't Save
-; Don't Save
-;
-MSG_ICON_MODIFIED
-Icon has been modified.\nDo you wish to save it first?
-; Icon has been modified.\nDo you wish to save it first?
-;
-MSG_SORT
-S_ort
-; S_ort
-;
-MSG_PFS2
-PFS(2)
-; PFS(2)
-;
-MSG_PFS3
-PFS(3)
-; PFS(3)
-;
-MSG_PFS3_MULTI
-muPF
-; muPF
-;
-MSG_FFS7
-FFS(7)
-; FFS(7)
-;
-MSG_VP255
-DOS(9)
-; DOS(9)
-;
-MSG_SFS0
-SFS(0)
-; SFS(0)
-;
-MSG_SFS1
-SFS(1)
-; SFS(1)
-;
-MSG_SFS2
-SFS(2)
-; SFS(2)
-;
-MSG_SFS3
-SFS(3)
-; SFS(3)
-;
-MSG_JXFS
-JXFS
-; JXFS
-;
-MSG_SWAP
-SWAP
-; SWAP
-;
-MSG_BOX
-BOX(0)
-; BOX(0)
-;
-MSG_FAT32
-FAT32
-; FAT32
-;
-MSG_EXFAT
-EXFAT
-; EXFAT
-;
-MSG_EXT2FS
-EXT2FS
-; EXT2FS
-;
-MSG_HFS
-HFS
-; HFS
-;
-MSG_NTFS
-NTFS
-; NTFS
 ;

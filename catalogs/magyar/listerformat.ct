@@ -1,0 +1,116 @@
+## version $VER: listerformat.catalog 2.1 (22.9.97) Készítette Horváth Péter és Miklós Árpád
+## codeset 0
+## language magyar
+;
+MSG_LISTER_FORMAT_TITLE
+Listaformátum
+; List Format
+;
+MSG_LISTER_AVAILABLE_DISPLAY_ITEMS
+Választható...
+; Available...
+;
+MSG_LISTER_SELECTED_DISPLAY_ITEMS
+Megjelenés/Rendezés
+; Display/Sort...
+;
+MSG_LISTER_LIST_FILENAME
+Név
+; File Name
+;
+MSG_LISTER_LIST_FILESIZE
+Méret
+; File Size
+;
+MSG_LISTER_LIST_PROTECTION
+Jelzõbitek
+; Protection
+;
+MSG_LISTER_LIST_DATE
+Dátum
+; File Date
+;
+MSG_LISTER_LIST_COMMENT
+Megjegyzés
+; Comment
+;
+MSG_LISTER_LIST_FILETYPE
+Típus
+; File Type
+;
+MSG_LISTER_LIST_OWNER
+Tulajdonos
+; Owner
+;
+MSG_LISTER_LIST_GROUP
+Csoport
+; Group
+;
+MSG_LISTER_LIST_NETPROTECTION
+Hozzáférés
+; Net Access
+;
+MSG_LISTER_ENTRY_SEPARATION
+_Sorrend
+; _Entry Separation
+;
+MSG_LISTER_REVERSE_SORTING
+F_ordított sorrend
+; _Reverse Sorting
+;
+MSG_LISTER_SEPARATION_MIX
+Vegyesen
+; Mix Files/Dirs
+;
+MSG_LISTER_SEPARATION_DIRS
+Elõbb a könyvtárak
+; Directories First
+;
+MSG_LISTER_SEPARATION_FILES
+Elõbb az állományok
+; Files First
+;
+MSG_LISTER_SHOW
+M_utatási szûrõ
+; _Show Filter
+;
+MSG_LISTER_HIDE
+_Elrejtési szûrõ
+; _Hide Filter
+;
+MSG_LISTER_REJECT_ICONS
+I_konok kiszûrése
+; _Filter Icons
+;
+MSG_LISTER_HIDDEN_BIT
+Re_jtetteket ne
+; H_idden
+;
+MSG_LISTER_USE
+_Használd
+; _Use
+;
+MSG_LISTER_CANCEL
+_Mégsem
+; _Cancel
+;
+MSG_LISTER_LIST_VERSION
+Változat
+; Version
+;
+MSG_LISTER_SAVE
+_Tárold
+; S_ave
+;
+MSG_DEFAULTS
+Alap_értelmezés
+; Reset to _Defaults
+;
+MSG_FTP_DEFAULTS
+Szabad hely kijelzõ
+; Reset FTP Defaults
+;
+MSG_LISTER_FUEL_GAUGE
+_Örököl
+; Free Space _Gauge
+;

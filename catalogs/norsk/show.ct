@@ -2,10 +2,6 @@
 ## codeset 0
 ## language norsk
 ;
-MSG_OK
-_OK
-; _OK
-;
 MSG_INFO_TITLE
 Informasjon om bildet
 ; Picture Information
@@ -30,10 +26,6 @@ MSG_INFO_FRAME
 Bilde nr:
 ; Frame:
 ;
-MSG_INFO_ANIM
-Anim Type:
-; Anim Type:
-;
 MSG_INFO_FRAME_NUM
 %ld av %ld @ %ld/sek
 ; %ld of %ld @ %ld/sec
@@ -53,10 +45,6 @@ _Skygge:
 MSG_PRINT_PLACEMENT
 P_lassering:
 ; P_lacement:
-;
-MSG_PRINT_FORM_FEED
-_Form Feed
-; _Form Feed
 ;
 MSG_PRINT_PRINT_TITLE
 Skriv ut _Tittel

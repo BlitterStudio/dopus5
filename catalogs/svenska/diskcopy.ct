@@ -83,18 +83,15 @@ Kopiering misslyckades!
 ; Diskcopy failed.
 ;
 MSG_READ_ERROR
-Kunde inte läsa från %s, spår %ld\n\
-%s!
+Kunde inte läsa från %s, spår %ld\n%s!
 ; Error reading %s track %ld\n%s
 ;
 MSG_WRITE_ERROR
-Kunde inte skriva till %s, spår %ld\n\
-%s!
+Kunde inte skriva till %s, spår %ld\n%s!
 ; Error writing %s track %ld\n%s
 ;
 MSG_VERIFY_ERROR
-Verifieringsfel på %s, spår %ld\n\
-%s!
+Verifieringsfel på %s, spår %ld\n%s!
 ; Error verifying %s track %ld\n%s
 ;
 MSG_DISKCOPY_READING
@@ -142,13 +139,8 @@ MSG_BUMPING_NAMES
 ; Bumping names...
 ;
 MSG_INCOMPATIBLE
-Diskarna är inte kompatibla,\n\
-och kan inte kopieras.
+Diskarna är inte kompatibla,\noch kan inte kopieras.
 ; Disks are of incompatible types and can not be copied.
-;
-MSG_OK
-OK
-; OK
 ;
 MSG_DISKCOPY_DESC
 Gör kopior av en disk

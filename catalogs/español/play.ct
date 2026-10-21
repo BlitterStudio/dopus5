@@ -7,11 +7,11 @@ _Siguiente
 ; _Next
 ;
 MSG_ABORT
-_Abortar
+A_bortar
 ; _Abort
 ;
 MSG_PLAY_TITLE
-Reproducir
+Reproductor
 ; Play
 ;
 MSG_FILENAME
@@ -19,27 +19,19 @@ Fichero:
 ; File:
 ;
 MSG_LENGTH
-Longitud:
+Duración:
 ; Length:
 ;
 MSG_TYPE
-Tipo:
+Formato:
 ; Type:
 ;
 MSG_TYPE_STEREO
-Stereo
+Estéreo
 ; Stereo
 ;
-MSG_TYPE_MONO
-Mono
-; Mono
-;
-MSG_TYPE_RAW
-Raw
-; Raw
-;
 MSG_STATUS
-Status:
+Estado:
 ; Status:
 ;
 MSG_STATUS_LOADING
@@ -51,11 +43,11 @@ Descomprimiendo...
 ; Decompressing...
 ;
 MSG_STATUS_PLAYING
-Reproduciendo sonido...
+Reproduciendo...
 ; Playing sound...
 ;
 MSG_PLAY_DESC
-Reproduciendo ficheros de sonido
+Reproducir ficheros de sonido
 ; Play sound files
 ;
 MSG_PLAY_NEXT

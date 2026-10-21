@@ -58,10 +58,6 @@ MSG_SEARCH_NO_CASE
 Overse _versaler
 ; _Ignore Case
 ;
-MSG_SEARCH_WILD
-_Wildcards
-; _Wildcards
-;
 MSG_SEARCH_ONLYWORD
 Kun _hele ord
 ; _Only Words
@@ -69,10 +65,6 @@ Kun _hele ord
 MSG_SEARCH_REVERSE
 _Baklengs søk
 ; _Reverse Search
-;
-MSG_OK_BUTTON
-OK
-; OK
 ;
 MSG_CANCEL_BUTTON
 Avbryt
@@ -89,18 +81,6 @@ Les tekstfiler
 MSG_MENU_MODE
 Modus
 ; Mode
-;
-MSG_MENU_MODE_NORMAL
-Normal
-; Normal
-;
-MSG_MENU_MODE_ANSI
-ANSI
-; ANSI
-;
-MSG_MENU_MODE_HEX
-Hex
-; Hex
 ;
 MSG_MENU_USE_SCREEN
 Bruk Egen Skjerm
@@ -157,8 +137,4 @@ Leser fil...
 MSG_COUNTING_LINES
 Teller linjer...
 ; Counting lines...
-;
-MSG_CLOSE
-Close
-; Close
 ;

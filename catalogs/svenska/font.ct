@@ -1,0 +1,60 @@
+## version $VER: viewfont.catalog 1.1 (15.6.97)
+## codeset 0
+## language svenska
+;
+MSG_FONT_TITLE
+Teckensnittsvisare
+; Font Viewer
+;
+MSG_FONT_FONT
+_Teckensnitt
+; _Font
+;
+MSG_FONT_SIZE
+_Storlek
+; _Size
+;
+MSG_FONT_PRINT
+Sk_riv ut
+; _Print
+;
+MSG_VIEWFONT_DESC
+Visa ett teckensnitt
+; View a font
+;
+MSG_FONT_BOLD
+_F
+; _B
+;
+MSG_FONT_ITALIC
+_K
+; _I
+;
+MSG_FONT_SELECT
+Välj teckensnitt
+; Select Font
+;
+MSG_OK
+OK
+; Ok
+;
+MSG_MENU_PROJECT
+Arkiv
+; Project
+;
+MSG_MENU_OPEN_FONT
+Öppna teckensnitt...
+; Open Font...
+;
+MSG_MENU_SAVE_SETTINGS
+Spara inställningar
+; Save Settings
+;
+MSG_MENU_QUIT
+Avsluta
+; Quit
+;
+MSG_MENU_ABOUT
+Om...
+; About...
+;

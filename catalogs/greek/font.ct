@@ -1,0 +1,64 @@
+## version $VER: viewfont.catalog 5.65 (12.9.97)
+## codeset 0
+## language greek
+;
+MSG_FONT_TITLE
+Παρουσιαστής Γραμματοσειρών
+; Font Viewer
+;
+MSG_FONT_FONT
+Γραμ/ρά
+; _Font
+;
+MSG_FONT_SIZE
+Μέγεθος
+; _Size
+;
+MSG_FONT_PRINT
+Εκτύπωση
+; _Print
+;
+MSG_VIEWFONT_DESC
+Εμφάνιση Γραμ/ράς
+; View a font
+;
+MSG_FONT_BOLD
+_Χ
+; _B
+;
+MSG_FONT_ITALIC
+_Π
+; _I
+;
+MSG_FONT_ULINE
+_Υ
+; _U
+;
+MSG_FONT_SELECT
+Επιλογή Γραμ/ράς
+; Select Font
+;
+MSG_OK
+Εντάξει
+; Ok
+;
+MSG_MENU_PROJECT
+Εργασία
+; Project
+;
+MSG_MENU_OPEN_FONT
+¶νοιγμα Γραμματοσειράς...
+; Open Font...
+;
+MSG_MENU_SAVE_SETTINGS
+Αποθήκευση Ρυθμίσεων
+; Save Settings
+;
+MSG_MENU_QUIT
+Έξοδος
+; Quit
+;
+MSG_MENU_ABOUT
+Σχετικά...
+; About...
+;

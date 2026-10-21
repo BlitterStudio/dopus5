@@ -2,10 +2,6 @@
 ## codeset 0
 ## language svenska
 ;
-MSG_OK
-OK
-; OK
-;
 MSG_SELECT_FILE
 Välj en fil
 ; Select File
@@ -22,21 +18,9 @@ MSG_FONT_DRAWMODE
 Läge
 ; Mode:
 ;
-MSG_FONT_TEXT
-Text
-; Text
-;
 MSG_FONT_FIELD_TEXT
 Text+bakgrund
 ; Text+Field
-;
-MSG_SIZE_FIT
-9999%%
-; 9999%%
-;
-MSG_SIZE
-%ld%%
-; %ld%%
 ;
 MSG_ABORT
 Avbryt
@@ -59,9 +43,7 @@ Kunde inte öppna verktyget "%s"!
 ; Unable to open your tool '%s'
 ;
 MSG_SICK_OF_WAITING
-Opus har tröttnat på att vänta\n\
-på "%s".\n\
-Ska Opus vänta lite mer?
+Opus har tröttnat på att vänta\npå "%s".\nSka Opus vänta lite mer?
 ; Opus is sick of waiting for '%s' to return.\nWait some more?
 ;
 MSG_WAIT_CANCEL

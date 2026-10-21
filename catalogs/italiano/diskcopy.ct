@@ -83,18 +83,15 @@ Copia disco fallita.
 ; Diskcopy failed.
 ;
 MSG_READ_ERROR
-Errore di lettura di %s, traccia %ld\n\
-%s
+Errore di lettura di %s, traccia %ld\n%s
 ; Error reading %s track %ld\n%s
 ;
 MSG_WRITE_ERROR
-Errore di scrittura di %s, traccia %ld\n\
-%s
+Errore di scrittura di %s, traccia %ld\n%s
 ; Error writing %s track %ld\n%s
 ;
 MSG_VERIFY_ERROR
-Errore di verifica di %s, traccia %ld\n\
-%s
+Errore di verifica di %s, traccia %ld\n%s
 ; Error verifying %s track %ld\n%s
 ;
 MSG_DISKCOPY_READING

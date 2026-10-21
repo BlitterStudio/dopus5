@@ -90,18 +90,6 @@ MSG_MENU_MODE
 Modus
 ; Mode
 ;
-MSG_MENU_MODE_NORMAL
-Normal
-; Normal
-;
-MSG_MENU_MODE_ANSI
-ANSI
-; ANSI
-;
-MSG_MENU_MODE_HEX
-Hex
-; Hex
-;
 MSG_MENU_USE_SCREEN
 Eigener Bildschirm
 ; Use Screen
@@ -129,10 +117,6 @@ Dateinamen eingeben
 MSG_IO_ERROR
 I/O-Fehler
 ; IO Error
-;
-MSG_ERROR_CODE
-DOS-Fehler
-; DOS error %ld
 ;
 MSG_MENU_TO_EDITOR
 Zum Editor ...

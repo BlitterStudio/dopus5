@@ -1,10 +1,6 @@
 ## version $VER: ViewFont.catalog 5.61 (08.07.1997)
 ## codeset 0
 ## language français
-; ************************************************* 
-; Catalog description file for font.module
-; ************************************************* 
-;
 ;
 MSG_FONT_TITLE
 Afficheur de police
@@ -29,10 +25,6 @@ Affiche les polices
 MSG_FONT_BOLD
 _G
 ; _B
-;
-MSG_FONT_ITALIC
-_I
-; _I
 ;
 MSG_FONT_ULINE
 _S

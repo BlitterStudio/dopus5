@@ -11,7 +11,7 @@ Imprimiendo...
 ; Printing...
 ;
 MSG_PRINT
-Im_primir
+_Imprimir
 ; _Print
 ;
 MSG_CANCEL
@@ -23,35 +23,35 @@ Texto
 ; Text
 ;
 MSG_HEADER_FOOTER
-Cabecera/Pié
+Encabezado/Pie de Página
 ; Header/Footer
 ;
 MSG_PRINT_QUALITY
-_Calidad
+Calida_d
 ; _Quality
 ;
 MSG_PRINT_SPACING
-_Separación líneas
+_Espaciado
 ; _Spacing
 ;
 MSG_PRINT_PITCH
-Tono
+Sep_aración
 ; P_itch
 ;
 MSG_PRINT_LEFT_MARGIN
-Margen _izquierdo
+Margen I_zq.:
 ; _Left Margin
 ;
 MSG_PRINT_RIGHT_MARGIN
-Margen _derecho
+Margen _Dch.:
 ; _Right Margin
 ;
 MSG_PRINT_PAGE_LENGTH
-Longitud de página
+Longitud _Pág.:
 ; P_age Length
 ;
 MSG_PRINT_TAB_SIZE
-_Tamaño tabulador
+Tamaño _Tab.:
 ; _Tab Size
 ;
 MSG_PRINT_QUALITY_DRAFT
@@ -70,32 +70,24 @@ MSG_PRINT_SPACING_8
 8 Líneas x pulgada
 ; 8 LPI
 ;
-MSG_PRINT_PITCH_PICA
-Pica
-; Pica
-;
-MSG_PRINT_PITCH_ELITE
-Elite
-; Elite
-;
 MSG_PRINT_PITCH_FINE
-Fine
+Fino
 ; Fine
 ;
 MSG_PRINT_CONFIGURATION
-c_onfiguración...
+configuració_n...
 ; c_onfiguration...
 ;
 MSG_PRINT_HEADER
-Cabecera
+Encabezado
 ; Header
 ;
 MSG_PRINT_FOOTER
-Pié
+Pie de pág.
 ; Footer
 ;
 MSG_PRINT_TITLE
-Título
+Tít_ulo:
 ; Titl_e
 ;
 MSG_PRINT_DATE
@@ -103,27 +95,23 @@ _Fecha
 ; _Date
 ;
 MSG_PRINT_PAGE
-Pá_gina
+Nº Págin_a
 ; Pa_ge
 ;
 MSG_PRINT_STYLE
-Est_ilo
+Estil_o
 ; St_yle
-;
-MSG_PRINT_STYLE_NORMAL
-Normal
-; Normal
 ;
 MSG_PRINT_STYLE_BOLD
 Negrita
 ; Bold
 ;
 MSG_PRINT_STYLE_ITALICS
-Itálica
+Cursiva
 ; Italics
 ;
 MSG_PRINT_STYLE_UNDERLINE
-Sbrydo.
+Subrayada
 ; Uline
 ;
 MSG_ABORT
@@ -131,23 +119,23 @@ Abortar
 ; Abort
 ;
 MSG_OK
-OK
+Aceptar
 ; OK
 ;
 MSG_OPENING_PRINTER
-Abriendo impresora...
+Inicializando impresora...
 ; Opening printer...
 ;
 MSG_CANT_OPEN_PRINTER
-¡No se pudo abrir la impresora!
+¡Imposible imprimir!
 ; Couldn't open printer!
 ;
 MSG_PRINTER_ERROR
-Ha ocurrido un error (%ld) al imprimir.
+Ocurrió un error (%ld) al imprimir.
 ; An error occurred (%ld) while printing.
 ;
 MSG_REALLY_ABORT
-¿Abortar la impresión?
+¿Interrumpir impresión?
 ; Really abort print?
 ;
 MSG_RETRY_CANCEL
@@ -155,11 +143,11 @@ Reintentar|Cancelar
 ; Retry|Cancel
 ;
 MSG_ABORT_RESUME
-Abortar|Continuar
+Sí|No
 ; Abort|Continue
 ;
 MSG_PRINT_PAGENUM
-Página
+Página 
 ; Page 
 ;
 MSG_PRINT_DESC
@@ -167,7 +155,7 @@ Imprimir ficheros de texto
 ; Print text files
 ;
 MSG_PRINT_OUTPUT
-Salida
+_Salida
 ; Outp_ut
 ;
 MSG_PRINT_OUTPUT_PRINTER
@@ -179,6 +167,6 @@ Fichero
 ; File
 ;
 MSG_SELECT_OUTPUT_FILE
-Seleccionar fichero de salida
+Elija fichero de salida...
 ; Select Output File
 ;

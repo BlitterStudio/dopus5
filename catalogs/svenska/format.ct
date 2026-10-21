@@ -83,12 +83,8 @@ Fortsätt|Avbryt
 ; Proceed|Cancel
 ;
 MSG_DISK_NOT_BLANK
-Disken i enhet %s är inte tom!\n\
-Volymen "%s" innehåller %s.\n\
-All data kommer att försvinna!\n\
-Välj "Fortsätt" för att fortsätta.
-; Disk in drive %s is not blank!\nVolume '%s' contains %s.\n\
-; All data will be erased.\nChoose Proceed to continue.
+Disken i enhet %s är inte tom!\nVolymen "%s" innehåller %s.\nAll data kommer att försvinna!\nVälj "Fortsätt" för att fortsätta.
+; Disk in drive %s is not blank!\nVolume '%s' contains %s.\nAll data will be erased.\nChoose Proceed to continue.
 ;
 MSG_ABORTED
 Avbruten.
@@ -103,38 +99,38 @@ Formaterar...
 ; Formatting...
 ;
 MSG_FORMAT_FORMATERROR
-Format error on track %ld.
+Kunde inte formatera spår %ld!
 ; Format error on track %ld.
 ;
 MSG_FORMAT_VERIFYERROR
-Verify error on track %ld.
+Verifieringsfel på spår %ld!
 ; Verify error on track %ld.
 ;
 MSG_FORMAT_SUCCESSFUL
-Format successful!
+Formatering lyckades!
 ; Format successful!
 ;
 MSG_FORMAT_FAILED
-Format failed.
+Formatering misslyckades!
 ; Format failed.
 ;
 MSG_FORMAT_SETTING_UP
-Setting up...
+Initierar...
 ; Setting up...
 ;
 MSG_FORMAT_CLEANING_UP
-Cleaning up...
+Städar upp...
 ; Cleaning up...
 ;
 MSG_FORMAT_MAKING_TRASH
-Making Trashcan...
+Skapar soptunna...
 ; Making Trashcan...
 ;
 MSG_INSTALLING_DISK
-Installing Bootblock...
+Installerar bootblock...
 ; Installing Bootblock...
 ;
 MSG_FORMAT_DESC
-Format disks
+Formaterar diskar
 ; Format disks
 ;

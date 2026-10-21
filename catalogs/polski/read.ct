@@ -94,14 +94,6 @@ MSG_MENU_MODE_NORMAL
 Tekst
 ; Normal
 ;
-MSG_MENU_MODE_ANSI
-ANSI
-; ANSI
-;
-MSG_MENU_MODE_HEX
-Hex
-; Hex
-;
 MSG_MENU_USE_SCREEN
 Uûyj wîasnego ekranu
 ; Use Screen
@@ -157,8 +149,4 @@ Odczytujë plik...
 MSG_COUNTING_LINES
 Liczë linie...
 ; Counting lines...
-;
-MSG_CLOSE
-Close
-; Close
 ;

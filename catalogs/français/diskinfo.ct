@@ -1,252 +1,80 @@
 ## version $VER: DiskInfo.catalog 5.61 (08.07.1997)
 ## codeset 0
 ## language français
-; ************************************************* 
-; Catalog description file for diskinfo.module
-; ************************************************* 
-;
-; This catalog is for the replacement diskinfo.module with
-; the 3D pie graph. You must set the catalog version to 56
-; for it to work.
-;
 ;
 MSG_DISKINFO_TITLE
-Informations sur le disque
+Informations sur %b (%s)
 ; %b (%s) Information
 ;
 MSG_DISKINFO_DESC
-Informations sur périphérique
+Infos sur un périphérique
 ; Show information about a device
 ;
 MSG_OK
-Disque :\x00
+_Okay
 ; _OK
 ;
 MSG_CANCEL
-Nom :
+_Annuler
 ; _Cancel
 ;
 MSG_NAME
-Taille :\x00
+_Nom :
 ; _Name:
 ;
 MSG_HANDLER
-Util. :
+Gestion :
 ; Handler:
 ;
 MSG_TYPE
-Libres :\x00
+Type :
 ; Type:
 ;
 MSG_STATE
-Pourcent :
+Etat :
 ; State:
 ;
 MSG_USED
-Densité :
+Util. :
 ; Used:
 ;
 MSG_FREE
-Erreurs :
+Libre :
 ; Free:
 ;
 MSG_CAPACITY
-Statut :\x00
+Total :
 ; Total:
 ;
 MSG_UNIT
-Date :
+unité
 ; unit
 ;
 MSG_UNKNOWN
-Système :
+inconnu
 ; unknown
 ;
 MSG_READ_WRITE
-octets 
+Lecture/Ecriture
 ; Read/Write
 ;
 MSG_READ_ONLY
-blocs 
+Lecture seule
 ; Read Only
 ;
 MSG_VALIDATING
-pleins 
+Validation
 ; Validating
 ;
 MSG_BYTES
-libres
+ octets
 ;  bytes
 ;
 MSG_ERROR
-octets/bloc
+%ld erreur
 ; %ld error
 ;
 MSG_ERRORS
-
+%ld erreurs
 ; %ld errors
 ;
-;
-;
-; DOS types
-;
-MSG_DOSTYPE_1
-
-; Old File System
-;
-MSG_DOSTYPE_2
-
-; Fast File System
-;
-MSG_DOSTYPE_3
-
-; Old File System (International)
-;
-MSG_DOSTYPE_4
-
-; Fast File System (International)
-;
-MSG_DOSTYPE_5
-
-; Old File System (Dir-Caching)
-;
-MSG_DOSTYPE_6
-
-; Fast File System (Dir-Caching)
-;
-MSG_DOSTYPE_7
-
-; MS-DOS (CrossDOS)
-;
-MSG_DOSTYPE_8
-
-; Ami-FileSafe Pro
-;
-MSG_DOSTYPE_9
-
-; Ami-FileSafe User
-;
-MSG_DOSTYPE_10
-
-; Ami-FileSafe Multi
-;
-MSG_DOSTYPE_11
-
-; PFS Floppy
-;
-MSG_DOSTYPE_12
-
-; PFS Hard Drive
-;
-MSG_DOSTYPE_13
-
-; Envoy Network Volume
-;
-MSG_DOSTYPE_14
-
-; Personal File System 2
-;
-MSG_DOSTYPE_15
-
-; Personal File System 3
-;
-MSG_DOSTYPE_16
-
-; Personal File System 2 SCSI
-;
-MSG_DOSTYPE_17
-
-; Personal File System 3 SCSI
-;
-MSG_DOSTYPE_18
-
-; Personal File System Multiuser
-;
-MSG_DOSTYPE_19
-
-; Fast File System (FFS-LNFS)
-;
-MSG_DOSTYPE_20
-
-; Vector Based File System
-;
-MSG_DOSTYPE_21
-
-; Smart File System 0
-;
-MSG_DOSTYPE_22
-
-; Smart File System 1
-;
-MSG_DOSTYPE_23
-
-; Smart File System 2
-;
-MSG_DOSTYPE_24
-
-; Smart File System 3
-;
-MSG_DOSTYPE_25
-
-; JX File System
-;
-MSG_DOSTYPE_26
-
-; Box File System
-;
-MSG_DOSTYPE_27
-
-; FAT32 File System
-;
-MSG_DOSTYPE_28
-
-; exFat File System
-;
-MSG_DOSTYPE_29
-
-; FUSE ext2 File System
-;
-MSG_DOSTYPE_30
-
-; FUSE HFS
-;
-MSG_DOSTYPE_31
-
-; NTFS
-;
-MSG_DOSTYPE_32
-
-; Swap
-;
-;
-MSG_UNKNOWN_1019
-Disque illisible\x00
-; 
-;
-MSG_UNKNOWN_1020
-Disque non DOS
-; 
-;
-MSG_UNKNOWN_1021
-Disque Kickstart\x00
-; 
-;
-MSG_UNKNOWN_1022
-En validation
-; 
-;
-MSG_UNKNOWN_1023
-Protégé en écriture
-; 
-;
-MSG_UNKNOWN_1024
-Lecture/Ecriture\x00
-; 
-;
-MSG_UNKNOWN_1025
-Erreur DOS
-; 
-;
-MSG_UNKNOWN_1026
-_Continuer
-; 
