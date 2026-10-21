@@ -114,11 +114,16 @@ static BOOL display_lock_pattern(void)
 
 // display_update_pattern() waits for the main process and the listers, which may
 // be closing the display; never hold the pattern lock across it
-static BOOL display_update_pattern_unlocked(short which, short valid)
+static BOOL display_update_pattern_unlocked(short which, short valid, ULONG pattern_generation)
 {
 	ReleaseSemaphore(&GUI->pattern_lock);
 	display_update_pattern(which, valid);
-	return display_lock_pattern();
+	if (!display_lock_pattern())
+		return FALSE;
+	if (GUI->pattern_generation == pattern_generation)
+		return TRUE;
+	ReleaseSemaphore(&GUI->pattern_lock);
+	return FALSE;
 }
 
 // Free the pattern data not yet handed to GUI->pattern, when the display goes
@@ -139,13 +144,16 @@ short display_get_pattern(BOOL use_custom)
 	char *data[NUM_PATTERNS], *filename;
 	short change = 0;
 	ULONG flags = 0;
-
+	ULONG pattern_generation;
 	// Display closed (or closing)?
 	if (!display_lock_pattern())
 	{
 		GUI->pattern_main_pending = FALSE;
 		return 0;
 	}
+
+	// Reject work that was prepared for a display which has since been closed
+	pattern_generation = GUI->pattern_generation;
 
 	// Copy from system fields to custom fields (if custom field is empty, or custom flag is not set)
 	for (a = 0; a < 4; a++)
@@ -171,7 +179,7 @@ short display_get_pattern(BOOL use_custom)
 			if (GUI->pattern[a].valid)
 			{
 				// Clear existing pattern
-				if (!display_update_pattern_unlocked(a, 0))
+				if (!display_update_pattern_unlocked(a, 0, pattern_generation))
 					return 0;
 
 				// Free pattern data
@@ -496,7 +504,7 @@ short display_get_pattern(BOOL use_custom)
 			if (GUI->pattern[a].valid)
 			{
 				// Clear existing patterns
-				if (!display_update_pattern_unlocked(a, 0))
+				if (!display_update_pattern_unlocked(a, 0, pattern_generation))
 				{
 					display_free_pattern_data(data, a);
 					return change;
@@ -563,7 +571,7 @@ short display_get_pattern(BOOL use_custom)
 			}
 
 			// Install new pattern
-			if (!display_update_pattern_unlocked(a, 1))
+			if (!display_update_pattern_unlocked(a, 1, pattern_generation))
 			{
 				display_free_pattern_data(data, a + 1);
 				return change;

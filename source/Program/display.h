@@ -267,6 +267,7 @@ typedef struct
 	ImageRemap remap;  // Remap data
 
 	struct SignalSemaphore pattern_lock;
+	ULONG pattern_generation;			 // Increments when the pattern display is closed
 	volatile BOOL pattern_main_pending;	 // Pattern process has not settled the main backdrop yet
 
 	Att_List *icon_sel_list;  // List of selected icons

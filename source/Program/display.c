@@ -784,6 +784,8 @@ void close_display(int close_flags, BOOL quit_all)
 	// Close the screen?
 	if (close_flags & CLOSE_SCREEN)
 	{
+		// Reject a pattern worker that released pattern_lock for this display
+		GUI->pattern_generation++;
 		// Free palette
 		free_colour_table();
 
