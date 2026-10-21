@@ -1,3 +1,46 @@
+[dopus5 next] Environment reloads and screen mode changes; View in the lister status pop-up
+Program, dopus5.library and configopus change; version bump deferred.
+
+- Toolbar and button images loaded from OS 3.5 icons are no longer left
+  laid out on a closed screen.  FreeRemapImage() kept the icon's
+  layout, so after a screen mode change the next LayoutIcon() or the
+  final FreeDiskObject() released pens through the old screen and its
+  colour map (reported by Peter Keunecke).  The layout is now undone
+  when the last remap goes, while the screen is still open.  Loading
+  such an image no longer leaves it laid out on the default public
+  screen.
+- A lister with its own toolbar (Set Toolbar, or ARexx lister set
+  toolbar) frees the toolbar's cache bitmap, image remaps and pens when
+  its window closes and builds them when it opens, also when the
+  toolbar was set while the lister was iconified, so a screen mode
+  change no longer leaves them on the old screen.
+- ARexx AppIcons free their remap before the icon is freed; removing a
+  local one remapped it again instead.
+- Loading environments one after another no longer crashes Opus.  The
+  LoadEnvironment command replies before the load is done, so a script
+  could start the next load while the last one was still running; the
+  two loads read into the same environment and freed the same button
+  banks (Software Failure, bad free address).  Environment loads now
+  run one at a time, in the order they were started, and the lister
+  menu, user menu and scripts banks are swapped under their locks.
+  Loads still waiting their turn leave when Opus quits.
+- Closing the display (screen mode change, Hide, loading an
+  environment) waits for a backdrop picture still being loaded for that
+  screen, instead of freeing the picture and closing the screen under
+  the process loading it.  If the next display is already open by the
+  time that process carries on, it loads the picture for that one.
+- The lister status pop-up (click SRCE/DEST/OFF) has the View sub-menu:
+  Name, Icon, Icon Action and Show All.  In a name-mode lister the
+  right mouse button only scrolls the file list, so a window too large
+  to move the pointer outside of had no easy way to change the view
+  (reported by Peter Keunecke).
+- The Environment editor shows the screen mode list, and the sound
+  list, when it opens on that page.  It opens on the first page of its
+  list, which is sorted by the translated names, and in some languages
+  that is Screen Mode or Sounds.  Their lists were filled only after
+  the page was set up, so the page stayed empty until another page was
+  picked and the first one chosen again (reported by Peter Keunecke).
+
 [dopus5 next] Icons are drawn once, so soft alpha edges are not doubled
 Program changes; version bump deferred.
 

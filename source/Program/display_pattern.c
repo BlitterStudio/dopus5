@@ -101,8 +101,63 @@ static void display_prepare_wbpattern_data(struct WBPatternPrefs *prefs, char *d
 #endif
 }
 
+// Take the pattern lock (see close_display()). FALSE, without the lock, if the
+// screen has gone: patterns are freed with it, and display_open() starts a new
+// pattern process for the next display, as this one may still be in the list
+static BOOL display_lock_pattern(void)
+{
+	ObtainSemaphore(&GUI->pattern_lock);
+	if (GUI->screen_pointer)
+		return TRUE;
+	GUI->pattern_gave_up = TRUE;
+	ReleaseSemaphore(&GUI->pattern_lock);
+	return FALSE;
+}
+
+// display_update_pattern() waits for the main process and the listers, which may
+// be closing the display; never hold the pattern lock across it. FALSE, without
+// the lock, if the display was closed meanwhile; *restart is set if another one
+// is already open, as display_open() leaves its patterns to this process
+static BOOL display_update_pattern_unlocked(short which, short valid, ULONG generation, BOOL *restart)
+{
+	ReleaseSemaphore(&GUI->pattern_lock);
+	display_update_pattern(which, valid);
+	if (!display_lock_pattern())
+		return FALSE;
+	if (GUI->pattern_generation == generation)
+		return TRUE;
+	ReleaseSemaphore(&GUI->pattern_lock);
+	*restart = TRUE;
+	return FALSE;
+}
+
+// Free the pattern data not yet handed to GUI->pattern, when the display goes
+static void display_free_pattern_data(char **data, short from)
+{
+	for (; from < NUM_PATTERNS; from++)
+		FreeVec(data[from]);
+	GUI->pattern_main_pending = FALSE;
+}
+
+static short display_get_pattern_once(BOOL use_custom, BOOL *restart);
+
 // Get backdrop pattern
 short display_get_pattern(BOOL use_custom)
+{
+	BOOL restart;
+	short change;
+
+	// Start again if the display was closed and opened again under us
+	do
+	{
+		restart = FALSE;
+		change = display_get_pattern_once(use_custom, &restart);
+	} while (restart);
+
+	return change;
+}
+
+static short display_get_pattern_once(BOOL use_custom, BOOL *restart)
 {
 	APTR iff;
 	BPTR file;
@@ -111,6 +166,17 @@ short display_get_pattern(BOOL use_custom)
 	char *data[NUM_PATTERNS], *filename;
 	short change = 0;
 	ULONG flags = 0;
+	ULONG generation;
+
+	// Display closed (or closing)?
+	if (!display_lock_pattern())
+	{
+		GUI->pattern_main_pending = FALSE;
+		return 0;
+	}
+
+	// The display this load is for
+	generation = GUI->pattern_generation;
 
 	// Copy from system fields to custom fields (if custom field is empty, or custom flag is not set)
 	for (a = 0; a < 4; a++)
@@ -136,7 +202,8 @@ short display_get_pattern(BOOL use_custom)
 			if (GUI->pattern[a].valid)
 			{
 				// Clear existing pattern
-				display_update_pattern(a, 0);
+				if (!display_update_pattern_unlocked(a, 0, generation, restart))
+					return 0;
 
 				// Free pattern data
 				FreeVec(GUI->pattern[a].data);
@@ -147,6 +214,7 @@ short display_get_pattern(BOOL use_custom)
 			}
 		}
 
+		ReleaseSemaphore(&GUI->pattern_lock);
 		return 0;
 	}
 
@@ -459,7 +527,11 @@ short display_get_pattern(BOOL use_custom)
 			if (GUI->pattern[a].valid)
 			{
 				// Clear existing patterns
-				display_update_pattern(a, 0);
+				if (!display_update_pattern_unlocked(a, 0, generation, restart))
+				{
+					display_free_pattern_data(data, a);
+					return change;
+				}
 			}
 
 			// Change more than centering?
@@ -506,6 +578,7 @@ short display_get_pattern(BOOL use_custom)
 				GetPatternBorder(&GUI->pattern[a],
 								 GUI->screen_pointer,
 								 GUI->env_BackgroundBorderColour[a] | (GUI->env_BackgroundFlags[a] & ENVBF_USE_COLOUR));
+				FreeVec(data[a]);
 			}
 
 			// Centering changed
@@ -517,10 +590,15 @@ short display_get_pattern(BOOL use_custom)
 					GUI->pattern[a].flags |= PATF_CENTER;
 				else
 					GUI->pattern[a].flags &= ~PATF_CENTER;
+				FreeVec(data[a]);
 			}
 
 			// Install new pattern
-			display_update_pattern(a, 1);
+			if (!display_update_pattern_unlocked(a, 1, generation, restart))
+			{
+				display_free_pattern_data(data, a + 1);
+				return change;
+			}
 		}
 
 		// If not, free data
@@ -532,6 +610,7 @@ short display_get_pattern(BOOL use_custom)
 			GUI->pattern_main_pending = FALSE;
 	}
 
+	ReleaseSemaphore(&GUI->pattern_lock);
 	return change;
 }
 

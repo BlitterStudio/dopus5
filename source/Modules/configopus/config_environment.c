@@ -88,13 +88,6 @@ unsigned long LIBFUNC L_Config_Environment(REG(a0, Cfg_Environment *env),
 	// Store graphics library
 	// data->GfxBase=(struct Library *)GfxBase;
 
-	// Build sub-option list, open display
-	if (!(data->options = build_sub_options(_environment_options)) || !(_config_env_open(data, screen)))
-	{
-		_config_env_cleanup(data);
-		return 0;
-	}
-
 #ifndef FUNKOFF
 	// Allocate font requesters
 	data->font_req = AllocAslRequestTags(ASL_FontRequest,
@@ -220,10 +213,24 @@ unsigned long LIBFUNC L_Config_Environment(REG(a0, Cfg_Environment *env),
 		for (node = env->path_list.mlh_Head; node->mln_Succ; node = node->mln_Succ)
 			Att_NewNode(data->path_list, (char *)(node + 1), 0, 0);
 	}
+#endif
 
-	// Build sound list
+	// Build sub-option list, open display. The lists above must exist first:
+	// the window opens straight onto the first page of the sorted list, which
+	// in some languages is Screen Mode and needs mode_list
+	if (!(data->options = build_sub_options(_environment_options)) || !(_config_env_open(data, screen)))
+	{
+		_config_env_cleanup(data);
+		return 0;
+	}
+
+#ifndef FUNKOFF
+	// Build sound list (needs the window for its pens)
 	env_init_sounds(data);
 
+	// Opened on the Sounds page (it can sort first too)? Show the list now
+	if (data->option == ENVIRONMENT_SOUNDLIST && data->option_list)
+		_config_env_set(data, ENVIRONMENT_SOUNDLIST);
 #endif
 
 	// Event loop

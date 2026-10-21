@@ -872,7 +872,13 @@ Image_Data *read_image(char *name, OpenImageInfo *info)
 							// Alternate image?
 							if (obj->do_Gadget.SelectRender)
 								data->flags |= IMAGEF_SEL_IMAGE;
+
+							// The default public screen is only borrowed for loading;
+							// RemapImage() lays the icon out on the screen it is shown on
+							LayoutIcon(obj, NULL, TAG_DONE);
 						}
+						else
+							FreeDiskObject(obj);
 					}
 					UnlockPubScreen(0, screen);
 				}
@@ -1978,12 +1984,15 @@ void LIBFUNC L_FreeRemapImage(REG(a0, Image_Data *image), REG(a1, ImageRemap *re
 
 	if (IconBase->lib_Version >= 44 && image->new_diskobj)
 	{
-		// if 3.5 and is an icon then don't do this since plane data
-		//  is private to new V44 diskobject stuff
-		// just keep nesting count in sync
-
+		// The plane data is private to the V44 icon; LayoutIcon() owns it
 		if ((--image->remap_count) == 0)
-		{  // Store depth ? Needed?
+		{
+			// Undo the layout now, while the screen still exists. Left laid
+			// out, the icon keeps pens on a screen that may close before
+			// FreeDiskObject() or the next LayoutIcon() releases them
+			LayoutIcon((struct DiskObject *)image->new_diskobj, NULL, TAG_DONE);
+			image->remap_image[0] = 0;
+			image->remap_image[1] = 0;
 			image->remap_depth = 0;
 		}
 	}

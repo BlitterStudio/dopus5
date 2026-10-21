@@ -747,9 +747,15 @@ void lister_new_toolbar(Lister *lister, char *name, ToolBarInfo *bank)
 	// Need to load toolbar
 	else
 	{
-		// Try to get new toolbar
+		// Try to get new toolbar. Without a window, keep nothing tied to the
+		// screen: lister_open_window() builds the cache on the screen it opens on
 		if ((lister->toolbar_alloc = OpenToolBar(0, lister->toolbar_path)))
-			GetToolBarCache(lister->toolbar_alloc, TRUE);
+		{
+			if (lister_valid_window(lister))
+				GetToolBarCache(lister->toolbar_alloc, TRUE);
+			else
+				FreeToolBarCache(lister->toolbar_alloc);
+		}
 
 		// Use as new toolbar
 		lister->toolbar = lister->toolbar_alloc;

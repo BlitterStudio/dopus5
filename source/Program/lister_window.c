@@ -103,6 +103,11 @@ struct Window *lister_open_window(Lister *lister, struct Screen *screen)
 	// Get screen font
 	AskFont(&screen->RastPort, &lister->screen_font);
 
+	// Custom toolbar's cache and image remap are freed with the window, as the
+	// screen may change in between (see lister_close_window)
+	if (lister->toolbar_alloc && !lister->toolbar_alloc->cache && GUI->screen_pointer)
+		GetToolBarCache(lister->toolbar_alloc, TRUE);
+
 	// Calculate minimum size
 	lister_calc_limits(lister, screen);
 
@@ -493,6 +498,11 @@ void lister_close_window(Lister *lister, BOOL run_script)
 
 	// Free icon remapping
 	backdrop_free_remap(lister->backdrop_info, lister->window);
+
+	// Free the custom toolbar's cache bitmap, images and pens while the screen
+	// is still open; a screen mode change would otherwise leave them on the
+	// old screen
+	FreeToolBarCache(lister->toolbar_alloc);
 
 	// Close window
 	if (lister->window)

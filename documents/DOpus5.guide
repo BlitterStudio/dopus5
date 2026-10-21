@@ -1,6 +1,6 @@
 @database dopus5
 @master dopus5.guide
-@$VER: Dopus5Guide 58.19 (18.10.2026)
+@$VER: Dopus5Guide 58.20 (20.10.2026)
 @author "Mark Anderson, Andrew Dunbar, Dr Greg Perry, Leo Davidson and Dave Clarke"
 @(c) "Directory Opus 5 Help Guide (c) GPSoftware 1999"
 @(c) "Directory Opus 5 Help Guide (c) DOPUS5 Open Source Team 2012-2026"
@@ -2632,6 +2632,12 @@ allows use of the toolbar and all associated functions.  With the Show All
 option, which is only available in Icon Mode and Icon Action Mode, Opus 5
 will display all the files and directories using pseudo-icons for those
 which do not have real icons, using filetype icons wherever possible.
+
+The modes are in the Lister menu, and also in the View sub-menu of the
+pop-up menus inside the Lister: click the @{" status display " link "Lister Status PopUp"} (SRCE, DEST,
+OFF), or press the right mouse button on the window's title bar, on its
+border or, in icon mode, on the background.  You don't need to move the
+pointer outside a large window to reach them.
 
 @endnode
 

@@ -1278,6 +1278,62 @@ void popup_build_openwith(PopUpHandle *menu)
 	unlock_listlock(&GUI->open_with_list);
 }
 
+// Add the View sub-menu (name, icon, icon action, show all) for a lister
+BOOL popup_lister_view_menu(Lister *lister, PopUpHandle *menu)
+{
+	PopUpItem *item, *sub;
+
+	// View item
+	if (!(item = PopUpNewItem(menu, MSG_LISTER_VIEW, 0, POPUPF_SUB | POPUPF_LOCALE)))
+		return 0;
+
+	// Create list for submenus
+	if (!(PopUpItemSub(menu, item)))
+	{
+		item->flags |= POPUPF_DISABLED;
+		return 1;
+	}
+
+	// View by name
+	if ((sub = PopUpNewItem(menu, MSG_LISTER_VIEW_NAME, MENU_LISTER_VIEW_NAME, POPUPF_CHECKIT | POPUPF_LOCALE)))
+	{
+		// Selected?
+		if (!(lister->flags & (LISTERF_VIEW_ICONS | LISTERF_ICON_ACTION)))
+			sub->flags |= POPUPF_CHECKED;
+	}
+
+	// View by icon
+	if ((sub = PopUpNewItem(menu, MSG_LISTER_VIEW_ICON, MENU_LISTER_VIEW_ICON, POPUPF_CHECKIT | POPUPF_LOCALE)))
+	{
+		// Selected?
+		if ((lister->flags & (LISTERF_VIEW_ICONS | LISTERF_ICON_ACTION)) == LISTERF_VIEW_ICONS)
+			sub->flags |= POPUPF_CHECKED;
+	}
+
+	// Icon action mode
+	if ((sub = PopUpNewItem(menu, MSG_LISTER_ICON_ACTION, MENU_LISTER_ICON_ACTION, POPUPF_CHECKIT | POPUPF_LOCALE)))
+	{
+		// Selected?
+		if (lister->flags & LISTERF_ICON_ACTION)
+			sub->flags |= POPUPF_CHECKED;
+	}
+
+	// Separator
+	PopUpSeparator(menu);
+
+	// Show all
+	if ((sub = PopUpNewItem(menu, MSG_LISTER_SHOW_ALL, MENU_LISTER_SHOW_ALL, POPUPF_CHECKIT | POPUPF_LOCALE)))
+	{
+		// Selected?
+		if (lister->flags & LISTERF_SHOW_ALL && lister->flags & LISTERF_VIEW_ICONS)
+			sub->flags |= POPUPF_CHECKED;
+	}
+
+	// End sub menu
+	PopUpEndSub(menu);
+	return 1;
+}
+
 // Default lister popup menu
 void popup_default_menu(BackdropInfo *info, PopUpHandle *menu, short *extnum)
 {
@@ -1351,57 +1407,8 @@ void popup_default_menu(BackdropInfo *info, PopUpHandle *menu, short *extnum)
 	PopUpSeparator(menu);
 
 	// View item
-	if ((item = PopUpNewItem(menu, MSG_LISTER_VIEW, 0, POPUPF_SUB | POPUPF_LOCALE)))
+	if (popup_lister_view_menu(info->lister, menu))
 	{
-		// Create list for submenus
-		if (PopUpItemSub(menu, item))
-		{
-			PopUpItem *sub;
-
-			// View by name
-			if ((sub = PopUpNewItem(menu, MSG_LISTER_VIEW_NAME, MENU_LISTER_VIEW_NAME, POPUPF_CHECKIT | POPUPF_LOCALE)))
-			{
-				// Selected?
-				if (!(info->lister->flags & (LISTERF_VIEW_ICONS | LISTERF_ICON_ACTION)))
-					sub->flags |= POPUPF_CHECKED;
-			}
-
-			// View by icon
-			if ((sub = PopUpNewItem(menu, MSG_LISTER_VIEW_ICON, MENU_LISTER_VIEW_ICON, POPUPF_CHECKIT | POPUPF_LOCALE)))
-			{
-				// Selected?
-				if ((info->lister->flags & (LISTERF_VIEW_ICONS | LISTERF_ICON_ACTION)) == LISTERF_VIEW_ICONS)
-					sub->flags |= POPUPF_CHECKED;
-			}
-
-			// Icon action mode
-			if ((sub = PopUpNewItem(
-					 menu, MSG_LISTER_ICON_ACTION, MENU_LISTER_ICON_ACTION, POPUPF_CHECKIT | POPUPF_LOCALE)))
-			{
-				// Selected?
-				if (info->lister->flags & LISTERF_ICON_ACTION)
-					sub->flags |= POPUPF_CHECKED;
-			}
-
-			// Separator
-			PopUpSeparator(menu);
-
-			// Show all
-			if ((sub = PopUpNewItem(menu, MSG_LISTER_SHOW_ALL, MENU_LISTER_SHOW_ALL, POPUPF_CHECKIT | POPUPF_LOCALE)))
-			{
-				// Selected?
-				if (info->lister->flags & LISTERF_SHOW_ALL && info->lister->flags & LISTERF_VIEW_ICONS)
-					sub->flags |= POPUPF_CHECKED;
-			}
-
-			// End sub menu
-			PopUpEndSub(menu);
-		}
-
-		// Failed
-		else
-			item->flags |= POPUPF_DISABLED;
-
 		// Separator
 		PopUpSeparator(menu);
 	}

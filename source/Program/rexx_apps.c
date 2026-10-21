@@ -234,7 +234,7 @@ IPTR rexx_add_appicon(char *str, struct RexxMsg *msg)
 	{
 		// Failed
 		if (app->flags & RATF_LOCAL)
-			RemapIcon(app->icon, GUI->screen_pointer, FALSE);
+			RemapIcon(app->icon, GUI->screen_pointer, TRUE);
 		FreeCachedDiskObject(app->icon);
 		FreeVec(app);
 		return 0;
@@ -290,7 +290,7 @@ void rexx_rem_appthing(char *str, short type)
 
 					// Free the remap (if local)
 					if (look->flags & RATF_LOCAL)
-						RemapIcon(look->icon, GUI->screen_pointer, FALSE);
+						RemapIcon(look->icon, GUI->screen_pointer, TRUE);
 
 					// Free icon
 					FreeCachedDiskObject(look->icon);
