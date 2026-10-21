@@ -669,6 +669,12 @@ BOOL rexx_dopus_cmd(struct RexxMsg *msg, short command, char *args)
 						environment->env->palette_count = 8;
 				}
 
+				// Tooltips/alternate rows
+				else if (val == 11)
+					rexx_dopus_get_colour(&args, environment->env->tooltip_col, ENVCOL_TOOLTIP);
+				else if (val == 12)
+					rexx_dopus_get_colour(&args, environment->env->stripe_col, ENVCOL_STRIPE);
+
 				// Invalid
 				else
 				{
@@ -862,6 +868,18 @@ BOOL rexx_dopus_cmd(struct RexxMsg *msg, short command, char *args)
 				// User pens
 				else if (val == 10)
 					lsprintf(buf, "%ld ", environment->env->palette_count);
+
+				// Tooltips/alternate rows
+				else if (val == 11)
+					lsprintf(buf,
+							 "%ld %ld ",
+							 rexx_dopus_map_pen(environment->env->tooltip_col[0]),
+							 rexx_dopus_map_pen(environment->env->tooltip_col[1]));
+				else if (val == 12)
+					lsprintf(buf,
+							 "%ld %ld ",
+							 rexx_dopus_map_pen(environment->env->stripe_col[0]),
+							 rexx_dopus_map_pen(environment->env->stripe_col[1]));
 
 				// Invalid
 				else

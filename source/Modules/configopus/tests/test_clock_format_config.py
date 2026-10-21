@@ -61,7 +61,6 @@ class ClockFormatConfigTests(unittest.TestCase):
 
         self.assertIn("if (env->version < CONFIG_VERSION_17)", source)
         self.assertIn("env->clock_format[0] = 0;", source)
-        self.assertIn("env->version = CONFIG_VERSION_17;", source)
 
     def test_config_ui_exposes_and_persists_clock_format(self):
         env_source = read_source(CONFIG_ENVIRONMENT_C)

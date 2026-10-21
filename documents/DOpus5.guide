@@ -1,6 +1,6 @@
 @database dopus5
 @master dopus5.guide
-@$VER: Dopus5Guide 58.20 (20.10.2026)
+@$VER: Dopus5Guide 58.21 (21.10.2026)
 @author "Mark Anderson, Andrew Dunbar, Dr Greg Perry, Leo Davidson and Dave Clarke"
 @(c) "Directory Opus 5 Help Guide (c) GPSoftware 1999"
 @(c) "Directory Opus 5 Help Guide (c) DOPUS5 Open Source Team 2012-2026"
@@ -3882,7 +3882,8 @@ of its own. In the Select Colours requester it is the square after the
 user pens: select it and set its colour with the red, green and blue
 sliders below the palette. Custom colours apply to every element: file
 and directory entries, selected entries, the source and destination
-title bars, devices, assigns, the free space gauge and tooltips.
+title bars, devices, assigns, the free space gauge, tooltips and
+alternate rows.
 
 Each custom colour takes a free pen on the screen. If no pen is free when
 a lister opens, the closest existing colour is used. If no pen is free
@@ -3896,6 +3897,13 @@ colour when the disk is getting full.
 
 The 'Tooltips' item controls the foreground and background colours used by
 lister toolbar tooltips.
+
+The 'Alternate Rows' item sets the background colour of every second
+row when Striped Rows is turned on in
+@{" Lister Display " LINK "Environment - Lister Display"}.  Only its
+background colour is used; the text keeps the file or directory colour.
+It starts as a light grey custom colour, and white is used on screens
+that have no free pen for it.
 
 @endnode
 
@@ -3957,6 +3965,15 @@ lister toolbar tooltips.
     one lister window into two panels with separate paths and scroll
     positions.  Icon-mode and icon-action listers still open as normal
     single-panel listers.
+
+  Striped Rows:
+    Draws every second row of a name mode lister with the 'Alternate
+    Rows' background colour from
+    @{" Lister Colours " LINK "Environment - Lister Colours"}, which makes
+    long lists easier to follow across the columns.  Only unselected
+    files and directories are striped; selected entries, devices and
+    assigns keep their own colours.  The stripes stay with their entries
+    when the list scrolls.
 
 @endnode
 

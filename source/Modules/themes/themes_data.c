@@ -40,7 +40,7 @@ ModuleInfo_4 module_info = {1,
 							 {CONVERTTHEME, "ConvertTheme", MSG_CONVERT_THEME_DESC, 0, ARG_3}}};
 
 char *pen_settings[] =
-	{"icons", "files", "dirs", "selfiles", "seldirs", "devices", "assigns", "source", "dest", "gauge", "user", 0};
+	{"icons", "files", "dirs", "selfiles", "seldirs", "devices", "assigns", "source", "dest", "gauge", "user", "tooltips", "stripes", 0};
 
 char apply_lookup[] = {'p', 'f', 'b', 's'};
 

@@ -114,7 +114,7 @@ void show_list_selector(Lister *lister, short line, BOOL erase)
 
 	// Get selector line entry, and set correct colours
 	if ((entry = get_entry_ord(&lister->cur_buffer->entry_list, line + lister->cur_buffer->buf_VertOffset)))
-		getdispcol(entry, lister, &fpen, &bpen);
+		getdispcol(entry, lister, line, &fpen, &bpen);
 
 	// Erase?
 	if (erase || lister->cur_buffer->buf_TotalEntries[0] < 1)

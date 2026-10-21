@@ -1036,6 +1036,9 @@ static short lister_config_pen(short col, short num)
 
 	case ENVCOL_TOOLTIP:
 		return environment->env->tooltip_col[num];
+
+	case ENVCOL_STRIPE:
+		return environment->env->stripe_col[num];
 	}
 
 	return 0;
@@ -1111,6 +1114,9 @@ void lister_init_display_colours(Lister *lister)
 
 	for (col = ENVCOL_FILES_UNSEL; col <= ENVCOL_VOLUMES; col++)
 		lister_init_colour(lister, col, FALSE);
+
+	// Only hold a pen for the stripe colour while striping is on
+	lister_init_colour(lister, ENVCOL_STRIPE, !(environment->env->env_flags & ENVF_STRIPED_ROWS));
 }
 
 // See if the lister wants a gauge

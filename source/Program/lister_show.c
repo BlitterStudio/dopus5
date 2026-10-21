@@ -75,18 +75,18 @@ void lister_display_dir(Lister *lister)
 			return;
 		}
 
-		// Scroll up?
+		// Scroll up; new lines appear at the top
 		if (delta < 0)
 		{
-			top_line = lister->text_height + delta;
-			bottom_line = lister->text_height;
+			top_line = 0;
+			bottom_line = -delta;
 		}
 
-		// Scroll down
+		// Scroll down; new lines appear at the bottom
 		else
 		{
-			top_line = 0;
-			bottom_line = delta;
+			top_line = lister->text_height - delta;
+			bottom_line = lister->text_height;
 		}
 
 		// Scroll more than full page or not at all?
@@ -330,7 +330,7 @@ void display_entry(DirEntry *entry, Lister *lister, int position)
 void lister_draw_entry(Lister *lister, DirEntry *entry, short x, short y, short offset, short width, short line)
 {
 	// Set pen colours
-	setdispcol(entry, lister);
+	setdispcol(entry, lister, line);
 
 	// Proportional font?
 	if (lister->more_flags & LISTERF_PROP_FONT)
@@ -431,12 +431,12 @@ void lister_draw_entry(Lister *lister, DirEntry *entry, short x, short y, short 
 
 // Change pens to the colours needed to display an entry
 // Called from the LISTER PROCESS
-void setdispcol(DirEntry *entry, Lister *lister)
+void setdispcol(DirEntry *entry, Lister *lister, short line)
 {
 	short fpen, bpen;
 
 	// Get pen colours
-	getdispcol(entry, lister, &fpen, &bpen);
+	getdispcol(entry, lister, line, &fpen, &bpen);
 
 	/*
 		// Highlighted entry?
@@ -480,7 +480,8 @@ void setdispcol(DirEntry *entry, Lister *lister)
 		SetSoftStyle(&lister->text_area.rast, FSF_BOLD, FSF_BOLD);
 }
 
-void getdispcol(DirEntry *entry, Lister *lister, short *fpen, short *bpen)
+// Get the pens for an entry shown on a display line
+void getdispcol(DirEntry *entry, Lister *lister, short line, short *fpen, short *bpen)
 {
 	short col = ENVCOL_FILES_UNSEL;
 
@@ -549,6 +550,11 @@ void getdispcol(DirEntry *entry, Lister *lister, short *fpen, short *bpen)
 	// Get pens, custom or configured
 	*fpen = lister_colour_pen(lister, col, 0);
 	*bpen = lister_colour_pen(lister, col, 1);
+
+	// Unselected files and directories on every other row of the list use the stripe background
+	if ((col == ENVCOL_FILES_UNSEL || col == ENVCOL_DIRS_UNSEL) && entry->de_Node.dn_Succ &&
+		(environment->env->env_flags & ENVF_STRIPED_ROWS) && ((lister->cur_buffer->buf_VertOffset + line) & 1))
+		*bpen = lister_colour_pen(lister, ENVCOL_STRIPE, 1);
 }
 
 // Build the string to display an entry of a buffer

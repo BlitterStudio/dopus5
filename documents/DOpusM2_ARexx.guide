@@ -1,5 +1,5 @@
 @DATABASE DOpusM2_ARexx
-@$VER: DOpusM2_ARexx.guide 57.8 (15.10.2026)
+@$VER: DOpusM2_ARexx.guide 57.9 (21.10.2026)
 @AUTHOR "Dr Greg Perry, Jonathan Potter, Leo Davidson, Andrew Dunbar and Dave Clarke"
 @(c) GPSoftware 1999
 @(c) DOPUS5 Open Source Team 2012-2014
@@ -968,6 +968,8 @@ display components.
     @{fg shine}dest@{fg text}           <fg> <bg>
     @{fg shine}gauge@{fg text}          <normal> <full>
     @{fg shine}user@{fg text}           <count>
+    @{fg shine}tooltips@{fg text}       <fg> <bg>
+    @{fg shine}stripes@{fg text}        <fg> <bg>
 
 The pen number is mapped in the following way:
 
@@ -1402,6 +1404,8 @@ followed by a number of values which represent which of the pens to use.
   dest     <fg> <bg>
   gauge    <normal> <full>
   user     <count>
+  tooltips <fg> <bg>
+  stripes  <fg> <bg>
 
 The pen number is mapped in the following way:
 
@@ -1416,6 +1420,10 @@ For example,
 
 Setting the pens of a lister element turns off the custom colour chosen
 for that pen in Environment, Lister Colours.
+
+Only the background pen of @{b}stripes@{ub} is used, for every second row of
+the file list.  The rows are striped only while Striped Rows is on in
+Environment, Lister Display.
 
 
 @{fg shine}See also:@{fg text}

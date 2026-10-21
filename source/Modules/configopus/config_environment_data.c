@@ -538,7 +538,7 @@ const ObjectDef _config_environment_objects[] =
 						// Heading
 						{OD_TEXT,
 						 TEXTPEN,
-						 {4, 5, 0, 1},
+						 {4, 4, 0, 1},
 						 {0, 0, 0, 0},
 						 MSG_ENVIRONMENT_LISTER_SETTINGS,
 						 0,
@@ -548,7 +548,7 @@ const ObjectDef _config_environment_objects[] =
 						// Font popup
 						{OD_GADGET,
 						 FONT_BUTTON_KIND,
-						 {14, 6, 0, 1},
+						 {14, 5, 0, 1},
 						 {5, 4, 28, 6},
 						 MSG_ENVIRONMENT_SCREENMODE_FONT,
 						 PLACETEXT_LEFT,
@@ -558,7 +558,7 @@ const ObjectDef _config_environment_objects[] =
 						// Font name
 						{OD_GADGET,
 						 STRING_KIND,
-						 {14, 6, SIZE_MAX_LESS - 2, 1},
+						 {14, 5, SIZE_MAX_LESS - 2, 1},
 						 {33, 4, -36, 6},
 						 0,
 						 0,
@@ -568,7 +568,7 @@ const ObjectDef _config_environment_objects[] =
 						// Font size
 						{OD_GADGET,
 						 INTEGER_KIND,
-						 {POS_RIGHT_JUSTIFY - 2, 6, 0, 1},
+						 {POS_RIGHT_JUSTIFY - 2, 5, 0, 1},
 						 {-8, 4, 28, 6},
 						 0,
 						 0,
@@ -578,7 +578,7 @@ const ObjectDef _config_environment_objects[] =
 						// Status text
 						{OD_GADGET,
 						 STRING_KIND,
-						 {14, 7, SIZE_MAX_LESS - 2, 1},
+						 {14, 6, SIZE_MAX_LESS - 2, 1},
 						 {5, 12, -36, 6},
 						 MSG_ENVIRONMENT_LISTER_STATUS,
 						 0,
@@ -588,7 +588,7 @@ const ObjectDef _config_environment_objects[] =
 						// Status text popup
 						{OD_GADGET,
 						 FILE_BUTTON_KIND,
-						 {POS_RIGHT_JUSTIFY - 2, 7, 0, 1},
+						 {POS_RIGHT_JUSTIFY - 2, 6, 0, 1},
 						 {-8, 12, 28, 6},
 						 0,
 						 0,
@@ -598,7 +598,7 @@ const ObjectDef _config_environment_objects[] =
 						// Field titles
 						{OD_GADGET,
 						 CHECKBOX_KIND,
-						 {14, 8, 0, 1},
+						 {14, 7, 0, 1},
 						 {5, 20, 26, 6},
 						 MSG_ENVIRONMENT_FIELD_TITLES,
 						 PLACETEXT_RIGHT,
@@ -608,7 +608,7 @@ const ObjectDef _config_environment_objects[] =
 						// Hide padlock gadget
 						{OD_GADGET,
 						 CHECKBOX_KIND,
-						 {14, 9, 0, 1},
+						 {14, 8, 0, 1},
 						 {5, 28, 26, 6},
 						 MSG_ENVIRONMENT_HIDE_PADLOCK,
 						 PLACETEXT_RIGHT,
@@ -621,7 +621,7 @@ const ObjectDef _config_environment_objects[] =
 						// to the other lister-display flags rather than Misc).
 						{OD_GADGET,
 						 CHECKBOX_KIND,
-						 {14, 10, 0, 1},
+						 {14, 9, 0, 1},
 						 {5, 36, 26, 6},
 						 MSG_ENVIRONMENT_DOS_PATCH,
 						 PLACETEXT_RIGHT,
@@ -631,11 +631,21 @@ const ObjectDef _config_environment_objects[] =
 						// Open new listers in dual mode
 						{OD_GADGET,
 						 CHECKBOX_KIND,
-						 {14, 11, 0, 1},
+						 {14, 10, 0, 1},
 						 {5, 44, 26, 6},
 						 MSG_ENVIRONMENT_DUAL_DEFAULT,
 						 PLACETEXT_RIGHT,
 						 GAD_ENVIRONMENT_DUAL_DEFAULT,
+						 _environment_relative_taglist},
+
+						// Striped rows
+						{OD_GADGET,
+						 CHECKBOX_KIND,
+						 {14, 11, 0, 1},
+						 {5, 52, 26, 6},
+						 MSG_ENVIRONMENT_STRIPED_ROWS,
+						 PLACETEXT_RIGHT,
+						 GAD_ENVIRONMENT_STRIPED_ROWS,
 						 _environment_relative_taglist},
 
 						{OD_END}},
