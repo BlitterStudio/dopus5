@@ -227,6 +227,10 @@ unsigned long LIBFUNC L_Config_Environment(REG(a0, Cfg_Environment *env),
 #ifndef FUNKOFF
 	// Build sound list (needs the window for its pens)
 	env_init_sounds(data);
+
+	// Opened on the Sounds page (it can sort first too)? Show the list now
+	if (data->option == ENVIRONMENT_SOUNDLIST && data->option_list)
+		_config_env_set(data, ENVIRONMENT_SOUNDLIST);
 #endif
 
 	// Event loop
