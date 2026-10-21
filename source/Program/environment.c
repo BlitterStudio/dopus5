@@ -515,6 +515,7 @@ BOOL environment_open(Cfg_Environment *env, char *name, BOOL first, APTR prog)
 		main_bump_progress(prog, progress++, 0);
 
 		// Free lister menu, get new one
+		GetSemaphore(&GUI->lister_menu_lock, SEMF_EXCLUSIVE, 0);
 		CloseButtonBank(GUI->lister_menu);
 		if ((GUI->lister_menu = OpenButtonBank(env->menu_path)))
 		{
@@ -526,20 +527,25 @@ BOOL environment_open(Cfg_Environment *env, char *name, BOOL first, APTR prog)
 				GUI->lister_menu->window.flags |= BTNWF_FIX_MENU;
 			}
 		}
+		FreeSemaphore(&GUI->lister_menu_lock);
 
 		// Bump progress
 		main_bump_progress(prog, progress++, 0);
 
 		// Free user menu, get new one
+		GetSemaphore(&GUI->user_menu_lock, SEMF_EXCLUSIVE, 0);
 		CloseButtonBank(GUI->user_menu);
 		GUI->user_menu = OpenButtonBank(env->user_menu_path);
+		FreeSemaphore(&GUI->user_menu_lock);
 
 		// Bump progress
 		main_bump_progress(prog, progress++, 0);
 
 		// Free scripts, get new set
+		GetSemaphore(&GUI->scripts_lock, SEMF_EXCLUSIVE, 0);
 		CloseButtonBank(GUI->scripts);
 		GUI->scripts = OpenButtonBank(env->scripts_path);
+		FreeSemaphore(&GUI->scripts_lock);
 
 		// Bump progress
 		main_bump_progress(prog, progress++, 0);
@@ -1400,7 +1406,7 @@ IPC_EntryCode(environment_proc)
 	char *path;
 	struct Window *status = 0;
 	ULONG change, change_flags[2] = {0, 0};
-	BOOL reopen = 0, old = 0, need_reset = 0;
+	BOOL reopen = 0, old = 0, need_reset = 0, locked = 0;
 	short save_layout = 0;
 	BPTR file;
 	APTR progress = 0;
@@ -1408,6 +1414,13 @@ IPC_EntryCode(environment_proc)
 	// Do startup
 	if ((ipc = IPC_ProcStartup((IPTR *)&packet, 0)) && (path = AllocVec(256, 0)))
 	{
+		// One environment process at a time, until the display it closed is open
+		// again: two loads would read into the same environment and free the
+		// same button banks (an ARexx LoadEnvironment replies before the load is
+		// done, so scripts can start the next one straight away)
+		ObtainSemaphore(&GUI->env_load_lock);
+		locked = 1;
+
 		// Get name, either from packet or current env name
 		strcpy(path, (packet->type == -1) ? packet->name : environment->path);
 
@@ -1655,6 +1668,10 @@ IPC_EntryCode(environment_proc)
 		IPC_Command(&main_ipc, MAINCMD_OPEN_DISPLAY, DSPOPENF_DESKTOP, 0, 0, (struct MsgPort *)-1);
 	else if (change_flags[0] || change_flags[1])
 		send_main_reset_cmd(change_flags[0], change_flags[1], 0);
+
+	// Let the next environment process run
+	if (locked)
+		ReleaseSemaphore(&GUI->env_load_lock);
 
 	// Free startup packet
 	FreeVec(packet);

@@ -684,6 +684,11 @@ void close_display(int close_flags, BOOL quit_all)
 		SendNotifyMsg(DN_OPUS_HIDE, 0, 0, 0, 0, 0);
 	}
 
+	// The pattern process loads backdrop pictures for this screen under this
+	// lock; wait for it, and keep it out until the patterns are freed and the
+	// screen is closed (display_get_pattern() gives up once the screen is gone)
+	ObtainSemaphore(&GUI->pattern_lock);
+
 	// Close main window?
 	if (close_flags & CLOSE_WINDOW)
 	{
@@ -860,6 +865,8 @@ void close_display(int close_flags, BOOL quit_all)
 		GUI->screen = 0;
 		GUI->screen_pointer = 0;
 	}
+
+	ReleaseSemaphore(&GUI->pattern_lock);
 }
 
 void display_box_to_rect(struct IBox *box, struct Rectangle *rect)

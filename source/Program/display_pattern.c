@@ -101,6 +101,34 @@ static void display_prepare_wbpattern_data(struct WBPatternPrefs *prefs, char *d
 #endif
 }
 
+// Take the pattern lock (see close_display()). FALSE, without the lock, if the
+// screen has gone: patterns are freed with it, and display_open() loads them again
+static BOOL display_lock_pattern(void)
+{
+	ObtainSemaphore(&GUI->pattern_lock);
+	if (GUI->screen_pointer)
+		return TRUE;
+	ReleaseSemaphore(&GUI->pattern_lock);
+	return FALSE;
+}
+
+// display_update_pattern() waits for the main process and the listers, which may
+// be closing the display; never hold the pattern lock across it
+static BOOL display_update_pattern_unlocked(short which, short valid)
+{
+	ReleaseSemaphore(&GUI->pattern_lock);
+	display_update_pattern(which, valid);
+	return display_lock_pattern();
+}
+
+// Free the pattern data not yet handed to GUI->pattern, when the display goes
+static void display_free_pattern_data(char **data, short from)
+{
+	for (; from < NUM_PATTERNS; from++)
+		FreeVec(data[from]);
+	GUI->pattern_main_pending = FALSE;
+}
+
 // Get backdrop pattern
 short display_get_pattern(BOOL use_custom)
 {
@@ -111,6 +139,13 @@ short display_get_pattern(BOOL use_custom)
 	char *data[NUM_PATTERNS], *filename;
 	short change = 0;
 	ULONG flags = 0;
+
+	// Display closed (or closing)?
+	if (!display_lock_pattern())
+	{
+		GUI->pattern_main_pending = FALSE;
+		return 0;
+	}
 
 	// Copy from system fields to custom fields (if custom field is empty, or custom flag is not set)
 	for (a = 0; a < 4; a++)
@@ -136,7 +171,8 @@ short display_get_pattern(BOOL use_custom)
 			if (GUI->pattern[a].valid)
 			{
 				// Clear existing pattern
-				display_update_pattern(a, 0);
+				if (!display_update_pattern_unlocked(a, 0))
+					return 0;
 
 				// Free pattern data
 				FreeVec(GUI->pattern[a].data);
@@ -147,6 +183,7 @@ short display_get_pattern(BOOL use_custom)
 			}
 		}
 
+		ReleaseSemaphore(&GUI->pattern_lock);
 		return 0;
 	}
 
@@ -459,7 +496,11 @@ short display_get_pattern(BOOL use_custom)
 			if (GUI->pattern[a].valid)
 			{
 				// Clear existing patterns
-				display_update_pattern(a, 0);
+				if (!display_update_pattern_unlocked(a, 0))
+				{
+					display_free_pattern_data(data, a);
+					return change;
+				}
 			}
 
 			// Change more than centering?
@@ -506,6 +547,7 @@ short display_get_pattern(BOOL use_custom)
 				GetPatternBorder(&GUI->pattern[a],
 								 GUI->screen_pointer,
 								 GUI->env_BackgroundBorderColour[a] | (GUI->env_BackgroundFlags[a] & ENVBF_USE_COLOUR));
+				FreeVec(data[a]);
 			}
 
 			// Centering changed
@@ -517,10 +559,15 @@ short display_get_pattern(BOOL use_custom)
 					GUI->pattern[a].flags |= PATF_CENTER;
 				else
 					GUI->pattern[a].flags &= ~PATF_CENTER;
+				FreeVec(data[a]);
 			}
 
 			// Install new pattern
-			display_update_pattern(a, 1);
+			if (!display_update_pattern_unlocked(a, 1))
+			{
+				display_free_pattern_data(data, a + 1);
+				return change;
+			}
 		}
 
 		// If not, free data
@@ -532,6 +579,7 @@ short display_get_pattern(BOOL use_custom)
 			GUI->pattern_main_pending = FALSE;
 	}
 
+	ReleaseSemaphore(&GUI->pattern_lock);
 	return change;
 }
 

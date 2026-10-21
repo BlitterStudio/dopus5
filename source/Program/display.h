@@ -227,6 +227,7 @@ typedef struct
 	struct SignalSemaphore iconify_icon_lock;
 
 	struct SignalSemaphore eject_lock;	// One disk eject at a time
+	struct SignalSemaphore env_load_lock;  // One environment process at a time
 
 	struct ListLock function_traps;	 // Function trap list
 
