@@ -1,6 +1,69 @@
-[dopus5 next] Striped lister rows (issue #225); catalogs repaired
+[dopus5 5.104] Release summary
+Program bumps to 5.104, library and modules to v73r8, commands to
+v65r6.  The release adds striped lister rows, repairs the translated
+catalogs, makes back-to-back environment loads and screen mode changes
+safe, draws alpha icons once, and fixes archive browsing and pop-up
+menus on AROS 64-bit.  The detailed entries for each change follow
+this summary.
+
+Program:
+- Striped Rows in Environment > Lister Display draws every second row
+  of a name mode lister in the new Alternate Rows colour (#225).
+- Lines that scroll into a name mode lister are drawn with their own
+  line number.
+- Loading environments one after another no longer crashes Opus; the
+  loads run one at a time, in the order they were started.
+- A screen mode change no longer leaves OS 3.5 icon images, lister
+  toolbars or ARexx AppIcon remaps on the old screen, and closing the
+  display waits for a backdrop picture that is still loading.
+- The lister status pop-up has a View sub-menu (Name, Icon, Icon
+  Action, Show All).
+- Icon-mode listers draw each icon once, so the soft edges of alpha
+  icons are not doubled.  Redrawing an icon no longer draws it over
+  itself or wipes the icons underneath.
+- AROS: right-clicking an Opus window that is not active no longer
+  leaves a dead pop-up menu.
+- AROS 64-bit: pointers, GetAttr() results, hooks and font.prefs
+  values use their full width.
+
+dopus5.library:
+- Environment config version 18 adds the striped row settings; older
+  environments load with striping off.
+- FreeRemapImage() undoes an icon image's layout while its screen is
+  still open.
+- AROS 64-bit: BOOPSI classes, string edit and backfill hooks use the
+  AROS hook calling convention; wrappers pass full-width values.
+
+Modules:
+- configopus: Striped Rows and Alternate Rows; the Environment editor
+  fills the Screen Mode and Sounds lists when it opens on those pages;
+  editing a filetype without an icon no longer crashes on AROS.
+- xadopus: archives open, browse and close on AROS 64-bit.
+- ftp, icon, join, read and the other modules: 64-bit AROS fixes.
+
+Commands:
+- ViewFont: 64-bit AROS hook and argument fixes.
+
+Catalogs:
+- The translated catalogs are rebuilt from the original Opus 5.65 and
+  5.8x catalogs by string ID, the French catalogs exist once and use
+  names, and configopus.cd and ftp.cd use the IDs the modules use.
+
+Documentation:
+- DOpus5.guide 58.21 and DOpusM2_ARexx.guide 57.9.
+
+Versioning notes:
+- PROG_REVISION moves 103 -> 104.
+- Global LIB_REVISION moves 7 -> 8 (dopus5.library and all modules
+  ship at v73r8).
+- CMD_REVISION moves 5 -> 6 (DOpusRT5, LoadDB, LoadDOpusLib and
+  ViewFont ship at v65r6).
+
+2026-10-21 by Dimitris Panokostas <midwan@gmail.com>
+
+[dopus5 5.104] Striped lister rows (issue #225); catalogs repaired
 Program, dopus5.library and configopus change; environment config
-version 18; version bump deferred.
+version 18; ships in 5.104.
 
 - Name mode listers can draw every second row in a different
   background colour.  Turn it on with Striped Rows in Environment >
@@ -30,7 +93,7 @@ version 18; version bump deferred.
   % codes, '|' button count or length no longer fit the current
   string are left out, so Opus shows the English text there.
 - The French catalogs used numbers instead of names for most strings
-  and existed twice (as "franÃ§ais" in two Unicode forms); there is
+  and existed twice (as "français" in two Unicode forms); there is
   one copy now, with names.  catalogs/Makefile builds the ViewFont,
   Lister Format and Path Format catalogs where a translation exists
   and skips the ones that do not.
@@ -43,8 +106,8 @@ version 18; version bump deferred.
 - Striped Rows and Alternate Rows are translated into every
   catalog language.
 
-[dopus5 next] Environment reloads and screen mode changes; View in the lister status pop-up
-Program, dopus5.library and configopus change; version bump deferred.
+[dopus5 5.104] Environment reloads and screen mode changes; View in the lister status pop-up
+Program, dopus5.library and configopus change; ships in 5.104.
 
 - Toolbar and button images loaded from OS 3.5 icons are no longer left
   laid out on a closed screen.  FreeRemapImage() kept the icon's
@@ -86,8 +149,8 @@ Program, dopus5.library and configopus change; version bump deferred.
   the page was set up, so the page stayed empty until another page was
   picked and the first one chosen again (reported by Peter Keunecke).
 
-[dopus5 next] Icons are drawn once, so soft alpha edges are not doubled
-Program changes; version bump deferred.
+[dopus5 5.104] Icons are drawn once, so soft alpha edges are not doubled
+Program changes; ships in 5.104.
 
 - Icon-mode listers draw each icon once when they open.  Opus drew
   every icon as it was read and then all of them again when the
@@ -105,9 +168,9 @@ Program changes; version bump deferred.
   for a selected icon wiped the parts of icons underneath it.
   AppIcons with a render hook still draw over what is there.
 
-[dopus5 next] AROS 64-bit: archive browsing, frozen pop-up menus, 64-bit sweep
-Program, dopus5.library, configopus and most modules change; version
-bump deferred.
+[dopus5 5.104] AROS 64-bit: archive browsing, frozen pop-up menus, 64-bit sweep
+Program, dopus5.library, configopus and most modules change; ships
+in 5.104.
 
 - Opening a ZIP, LHA or other archive in a lister no longer crashes on
   AROS 64-bit.  XADopus named its message port "XADopus_<address>" in a

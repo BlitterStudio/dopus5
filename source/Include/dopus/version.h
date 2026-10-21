@@ -16,15 +16,15 @@
 
 // set the program version/revision
 #define PROG_VERSION    5
-#define PROG_REVISION   103
+#define PROG_REVISION   104
 
 // set the library & modules version/revision
 #define LIB_VERSION    73
-#define LIB_REVISION   7
+#define LIB_REVISION   8
 
 // set the commands version/revision (viewfont, dopusrt5, loadwb, loaddopuslib)
 #define CMD_VERSION    65
-#define CMD_REVISION   5
+#define CMD_REVISION   6
 
 // set platform identification
 #if defined(DEBUG) && DEBUG
