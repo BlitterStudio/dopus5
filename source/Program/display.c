@@ -686,8 +686,11 @@ void close_display(int close_flags, BOOL quit_all)
 
 	// The pattern process loads backdrop pictures for this screen under this
 	// lock; wait for it, and keep it out until the patterns are freed and the
-	// screen is closed (display_get_pattern() gives up once the screen is gone)
+	// screen is closed. A pattern process that let go of the lock while this
+	// display was up starts again for the next one (display_get_pattern())
 	ObtainSemaphore(&GUI->pattern_lock);
+	if (close_flags & CLOSE_SCREEN || (close_flags & CLOSE_WINDOW && !(close_flags & CLOSE_KEEP_PATTERN)))
+		++GUI->pattern_generation;
 
 	// Close main window?
 	if (close_flags & CLOSE_WINDOW)
@@ -784,8 +787,6 @@ void close_display(int close_flags, BOOL quit_all)
 	// Close the screen?
 	if (close_flags & CLOSE_SCREEN)
 	{
-		// Reject a pattern worker that released pattern_lock for this display
-		GUI->pattern_generation++;
 		// Free palette
 		free_colour_table();
 

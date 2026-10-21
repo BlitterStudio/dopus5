@@ -113,16 +113,19 @@ static BOOL display_lock_pattern(void)
 }
 
 // display_update_pattern() waits for the main process and the listers, which may
-// be closing the display; never hold the pattern lock across it
-static BOOL display_update_pattern_unlocked(short which, short valid, ULONG pattern_generation)
+// be closing the display; never hold the pattern lock across it. FALSE, without
+// the lock, if the display was closed meanwhile; *restart is set if another one
+// is already open, as display_open() leaves its patterns to this process
+static BOOL display_update_pattern_unlocked(short which, short valid, ULONG generation, BOOL *restart)
 {
 	ReleaseSemaphore(&GUI->pattern_lock);
 	display_update_pattern(which, valid);
 	if (!display_lock_pattern())
 		return FALSE;
-	if (GUI->pattern_generation == pattern_generation)
+	if (GUI->pattern_generation == generation)
 		return TRUE;
 	ReleaseSemaphore(&GUI->pattern_lock);
+	*restart = TRUE;
 	return FALSE;
 }
 
@@ -134,8 +137,25 @@ static void display_free_pattern_data(char **data, short from)
 	GUI->pattern_main_pending = FALSE;
 }
 
+static short display_get_pattern_once(BOOL use_custom, BOOL *restart);
+
 // Get backdrop pattern
 short display_get_pattern(BOOL use_custom)
+{
+	BOOL restart;
+	short change;
+
+	// Start again if the display was closed and opened again under us
+	do
+	{
+		restart = FALSE;
+		change = display_get_pattern_once(use_custom, &restart);
+	} while (restart);
+
+	return change;
+}
+
+static short display_get_pattern_once(BOOL use_custom, BOOL *restart)
 {
 	APTR iff;
 	BPTR file;
@@ -144,7 +164,8 @@ short display_get_pattern(BOOL use_custom)
 	char *data[NUM_PATTERNS], *filename;
 	short change = 0;
 	ULONG flags = 0;
-	ULONG pattern_generation;
+	ULONG generation;
+
 	// Display closed (or closing)?
 	if (!display_lock_pattern())
 	{
@@ -152,8 +173,8 @@ short display_get_pattern(BOOL use_custom)
 		return 0;
 	}
 
-	// Reject work that was prepared for a display which has since been closed
-	pattern_generation = GUI->pattern_generation;
+	// The display this load is for
+	generation = GUI->pattern_generation;
 
 	// Copy from system fields to custom fields (if custom field is empty, or custom flag is not set)
 	for (a = 0; a < 4; a++)
@@ -179,7 +200,7 @@ short display_get_pattern(BOOL use_custom)
 			if (GUI->pattern[a].valid)
 			{
 				// Clear existing pattern
-				if (!display_update_pattern_unlocked(a, 0, pattern_generation))
+				if (!display_update_pattern_unlocked(a, 0, generation, restart))
 					return 0;
 
 				// Free pattern data
@@ -504,7 +525,7 @@ short display_get_pattern(BOOL use_custom)
 			if (GUI->pattern[a].valid)
 			{
 				// Clear existing patterns
-				if (!display_update_pattern_unlocked(a, 0, pattern_generation))
+				if (!display_update_pattern_unlocked(a, 0, generation, restart))
 				{
 					display_free_pattern_data(data, a);
 					return change;
@@ -571,7 +592,7 @@ short display_get_pattern(BOOL use_custom)
 			}
 
 			// Install new pattern
-			if (!display_update_pattern_unlocked(a, 1, pattern_generation))
+			if (!display_update_pattern_unlocked(a, 1, generation, restart))
 			{
 				display_free_pattern_data(data, a + 1);
 				return change;
