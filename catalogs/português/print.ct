@@ -70,14 +70,6 @@ MSG_PRINT_SPACING_8
 8 Lin./pul.
 ; 8 LPI
 ;
-MSG_PRINT_PITCH_PICA
-Pica
-; Pica
-;
-MSG_PRINT_PITCH_ELITE
-Elite
-; Elite
-;
 MSG_PRINT_PITCH_FINE
 Fino
 ; Fine
@@ -109,10 +101,6 @@ Pá_gina
 MSG_PRINT_STYLE
 Est_ilo
 ; St_yle
-;
-MSG_PRINT_STYLE_NORMAL
-Normal
-; Normal
 ;
 MSG_PRINT_STYLE_BOLD
 Negro

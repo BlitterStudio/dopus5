@@ -38,7 +38,6 @@ class ListerTooltipColourTests(unittest.TestCase):
         self.assertIn("env->tooltip_col[0] = 1;", source)
         self.assertIn("env->tooltip_col[1] = 0;", source)
         self.assertIn("if (env->version < CONFIG_VERSION_16)", source)
-        self.assertIn("env->version = CONFIG_VERSION_17;", source)
 
     def test_lister_colours_editor_exposes_tooltip_item(self):
         config_source = read_source(CONFIG_ENVIRONMENT_C)

@@ -11,7 +11,7 @@ _Formatear
 ; _Format
 ;
 MSG_FORMAT_QUICK_FORMAT
-Formatear rápido
+Formateo _rápido
 ; _Quick Format
 ;
 MSG_FORMAT_CANCEL
@@ -19,27 +19,27 @@ _Cancelar
 ; _Cancel
 ;
 MSG_FORMAT_NAME
-_Nombre
+_Nombre:
 ; _Name
 ;
 MSG_FORMAT_FFS
-F_ast File System
+F_astFileSystem
 ; F_ast File System
 ;
 MSG_FORMAT_INTERNATIONAL
-_Modo Internacional
+Modo _Internacional
 ; _International Mode
 ;
 MSG_FORMAT_CACHING
-_Caché de directorios
+_Directory Cache
 ; _Directory Caching
 ;
 MSG_FORMAT_TRASHCAN
-_Papelera
+Crear _Papelera
 ; _Put Trashcan
 ;
 MSG_FORMAT_INSTALL
-Con _Arranque
+Autoarrancabl_e
 ; _Make Bootable
 ;
 MSG_FORMAT_VERIFY
@@ -47,7 +47,7 @@ _Verificar
 ; _Verify
 ;
 MSG_FORMAT_DEFAULT_NAME
-Vacío
+Sin_Nombre
 ; Empty
 ;
 MSG_FORMAT_STATUS
@@ -63,7 +63,7 @@ Comprobando disco...
 ; Checking disk...
 ;
 MSG_CANT_OPEN_DEVICE
-¡No se puede abrir el dispositivo!
+¡No puedo abrir dispositivo!
 ; Unable to open device!
 ;
 MSG_NO_DISK_PRESENT
@@ -71,7 +71,7 @@ MSG_NO_DISK_PRESENT
 ; No disk present in drive!
 ;
 MSG_DISK_WRITE_PROTECTED
-¡Disco protegido contra escritura!
+¡Disco PROTEGIDO contra escritura!
 ; Disk is write-protected!
 ;
 MSG_RETRY_CANCEL
@@ -83,19 +83,15 @@ Proceder|Cancelar
 ; Proceed|Cancel
 ;
 MSG_DISK_NOT_BLANK
-¡El disco en la unidad %s no está en blanco!\n\
-El volumen '%s' contiene %s.\n\
-Todos los datos serán borrados.\n\
-Proceder para continuar
-; Disk in drive %s is not blank!\nVolume '%s' contains %s.\n\
-; All data will be erased.\nChoose Proceed to continue.
+¡El disco en %s no está vacio!\n'%s' tiene en uso %s\n\nLos datos se PERDERAN.\nPulse en 'Proceder' para continuar.
+; Disk in drive %s is not blank!\nVolume '%s' contains %s.\nAll data will be erased.\nChoose Proceed to continue.
 ;
 MSG_ABORTED
 Abortado.
 ; Aborted.
 ;
 MSG_FORMAT_INITIALISING
-Inicializando el disco...
+Inicializando disco...
 ; Initialising disk...
 ;
 MSG_FORMAT_FORMATTING
@@ -103,38 +99,38 @@ Formateando...
 ; Formatting...
 ;
 MSG_FORMAT_FORMATERROR
-Format error on track %ld.
+Error formateando pista %ld
 ; Format error on track %ld.
 ;
 MSG_FORMAT_VERIFYERROR
-Verify error on track %ld.
+Error verificando pista %ld
 ; Verify error on track %ld.
 ;
 MSG_FORMAT_SUCCESSFUL
-Format successful!
+¡Formateo realizado con éxito!
 ; Format successful!
 ;
 MSG_FORMAT_FAILED
-Format failed.
+Intento de dar formato fallido.
 ; Format failed.
 ;
 MSG_FORMAT_SETTING_UP
-Setting up...
+Configurando...
 ; Setting up...
 ;
 MSG_FORMAT_CLEANING_UP
-Cleaning up...
+Inicializando...
 ; Cleaning up...
 ;
 MSG_FORMAT_MAKING_TRASH
-Making Trashcan...
+Creando Papelera...
 ; Making Trashcan...
 ;
 MSG_INSTALLING_DISK
-Installing Bootblock...
+Instalando autoarranque...
 ; Installing Bootblock...
 ;
 MSG_FORMAT_DESC
-Format disks
+Formatear discos
 ; Format disks
 ;

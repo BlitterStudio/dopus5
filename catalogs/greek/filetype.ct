@@ -14,10 +14,6 @@ MSG_FIND_PRI
 Προτ.
 ; Pri
 ;
-MSG_FIND_ID
-ID
-; ID
-;
 MSG_FIND_FILETYPE
 Είδος
 ; Filetype
@@ -198,29 +194,9 @@ MSG_CREATE_NAME
  Ό_νομα:
 ;  _Name:
 ;
-MSG_CREATE_IFF
-  _IFF:
-;   _IFF:
-;
 MSG_CREATE_GROUP
  _Ομάδα:
 ; _Group:
-;
-MSG_CREATE_ID
-   I_D:
-;    I_D:
-;
-MSG_CREATE_BYTES
-_Bytes:
-; _Bytes:
-;
-MSG_CREATE_CASE
-Case
-; Case
-;
-MSG_CREATE_NOCASE
-No Case
-; No Case
 ;
 MSG_CREATE_EDIT
 _Επ/σία
@@ -239,9 +215,7 @@ MSG_CREATE_ADD_FILE
 ; Add a file...
 ;
 MSG_CREATE_WARN_EDITED
-ΠΡΟΣΟΧΗ!\n\n\
-Χρησιμοποιήσατε τον παραμετροποιητή.\n\
-Εάν συνεχίσετε, οι αλλαγές θα χαθούν...
+ΠΡΟΣΟΧΗ!\n\nΧρησιμοποιήσατε τον παραμετροποιητή.\nΕάν συνεχίσετε, οι αλλαγές θα χαθούν...
 ; WARNING\n\nYou have used the editor.\nIf you continue your changes will be lost...
 ;
 MSG_CREATE_CONTINUE_CANCEL
@@ -253,7 +227,6 @@ MSG_REPLACE_CANCEL
 ; Replace|Cancel
 ;
 MSG_FILETYPE_EXISTS
-Το είδος '%s' υπάρχει.\n\
-Θα το αντικαταστήσετε
+Το είδος '%s' υπάρχει.\nΘα το αντικαταστήσετε
 ; Filetype '%s' exists.\nDo you wish to replace it?
 ;

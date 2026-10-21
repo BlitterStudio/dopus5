@@ -22,10 +22,6 @@ MSG_FORMAT_NAME
 _Naam
 ; _Name
 ;
-MSG_FORMAT_FFS
-F_ast File System
-; F_ast File System
-;
 MSG_FORMAT_INTERNATIONAL
 _Internationale modus
 ; _International Mode
@@ -49,10 +45,6 @@ _Verifieer
 MSG_FORMAT_DEFAULT_NAME
 Leeg
 ; Empty
-;
-MSG_FORMAT_STATUS
-%ld tracks, %ld bytes/trk, %s
-; %ld tracks, %ld bytes/trk, %s
 ;
 MSG_OPENING_DEVICE
 Open eenheid...
@@ -83,12 +75,8 @@ Ga door|Annuleer
 ; Proceed|Cancel
 ;
 MSG_DISK_NOT_BLANK
-Disk in eenheid %s is niet leeg!\n\
-Volume '%s' bevat %s.\n\
-Alle gegevens zullen gewist worden.\n\
-Kies 'Ga door' om door te gaan.
-; Disk in drive %s is not blank!\nVolume '%s' contains %s.\n\
-; All data will be erased.\nChoose Proceed to continue.
+Disk in eenheid %s is niet leeg!\nVolume '%s' bevat %s.\nAlle gegevens zullen gewist worden.\nKies 'Ga door' om door te gaan.
+; Disk in drive %s is not blank!\nVolume '%s' contains %s.\nAll data will be erased.\nChoose Proceed to continue.
 ;
 MSG_ABORTED
 Afgebroken.
@@ -103,38 +91,38 @@ Formatteer...
 ; Formatting...
 ;
 MSG_FORMAT_FORMATERROR
-Format error on track %ld.
+Formatteerfout op track %ld.
 ; Format error on track %ld.
 ;
 MSG_FORMAT_VERIFYERROR
-Verify error on track %ld.
+Verifieerfout op track %ld.
 ; Verify error on track %ld.
 ;
 MSG_FORMAT_SUCCESSFUL
-Format successful!
+Formatteren succesvol!
 ; Format successful!
 ;
 MSG_FORMAT_FAILED
-Format failed.
+Formatteren mislukt.
 ; Format failed.
 ;
 MSG_FORMAT_SETTING_UP
-Setting up...
+Initialiseer...
 ; Setting up...
 ;
 MSG_FORMAT_CLEANING_UP
-Cleaning up...
+Ruim op...
 ; Cleaning up...
 ;
 MSG_FORMAT_MAKING_TRASH
-Making Trashcan...
+Maak prullenbak...
 ; Making Trashcan...
 ;
 MSG_INSTALLING_DISK
-Installing Bootblock...
+Installeer boot­blok...
 ; Installing Bootblock...
 ;
 MSG_FORMAT_DESC
-Format disks
+Formatteer disks
 ; Format disks
 ;

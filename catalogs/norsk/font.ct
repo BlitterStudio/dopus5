@@ -1,0 +1,44 @@
+## version $VER: viewfont.catalog 5.5 (24.10.96)
+## codeset 0
+## language norsk
+;
+MSG_FONT_TITLE
+Font Fremviser
+; Font Viewer
+;
+MSG_FONT_SIZE
+_Stør.
+; _Size
+;
+MSG_FONT_PRINT
+U_tskrift
+; _Print
+;
+MSG_VIEWFONT_DESC
+Vis en font
+; View a font
+;
+MSG_FONT_SELECT
+Velg Font
+; Select Font
+;
+MSG_MENU_PROJECT
+Prosjekt
+; Project
+;
+MSG_MENU_OPEN_FONT
+Åpne Font...
+; Open Font...
+;
+MSG_MENU_SAVE_SETTINGS
+Lagre Innstillinger
+; Save Settings
+;
+MSG_MENU_QUIT
+Avslutt
+; Quit
+;
+MSG_MENU_ABOUT
+Om...
+; About...
+;

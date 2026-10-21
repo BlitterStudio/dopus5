@@ -30,10 +30,6 @@ MSG_FORMAT_INTERNATIONAL
 Δ_ιεθνής Κατάσταση (Intl)
 ; _International Mode
 ;
-MSG_FORMAT_CACHING
-_Directory Caching
-; _Directory Caching
-;
 MSG_FORMAT_TRASHCAN
 _Αποριμματοδοχείο
 ; _Put Trashcan
@@ -83,12 +79,8 @@ MSG_PROCEED_CANCEL
 ; Proceed|Cancel
 ;
 MSG_DISK_NOT_BLANK
-Ο δίσκος στον οδηγό %s δεν είναι κενός!\n\
-Ο δίσκος '%s' περιέχει %s.\n\
-Όλα τα δεδομένα θα χαθούν.\n\
-Επιλέξτε "Συνέχεια" για να συνεχίσετε.
-; Disk in drive %s is not blank!\nVolume '%s' contains %s.\n\
-; All data will be erased.\nChoose Proceed to continue.
+Ο δίσκος στον οδηγό %s δεν είναι κενός!\nΟ δίσκος '%s' περιέχει %s.\nΌλα τα δεδομένα θα χαθούν.\nΕπιλέξτε "Συνέχεια" για να συνεχίσετε.
+; Disk in drive %s is not blank!\nVolume '%s' contains %s.\nAll data will be erased.\nChoose Proceed to continue.
 ;
 MSG_ABORTED
 Ακυρώθηκε.
@@ -103,38 +95,38 @@ MSG_FORMAT_FORMATTING
 ; Formatting...
 ;
 MSG_FORMAT_FORMATERROR
-Format error on track %ld.
+Λάθος διαμόρφωσης στον τομέα %ld.
 ; Format error on track %ld.
 ;
 MSG_FORMAT_VERIFYERROR
-Verify error on track %ld.
+Λάθος επιβεβαίωσης στον τομέα %ld.
 ; Verify error on track %ld.
 ;
 MSG_FORMAT_SUCCESSFUL
-Format successful!
+Επιτυχής διαμόρφωση!
 ; Format successful!
 ;
 MSG_FORMAT_FAILED
-Format failed.
+Μή επιτυχής διαμόρφωση.
 ; Format failed.
 ;
 MSG_FORMAT_SETTING_UP
-Setting up...
+Προετοιμασία...
 ; Setting up...
 ;
 MSG_FORMAT_CLEANING_UP
-Cleaning up...
+Καθαρισμός...
 ; Cleaning up...
 ;
 MSG_FORMAT_MAKING_TRASH
-Making Trashcan...
+Δημιουργία Αποριμματοδοχείου...
 ; Making Trashcan...
 ;
 MSG_INSTALLING_DISK
-Installing Bootblock...
+Εγκατάσταση εκκινητή...
 ; Installing Bootblock...
 ;
 MSG_FORMAT_DESC
-Format disks
+Διαμόρφωση δίσκων
 ; Format disks
 ;

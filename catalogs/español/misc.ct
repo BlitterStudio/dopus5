@@ -3,14 +3,14 @@
 ## language español
 ;
 MSG_BEEP_DESC
-Suena un bip
+Escuchar un pitido
 ; Makes a beep sound
 ;
 MSG_FLASH_DESC
-La pantalla parpadea
+Parpadear la pantalla
 ; Flashes the display
 ;
 MSG_ALARM_DESC
-Suena una alarma
+Escuchar una alarma
 ; Sounds an alarm
 ;

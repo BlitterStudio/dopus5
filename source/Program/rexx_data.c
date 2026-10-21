@@ -221,7 +221,7 @@ char *
    *labelcol_keys[] = {"desktop", "windows", "jam1", "jam2", "shadow", "outline", 0},
 
    *pens_key[] =
-	   {"icons", "files", "dirs", "selfiles", "seldirs", "devices", "assigns", "source", "dest", "gauge", "user", 0},
+	   {"icons", "files", "dirs", "selfiles", "seldirs", "devices", "assigns", "source", "dest", "gauge", "user", "tooltips", "stripes", 0},
 
    *font_key[] = {"screen", "listers", "iconsd", "iconsw", 0};
 

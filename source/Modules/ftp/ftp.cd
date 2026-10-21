@@ -272,10 +272,10 @@ MSG_ERR_XX (//)
 ;
 ;
 MSG_MAIN_NEED_TCPIP (//)
-You must have a TCP/IP stack
-such as AmiTCP, AS225, INet,
-Miami, MLink, or TermiteTCP
-running to use
+You must have a TCP/IP stack\n\
+such as AmiTCP, AS225, INet,\n\
+Miami, MLink, or TermiteTCP\n\
+running to use\n\
 OpusFTP
 ;
 ; (The next two lines make up a single string "The ??? command...")
@@ -283,8 +283,8 @@ MSG_MAIN_THE (//)
 The
 ;
 MSG_MAIN_CMD_NOT_SUPP (//)
-command
-is not currently supported
+command\n\
+is not currently supported\n\
 by OpusFTP
 ;
 ;
@@ -395,30 +395,31 @@ sec
 MSG_KILOBYTES (//)
 kb
 ;
-MSG_SEND_NOOP (//) ; don't tranlate the NOOP part
+; don't translate the NOOP part
+MSG_SEND_NOOP (//)
 NOOPs
 ;
 MSG_BADSITE (//)
-Invalid Site Details
+Invalid Site Details\n\
 You must enter a Host IP or Address.
 ;
 MSG_BADVER (//)
-This OpusFTP module requires
+This OpusFTP module requires\n\
 DOpus version 5.51 or higher!
 ;
 MSG_QUERYSAVE (//)
-You have modified the FTP config and not
+You have modified the FTP config and not\n\
 saved it. Would you like to?
 ;
 MSG_FTP_USE (//)
 _Use
 ;
 MSG_QUERYINDEX (//)
-Found file %s of size %ld %s.
+Found file %s of size %ld %s.\n\
 Fetch it and update file comments?
 ;
 MSG_BADHASH (//)
-Sorry, OpusFTP cannot handle files
+Sorry, OpusFTP cannot handle files\n\
 beginning with the '#' character.
 ;
 MSG_FTP_DOS_ERROR (//)
@@ -428,7 +429,7 @@ OBSOLETE027 (//)
 
 ;
 MSG_NO_LOCALHOST (//)
-Site to site transfer is not possible using localhost.
+Site to site transfer is not possible using localhost.\n\
 Please use the full address instead.
 ;
 OBSOLETE028 (//)
@@ -515,7 +516,7 @@ MSG_FTP_DRAWERS (//)
 drawer(s) (and their contents)
 ;
 MSG_DELETE_DIRS (//)
-is a directory.
+is a directory.\n\
 Procede with delete operation?
 ;
 ;	Recursive confirmation requester
@@ -626,18 +627,18 @@ _Progress
 ;
 ;
 MSG_FTP_GETPUT_NO_PASV (//)
-Neither site supports passive transfers.
+Neither site supports passive transfers.\n\
 Site to site transfer is not possible.
 ;
 MSG_FTP_LOGIN_FAILED (//)
 Login unsuccessful.
 ;
 MSG_FTP_CHANGE_USERPASS (//)
-Do you wish to alter the user name
+Do you wish to alter the user name\n\
 and password?
 ;
 MSG_RESUME_FAILURE (//)
-This FTP server does not support the resume feature.
+This FTP server does not support the resume feature.\n\
 The old file will be replaced.
 ;
 MSG_CONSOLE_TITLE (//)
@@ -779,10 +780,10 @@ Enable Log
 MSG_FTP_LOG_DEBUG (//)
 Enable Debug
 ;
-MSG_FTP_NO_KEEP_ALIVE (//)
+MSG_FTP_NO_KEEP_ALIVE (1346//)
 Disable Stayin' Alive _Pings
 ;
-MSG_FTP_GLOBAL (//)
+MSG_FTP_GLOBAL (1233//)
 Global
 ;
 MSG_FTP_GLOBAL_SETTINGS (//)
@@ -1063,7 +1064,7 @@ MSG_FTP_IMPORT_AMFTP_SITES (//)
 Import AMFTP Sites
 ;
 MSG_FTP_IMPORT_BAD_AMFTPFILE (//)
-Not an .AmFTPProfiles file!
+Not an .AmFTPProfiles file!\n\
  Continue anyway?
 ;
 MSG_FTP_LAST_SITE (//)

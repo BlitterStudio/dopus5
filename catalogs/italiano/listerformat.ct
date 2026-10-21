@@ -1,0 +1,116 @@
+## version $VER: listerformat.catalog 2.2 (28.06.97) by Francesco Dipietromaria
+## codeset 0
+## language italiano
+;
+MSG_LISTER_FORMAT_TITLE
+Formato liste
+; List Format
+;
+MSG_LISTER_AVAILABLE_DISPLAY_ITEMS
+Disponibili...
+; Available...
+;
+MSG_LISTER_SELECTED_DISPLAY_ITEMS
+Mostra/Ordina...
+; Display/Sort...
+;
+MSG_LISTER_LIST_FILENAME
+Nome file
+; File Name
+;
+MSG_LISTER_LIST_FILESIZE
+Dim. file
+; File Size
+;
+MSG_LISTER_LIST_PROTECTION
+Protezioni
+; Protection
+;
+MSG_LISTER_LIST_DATE
+Data file
+; File Date
+;
+MSG_LISTER_LIST_COMMENT
+Commento
+; Comment
+;
+MSG_LISTER_LIST_FILETYPE
+Tipo file
+; File Type
+;
+MSG_LISTER_LIST_OWNER
+Proprietario
+; Owner
+;
+MSG_LISTER_LIST_GROUP
+Gruppo
+; Group
+;
+MSG_LISTER_LIST_NETPROTECTION
+Accesso di rete
+; Net Access
+;
+MSG_LISTER_ENTRY_SEPARATION
+Separaz. ogg_etti
+; _Entry Separation
+;
+MSG_LISTER_REVERSE_SORTING
+Ordine cont_rario
+; _Reverse Sorting
+;
+MSG_LISTER_SEPARATION_MIX
+Mescola file/dir
+; Mix Files/Dirs
+;
+MSG_LISTER_SEPARATION_DIRS
+Directory per prime
+; Directories First
+;
+MSG_LISTER_SEPARATION_FILES
+Files per primi
+; Files First
+;
+MSG_LISTER_SHOW
+Mo_stra filtro
+; _Show Filter
+;
+MSG_LISTER_HIDE
+Nasco_ndi filtro
+; _Hide Filter
+;
+MSG_LISTER_REJECT_ICONS
+Filtra _icone
+; _Filter Icons
+;
+MSG_LISTER_HIDDEN_BIT
+Nascon_di
+; H_idden
+;
+MSG_LISTER_USE
+_Usa
+; _Use
+;
+MSG_LISTER_CANCEL
+Annulla
+; _Cancel
+;
+MSG_LISTER_LIST_VERSION
+Versione
+; Version
+;
+MSG_LISTER_SAVE
+S_alva
+; S_ave
+;
+MSG_DEFAULTS
+Ripristina valori pre_definiti
+; Reset to _Defaults
+;
+MSG_FTP_DEFAULTS
+Sbarra spazio libero
+; Reset FTP Defaults
+;
+MSG_LISTER_FUEL_GAUGE
+_Eredita
+; Free Space _Gauge
+;

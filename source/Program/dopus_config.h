@@ -44,6 +44,7 @@ For more information on Directory Opus for Windows please see:
 #define CONFIG_VERSION_15 15
 #define CONFIG_VERSION_16 16
 #define CONFIG_VERSION_17 17
+#define CONFIG_VERSION_18 18
 
 // Sort format
 typedef struct
@@ -492,7 +493,10 @@ typedef struct
 	// Promoted in CONFIG_VERSION_16. Steals 4 reserved bytes so the on-disk
 	// layout after pad stays compatible.
 	UBYTE tooltip_col[2];	// Lister toolbar tooltip colours
-	UBYTE env_pad_16[2];	// Pad to keep ULONG alignment
+
+	// Added in CONFIG_VERSION_18 in the old env_pad_16 bytes. Only the
+	// background pen is used.
+	UBYTE stripe_col[2];	// Lister alternate row colours
 
 	ULONG pad[13];	// Save recompilation
 
@@ -535,6 +539,7 @@ typedef struct
 #define ENVF_USE_PATHLIST (1 << 4)	  // Use path list
 #define ENVF_BENIFY (1 << 5)		  // Drop on Desktop saves position permanently (was dopus/ReturnOfBenify)
 #define ENVF_ENABLE_SHORTCUTS (1 << 6) // Extra desktop popup keyboard shortcuts (was dopus/EnableShortcuts)
+#define ENVF_STRIPED_ROWS (1 << 7)	   // Alternate lister rows use the stripe colour
 
 #define ENVNIF_ENABLE (1 << 0)
 #define ENVNIF_DISCOURAGE (1 << 1)
@@ -578,6 +583,7 @@ enum {
 	ENVCOL_VOLUMES,
 	ENVCOL_GAUGE,
 	ENVCOL_TOOLTIP,
+	ENVCOL_STRIPE,
 
 	ENVCOL_MAX = 16
 };

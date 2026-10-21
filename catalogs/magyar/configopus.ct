@@ -2,10 +2,6 @@
 ## codeset 5
 ## language magyar
 ;
-MSG_OKAY
-_OK
-; _OK
-;
 MSG_CANCEL
 _Mégsem
 ; _Cancel
@@ -63,256 +59,196 @@ MSG_SETTINGS_WHEN_COPYING_FILES
 ; When copying files and directories...
 ;
 MSG_SETTINGS_SET_ARCHIVE_BIT
-_OK
+Beállítom a forrás _archív bitjét
 ; Set source _archive bit
 ;
 MSG_SETTINGS_ALSO_COPY_SOURCE
-_Mégsem
+A forrásból másolom még a ...
 ; Also copy source's...
 ;
 MSG_SETTINGS_COPY_DATESTAMP
-_Használd
+dá_tumot
 ; Da_testamp
 ;
 MSG_SETTINGS_COPY_PROTECTION
-Állomány
+_jelzõbiteket
 ; _Protection Bits
 ;
 MSG_SETTINGS_COPY_COMMENT
-_Tárold
+m_egjegyzést
 ; C_omment
 ;
 MSG_SETTINGS_ASK_BEFORE
-_OK
+Rákérdezek, mielõtt...
 ; Ask before...
 ;
 MSG_SETTINGS_COMMENCING_DELETE
-_Mégsem
+Megkezdem a törlést
 ; C_ommencing delete
 ;
 MSG_SETTINGS_DELETING_FILES
-_Használd
+Á_llományokat törlök
 ; Deleting _files
 ;
 MSG_SETTINGS_DELETING_DIRS
-Állomány
+_Könyvtárakat törlök
 ; Deleting _directories
 ;
 MSG_SETTINGS_PERFORM_ALL_ACTIONS
-_Tárold
+A _mûveleteket ikonokon is végrehajtom
 ; Perform all actions on icons
 ;
 MSG_SETTINGS_SELECT_ICONS_AUTOMATICALLY
-Módosít
+_Automatikusan kiválasztom az ikonokat is
 ; Select icons automatically
 ;
 MSG_SETTINGS_MISC
-Kivág
+Különféle beállítások...
 ; Misc. flags...
 ;
 MSG_SETTINGS_CACHING_MAX_BUFFERS
-Másol
+Tárolt könyvtárak _maximális száma
 ; _Maximum number of dirs cached
 ;
 MSG_SETTINGS_DISABLE_CACHING
-Beilleszt
+N_incs könyvtártárolás
 ; _Disable directory caching
 ;
 MSG_SETTINGS_REREAD_CHANGED_BUFFERS
-Ikon menü
+A könyvtárakat változáskor új_raolvasom
 ; _Re-read modified caches
 ;
 MSG_SETTINGS_SUB_DATE_FORMAT
-Locale
+Helyi beállítások
 ; Locale
 ;
 MSG_SETTINGS_DATE_FORMAT
-Date Format...
+Dátum formátuma...
 ; Date Format...
 ;
 MSG_SETTINGS_NAME_SUBSTITUTION
-_Name substitution
+_Napok nevének behelyettesítése
 ; _Name substitution
 ;
 MSG_SETTINGS_12_HOUR_CLOCK
-_12 hour clock
+_12 órás idõjelzõ
 ; _12 hour clock
 ;
 MSG_SETTINGS_DATEFORMAT_DDMMMYY
-DD-MMM-YY    (22-Sep-73)
+NN-HHH-ÉÉ   (22-Szep-73)
 ; DD-MMM-YY    (22-Sep-73)
 ;
 MSG_SETTINGS_DATEFORMAT_YYMMDD
-YY-MM-DD     (72-06-02)
+ÉÉ-HH-NN     (72-06-02)
 ; YY-MM-DD     (72-06-02)
 ;
 MSG_SETTINGS_DATEFORMAT_MMDDYY
-MM-DD-YY     (12-03-76)
+HH-NN-ÉÉ     (12-03-76)
 ; MM-DD-YY     (12-03-76)
 ;
 MSG_SETTINGS_DATEFORMAT_DDMMYY
-DD-MM-YY     (30-10-46)
+NN-HH-ÉÉ     (30-10-46)
 ; DD-MM-YY     (30-10-46)
 ;
 MSG_SETTINGS_SUB_HIDE
-Hide Method
+Elrejtõzés
 ; Hide Method
 ;
 MSG_SETTINGS_SUB_HIDE_TITLE
-Hide Method...
+Elrejtõzés módja...
 ; Hide Method...
 ;
 MSG_SETTINGS_SUB_HIDE_ICON
-AppIcon (Workbench only)
+AppIcon (Csak Workbench)
 ; AppIcon (Workbench only)
 ;
 MSG_SETTINGS_SUB_HIDE_MENU
-AppMenu (Workbench only)
+AppMenu (Csak Workbench)
 ; AppMenu (Workbench only)
 ;
 MSG_SETTINGS_SUB_HIDE_CLOCK
-Clock
+Óra
 ; Clock
 ;
 MSG_SETTINGS_SUB_HIDE_NONE
-Hotkey only
+Csak hívógomb
 ; Hotkey only
 ;
 MSG_SETTINGS_UPDATE_FREE_SPACE
-Update _destination free space
+Frissítem a cél szaba_d helyét
 ; Update _destination free space
 ;
 MSG_SETTINGS_THOUSANDS_SEPS
-_OK
+Ezresek elválasz_tása
 ; _Thousands separator
 ;
 MSG_SETTINGS_TRAP_MORE
-_OK
+"_More" lecserélése az Alkalmazás-ban
 ; Trap 'More' in default tool
 ;
 MSG_SETTINGS_SUB_MISC
-_Mégsem
+Egyebek
 ; Miscellaneous
 ;
 MSG_SETTINGS_SUB_MISC_TITLE
-_Használd
+Egyéb beállítások...
 ; Miscellaneous Settings...
 ;
 MSG_SETTINGS_MOUSE_HOOK
-Állomány
+_Egérgombok a nem aktív gombsorok fölött
 ; _Mouse buttons over inactive banks
 ;
 MSG_SETTINGS_SUB_PRI
-_Tárold
+Prioritás
 ; Priority
 ;
 MSG_SETTINGS_SUB_PRI_TITLE
-Módosít
+Taszkprioritások...
 ; Task priorities...
 ;
 MSG_SETTINGS_PRI_MAIN
-Kivág
+_Fõprogram prioritása
 ; _Main priority
 ;
 MSG_SETTINGS_PRI_LISTER
-Másol
+_Listák
 ; _Listers
 ;
 MSG_SETTINGS_PRI_WHEN_BUSY
-Beilleszt
+Ha dolgozik
 ; When busy
 ;
 MSG_SETTINGS_VERBOSE_REPLACE
-_Használd
+_Bõvített 'Lecseréljem?' kérdezõ
 ; _Verbose 'Replace?' requester
 ;
 MSG_SETTINGS_QUICK_QUIT
-Állomány
+_Gyors kilépés
 ; _Quick quit
 ;
 MSG_SETTINGS_SUB_REPLACE
-_Tárold
+Lecserélés
 ; Replace
 ;
 MSG_SETTINGS_SUB_REPLACE_TITLE
-Módosít
+Állományok lecserélésekor...
 ; When replacing files...
 ;
 MSG_SETTINGS_CHECK_VERSION
-Kivág
+_Automatikusan figyelem a verziószámot
 ; Auto_matically check version
 ;
 MSG_SETTINGS_EXTENDED_KEY
-Másol
+_Billentyûs kiválasztás a listákban
 ; _Extended lister key selection
 ;
 MSG_SETTINGS_FILETYPE_SNIFFER
-Beilleszt
+Á_llománytípus-szimatoló
 ; _Filetype Sniffer
 ;
 MSG_SETTINGS_POPKEY
-Ikon menü
+_Hívógomb:
 ; _PopKey:
-;
-MSG_SETTINGS_ENABLE_MUFS
-E_nable MUFS Support
-; E_nable MUFS Support
-;
-MSG_SETTINGS_SUB_PATHLIST
-Path List
-; Path List
-;
-MSG_SETTINGS_USE_PATHLIST
-Use Opus internal _path list
-; Use Opus internal _path list
-;
-MSG_SETTINGS_RESET_PATHLIST
-C_lear
-; C_lear
-;
-MSG_SETTINGS_POPUP_DELAY
-_Popup Delay
-; _Popup Delay
-;
-MSG_SETTINGS_MAX_OPENWITH
-Maximum 'Open _With' Entries
-; Maximum 'Open _With' Entries
-;
-MSG_SETTINGS_SUB_SOUNDLIST
-Sound Events
-; Sound Events
-;
-MSG_SETTINGS_VOLUME
-_Volume
-; _Volume
-;
-MSG_SETTINGS_EXCLUSIVE_SOUND
-_Exclusive Startup/Shutdown Sounds
-; _Exclusive Startup/Shutdown Sounds
-;
-MSG_SETTINGS_THIN_BORDERS
-_Thin Gadget Borders
-; _Thin Gadget Borders
-;
-MSG_SETTINGS_TEST
-_Test
-; _Test
-;
-MSG_SETTINGS_SUB_DIRECTORIES
-Directories
-; Directories
-;
-MSG_SETTINGS_MAX_FILENAME
-M_aximum Filename Length
-; M_aximum Filename Length
-;
-MSG_SETTINGS_PATHLIST_ADD
-_Add
-; _Add
-;
-MSG_SETTINGS_PATHLIST_DEL
-_Delete
-; _Delete
 ;
 MSG_ENVIRONMENT_TITLE
 Környezet
@@ -371,388 +307,360 @@ _Saját színek
 ; User _Pens
 ;
 MSG_ENVIRONMENT_LISTER_EXAMPLE
-_OK
+Példa
 ; Example
 ;
 MSG_ENVIRONMENT_SUB_LISTER_DISPLAY
-_Mégsem
+Listamegjelenítés
 ; Lister Display
 ;
 MSG_ENVIRONMENT_LISTER_COLOUR_ITEMS
-_Használd
+Lista_elemek színei...
 ; Lister _Element Colours...
 ;
 MSG_ENVIRONMENT_LISTER_FG_PALETTE
-Állomány
+_Rajzolószín
 ; _Foreground
 ;
 MSG_ENVIRONMENT_LISTER_BG_PALETTE
-_Tárold
+_Háttérszín
 ; _Background
 ;
 MSG_ENVIRONMENT_LISTER_FILES
-_OK
+Állomány
 ; Files
 ;
 MSG_ENVIRONMENT_LISTER_DIRS
-_Mégsem
+Könyvtár
 ; Directories
 ;
 MSG_ENVIRONMENT_LISTER_SEL_FILES
-_Használd
+Kiv. állomány
 ; Selected Files
 ;
 MSG_ENVIRONMENT_LISTER_SEL_DIRS
-Állomány
+Kiv. könyvtár
 ; Selected Dirs
 ;
 MSG_ENVIRONMENT_LISTER_SOURCE
-_Tárold
+Forrás
 ; Source
 ;
 MSG_ENVIRONMENT_LISTER_DEST
-Módosít
+Cél
 ; Destination
 ;
 MSG_ENVIRONMENT_LISTER_DEVICES
-Kivág
+Eszköz
 ; Devices
 ;
 MSG_ENVIRONMENT_LISTER_VOLUMES
-Másol
+Hozzárendelés
 ; Assigns
 ;
 MSG_ENVIRONMENT_USE
-Beilleszt
+Használd
 ; Use
 ;
 MSG_ENVIRONMENT_BUTTONS_FIELD
-_Használd
+_Beállítás:
 ; _Prefs:
 ;
 MSG_ENVIRONMENT_PALETTE_RESET
-Állomány
+A_lap
 ; R_eset
 ;
 MSG_ENVIRONMENT_OUTPUT_SET
-_OK
+B_eállít...
 ; S_et...
 ;
 MSG_ENVIRONMENT_OUTPUT_NAME
-_Mégsem
+Név:
 ; _Title:
 ;
 MSG_ENVIRONMENT_OUTPUT_DIMENSIONS
-_Használd
+Méret:
 ; Size:
 ;
 MSG_ENVIRONMENT_SIZE_INST_1
-Állomány
+Méretezze és mozgassa az ablakot, ahogyan
 ; Size and position window as desired.
 ;
 MSG_ENVIRONMENT_SIZE_INST_2
-_Tárold
+kívánja, majd zárja be, ha elkészült.
 ; Click the close button when finished.
 ;
 MSG_ENVIRONMENT_OPTIONS_APPICONS
-Módosít
+App_Ikonok megjelenítése
 ; Display App_Icons
 ;
 MSG_ENVIRONMENT_OPTIONS_APPMENU
-Kivág
+"_Programok" menü megjelenítése
 ; Display '_Tools' Menu
 ;
 MSG_ENVIRONMENT_PATCH_OPTIONS
-_OK
+Workbench emuláció...
 ; Workbench Emulation...
 ;
 MSG_LISTER_SELECT_FONT
-_OK
+Lista betûtípusának kiválasztása
 ; Select Lister Font
 ;
 MSG_ENVIRONMENT_OPTIONS_HIDEBAD
-_Mégsem
+_Rossz lemezek elrejtése
 ; _Hide Bad Disks
 ;
 MSG_ENVIRONMENT_SUB_LISTER_OPTIONS
-_Használd
+Listabeállítások
 ; Lister Options
 ;
 MSG_ENVIRONMENT_NEW_DEVICELIST
-Állomány
+_Eszközlista új listaablakban
 ; _Device List In New Lister
 ;
 MSG_ENVIRONMENT_DEFAULT_SIZE
-_Tárold
+Alapméret:
 ; Default Size:
 ;
 MSG_ENVIRONMENT_DEFLISTER_SIZE
-Módosít
+Alap listaablak-méret
 ; Default Lister Size
 ;
 MSG_ENVIRONMENT_SIZE_INST_3
-Kivág
+Méretezze az ablakot, ahogyan
 ; Size window as desired.
 ;
 MSG_ENVIRONMENT_2XCLICK_EDITING
-Másol
+_Jobb gomb duplaklikk: formátumszerkesztés
 ; _RMB Double-Click Editing
 ;
 MSG_ENVIRONMENT_LISTER_STATUS
-_OK
+Fejléc:
 ; S_tatus Text:
 ;
 MSG_ENVIRONMENT_LISTER_SELECT_STATUS
-_Mégsem
+Kód kiválasztása
 ; Select Code
 ;
 MSG_ENVIRONMENT_SIMPLE_REFRESH
-_Használd
+Ablakok egyszerû fr_issítése
 ; S_impleRefresh Windows
 ;
 MSG_ENVIRONMENT_SCREENMODE_FONT
-Állomány
+_Betûtípus:
 ; _Font:
 ;
 MSG_ENVIRONMENT_SUB_DESKTOP
-_Tárold
+Munkaasztal
 ; Desktop
 ;
 MSG_ENVIRONMENT_DESKTOP_TITLE
-Módosít
+Munkaasztal ikonjai...
 ; Desktop Icons...
 ;
 MSG_ENVIRONMENT_HIDDEN_DRIVES
-_Mégsem
+Rejtett meghajtók...
 ; Hidden drives...
 ;
 MSG_ENVIRONMENT_OUTPUT_DEVICE
-_Használd
+_Eszköz
 ; _Device
 ;
 MSG_ENVIRONMENT_PALETTE_LOAD
-Állomány
-; _Load
+_Betöltés
+; _Load...
 ;
 MSG_ENVIRONMENT_SELECT_PALETTE
-_Tárold
+Paletta kiválasztása
 ; Select Palette
 ;
 MSG_ENVIRONMENT_LISTER_OPTIONS
-_OK
+Listaablak beállításai...
 ; Lister Options...
 ;
 MSG_ENVIRONMENT_FIELD_TITLES
-_Mégsem
+_Mezõfeliratok
 ; F_ield Titles
 ;
 MSG_ENVIRONMENT_USE_SNAPSHOT
-_Használd
+_Megjegyzem az utolsó pozíciót
 ; _Always Use Snapshot Position
 ;
 MSG_ENVIRONMENT_NAME_POPUP
-_OK
+K_ibomló menük szöveges listákban is
 ; _Name Mode PopUp
 ;
 MSG_ENVIRONMENT_LISTER_EDITING
-_OK
+Adat_ok szerkesztése
 ; Inline _Editing
 ;
 MSG_LISTEREDIT_DISABLED
-_Mégsem
+Kikapcsolva
 ; Disabled
 ;
 MSG_LISTEREDIT_LEFT
-_Használd
+Bal gomb
 ; Left Button
 ;
 MSG_LISTEREDIT_MIDDLE
-Állomány
+Középsõ gomb
 ; Middle Button
 ;
 MSG_LISTEREDIT_BOTH
-_Tárold
+Bal & középsõ
 ; Left & Middle
 ;
 MSG_ENVIRONMENT_OPTIONS_ICONPOS
-Módosít
+_Workbench ikonpozícióinak használata
 ; Use Workbench icon positions
 ;
 MSG_ENVIRONMENT_CACHE_ICONS
-Kivág
+Ikonképek _tárolása
 ; Cache icon images
 ;
 MSG_ENVIRONMENT_REMAP_ICONS
-Másol
+Ikonképek _színillesztése
 ; Remap icon images
 ;
 MSG_ENVIRONMENT_BORDERS_ON
-Beilleszt
+Ikon_keretek
 ; Icon borders on by default
 ;
 MSG_ENVIRONMENT_ARROW_ON
-Ikon menü
+Mutatom a "kint hagyott" nyilat
 ; Show arrow on left-out icons
 ;
 MSG_ENVIRONMENT_ICON_SETTINGS
-Icon Settings...
+Ikonbeállítások
 ; Icon Settings...
 ;
 MSG_ENVIRONMENT_ICON_FONTCOL
-Label Font and Colour...
+Címkék betûtípusa és színei...
 ; Label Font and Colour...
 ;
 MSG_ENVIRONMENT_ICON_FONT_DESKTOP
-Des_ktop...
+M_unkaasztal...
 ; Des_ktop...
 ;
 MSG_ENVIRONMENT_ICON_FONT_WINDOWS
-_Windows...
+Ab_lakok...
 ; _Windows...
 ;
 MSG_ENVIRONMENT_SUB_ICONS
-Icon Settings
+Ikonbeállítások
 ; Icon Settings
 ;
 MSG_SELECT_FONT
-Select Font And Colour
+Betûtípus és szín kiválasztása
 ; Select Font And Colour
 ;
 MSG_FONT_DRAWMODE
-Mode:
+Mód:
 ; Mode:
 ;
 MSG_FONT_TEXT
-Text
+Csak szöveg
 ; Text
 ;
 MSG_FONT_FIELD_TEXT
-Text+Field
+Szöveg+Háttér
 ; Text+Field
 ;
 MSG_ENVIRONMENT_OPTIONS_APPTOOLS
-_Move AppIcons to 'Tools' Menu
+_AppIkonok a "Programok" menübe
 ; _Move AppIcons to 'Tools' Menu
 ;
 MSG_ENVIRONMENT_COLOURS_MODIFY
-_Modify...
+_Módosít...
 ; _Modify...
 ;
 MSG_ENVIRONMENT_GAUGE_COLOUR
-_OK
+Telítettség
 ; Gauge Fill
 ;
 MSG_ENVIRONMENT_DEFAULT_FORMAT
-_Mégsem
+Alapformátum:
 ; Default Format:
 ;
 MSG_ENVIRONMENT_FORMAT_SET
-_Használd
+Kiválasz_t...
 ; Se_t...
 ;
 MSG_ENVIRONMENT_SUB_LISTER_DEFAULT
-Állomány
+Lista alapbeállításai
 ; Lister Default
 ;
 MSG_ENVIRONMENT_SPLIT_LABELS
-_Tárold
+Hosszú nevek tördel_ése
 ; Split long icon labels
 ;
 MSG_ENVIRONMENT_SUB_LISTER_COLOURS
-Módosít
+Lista színei
 ; Lister Colours
 ;
 MSG_ENVIRONMENT_OUTPUT_WINDOW
-Kivág
+Kimeneti ablak...
 ; Output Window...
 ;
 MSG_ENVIRONMENT_STACK
-Másol
+V_erem:
 ; S_tack:
 ;
-MSG_ENVIRONMENT_AMIGADOS
-Beilleszt
-; AmigaDOS...
-;
 MSG_ENVIRONMENT_SUB_LAUNCHING
-Ikon menü
+CLI indítás
 ; CLI Launching
 ;
 MSG_ENVIRONMENT_LISTER_SETTINGS
-Lister Display Settings...
+Lista megjelenítése
 ; Lister Display Settings...
 ;
 MSG_ENVIRONMENT_SUB_PICTURES
-Backgrounds
+Hátterek
 ; Backgrounds
 ;
 MSG_ENVIRONMENT_OPTIONS_DISPLAY_BACKDROPS
-Background Pictures...
+Háttérképek...
 ; Background Pictures...
 ;
 MSG_ENVIRONMENT_OPTIONS_ENABLE_PATTERN
-_Enable Backgrounds
+_Hátterek engedélyezése
 ; _Enable Backgrounds
 ;
 MSG_ENVIRONMENT_PICTURE_DESKTOP
-_Desktop:
+_Munkaasztal:
 ; _Desktop:
 ;
 MSG_ENVIRONMENT_PICTURE_LISTER
-_Window:
+_Ablakok:
 ; _Window:
 ;
 MSG_ENVIRONMENT_PICTURE_REQUESTER
-_Requester:
+_Kérdezõk:
 ; _Requester:
 ;
 MSG_ENVIRONMENT_PICTURE_WBPATTERN
-WBPattern Settings...
+WB háttérminta-beállítások...
 ; WBPattern Settings...
 ;
 MSG_ENVIRONMENT_PICTURE_USE_WBPATTERN
-Use W_BPattern Prefs
+_WB háttérminta-beállítás használata
 ; Use W_BPattern Prefs
 ;
 MSG_ENVIRONMENT_SUB_WBEMULATION
-WB Emulation
+WB emuláció
 ; WB Emulation
 ;
 MSG_ENVIRONMENT_LISTER_DEFAULT
-Default Lister Settings...
+Lista alapbeállításai
 ; Default Lister Settings...
 ;
 MSG_ENVIRONMENT_FULL_TRANSPARENCY
-Borderless icons are fully transparent
+_Teljes áttetszõség
 ; Borderless icons are fully transparent
 ;
 MSG_ENVIRONMENT_OPTIONS_REMOVE_OPUS
-Remove Opus icon positions
+Opus ikonpoz_íciók eltávolítása
 ; Remove Opus icon positions
-;
-MSG_FONT_SHADOW
-Shadow
-; Shadow
-;
-MSG_FONT_OUTLINE
-Outline
-; Outline
-;
-MSG_ENVIRONMENT_OPTIONS_REALTIME_SCROLL
-Real-time icon scrolling
-; Real-time icon scrolling
-;
-MSG_ENVIRONMENT_CACHING_TITLE
-Directory Caching...
-; Directory Caching...
-;
-MSG_ERROR_WRONG_TYPE_ENV
-'%s' is not a valid environment file!
-; '%s' is not a valid environment file!
-;
-MSG_ENVIRONMENT_OPTIONS_SHOW_WBLEFTOUTS
-Show Workbench Leftout icons
-; Show Workbench Leftout icons
 ;
 MSG_BUTTONS_TITLE
 Gombcsoport-szerkesztõ
@@ -763,396 +671,240 @@ _Név:
 ; _Name
 ;
 MSG_BUTTONS_COLUMNS
-_OK
+Oszlop:
 ; Columns
 ;
 MSG_BUTTONS_ROWS
-_Mégsem
+Sor:
 ; Rows
 ;
 MSG_BUTTONS_ADD
-_Használd
+Hozzáad
 ; Add
 ;
-MSG_BUTTONS_REMOVE
-Állomány
-; Xform
-;
 MSG_BUTTONS_INSERT
-_Tárold
+Beszúr
 ; Insert
 ;
 MSG_BUTTONS_DELETE
-Módosít
+Töröl
 ; Delete
 ;
 MSG_BUTTONS_FONT
-Kivág
+_Betûtípus:
 ; _Font
 ;
 MSG_BUTTONS_SELECT_FONT
-Másol
+Gomb betûtípusának kiválasztása
 ; Select Button Font
 ;
 MSG_BUTTONS_BUTTON
-Beilleszt
+Gomb
 ; Button
 ;
 MSG_BUTTONS_COPY
-Ikon menü
+Másol
 ; Copy
 ;
 MSG_BUTTONS_CUT
-Cut
+Kivág
 ; Cut
 ;
 MSG_BUTTONS_ERASE
-Erase
+Töröl
 ; Erase
 ;
 MSG_BUTTONS_EDIT
-Edit
+Módosít
 ; Edit
 ;
 MSG_BUTTONS_PAINT_MODE
-_Paint Mode
+_Rajzmód
 ; _Paint Mode
 ;
 MSG_BUTTONS_CLIPBOARD_CLEAR
-_Clear
+_Üres
 ; _Clear
 ;
 MSG_BUTTONS_BANK_EDITING
-Bank
+Csoport
 ; Bank
 ;
 MSG_BUTTONS_BANK_BORDER
-Full B_order
+Tel_jes keret
 ; Full B_order
 ;
 MSG_BUTTONS_CLIPBOARD
-Clipboard
+Vágóasztal
 ; Clipboard
 ;
 MSG_BUTTONS_BUTTON_EDITING
-Button
+Gomb
 ; Button
 ;
 MSG_BUTTONS_DRAG_AUTO
-_OK
+Automatikus
 ; Automatic
 ;
 MSG_BUTTONS_BORDERLESS
-_Mégsem
+_Keret nélkül
 ; _Borderless Buttons
 ;
 MSG_BUTTONS_SIMPLE_REFRESH
-_Használd
+Egyszerû frissítés
 ; S_imple-Refresh
 ;
 MSG_BUTTONS_SHOW_CLIPBOARD
-_Mégsem
+Vágóasztal be
 ; Show C_lipboard
 ;
 MSG_BUTTONS_NO_DOGEARS
-_Használd
+Nincs 'szamárfül'
 ; No 'Do_g ears'
-;
-MSG_BUTTONS_DRAG
-Állomány
-; _Drag: 
-;
-MSG_BUTTONS_AUTO_CLOSE
-_Tárold
-; _Auto Close
-;
-MSG_BUTTONS_DRAG_NONE
-Módosít
-; None
-;
-MSG_BUTTONS_AUTO_ICONIFY
-Kivág
-; A_uto Iconify
-;
-MSG_BUTTONS_DRAG_TOP
-Másol
-; Top
-;
-MSG_BUTTONS_DRAG_LEFT
-Beilleszt
-; Left
-;
-MSG_BUTTONS_DRAG_BOTTOM
-Ikon menü
-; Bottom
-;
-MSG_BUTTONS_DRAG_RIGHT
-Right
-; Right
-;
-MSG_BUTTONS_ACTIVE_POPUPS
-Acti_ve Popups
-; Acti_ve Popups
-;
-MSG_BUTTONS_SETTINGS
-Settings
-; Settings
-;
-MSG_BUTTONS_BACKPIC
-Pic_ture
-; Pic_ture
 ;
 MSG_FUNCED_TITLE
 Funkciószerkesztõ
 ; Function Editor
 ;
 MSG_FUNCED_KEY
-_OK
+_Hívógomb
 ; _Key
 ;
 MSG_FUNCED_FLAGS
-_Mégsem
+Beállítások
 ; Flags
 ;
 MSG_FUNCED_NEW_ENTRY
-_Használd
+_Hozzáad
 ; _Add
 ;
 MSG_FUNCED_INSERT
-Állomány
+_Beszúr
 ; _Insert
 ;
 MSG_FUNCED_DELETE
-_Tárold
+_Töröl
 ; _Delete
 ;
 MSG_FUNCED_FUNCTYPE_COMMAND
-Módosít
+Parancs
 ; Command
 ;
-MSG_FUNCED_FUNCTYPE_AMIGADOS
-Kivág
-; AmigaDOS
-;
-MSG_FUNCED_FUNCTYPE_WORKBENCH
-Másol
-; Workbench
-;
-MSG_FUNCED_FUNCTYPE_BATCH
-Beilleszt
-; Script
-;
-MSG_FUNCED_FUNCTYPE_AREXX
-Ikon menü
-; ARexx
-;
 MSG_FUNCED_SELECT_COMMAND
-_Mégsem
+Parancs kiválasztása
 ; Select Command
 ;
 MSG_SELECT_FILE
-_Használd
+Állomány kiválasztása
 ; Select File
 ;
 MSG_FUNCED_SELECT_ARG
-Állomány
+Paraméter kiválasztása
 ; Select Argument
 ;
 MSG_FUNCED_EXPORT_ASCII_MENU
-_Tárold
+Kimentés ASCII-ként...
 ; Export As ASCII...
 ;
 MSG_FUNCED_SELECT_FILE
-Módosít
+Állománynév megadása
 ; Enter Filename
 ;
 MSG_FUNCED_LABEL
-Kivág
+_Cimke
 ; _Label
 ;
 MSG_FUNCED_EXPORT_CMD_MENU
-Másol
+Kimentés parancsállományként...
 ; Export As Command File...
 ;
 MSG_ENVIRONMENT_HIDDEN_BAD_DRIVES
-Beilleszt
+Rejtett meghajtók (csak a rossz lemezek)...
 ; Hidden drives (bad disks only)...
 ;
 MSG_ENVIRONMENT_DESKTOP_LOCATION
-Ikon menü
+Munkaasztal-fiók:
 ; Desktop _Folder:
 ;
 MSG_ENVIRONMENT_DESKTOP_ENABLE
-_PopUp Enabled
+_Kibomló menü
 ; _PopUp Enabled
 ;
 MSG_ENVIRONMENT_DESKTOP_DEFAULT
-Default _Action:
+Alapmûvelet:
 ; Default _Action:
 ;
 MSG_ENVIRONMENT_DEFAULT_NONE
-None
+Semmi
 ; None
 ;
 MSG_ENVIRONMENT_DEFAULT_LEFTOUT
-Create Left-out
+Kint hagyott ikon létrehozása
 ; Create Left-out
 ;
 MSG_ENVIRONMENT_DEFAULT_MOVE
-Move to Desktop
+Áthelyezés a munkaasztalra
 ; Move to Desktop
 ;
 MSG_ENVIRONMENT_DEFAULT_COPY
-Copy to Desktop
+Másolás a munkaasztalra
 ; Copy to Desktop
 ;
 MSG_ENVIRONMENT_NEWICONS
-NewIcons Settings...
+NewIcons beállítások...
 ; NewIcons Settings...
 ;
 MSG_ENVIRONMENT_NEWICONS_ENABLE
-_Enable NewIcons
+NewIcons _engedélyezése
 ; _Enable NewIcons
 ;
 MSG_ENVIRONMENT_NEWICONS_DISCOURAGE
-_Discourage NewIcons
+NewIcons kikapcsolása
 ; _Discourage NewIcons
 ;
 MSG_ENVIRONMENT_NEWICONS_DITHERING
-D_ither Image
+Képfinomítás
 ; D_ither Image
 ;
 MSG_ENVIRONMENT_NEWICONS_PRECISION
-_Pen Precision
+_Színpontosság
 ; _Pen Precision
 ;
 MSG_ENVIRONMENT_SUB_ICON_COLOURS
-Icon Display
+Ikonmegjelenítés
 ; Icon Display
 ;
 MSG_ENVIRONMENT_PICTURE_CENTERED
-Centre
+Kép középre
 ; Centre
 ;
 MSG_ENVIRONMENT_PICTURE_NONE
-None
+Nincs színillesztés
 ; None
 ;
 MSG_ENVIRONMENT_PICTURE_GUI
-Worst Result
+Leggyengébb
 ; Worst Result
 ;
 MSG_ENVIRONMENT_PICTURE_ICON
-Poor Result
+Gyenge
 ; Poor Result
 ;
 MSG_ENVIRONMENT_PICTURE_IMAGE
-Decent Result
+Átlagos
 ; Decent Result
 ;
 MSG_ENVIRONMENT_PICTURE_EXACT
-Best Result
+Legjobb
 ; Best Result
 ;
 MSG_ENVIRONMENT_DROP_SUBDIR
-Dra_g Into Sub-Directories
+Alkönyvtárakba húz_ás
 ; Dra_g Into Sub-Directories
 ;
 MSG_FUNCED_IMAGE
-I_mage
+K_ép
 ; I_mage
-;
-MSG_ENVIRONMENT_NEWICONS_RTGMODE
-_RTG Mode
-; _RTG Mode
-;
-MSG_ENVIRONMENT_NO_ACTIVE_SELECT
-Allow _File Select On Source Activation
-; Allow _File Select On Source Activation
-;
-MSG_ENVIRONMENT_SUB_ICON_HANDLING
-Icon Handling
-; Icon Handling
-;
-MSG_ENVIRONMENT_OPEN
-Open Environment
-; Open Environment
-;
-MSG_ENVIRONMENT_SAVE
-Save Environment
-; Save Environment
-;
-MSG_ENVIRONMENT_DISABLE_NOLABELS
-Allow icons with no labels
-; Allow icons with no labels
-;
-MSG_ENVIRONMENT_SMART_ICON_COPY
-Smart icon copying
-; Smart icon copying
-;
-MSG_ENVIRONMENT_FORCE_LABELSPLIT
-Force split of long labels
-; Force split of long labels
-;
-MSG_ENVIRONMENT_QUICK_ICON_DRAG
-Quick icon dragging
-; Quick icon dragging
-;
-MSG_ENVIRONMENT_CUSTOM_DRAG
-Use custom drag routines
-; Use custom drag routines
-;
-MSG_ENVIRONMENT_SCREEN_TITLE
-Custom Screen Title...
-; Custom Screen Title...
-;
-MSG_ENVIRONMENT_CLL
-Ma_x. CLL:
-; Ma_x. CLL:
-;
-MSG_ENVIRONMENT_VOSTY_ZOOM
-Window _Zooms to Title Bar
-; Window _Zooms to Title Bar
-;
-MSG_ENVIRONMENT_PICTURE_STRETCHED
-Stretch Picture
-; Stretch Picture
-;
-MSG_ENVIRONMENT_PICTURE_TILED
-Tile
-; Tile
-;
-MSG_ENVIRONMENT_PICTURE_TYPE
-Display
-; Display
-;
-MSG_ENVIRONMENT_PICTURE_REMAP
-Remapping
-; Remapping
-;
-MSG_ENVIRONMENT_PICTURE_BORDER
-Border
-; Border
-;
-MSG_ENVIRONMENT_PICTURE_NORMAL
-Normal
-; Normal
-;
-MSG_ENVIRONMENT_PICTURE_BLACK
-Black
-; Black
-;
-MSG_ENVIRONMENT_PICTURE_WHITE
-White
-; White
-;
-MSG_ENVIRONMENT_THEMES_PATH
-Default Theme Path...
-; Default Theme Path...
-;
-MSG_ENVIRONMENT_THEMES_LOCATION
-_Location:
-; _Location:
 ;
 MSG_FUNCED_FLAG_OUTPUT_WINDOW
 Kimenetet ablakba
@@ -1314,9 +1066,9 @@ MSG_FUNCED_ARGUMENT_27
 {v}\tKörnyezeti változó
 ; {v}\tEnvironment variable
 ;
-MSG_FUNCED_ARGUMENT_LAST
+MSG_FUNCED_ARGUMENT_28
 -
-; -
+; {df}\tFirst destination entry (with path)
 ;
 MSG_STATUSBAR_CODE_FIRST
 *bs\tKiválasztott byte-ok száma
@@ -1346,93 +1098,13 @@ MSG_STATUSBAR_CODE_LAST
 *h*\tRejtett file-ok száma
 ; *h*\tHidden file count
 ;
-MSG_SCREENTITLE_CODE_FIRST
-*dv\tDirectory Opus version
-; *dv\tDirectory Opus version
+MSG_ENVIRONMENT_STRIPED_ROWS
+_Csíkos sorok
+; Stri_ped Rows
 ;
-MSG_SCREENTITLE_CODE_1
-*kv\tKickstart version
-; *kv\tKickstart version
-;
-MSG_SCREENTITLE_CODE_2
-*wv\tWorkbench version
-; *wv\tWorkbench version
-;
-MSG_SCREENTITLE_CODE_3
-*pr\tProcessor type
-; *pr\tProcessor type
-;
-MSG_SCREENTITLE_CODE_4
-*cp\tCoProcessor type
-; *cp\tCoProcessor type
-;
-MSG_SCREENTITLE_CODE_5
-*cs\tGraphics chip set
-; *cs\tGraphics chip set
-;
-MSG_SCREENTITLE_CODE_6
-*tm\tTotal memory
-; *tm\tTotal memory
-;
-MSG_SCREENTITLE_CODE_7
-*tc\tTotal chip memory
-; *tc\tTotal chip memory
-;
-MSG_SCREENTITLE_CODE_8
-*tf\tTotal fast memory
-; *tf\tTotal fast memory
-;
-MSG_SCREENTITLE_CODE_9
-*fm\tFree memory
-; *fm\tFree memory
-;
-MSG_SCREENTITLE_CODE_10
-*fc\tFree chip memory
-; *fc\tFree chip memory
-;
-MSG_SCREENTITLE_CODE_11
-*ff\tFree fast memory
-; *ff\tFree fast memory
-;
-MSG_SCREENTITLE_CODE_12
-*um\tMemory in use
-; *um\tMemory in use
-;
-MSG_SCREENTITLE_CODE_13
-*uc\tChip memory in use
-; *uc\tChip memory in use
-;
-MSG_SCREENTITLE_CODE_14
-*uf\tFast memory in use
-; *uf\tFast memory in use
-;
-MSG_SCREENTITLE_CODE_15
-*pu\tProcessor usage
-; *pu\tProcessor usage
-;
-MSG_SCREENTITLE_CODE_16
-*ta\tTask count
-; *ta\tTask count
-;
-MSG_SCREENTITLE_CODE_17
-*sc\tScreen count
-; *sc\tScreen count
-;
-MSG_SCREENTITLE_CODE_18
-*fp\tFree pen count
-; *fp\tFree pen count
-;
-MSG_SCREENTITLE_CODE_19
-*ev*\tEnvironment variable
-; *ev*\tEnvironment variable
-;
-MSG_SCREENTITLE_CODE_20
-*pm\tPhase of the Moon
-; *pm\tPhase of the Moon
-;
-MSG_SCREENTITLE_CODE_LAST
--
-; -
+MSG_ENVIRONMENT_STRIPE_COLOUR
+Váltakozó sorok
+; Alternate Rows
 ;
 MSG_BUTTONED_TITLE
 Gombszerkesztõ
@@ -1590,10 +1262,6 @@ MSG_FILETYPE_ACTION_DOUBLECLICK
 Duplaklikk
 ; Double-click
 ;
-MSG_FILETYPE_ACTION_DRAGNDROP
-Drag'n'drop
-; Drag'n'drop
-;
 MSG_FILETYPE_ACTION_USER1
 Felhasználói funkció 1
 ; User Function 1
@@ -1611,112 +1279,96 @@ Felhasználói funkció 4
 ; User Function 4
 ;
 MSG_FILETYPE_EDITOR_TITLE
-Módosít
+Állománytípus-szerkesztõ
 ; File Type Editor
 ;
 MSG_FILETYPE_REMOVE_REQ
-Kivág
+Tényleg eltávolítsam a(z) "%s" állománytípust ?
 ; Really remove the '%s' file type?
 ;
 MSG_FILETYPE_SELECT_ICON
-Másol
+Iko_n kiválasztása
 ; Select Ico_n
 ;
 MSG_FILETYPE_PICK_ICON
-Beilleszt
+Állománytípus ikonja
 ; File Type Icon
 ;
 MSG_FILETYPES_EDIT
-Ikon menü
+Módos_ít
 ; _Edit
 ;
 MSG_FILETYPES_EVENTS
-E_vents...
+Ese_mények...
 ; E_vents...
 ;
 MSG_FILETYPES_ICON_MENU
-Ic_on Menu...
+Ik_onmenü...
 ; Ic_on Menu...
 ;
 MSG_FILETYPES_EDIT_ACTION
-_Edit
+_Módosít
 ; _Edit
 ;
 MSG_FILETYPES_EDIT_ICON_MENU
-Ed_it
+Módos_ít
 ; Ed_it
 ;
 MSG_FILETYPES_ADD_ICON_MENU
-_Add
+Hozzá_ad
 ; _Add
 ;
 MSG_FILETYPES_DEL_ICON_MENU
-De_l
+Törö_l
 ; De_l
 ;
 MSG_FILETYPES_ICON
-Default Icon...
+Alapértelmezett ikon...
 ; Default Icon...
 ;
 MSG_CLASSED_DEL
-_Del
+_Töröl
 ; _Del
 ;
 MSG_FILETYPE_ACTION_USER5
-User Function 5
+Felhasználói funkció 5
 ; User Function 5
 ;
 MSG_FILETYPE_ACTION_USER6
-User Function 6
+Felhasználói funkció 6
 ; User Function 6
 ;
 MSG_FILETYPE_ACTION_USER7
-User Function 7
+Felhasználói funkció 7
 ; User Function 7
 ;
 MSG_FILETYPE_ACTION_USER8
-User Function 8
+Felhasználói funkció 8
 ; User Function 8
 ;
 MSG_FILETYPE_ACTION_USER9
-User Function 9
+Felhasználói funkció 9
 ; User Function 9
 ;
 MSG_FILETYPE_ACTION_USER10
-User Function 10
+Felhasználói funkció 10
 ; User Function 10
 ;
 MSG_FILETYPE_ACTION_SHIFT_DCLICK
-Double-click (Shift)
+Duplaklikk (Shift)
 ; Double-click (Shift)
 ;
-MSG_FILETYPE_ACTION_SHIFT_DDROP
-Drag'n'drop (Shift)
-; Drag'n'drop (Shift)
-;
 MSG_FILETYPE_ACTION_CTRL_DCLICK
-Double-click (Ctrl)
+Duplaklikk (Ctrl)
 ; Double-click (Ctrl)
 ;
-MSG_FILETYPE_ACTION_CTRL_DDROP
-Drag'n'drop (Ctrl)
-; Drag'n'drop (Ctrl)
-;
 MSG_FILETYPE_ACTION_ALT_DCLICK
-Double-click (Alt)
+Duplaklikk (Alt)
 ; Double-click (Alt)
-;
-MSG_FILETYPE_ACTION_ALT_DDROP
-Drag'n'drop (Alt)
-; Drag'n'drop (Alt)
 ;
 MSG_CLASSED_CLASS_NAME
 _Név
 ; _Name
-;
-MSG_CLASSED_CLASS_ID
-_ID
-; _ID
 ;
 MSG_CLASSED_ADD
 Hozzá_ad
@@ -1894,22 +1546,6 @@ MSG_CLASSED_MATCH_DISK_DESC
 Lemezek összehasonlítása
 ; Matches disks
 ;
-MSG_CLASSED_MATCH_SEARCHRANGE
-Search Range
-; Search Range
-;
-MSG_CLASSED_MATCH_SEARCHRANGE_DESC
-Search range for bytes
-; Search range for bytes
-;
-MSG_CLASSED_MATCH_MATCHCHUNK
-Match Chunk
-; Match Chunk
-;
-MSG_CLASSED_MATCH_MATCHCHUNK_DESC
-Match an IFF chunk
-; Match an IFF chunk
-;
 MSG_LISTER_BUTTONS_USE
 _Használd
 ; _Use
@@ -1919,55 +1555,55 @@ _Mégsem
 ; _Cancel
 ;
 MSG_LISTER_BUTTONS_MENU_NEW
-Kivág
+Új
 ; New
 ;
 MSG_LISTER_BUTTONS_MENU_OPEN
-Másol
+Megnyit...
 ; Open...
 ;
 MSG_LISTER_BUTTONS_MENU_SAVE
-Beilleszt
+Ment
 ; Save
 ;
 MSG_LISTER_BUTTONS_MENU_SAVEAS
-Ikon menü
+Más néven ment...
 ; Save As...
 ;
 MSG_LISTER_BUTTONS_MENU_QUIT
-Quit
+Kilép
 ; Quit
 ;
 MSG_SAVE_DISCARD
-_Használd
+Tárold|Dobd el
 ; Save|Discard
 ;
 MSG_SAVE_DISCARD_CANCEL
-Állomány
+Tárold|Dobd el|Mégsem
 ; Save|Discard|Cancel
 ;
 MSG_UNTITLED
-_Tárold
+Névtelen
 ; Untitled
 ;
 MSG_LISTER_BUTTONS_SAVE
-Módosít
+Menté_s
 ; _Save
 ;
 MSG_DISCARD_CANCEL
-Kivág
+Dobd el|Mégsem
 ; Discard|Cancel
 ;
 MSG_RESET_DEFAULTS
-Másol
+Alapértelmezés
 ; Reset To Defaults
 ;
 MSG_LAST_SAVED
-Beilleszt
+Utoljára tárolt
 ; Last Saved
 ;
 MSG_RESTORE
-Ikon menü
+Visszaállít
 ; Restore
 ;
 MSG_LISTER_MENU_ITEMS
@@ -1987,81 +1623,71 @@ Tö_röl
 ; _Delete
 ;
 MSG_LISTER_MENU_EDIT
-_Mégsem
+M_ódosít
 ; _Edit
 ;
 MSG_LISTER_MENU_NAME
-_Használd
+Objektum_név
 ; Item _Name
 ;
 MSG_LISTER_MENU_ENTER_NAME
-Állomány
+Menü mentése
 ; Save Menu
 ;
 MSG_LISTER_MENU_SELECT_FILE
-_Tárold
+Menü megnyitása
 ; Open Menu
 ;
 MSG_LISTER_MENU_CHANGED
-Módosít
-; The menu (%s) has been modified.\n\
-; Do you wish to save it before proceeding?
+A(z) "%s" menü megváltozott.\nKimenti, mielõtt továbblép?
+; The menu (%s) has been modified.\nDo you wish to save it before proceeding?
 ;
 MSG_LISTER_MENU_CHANGED_NOSAVE
-Kivág
-; The menu (%s) has been modified.\n\
-; Do you wish to discard it?
+A(z) "%s" menü megváltozott.\nEl kívánja dobni a változtatásokat?
+; The menu (%s) has been modified.\nDo you wish to discard it?
 ;
 MSG_LISTER_MENU_DUPLICATE
-Másol
+Megkett_õz
 ; Dup_licate
 ;
 MSG_HOTKEYS_ENTER_NAME
-Beilleszt
+Hívógombok elmentése
 ; Save Hotkeys
 ;
 MSG_HOTKEYS_SELECT_FILE
-Ikon menü
+Hívógombok megnyitása
 ; Open Hotkeys
 ;
 MSG_HOTKEYS_CHANGED
-The hotkeys file (%s) has been modified.\n\
-; Do you wish to save it before proceeding?
-; The hotkeys file (%s) has been modified.\n\
-; Do you wish to save it before proceeding?
+A(z) "%s" hívógombcsoport megváltozott.\nKimenti, mielõtt továbblép?
+; The hotkeys file (%s) has been modified.\nDo you wish to save it before proceeding?
 ;
 MSG_HOTKEYS_CHANGED_NOSAVE
-The hotkeys file (%s) has been modified.\n\
-; Do you wish to discard it?
-; The hotkeys file (%s) has been modified.\n\
-; Do you wish to discard it?
+A(z) "%s hívógombcsoport megváltozott.\nEl kívánja dobni a változtatásokat?
+; The hotkeys file (%s) has been modified.\nDo you wish to discard it?
 ;
 MSG_HOTKEYS_GLOBAL
-System-_global Hotkey
+_Globális hívógomb
 ; System-_global Hotkey
 ;
 MSG_SCRIPTS_ENTER_NAME
-Save Scripts
+Script mentése
 ; Save Scripts
 ;
 MSG_SCRIPTS_SELECT_FILE
-Open Scripts
+Script megnyitása
 ; Open Scripts
 ;
 MSG_SCRIPTS_CHANGED
-The scripts file (%s) has been modified.\n\
-; Do you wish to save it before proceeding?
-; The scripts file (%s) has been modified.\n\
-; Do you wish to save it before proceeding?
+A(z) "%s" script megváltozott.\nKimenti, mielõtt továbblép?
+; The scripts file (%s) has been modified.\nDo you wish to save it before proceeding?
 ;
 MSG_SCRIPTS_CHANGED_NOSAVE
-The scripts file (%s) has been modified.\n\
-; Do you wish to discard it?
-; The scripts file (%s) has been modified.\n\
-; Do you wish to discard it?
+A(z) "%s" script megváltozott.\nEl kívánja dobni a változtatásokat?
+; The scripts file (%s) has been modified.\nDo you wish to discard it?
 ;
 MSG_SCRIPTS
-Scripts...
+Script-ek...
 ; Scripts...
 ;
 MSG_ERROR_SAVING
@@ -2077,13 +1703,11 @@ MSG_RETRY_CANCEL
 ; Retry|Cancel
 ;
 MSG_ERROR_SAVING_BUILD
-Hiba történt mentés közben!\n\
-DOS hibakód: %ld%s
+Hiba történt mentés közben!\nDOS hibakód: %ld%s
 ; An error occurred while saving!\nDOS error %ld%s
 ;
 MSG_ERROR_LOADING_BUILD
-Hiba történt töltés közben!\n\
-DOS hibakód: %ld%s
+Hiba történt töltés közben!\nDOS hibakód: %ld%s
 ; An error occurred while loading!\nDOS error %ld%s
 ;
 MSG_FUNCTION_ASCII_NAME
@@ -2174,10 +1798,6 @@ MSG_SCRIPTS_MID_DOUBLECLICK
 Duplaklikk középsõ gombbal
 ; Middle double-click
 ;
-MSG_SCRIPTS_LAST
--
-; -
-;
 MSG_MENUS_TITLE
 Felhasználói menük
 ; User Menus
@@ -2235,13 +1855,8 @@ Cseréld le|Mégsem
 ; Replace|Cancel
 ;
 MSG_FILE_EXISTS
-A(z) "%s" állomány már létezik.\n\
-Lecseréljem?
+A(z) "%s" állomány már létezik.\nLecseréljem?
 ; File '%s' already exists.\nOk to replace it?
-;
-MSG_OK
-Ok
-; Ok
 ;
 MSG_INVALID_BUTTON_FILE
 A(z) "%s" gombcsoport érvénytelen.

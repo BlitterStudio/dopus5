@@ -123,7 +123,7 @@ Animation : %s\tBild %ld von %ld\t%ld x %ld x %ld\n\n
 ; Animation : %s\tFrame %ld of %ld\t%ld x %ld x %ld\n\n
 ;
 MSG_ILBM_TITLE
-Bild : %s\t%ld × %ld x %ld\n\n
+Bild : %s\t%ld x %ld x %ld\n\n 
 ; Picture : %s\t%ld x %ld x %ld\n\n
 ;
 MSG_INFO_TYPE

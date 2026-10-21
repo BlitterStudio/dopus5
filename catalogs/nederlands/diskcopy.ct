@@ -2,14 +2,6 @@
 ## codeset 0
 ## language nederlands
 ;
-MSG_DISKCOPY_TITLE
-Diskcopy
-; Diskcopy
-;
-MSG_DISKCOPY_DISKCOPY
-_Diskcopy
-; _Diskcopy
-;
 MSG_DISKCOPY_CANCEL
 _Annuleer
 ; _Cancel
@@ -83,18 +75,15 @@ Diskcopy mislukt.
 ; Diskcopy failed.
 ;
 MSG_READ_ERROR
-Fout bij lezen %s track %ld\n\
-%s
+Fout bij lezen %s track %ld\n%s
 ; Error reading %s track %ld\n%s
 ;
 MSG_WRITE_ERROR
-Fout bij schrijven %s track %ld\n\
-%s
+Fout bij schrijven %s track %ld\n%s
 ; Error writing %s track %ld\n%s
 ;
 MSG_VERIFY_ERROR
-Fout bij verifiëren %s track %ld\n\
-%s
+Fout bij verifiëren %s track %ld\n%s
 ; Error verifying %s track %ld\n%s
 ;
 MSG_DISKCOPY_READING

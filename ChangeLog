@@ -1,3 +1,48 @@
+[dopus5 next] Striped lister rows (issue #225); catalogs repaired
+Program, dopus5.library and configopus change; environment config
+version 18; version bump deferred.
+
+- Name mode listers can draw every second row in a different
+  background colour.  Turn it on with Striped Rows in Environment >
+  Lister Display, and set the colour with the new 'Alternate Rows'
+  item in Lister Colours.  Only the background of that item is used,
+  so files and directories keep their text colours.  Selected entries,
+  devices and assigns are not striped.  The colour starts as a light
+  grey custom colour; on a screen with no free pen, white is used.
+- The stripe colour takes a pen only while striping is on.  Older
+  environments load with striping off.
+- Lines that scroll into a name mode lister are drawn with their own
+  line number.  The lister passed the wrong one (top lines got bottom
+  numbers and the other way round), which also matters for the line
+  being edited and the keyboard selector arrow.
+- ARexx 'dopus set pens' and 'dopus query pens' take 'tooltips' and
+  'stripes'.  Saved themes do not include them: a theme stores pen
+  numbers only, and applying it would replace the default light grey
+  stripe colour with white.
+- The translated catalogs (catalogs/*.ct) had wrong text in many
+  places.  The files were generated in 2015 from the 1997 Magellan
+  catalogs with the string IDs counted wrongly after every gap in
+  the numbering, so a few hundred entries per language held another
+  string's translation ("_Ok" for "Set source archive bit") or
+  English.  They are rebuilt from the original catalogs on Aminet,
+  by string ID: Opus 5.65 for every language, and the 5.8x update for
+  Spanish.  Later fixes in the .ct files are kept.  Translations whose
+  % codes, '|' button count or length no longer fit the current
+  string are left out, so Opus shows the English text there.
+- The French catalogs used numbers instead of names for most strings
+  and existed twice (as "français" in two Unicode forms); there is
+  one copy now, with names.  catalogs/Makefile builds the ViewFont,
+  Lister Format and Path Format catalogs where a translation exists
+  and skips the ones that do not.
+- configopus.cd numbered the background picture strings from 23039,
+  the same IDs as the clock codes, and ftp.cd put "Disable Stayin'
+  Alive Pings" in the middle of the numbering, which moved 114 FTP
+  strings by one.  Both now match the IDs the modules use.  ftp.cd
+  also had strings over several lines without line continuations and
+  a comment after an ID, which FlexCat rejected.
+- Striped Rows and Alternate Rows are translated into every
+  catalog language.
+
 [dopus5 next] Environment reloads and screen mode changes; View in the lister status pop-up
 Program, dopus5.library and configopus change; version bump deferred.
 

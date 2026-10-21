@@ -1,16 +1,9 @@
 ## version $VER: DOpusLib.catalog 5.61 (08.07.1997)
 ## codeset 0
 ## language français
-; ************************************************* 
-; Catalog description file for dopus5.library
-; Copyright © 1995 Jonathan Potter
-; ************************************************* 
-;
-;
-; Generic strings
 ;
 MSG_OK
-Okay\x00
+Okay
 ; OK
 ;
 MSG_SELECT_FILE
@@ -37,14 +30,6 @@ MSG_FONT_FIELD_TEXT
 Texte + champs
 ; Text+Field
 ;
-MSG_SIZE_FIT
-
-; 9999%%
-;
-MSG_SIZE
-
-; %ld%%
-;
 MSG_ABORT
 Annuler
 ; Abort
@@ -61,10 +46,6 @@ MSG_DIRECTORY_OPUS_REQUEST
 Requête Directory Opus
 ; Directory Opus Request
 ;
-;
-;
-; Error messages
-;
 MSG_UNABLE_TO_OPEN_TOOL
 Impossible d'ouvrir l'outil « %s »
 ; Unable to open your tool '%s'
@@ -74,6 +55,6 @@ Opus est agacé d'attendre le retour de\n« %s »\nAttendre encore un peu ?
 ; Opus is sick of waiting for '%s' to return.\nWait some more?
 ;
 MSG_WAIT_CANCEL
-Attendre|Annuler\x00
+Attendre|Annuler
 ; Wait|Cancel
 ;

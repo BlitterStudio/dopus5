@@ -1,13 +1,9 @@
 ## version $VER: Print.catalog 5.61 (08.07.1997)
 ## codeset 0
 ## language français
-; ************************************************* 
-; Catalog description file for print.module
-; ************************************************* 
-;
 ;
 MSG_PRINTREQ_TITLE
-Imprimer\x00
+Imprimer
 ; Print
 ;
 MSG_PRINTING_TITLE
@@ -19,7 +15,7 @@ _Imprimer
 ; _Print
 ;
 MSG_CANCEL
-_Annuler\x00
+_Annuler
 ; _Cancel
 ;
 MSG_TEXT
@@ -31,15 +27,15 @@ Entête/Pied de page
 ; Header/Footer
 ;
 MSG_PRINT_QUALITY
-_Qualité\x00
+_Qualité
 ; _Quality
 ;
 MSG_PRINT_SPACING
-De_nsité\x00
+De_nsité
 ; _Spacing
 ;
 MSG_PRINT_PITCH
-_Largeur\x00
+_Largeur
 ; P_itch
 ;
 MSG_PRINT_LEFT_MARGIN
@@ -74,14 +70,6 @@ MSG_PRINT_SPACING_8
 8 LPP
 ; 8 LPI
 ;
-MSG_PRINT_PITCH_PICA
-
-; Pica
-;
-MSG_PRINT_PITCH_ELITE
-
-; Elite
-;
 MSG_PRINT_PITCH_FINE
 Fin
 ; Fine
@@ -95,39 +83,27 @@ Entête
 ; Header
 ;
 MSG_PRINT_FOOTER
-Pied\x00
+Pied
 ; Footer
 ;
 MSG_PRINT_TITLE
 _Titre
 ; Titl_e
 ;
-MSG_PRINT_DATE
-
-; _Date
-;
 MSG_PRINT_PAGE
 N_uméro de page
 ; Pa_ge
 ;
-MSG_PRINT_STYLE
-
-; St_yle
-;
-MSG_PRINT_STYLE_NORMAL
-
-; Normal
-;
 MSG_PRINT_STYLE_BOLD
-Gras\x00
+Gras
 ; Bold
 ;
 MSG_PRINT_STYLE_ITALICS
-Italique\x00
+Italique
 ; Italics
 ;
 MSG_PRINT_STYLE_UNDERLINE
-Souligné\x00
+Souligné
 ; Uline
 ;
 MSG_ABORT
@@ -135,11 +111,11 @@ Annuler
 ; Abort
 ;
 MSG_OK
-Okay\x00
+Okay
 ; OK
 ;
 MSG_OPENING_PRINTER
-Ouverture de l'imprimante...\x00
+Ouverture de l'imprimante...
 ; Opening printer...
 ;
 MSG_CANT_OPEN_PRINTER
@@ -163,12 +139,11 @@ Annuler|Continuer
 ; Abort|Continue
 ;
 MSG_PRINT_PAGENUM
-Page\x00
+Page
 ; Page 
 ;
-;
 MSG_PRINT_DESC
-Imprime les fichiers\x00
+Imprime les fichiers
 ; Print text files
 ;
 MSG_PRINT_OUTPUT

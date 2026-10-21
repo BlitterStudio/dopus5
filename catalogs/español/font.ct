@@ -1,0 +1,64 @@
+## version $VER: viewfont.catalog 1.0 (05.01.01)
+## codeset 0
+## language español
+;
+MSG_FONT_TITLE
+Visualizador de fuentes
+; Font Viewer
+;
+MSG_FONT_FONT
+_Fuente:
+; _Font
+;
+MSG_FONT_SIZE
+_Tamaño:
+; _Size
+;
+MSG_FONT_PRINT
+_Imprimir
+; _Print
+;
+MSG_VIEWFONT_DESC
+Visualizar fuentes
+; View a font
+;
+MSG_FONT_BOLD
+_N
+; _B
+;
+MSG_FONT_ITALIC
+_C
+; _I
+;
+MSG_FONT_ULINE
+_S
+; _U
+;
+MSG_FONT_SELECT
+Elija fuente...
+; Select Font
+;
+MSG_OK
+Aceptar
+; Ok
+;
+MSG_MENU_PROJECT
+Proyecto
+; Project
+;
+MSG_MENU_OPEN_FONT
+Abrir fuente...
+; Open Font...
+;
+MSG_MENU_SAVE_SETTINGS
+Guardar ajustes
+; Save Settings
+;
+MSG_MENU_QUIT
+Salir
+; Quit
+;
+MSG_MENU_ABOUT
+Acerca de...
+; About...
+;

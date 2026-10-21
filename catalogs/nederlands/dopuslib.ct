@@ -30,14 +30,6 @@ MSG_FONT_FIELD_TEXT
 Tekst+veld
 ; Text+Field
 ;
-MSG_SIZE_FIT
-9999%%
-; 9999%%
-;
-MSG_SIZE
-%ld%%
-; %ld%%
-;
 MSG_ABORT
 Breek af
 ; Abort
@@ -59,8 +51,7 @@ Kon uw tool '%s' niet openen
 ; Unable to open your tool '%s'
 ;
 MSG_SICK_OF_WAITING
-Opus wordt niet goed van het wachten op '%s'.\n\
-Nog langer wachten?
+Opus wordt niet goed van het wachten op '%s'.\nNog langer wachten?
 ; Opus is sick of waiting for '%s' to return.\nWait some more?
 ;
 MSG_WAIT_CANCEL

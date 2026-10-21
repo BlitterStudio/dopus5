@@ -1,127 +1,116 @@
-## version $VER: ListerFormat.catalog 5.61 (08.07.1997)
+## version $VER: listformat.catalog 2.1 (10.6.97)
 ## codeset 0
-## language français
-; ************************************************* 
-; Catalog description file for listerformat.module
-; ************************************************* 
-;
+## language nederlands
 ;
 MSG_LISTER_FORMAT_TITLE
-Format de listeur
+Lijstindeling
 ; List Format
 ;
 MSG_LISTER_AVAILABLE_DISPLAY_ITEMS
-Disponibles...
+Beschikbaar...
 ; Available...
 ;
 MSG_LISTER_SELECTED_DISPLAY_ITEMS
-Afficher/Trier...
+Toon/sorteer...
 ; Display/Sort...
 ;
 MSG_LISTER_LIST_FILENAME
-Nom
+Bestandsnaam
 ; File Name
 ;
 MSG_LISTER_LIST_FILESIZE
-Taille
+Bestandsgrootte
 ; File Size
 ;
 MSG_LISTER_LIST_PROTECTION
-
+Protectie
 ; Protection
 ;
 MSG_LISTER_LIST_DATE
-Date\x00
+Bestandsdatum
 ; File Date
 ;
 MSG_LISTER_LIST_COMMENT
-Commentaire
+Commentaar
 ; Comment
 ;
 MSG_LISTER_LIST_FILETYPE
-Type\x00
+Bestandssoort
 ; File Type
 ;
 MSG_LISTER_LIST_OWNER
-Propriétaire\x00
+Eigenaar
 ; Owner
 ;
 MSG_LISTER_LIST_GROUP
-Groupe
+Groep
 ; Group
 ;
 MSG_LISTER_LIST_NETPROTECTION
-Accès réseau\x00
+Nettoegang
 ; Net Access
 ;
 MSG_LISTER_ENTRY_SEPARATION
-_Séparation
+A_fscheiding
 ; _Entry Separation
 ;
 MSG_LISTER_REVERSE_SORTING
-_Tri inverse\x00
+Sorteer _omgekeerd
 ; _Reverse Sorting
 ;
 MSG_LISTER_SEPARATION_MIX
-Mixer Fich./Rép.\x00
+Meng best./dirs
 ; Mix Files/Dirs
 ;
 MSG_LISTER_SEPARATION_DIRS
-Répertoires
+Directory's eerst
 ; Directories First
 ;
 MSG_LISTER_SEPARATION_FILES
-Fichiers\x00
+Bestanden eerst
 ; Files First
 ;
 MSG_LISTER_SHOW
-Filtre : _Montrer
+_Toonfilter
 ; _Show Filter
 ;
 MSG_LISTER_HIDE
-Filtre : Cac_her\x00
+_Verbergfilter
 ; _Hide Filter
 ;
 MSG_LISTER_REJECT_ICONS
-_Filtrer icônes
+Filter _iconen
 ; _Filter Icons
 ;
 MSG_LISTER_HIDDEN_BIT
-_Cachés
+Ve_rborgen
 ; H_idden
 ;
 MSG_LISTER_USE
-_Utiliser
+_Gebruik
 ; _Use
 ;
 MSG_LISTER_CANCEL
-_Annuler\x00
+_Annuleer
 ; _Cancel
 ;
 MSG_LISTER_LIST_VERSION
-
+Versie
 ; Version
 ;
 MSG_LISTER_SAVE
-_Sauver
+_Bewaar
 ; S_ave
 ;
 MSG_DEFAULTS
-_Valeurs par défaut
+_Standaardinstelling
 ; Reset to _Defaults
 ;
 MSG_FTP_DEFAULTS
-_Jauge occupation
+Vr. ruimte­_meter
 ; Reset FTP Defaults
 ;
 MSG_LISTER_FUEL_GAUGE
-_Hériter\x00
+Over_erven
 ; Free Space _Gauge
 ;
-MSG_LISTER_INHERIT
-
-; I_nherit
-;
-MSG_SET_AS_DEFAULTS
-
-; Set _As Defaults

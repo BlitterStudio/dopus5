@@ -10,10 +10,6 @@ MSG_DISKINFO_DESC
 Visar information om en enhet
 ; Show information about a device
 ;
-MSG_OK
-_OK
-; _OK
-;
 MSG_CANCEL
 A_vbryt
 ; _Cancel
@@ -102,18 +98,6 @@ MSG_DOSTYPE_6
 Snabbt filsystem (lådfickminne)
 ; Fast File System (Dir-Caching)
 ;
-MSG_DOSTYPE_7
-MS-DOS (CrossDOS)
-; MS-DOS (CrossDOS)
-;
-MSG_DOSTYPE_8
-Ami-FileSafe Pro
-; Ami-FileSafe Pro
-;
-MSG_DOSTYPE_9
-Ami-FileSafe User
-; Ami-FileSafe User
-;
 MSG_DOSTYPE_10
 Ami-FileSafe MuFS
 ; Ami-FileSafe Multi
@@ -125,84 +109,4 @@ PFS-floppy
 MSG_DOSTYPE_12
 PFS-hårddisk
 ; PFS Hard Drive
-;
-MSG_DOSTYPE_13
-Envoy Network Volume
-; Envoy Network Volume
-;
-MSG_DOSTYPE_14
-Personal File System 2
-; Personal File System 2
-;
-MSG_DOSTYPE_15
-Personal File System 3
-; Personal File System 3
-;
-MSG_DOSTYPE_16
-Personal File System 2 SCSI
-; Personal File System 2 SCSI
-;
-MSG_DOSTYPE_17
-Personal File System 3 SCSI
-; Personal File System 3 SCSI
-;
-MSG_DOSTYPE_18
-Personal File System Multiuser
-; Personal File System Multiuser
-;
-MSG_DOSTYPE_19
-Fast File System (FFS-LNFS)
-; Fast File System (FFS-LNFS)
-;
-MSG_DOSTYPE_20
-Vector Based File System
-; Vector Based File System
-;
-MSG_DOSTYPE_21
-Smart File System 0
-; Smart File System 0
-;
-MSG_DOSTYPE_22
-Smart File System 1
-; Smart File System 1
-;
-MSG_DOSTYPE_23
-Smart File System 2
-; Smart File System 2
-;
-MSG_DOSTYPE_24
-Smart File System 3
-; Smart File System 3
-;
-MSG_DOSTYPE_25
-JX File System
-; JX File System
-;
-MSG_DOSTYPE_26
-Box File System
-; Box File System
-;
-MSG_DOSTYPE_27
-FAT32 File System
-; FAT32 File System
-;
-MSG_DOSTYPE_28
-exFat File System
-; exFat File System
-;
-MSG_DOSTYPE_29
-FUSE ext2 File System
-; FUSE ext2 File System
-;
-MSG_DOSTYPE_30
-FUSE HFS
-; FUSE HFS
-;
-MSG_DOSTYPE_31
-NTFS
-; NTFS
-;
-MSG_DOSTYPE_32
-Swap
-; Swap
 ;

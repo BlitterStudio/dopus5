@@ -1,0 +1,116 @@
+## version $VER: listerformat.catalog 0.4 (11-09-1998) - Por Raul Silva 
+## codeset 0
+## language português
+;
+MSG_LISTER_FORMAT_TITLE
+Formato da lista
+; List Format
+;
+MSG_LISTER_AVAILABLE_DISPLAY_ITEMS
+Disponivel...
+; Available...
+;
+MSG_LISTER_SELECTED_DISPLAY_ITEMS
+Mostrar/Ordenar...
+; Display/Sort...
+;
+MSG_LISTER_LIST_FILENAME
+Nome do ficheiro
+; File Name
+;
+MSG_LISTER_LIST_FILESIZE
+Tamanho do ficheiro
+; File Size
+;
+MSG_LISTER_LIST_PROTECTION
+Proteção
+; Protection
+;
+MSG_LISTER_LIST_DATE
+Data do ficheiro
+; File Date
+;
+MSG_LISTER_LIST_COMMENT
+Comentário
+; Comment
+;
+MSG_LISTER_LIST_FILETYPE
+Tipo do ficheiro
+; File Type
+;
+MSG_LISTER_LIST_OWNER
+Proprietário
+; Owner
+;
+MSG_LISTER_LIST_GROUP
+Grupo
+; Group
+;
+MSG_LISTER_LIST_NETPROTECTION
+Acesso à rede
+; Net Access
+;
+MSG_LISTER_ENTRY_SEPARATION
+Separação de _entradas
+; _Entry Separation
+;
+MSG_LISTER_REVERSE_SORTING
+O_rdenação inversa
+; _Reverse Sorting
+;
+MSG_LISTER_SEPARATION_MIX
+Misturar ficheiros/directórias
+; Mix Files/Dirs
+;
+MSG_LISTER_SEPARATION_DIRS
+Directórias primeiro
+; Directories First
+;
+MSG_LISTER_SEPARATION_FILES
+Ficheiros primeiro
+; Files First
+;
+MSG_LISTER_SHOW
+Mo_strar o filtro
+; _Show Filter
+;
+MSG_LISTER_HIDE
+Esconder o filtro
+; _Hide Filter
+;
+MSG_LISTER_REJECT_ICONS
+_Filtrar os Icones
+; _Filter Icons
+;
+MSG_LISTER_HIDDEN_BIT
+Escond_ido
+; H_idden
+;
+MSG_LISTER_USE
+_Usar
+; _Use
+;
+MSG_LISTER_CANCEL
+_Cancelar
+; _Cancel
+;
+MSG_LISTER_LIST_VERSION
+Versão
+; Version
+;
+MSG_LISTER_SAVE
+Gu_ardar
+; S_ave
+;
+MSG_DEFAULTS
+Restaurar por _Defeito
+; Reset to _Defaults
+;
+MSG_FTP_DEFAULTS
+Indicador do espaço livre
+; Reset FTP Defaults
+;
+MSG_LISTER_FUEL_GAUGE
+Herdar
+; Free Space _Gauge
+;

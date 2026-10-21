@@ -2,17 +2,9 @@
 ## codeset 0
 ## language nederlands
 ;
-MSG_PRINTREQ_TITLE
-Print
-; Print
-;
 MSG_PRINTING_TITLE
 Print...
 ; Printing...
-;
-MSG_PRINT
-_Print
-; _Print
 ;
 MSG_CANCEL
 _Annuleer
@@ -57,30 +49,6 @@ Tabgr_ootte
 MSG_PRINT_QUALITY_DRAFT
 Klad
 ; Draft
-;
-MSG_PRINT_QUALITY_LETTER
-Letter
-; Letter
-;
-MSG_PRINT_SPACING_6
-6 LPI
-; 6 LPI
-;
-MSG_PRINT_SPACING_8
-8 LPI
-; 8 LPI
-;
-MSG_PRINT_PITCH_PICA
-Pica
-; Pica
-;
-MSG_PRINT_PITCH_ELITE
-Elite
-; Elite
-;
-MSG_PRINT_PITCH_FINE
-Fine
-; Fine
 ;
 MSG_PRINT_CONFIGURATION
 _configuratie...
@@ -169,10 +137,6 @@ Print tekstbestanden
 MSG_PRINT_OUTPUT
 _Uitvoer
 ; Outp_ut
-;
-MSG_PRINT_OUTPUT_PRINTER
-Printer
-; Printer
 ;
 MSG_PRINT_OUTPUT_FILE
 Bestand

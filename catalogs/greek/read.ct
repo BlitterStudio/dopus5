@@ -94,10 +94,6 @@ MSG_MENU_MODE_NORMAL
 Κανονική
 ; Normal
 ;
-MSG_MENU_MODE_ANSI
-ANSI
-; ANSI
-;
 MSG_MENU_MODE_HEX
 Δεκαεξαδική
 ; Hex
@@ -157,8 +153,4 @@ MSG_READING_FILE_TITLE
 MSG_COUNTING_LINES
 Καταμέτρηση γραμμών...
 ; Counting lines...
-;
-MSG_CLOSE
-Close
-; Close
 ;

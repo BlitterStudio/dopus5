@@ -1,8 +1,6 @@
 ## version $VER: dopus.catalog 5.65 (8.9.97)
 ## codeset 10
 ## language greek
-; Catalog updates Copyright 2023-2026 Dimitris Panokostas
-;
 ;
 MSG_ABORTED
 Ακυρώθηκε
@@ -84,10 +82,6 @@ MSG_DISCARD
 Κατάργηση
 ; Discard
 ;
-MSG_BLOCKS
-blocks
-; blocks
-;
 MSG_FREE
 ελευθ
 ; free
@@ -137,33 +131,27 @@ MSG_UNKNOWN_TYPE
 ; <unknown>
 ;
 MSG_SNIFF_CONFIRMATION
-Το αρχείο '%s' δεν μπορεί να αναγνωρισθεί.\n\
-Να το ερευνήσω;
-; The file '%s' could not be identified.\n\
-; Launch Filetype Sniffer to investigate?
+Το αρχείο '%s' δεν μπορεί να αναγνωρισθεί.\nΝα το ερευνήσω;
+; The file '%s' could not be identified.\nLaunch Filetype Sniffer to investigate?
 ;
 MSG_SNIFF
 Έρευνα
 ; Sniff!
 ;
 MSG_SCRIPTS_CHANGED
-Τα scripts έχουν αλλαχθεί και δεν\n\
-καταχωρήθηκαν. Να καταχωρηθούν;
+Τα scripts έχουν αλλαχθεί και δεν\nκαταχωρήθηκαν. Να καταχωρηθούν;
 ; You have modified your scripts and not\nsaved them. Would you like to?
 ;
 MSG_LISTER_MENU_CHANGED
-Το Menu του καταλογέα έχει αλλαχθεί και δεν\n\
-καταχωρήθηκε. Να καταχωρηθεί;
+Το Menu του καταλογέα έχει αλλαχθεί και δεν\nκαταχωρήθηκε. Να καταχωρηθεί;
 ; You have modified your lister menu and not\nsaved it. Would you like to?
 ;
 MSG_USER_MENU_CHANGED
-Τα Menu του χρήστη έχουν αλλαχθεί και δεν\n\
-καταχωρήθηκαν. Να καταχωρηθούν;
+Τα Menu του χρήστη έχουν αλλαχθεί και δεν\nκαταχωρήθηκαν. Να καταχωρηθούν;
 ; You have modified your user menus and not\nsaved them. Would you like to?
 ;
 MSG_HOTKEYS_CHANGED
-Τα hotkeys έχουν αλλαχθεί και δεν\n\
-καταχωρήθηκαν. Να καταχωρηθούν;
+Τα hotkeys έχουν αλλαχθεί και δεν\nκαταχωρήθηκαν. Να καταχωρηθούν;
 ; You have modified your hotkeys and not\nsaved them. Would you like to?
 ;
 MSG_OPEN_NEW_WINDOW
@@ -195,13 +183,11 @@ MSG_DIRECTORY
 ; Directory 
 ;
 MSG_SELECT_UNPROTECT
-\n\
-Επιλέξτε Αποπροστασία για να θέσετε τη μάσκα διαγραφής.
+\nΕπιλέξτε Αποπροστασία για να θέσετε τη μάσκα διαγραφής.
 ; \nSelect Unprotect to set the deletion bit.
 ;
 MSG_FOUND_A_MATCH
-Βρέθηκε ταίρι για το αρχείο\n\
-'%s'
+Βρέθηκε ταίρι για το αρχείο\n'%s'
 ; Found a match in the file\n'%s'
 ;
 MSG_COMMENTING
@@ -257,327 +243,292 @@ MSG_DIRECTORY_OPUS_REQUEST
 ; Directory Opus Request
 ;
 MSG_MULTI_DRAG
-Άκυρο
+Multi-drag - %ld αρχεία, %ld κατάλογοι επιλέχθηκαν
 ; Multi-drag - %ld files, %ld dirs selected
 ;
 MSG_PRESS_MOUSE_BUTTON
-Αντικατάσταση
+Πατήστε το κουμπί κλεισίματος για συνέχεια...
 ; Click close button to continue...
 ;
 MSG_COMMENT
-Παράκαμψη
+σχόλιο
 ; comment
 ;
 MSG_PROTECT
-Παράκαμψη Όλων
+προστασία
 ; protect
 ;
 MSG_DATESTAMP
-Όλα
+ημερομηνία
 ; date stamp
 ;
 MSG_PROGRESS_OPERATION_MOVING
-Έξοδος
+Μετακίνηση...
 ; Moving...
 ;
 MSG_PROGRAM_LOADING
-Σώσιμο
+Εκκίνηση του Opus 5... παρακαλώ περιμένετε.
 ; Opus 5 loading... please wait.
 ;
 MSG_OPEN_MENU
-Κλείσιμο
+Φόρτωμα...
 ; Load...
 ;
 MSG_SAVE_MENU
-Ναι
+Σώσιμο
 ; Save
 ;
 MSG_SAVEAS_MENU
-Όχι
+Σώσιμο ως...
 ; Save As...
 ;
 MSG_ACT_RECURSIVELY
-Συνέχεια
+Εφαρμογή στα αρχεία καταλόγων;
 ; Act on files in sub-directories?
 ;
 MSG_PROGRESS_OPERATION_COMMENT
-Εντάξει
+Εφαρμογή σχολίων...
 ; Setting comments...
 ;
 MSG_PROGRESS_OPERATION_PROTECT
-Άκυρο
+Εφαρμογή προστασίας...
 ; Setting protections...
 ;
 MSG_PROGRESS_OPERATION_DATESTAMP
-Αντικατάσταση Όλων
+Εφαρμογή ημερομηνιών...
 ; Setting datestamps...
 ;
 MSG_SET_PROTECT_OLD
-Συνέχεια
+Τρέχον
 ; Current
 ;
 MSG_SET_PROTECT_SET
-Μετακίνηση
+Θέτω
 ; Set
 ;
 MSG_SET_PROTECT_CLEAR
-Κατάργηση
+Άκυρο
 ; Clear
 ;
 MSG_OK_BUTTON
-_OK
+Εντάξει
 ; _OK
 ;
 MSG_ALL_BUTTON
-ελευθ
+Ό_λα
 ; A_ll
 ;
 MSG_SKIP_BUTTON
-Σύνδεσμος
+Πα_ράκαμψη
 ; S_kip
 ;
 MSG_ABORT_BUTTON
-Επιλογή Αρχείου
+Ακύρ_ωση
 ; A_bort
 ;
 MSG_PROGRESS_OPERATION_ENCRYPTING
-Επιλογή Καταλόγου
+Κρυπτογράφηση...
 ; Encrypting...
 ;
 MSG_USER_MENU
-Εισαγωγή Αρχείου
+Χρήστης
 ; User
 ;
 MSG_LISTER_MENU_TITLE
-Άνοιγμα...
+PopUp-Menu Καταλογέα
 ; Lister Pop-Up Menu
 ;
 MSG_USER_MENU_TITLE
-Επαναδορά στις Αρχικές
+Menu Χρήστη
 ; User Menus
 ;
 MSG_EMPTY
-Τελευταίες Αποθηκευμένες
+άδειο
 ; empty
 ;
 MSG_CANCEL_BUTTON
-Επαναφορά
+Άκυρο
 ; _Cancel
 ;
 MSG_OPEN_BUTTON
-Σχέδιο
+Άνοιγμα
 ; _Open
 ;
 MSG_NEW_BUTTON
-Επεξεργασία
+Νέο
 ; _New
 ;
 MSG_PARENT
-<άγνωστο>
+Προηγούμενος κατάλογος
 ; Parent Directory
 ;
 MSG_ROOT
-Το αρχείο '%s' δεν μπορεί να αναγνωρισθεί.\n\
-Να το ερευνήσω;
+Κεντρικός κατάλογος
 ; Root Directory
 ;
 MSG_DEVICE_LIST
-Έρευνα
+Κατάλογος Συσκευών
 ; Device List
 ;
 MSG_SCANNING_DIRECTORIES
-Τα scripts έχουν αλλαχθεί και δεν\n\
-καταχωρήθηκαν. Να καταχωρηθούν;
+Ανίχνευση καταλόγων...
 ; Scanning directories...
 ;
 MSG_READING_DIRECTORY
-Το Menu του καταλογέα έχει αλλαχθεί και δεν\n\
-καταχωρήθηκε. Να καταχωρηθεί;
+Ανάγνωση καταλόγου...
 ; Reading directory...
 ;
 MSG_CHECK_FIT_RESULTS
-Τα Menu του χρήστη έχουν αλλαχθεί και δεν\n\
-καταχωρήθηκαν. Να καταχωρηθούν;
+Αποτελέσματα πληρωσης:\n
 ; Results of fit test:\n
 ;
 MSG_FIT
-Τα hotkeys έχουν αλλαχθεί και δεν\n\
-καταχωρήθηκαν. Να καταχωρηθούν;
+χωράει
 ; fit
 ;
 MSG_BLOCKS_NEEDED
-Άνοιγμα σε νέο καταλογέα;
+απαιτ. blocks
 ; blocks needed.
 ;
 MSG_EXECUTE_ENTER_COMMAND
-Άνοιγμα με...
+Εισαγωγή εντολής & παραμέτρων
 ; Enter command and arguments.
 ;
 MSG_TOOL_MENU
-Επιλέξτε εφαρμογή για άνοιγμα του '%s'
+Εργαλεία
 ; Tools
 ;
 MSG_BUFFER_LIST
-Άνοιγμα με
+Κατάλογος Cache
 ; Cache List
 ;
 MSG_REREAD_DIR
-Άλλο...
+Επανάγνωση καταλόγου
 ; Re-read Directory
 ;
 MSG_ASSIGN
-Assign
+Ψευδομονάδα
 ; Assign
 ;
 MSG_FULL
-full
+πλήρες
 ; full
 ;
 MSG_USED
-in use
+σε χρήση
 ; in use
 ;
 MSG_VALIDATING
-disk validating
+εγκυροποήση δίσκου
 ; disk validating
 ;
 MSG_ENTER_FILTER_STRING
-Directories selected - enter filter pattern.
+Επιλογή Καταλόγων - δώστε τη μορφή φίλτρου.
 ; Directories selected - enter filter pattern.
 ;
 MSG_VOLUME
-Volume
+Μονάδα
 ; Volume
 ;
 MSG_SELECT_SOURCE
-Select Source
+Επιλογή Αρχικού
 ; Select Source
 ;
 MSG_SELECT_DESTINATION
-Select Destination
+Επιλογή Τελικού
 ; Select Destination
 ;
 MSG_NO_OWNER
-<No Owner>
+<Χωρίς Χρήστη>
 ; <No Owner>
 ;
 MSG_NO_GROUP
-<No Group>
+<Χωρίς Ομάδα>
 ; <No Group>
 ;
-MSG_SCRIPTS_TITLE
-Scripts
-; Scripts
-;
 MSG_PROGRESS_OPERATION_LINKING
-Making Links...
+Δημιουργία Συνδέσμων...
 ; Making Links...
 ;
 MSG_LINKING
-making a link to
+δημιουργία σύνδεσμου με
 ; making a link to
 ;
 MSG_DECRYPT
-_Decrypt files
+Αποκρυπτ/ση αρχείων
 ; _Decrypt files
 ;
 MSG_EMPTY_TRASH
-Empty Trash
+Καθαρισμός Απορριμάτων
 ; Empty Trash
 ;
 MSG_REALLY_EMPTY_TRASH
-The contents of the trashcan will be lost!\nDo you really want to empty it?
+Τα περιεχόμενα του απορριματοδοχείου θα χαθούν!\nΘέλετε πραγματικά να το αδειάσετε;
 ; The contents of the trashcan will be lost!\nDo you really want to empty it?
 ;
 MSG_ENTER_ASSIGN_NAME
-Enter name to assign to '%s'
+Εισάγετε όνομα ψευδ/δας στο '%s'
 ; Enter name to assign to '%s'
 ;
 MSG_ADD
-Add
+Προσθ
 ; Add
 ;
 MSG_PATH
-Path
+Διαδρ
 ; Path
 ;
 MSG_DEFER
-Defer
+Διαφ
 ; Defer
 ;
 MSG_ASSIGNING
-assigning
+ψευδομονάδα
 ; assigning
 ;
 MSG_CHANGE_NEEDS_RESET
-Some changes you made will not be\neffective until you next reboot.
+Μερικές αλλαγές δεν θα ενεργοποιηθούν μέχρι\nτην επόμενη επανεκκίνηση. 
 ; Some changes you made will not be\neffective until you next reboot.
 ;
 MSG_OPENING
-opening
+άνοιγμα
 ; opening
 ;
 MSG_LIBRARY_ERROR
-Unable to open %s (%s)
+Αδύνατο το άνοιγμα %s (%s)
 ; Unable to open %s (%s)
 ;
 MSG_LIBRARY_ANY_VERSION
-any version
+οποιαδήποτε έκδοση
 ; any version
 ;
-MSG_CLI
-CLI
-; CLI
-;
 MSG_CX_DESC
-The Complete Workbench Replacement!
+Ο πλήρης αντικαταστάτης του Workbench!
 ; The Complete Workbench Replacement!
 ;
 MSG_ABORT_STARTUP
-Do you want to abort startup?
+Να διακοπεί η εκκίνηση;
 ; Do you want to abort startup?
 ;
 MSG_ABORT_STARTUP_BUTTONS
-Continue|Abort
+Συνέχεια|Ακύρωση
 ; Continue|Abort
 ;
 MSG_PROTECT_TITLE
-Protect
+Προστασία
 ; Protect
 ;
 MSG_DATESTAMP_TITLE
-Datestamp
+Ημερομηνία
 ; Datestamp
 ;
 MSG_COMMENT_TITLE
-Comment
+Σχόλιο
 ; Comment
 ;
 MSG_PATTERN_OFF
-The backdrop picture is disabled in the Environment.\n\
-; Would you like it enabled?
-; The backdrop picture is disabled in the Environment.\n\
-; Would you like it enabled?
-;
-MSG_THEMES_MENU
-Themes
-; Themes
-;
-MSG_THEMES_LOAD
-Load Theme...
-; Load Theme...
-;
-MSG_THEMES_SAVE
-Save Theme...
-; Save Theme...
-;
-MSG_THEMES_BUILD
-Build Theme...
-; Build Theme...
-;
-MSG_ADDICONING
-adding icons to
-; adding icons to
+Η εικόνα υποβάθρου είναι απενεργοποιημένη στο περιβάλλον.\nΝα ενεργοποιηθεί;
+; The backdrop picture is disabled in the Environment.\nWould you like it enabled?
 ;
 MSG_REGISTERED_TO
 Νόμιμος Κάτοχος:
@@ -684,8 +635,7 @@ MSG_PROGRESS_ADDING_ICONS
 ; Adding icons...
 ;
 MSG_ICON_ALREADY_EXISTS
-Ένα εικονίδιο υπάρχει ήση για το '%s'.\n\
-Να αντικατασταθεί;
+Ένα εικονίδιο υπάρχει ήση για το '%s'.\nΝα αντικατασταθεί;
 ; An icon already exists for '%s'.\nDo you wish to replace it?
 ;
 MSG_ICON_REPLACE_IMAGE
@@ -701,8 +651,7 @@ MSG_PROGRESS_OPERATION_COPYING
 ; Copying...
 ;
 MSG_CANT_OVERCOPY_FILES
-Ο αρχικός και τελικός κατάλογος πρέπει να είναι\n\
-διαφορετικοί για να αντιγραφούν αρχεία.
+Ο αρχικός και τελικός κατάλογος πρέπει να είναι\nδιαφορετικοί για να αντιγραφούν αρχεία.
 ; Source and destination directories\nmust be different to copy files.
 ;
 MSG_COPY
@@ -726,8 +675,7 @@ MSG_MOVING
 ; moving
 ;
 MSG_CANT_OVERLINK_FILES
-Ο αρχικός και τελικός κατάλογος πρέπει να είναι\n\
-διαφορετικοί για να μπουν σύνδεσμοι.
+Ο αρχικός και τελικός κατάλογος πρέπει να είναι\nδιαφορετικοί για να μπουν σύνδεσμοι.
 ; Source and destination directories\nmust be different to make links.
 ;
 MSG_CANT_LINK_DIR_INTO_ITSELF
@@ -741,10 +689,6 @@ MSG_FROM_TO
 MSG_FROM
 Από '%s'
 ; From '%s'
-;
-MSG_PROJECT_MENU
-Opus
-; Opus
 ;
 MSG_BACKDROP_MENU
 Χωρίς περιθώρια
@@ -765,10 +709,6 @@ MSG_QUIT_MENU
 MSG_EXECUTE_MENU
 Εκτέλεση Εντολής...
 ; Execute Command...
-;
-MSG_NEWSHELL_MENU
-NewShell...
-; NewShell...
 ;
 MSG_HELP_MENU
 Βοήθεια!
@@ -846,10 +786,6 @@ MSG_TILE_VERT_MENU
 Κάθετα
 ; Vertically
 ;
-MSG_CASCADE_MENU
-Cascade
-; Cascade
-;
 MSG_LISTER_LOCK_POS
 Ασφάλιση Θέσης;
 ; Lock Position?
@@ -910,10 +846,6 @@ MSG_OPEN_PARENT_MENU
 Άνοιγμα Προηγούμενου
 ; Open Parent
 ;
-MSG_LISTER_RESTORE
-Restore
-; Restore
-;
 MSG_ICONS_MENU
 Εικονίδια
 ; Icons
@@ -967,96 +899,64 @@ MSG_ICON_UNSNAPSHOT_MENU
 ; Un-Snapshot
 ;
 MSG_ICON_COPY
-Προσπαθείστε ξανά
+Αντιγραφή
 ; Copy
 ;
 MSG_ICONS_NEW_MENU
-Νέα προσπάθεια
+Νέο
 ; New
 ;
 MSG_ICONS_MAKEDIR_MENU
-Άκυρο
+Κατάλογος...
 ; Drawer...
 ;
 MSG_ICONS_NEWGROUP_MENU
-Αντικατάσταση
+Ομάδα...
 ; Group...
 ;
 MSG_ICON_COPY_RAM
-Παράκαμψη
+στη RAM:
 ; to RAM:
 ;
 MSG_ICON_COPY_DF0
-Παράκαμψη Όλων
+στο DF0:
 ; to DF0:
 ;
 MSG_ICON_COPY_OTHER
-Όλα
+σε άλλο...
 ; to other...
 ;
 MSG_ICON_COPY2
-Έξοδος
+Αντιγραφή...
 ; Copy...
 ;
 MSG_ICON_COPY_TO
-Σώσιμο
+στο
 ; to
 ;
 MSG_ICONS_NEWCOMMAND_MENU
-Κλείσιμο
+Εντολή...
 ; Command...
 ;
 MSG_ICONS_SHORTCUT_MENU
-Ναι
+Δημιουργία Συντόμευσης
 ; Create Shortcut
 ;
 MSG_DESKTOP_POPUP_LEFTOUT
-Όχι
+Δημιουργία Συντόμευσης
 ; Create Left-out
 ;
 MSG_DESKTOP_POPUP_COPY
-Συνέχεια
+Αντιγραφή στην επιφάνεία εργασίας
 ; Copy to Desktop
 ;
 MSG_DESKTOP_POPUP_MOVE
-Εντάξει
+Μετακίνηση στην επιφάνεια εργασίας
 ; Move to Desktop
 ;
 MSG_ICON_COPY_DESKTOP
-Άκυρο
+στην επιφάνεια εργασίας
 ; to Desktop
-;
-MSG_ICON_LINEUP
-Αντικατάσταση Όλων
-; Line Up
-;
-MSG_ICON_SNAPSHOT_LISTER
-Συνέχεια
-; Snapshot Lister
-;
-MSG_ICON_SNAPSHOT_ICONS
-Μετακίνηση
-; Snapshot Icons
-;
-MSG_ICON_SNAPSHOT_ALL
-Κατάργηση
-; Snapshot All
-;
-MSG_ICON_SNAPSHOT_WINDOW
-Snapshot Window
-; Snapshot Window
-;
-MSG_ICON_EJECT
-Eject Disk
-; Eject Disk
-;
-MSG_EJECTING
-ejecting
-; ejecting
-;
-MSG_EJECT_UNSUPPORTED
-%s cannot be ejected.
-; %s cannot be ejected.
 ;
 MSG_BUTTONS_MENU
 Κουμπιά
@@ -1098,10 +998,6 @@ MSG_FILETYPES_MENU
 Είδη Αρχείων...
 ; File Types...
 ;
-MSG_HOTKEYS_MENU
-Hotkeys...
-; Hotkeys...
-;
 MSG_MENU_MENU
 Menu Χρήστη...
 ; User Menus...
@@ -1115,44 +1011,16 @@ MSG_OPTIONS_MENU
 ; Options...
 ;
 MSG_DEFPUBSCR_MENU
-Προσπαθείστε ξανά
+Βασική Κοινή Οθόνη
 ; Default PubScreen
 ;
-MSG_MENU_HOTKEYS
-Προσπαθείστε ξανά
-; Hotkeys...
-;
-MSG_HOTKEYS_TITLE
-Νέα προσπάθεια
-; Hotkeys
-;
-MSG_MENU_SCRIPTS
-Άκυρο
-; Scripts...
-;
 MSG_MENU_SYSMENU
-Αντικατάσταση
+Menu Συστήματος...
 ; System Menus...
 ;
 MSG_MENU_ICONPOS
-Παράκαμψη
+Τοποθέτηση Εικονιδίων...
 ; Icon Positioning...
-;
-MSG_ENVIRONMENT_SAVE_LAYOUT_NEW
-Παράκαμψη Όλων
-; Save Layout
-;
-MSG_ENVIRONMENT_EDIT
-Όλα
-; Environment...
-;
-MSG_ENVIRONMENT_LOAD_NEW
-Έξοδος
-; Load Environment...
-;
-MSG_ENVIRONMENT_SAVE_NEW
-Σώσιμο
-; Save Environment
 ;
 MSG_SELECT_TITLE
 Επιλογή Αρχείων
@@ -1193,10 +1061,6 @@ _Ημ/νία
 MSG_SELECT_DATE_TO
 στο
 ; to
-;
-MSG_SELECT_PROT
-Bits on
-; Bits on
 ;
 MSG_SELECT_INCLUDE
 Συμπερίληψη
@@ -1251,8 +1115,7 @@ MSG_DOS_ERROR_CODE
 ; Error %ld
 ;
 MSG_ERROR_OCCURED
-Συνέβει λάθος %s '%s'\n\
-%s
+Συνέβει λάθος %s '%s'\n%s
 ; An error occured %s '%s'\n%s
 ;
 MSG_ERROR_DEST_IS_DIRECTORY
@@ -1264,73 +1127,67 @@ MSG_ERROR_DEST_IS_FILE
 ; Destination '%s' is a file.
 ;
 MSG_ERROR_UNKNOWN_CODE
-Προσπαθείστε ξανά
+Άγνωστος κωδικός λάθους
 ; Unknown error code
 ;
 MSG_BUTTONS_ERROR_SAVING
-Νέα προσπάθεια
+Λάθος στην καταχώρηση των κουμπιών!
 ; Error saving button bank!
 ;
 MSG_BUTTONS_ERROR_LOADING
-Άκυρο
+Λάθος στην ανάγνωση των κουμπιών!
 ; Error loading button bank!
 ;
 MSG_ERROR_CREATING_DIRECTORY
-Αντικατάσταση
-; creating the directory
-;
-MSG_CUSTPORT_NOT_FOUND
-Παράκαμψη
-; User-specified custom handler port\n'%s'\ncould not be found!
+δημιουργία του καταλόγου
+; Error creating the directory
 ;
 MSG_ALREADY_RUNNING
-Παράκαμψη Όλων
-; Directory Opus appears to be already running!\n\
-; Running a second copy has the potential to cause\n\
-; problems, and it is recommended that you do not.
+Το Directory Opus φαίνεται ότι είναι σε λειτουργία!\nΞεκινώντας το ξανά, μπορεί να δημιουργηθούν προβλήματα\nκαι συνίσταται να μην πραγματοποιηθεί αυτό.
+; Directory Opus appears to be already running!\nRunning a second copy has the potential to cause\nproblems, and it is recommended that you do not.
 ;
 MSG_ALREADY_RUNNING_BUTTONS
-Όλα
+Ακύρωση|Εκτέλεση Ξανά
 ; Cancel|Run Again
 ;
 MSG_UNABLE_TO_CLOSE_SCREEN
-Έξοδος
+Το Directory Opus δεν μπορεί να κλείσει την οθόνη του.\nΚλείστε όλα τα παράθυρα και ξαναδοκιμάστε.
 ; Directory Opus is unable to close its screen.\nPlease close all windows and try again.
 ;
 MSG_ERROR_INVALID_DATE
-Σώσιμο
+Εισήχθη λανθασμένη ακολουθία ημ/νίας!
 ; Invalid date string entered!
 ;
 MSG_UNABLE_TO_OPEN_SCREEN
-Κλείσιμο
+Αδύνατο να ανοίξει οθόνη!
 ; Can't open screen!
 ;
 MSG_AN_ERROR_OCCURED
-Ναι
+Συνέβει κάποιο λάθος
 ; An error occured 
 ;
 MSG_ERROR
-Όχι
+Λάθος
 ; Error 
 ;
 MSG_SIZE
-Συνέχεια
+Μέγεθος
 ; Size
 ;
 MSG_DATE
-Εντάξει
+Ημ/νία
 ; Date
 ;
 MSG_OLD
-Άκυρο
+Παλιό
 ; Old
 ;
 MSG_NEW
-Αντικατάσταση Όλων
+Νέο
 ; New
 ;
 MSG_FILE_EXISTS
-Συνέχεια
+Το αρχείο '%s' υπάρχει ήδη!
 ; File '%s' already exists!
 ;
 MSG_PROGRESS_OPERATION_DELETING
@@ -1338,12 +1195,8 @@ MSG_PROGRESS_OPERATION_DELETING
 ; Deleting...
 ;
 MSG_DELETE_CONFIRM
-Προσοχή: δεν μπορείτε να επανακτήσετε\n\
-ό,τι διαγράψετε! Να διαγραφούν:\n\n\
-%ld αρχείο(α) και\n\
-%ld κατάλογος(οι) (και τα περιεχόμενά τους);
-; Warning: you cannot get back\nwhat you delete! OK to delete:\n\n\
-; %ld file(s) and\n%ld drawer(s) (and their contents)?
+Προσοχή: δεν μπορείτε να επανακτήσετε\nό,τι διαγράψετε! Να διαγραφούν:\n\n%ld αρχείο(α) και\n%ld κατάλογος(οι) (και τα περιεχόμενά τους);
+; Warning: you cannot get back\nwhat you delete! OK to delete:\n\n%ld file(s) and\n%ld drawer(s) (and their contents)?
 ;
 MSG_DELETE
 Διαγραφή
@@ -1353,20 +1206,13 @@ MSG_DELETE_ALL
 Διαγραφή Όλων
 ; Delete All
 ;
-MSG_DELETE_FILE_CONFIRM
-\x00
-; Delete '%s'?
-;
 MSG_DELETE_DIR_CONFIRM
-Το '%s' είναι κατάλογος.\n\
-Να συνεχιστεί η διαγραφή;
+Το '%s' είναι κατάλογος.\nΝα συνεχιστεί η διαγραφή;
 ; '%s' is a directory.\nProceed with delete operation?
 ;
 MSG_DELETE_PROTECTED
-Το '%s' είναι προστατευμένο από διαγραφή.\n\
-Να απο-προστατευθεί και να ξαναπροσπαθήσετε;
-; '%s' is protected against deletion.\n\
-; Unprotect and try again?
+Το '%s' είναι προστατευμένο από διαγραφή.\nΝα απο-προστατευθεί και να ξαναπροσπαθήσετε;
+; '%s' is protected against deletion.\nUnprotect and try again?
 ;
 MSG_UNPROTECT
 Αποπροστασία
@@ -1417,8 +1263,7 @@ MSG_ENVIRONMENT_SAVING
 ; Saving environment file...
 ;
 MSG_BUTTONS_CHANGE_WARNING
-Η ομάδα κουμπιών '%s' έχει αλλαχθεί.\n\
-Να καταχωρηθεί;
+Η ομάδα κουμπιών '%s' έχει αλλαχθεί.\nΝα καταχωρηθεί;
 ; Button bank '%s' has been modified.\nDo you wish to save it?
 ;
 MSG_BUTTONS_CREATE_WHICH_TYPE
@@ -1498,18 +1343,12 @@ MSG_HUNT_ENTER_FILENAME
 ; Enter file pattern to search for.
 ;
 MSG_HUNT_FOUND_FILE
-Το αρχείο '%s' βρέθηκε στον κατάλογο\n\
-'%s'\n\
-Να πάω εκεί;
+Το αρχείο '%s' βρέθηκε στον κατάλογο\n'%s'\nΝα πάω εκεί;
 ; Found the file '%s' in the directory\n'%s'\nShall I go there?
 ;
 MSG_NEW_LISTER
 Νέος Καταλογέας
 ; New Lister
-;
-MSG_SEARCH_COMMENTS
-Search file comments
-; Search file comments
 ;
 MSG_FUNC_DESC_ADDICON
 Προσθήκη εικονιδίων στα αρχεία
@@ -1747,41 +1586,21 @@ MSG_FUNC_DESC_SETBACKGROUND
 Χρήση σαν εικόνα υποβάθρου
 ; Set as background picture
 ;
-MSG_FUNC_DESC_RESET
-Reset Things
-; Reset Things
-;
-MSG_FUNC_DESC_STOPSNIFFER
-Stop Filetype Sniffer
-; Stop Filetype Sniffer
-;
 MSG_ICON_GROUP
 Ομάδες Εφαρμογών
 ; Program Groups
 ;
 MSG_GROUP_ENTER_NAME
-Νέα προσπάθεια
+Όνομα ομάδας εφαρμογών
 ; Enter Program Group Name
 ;
 MSG_RXERR_1
 Το αρχείο απερρίφθη από τα φίλτρα
 ; File rejected by filters
 ;
-MSG_RXERR_5
-Invalid set/query item
-; Invalid set/query item
-;
 MSG_RXERR_6
 Λάθος όνομα ή εντολή
 ; Invalid name or keyword
-;
-MSG_RXERR_8
-Invalid trap
-; Invalid trap
-;
-MSG_RXERR_10
-Invalid lister handle
-; Invalid lister handle
 ;
 MSG_RXERR_12
 Λάθος πίνακας
@@ -1808,8 +1627,7 @@ MSG_RXERR_UNKNOWN
 ; Unknown error code
 ;
 MSG_DESKTOP_REALLY_DELETE
-Προσοχή: Δεν μπορείτε να ανακτήσετε\n\
-ό,τι διαγράψετε! Να διαγραφούν:\n\n
+Προσοχή: Δεν μπορείτε να ανακτήσετε\nό,τι διαγράψετε! Να διαγραφούν:\n\n
 ; Warning: you cannot get back\nwhat you delete! OK to delete:\n\n
 ;
 MSG_DESKTOP_DELETE_GROUPS
@@ -1817,19 +1635,19 @@ MSG_DESKTOP_DELETE_GROUPS
 ; %ld program group(s)
 ;
 MSG_DESKTOP_DELETE_ASSIGNS
-Άκυρο
+%ld ψευδομονάδα(ες)
 ; %ld assign(s)
 ;
 MSG_DESKTOP_DELETE_GROUP_OBJECTS
-Αντικατάσταση
+%ld αντικείμενο(α) ομάδας
 ; %ld group object(s)
 ;
 MSG_DESKTOP_DELETE_DESKTOP_FILES
-Παράκαμψη
+%ld αρχείο(α)
 ; %ld file(s)
 ;
 MSG_DESKTOP_DELETE_DESKTOP_DIRS
-Παράκαμψη Όλων
+%ld κατάλογο(οι)
 ; %ld dir(s)
 ;
 MSG_REPLACE_SAME
@@ -1877,12 +1695,8 @@ MSG_FILE_ALREADY_EXISTS
 ; File '%s' exists and would be replaced.\n
 ;
 MSG_BRIEF_FILE_EXISTS
-Το αρχείο '%s' υπάρχει ήδη. Να αντικατασταθεί;\n\n\
-Νέο - Μέγεθος : %7ld  Ημ/νία : %19s%s\n\
-Παλαιό - Μέγεθος : %7ld  Ημ/νία : %19s%s
-; File '%s' already exists. Replace it?\n\n\
-; New - Size : %7ld  Date : %19s%s\n\
-; Old - Size : %7ld  Date : %19s%s
+Το αρχείο '%s' υπάρχει ήδη. Να αντικατασταθεί;\n\nΝέο - Μέγεθος : %7ld  Ημ/νία : %19s%s\nΠαλαιό - Μέγεθος : %7ld  Ημ/νία : %19s%s
+; File '%s' already exists. Replace it?\n\nNew - Size : %7ld  Date : %19s%s\nOld - Size : %7ld  Date : %19s%s
 ;
 MSG_REPLACE_VER
   Έκδοση : %ld.%ld.%ld
@@ -1961,21 +1775,8 @@ MSG_LISTER_TITLE_USED
 ; In Use
 ;
 MSG_CLI_HELP
-Γράψτε 'help list' για έναν κατάλογο των εντολών,\n\
-ή 'help <εντολή>' για τις παραμέτρους της.\n\
-Γράψτε 'quit' για έξοδο.\n\n\
-Εισάγετε μια εσωτερική εντολή με παραμέτρους\n\
-για να εκτελεσθεί. Για να εκτελέσετε μια εντολή ARexx του DOpus\n\
-γράψτε ένα σύμβολο "+" πριν την εντολή.\n\
-Προσθέστε το "&" εάν θέλετε η εντολή να εκτελεσθεί\n\
-στο υπόβαθρο.\n
-; Type 'help list' for a list of commands,\n\
-; or 'help <command>' for a command template.\n\
-; Type 'quit' to exit the CLI.\n\n\
-; Enter an internal command with arguments to\n\
-; execute it. To execute a DOpus ARexx command,\n\
-; enter a + symbol before the command. Append a &\n\
-; if you want the command to be asynchronous.\n
+Γράψτε 'help list' για έναν κατάλογο των εντολών,\nή 'help <εντολή>' για τις παραμέτρους της.\nΓράψτε 'quit' για έξοδο.\n\nΕισάγετε μια εσωτερική εντολή με παραμέτρους\nγια να εκτελεσθεί. Για να εκτελέσετε μια εντολή ARexx του DOpus\nγράψτε ένα σύμβολο "+" πριν την εντολή.\nΠροσθέστε το "&" εάν θέλετε η εντολή να εκτελεσθεί\nστο υπόβαθρο.\n
+; Type 'help list' for a list of commands,\nor 'help <command>' for a command template.\nType 'quit' to exit the CLI.\n\nEnter an internal command with arguments to\nexecute it. To execute a DOpus ARexx command,\nenter a + symbol before the command. Append a &\nif you want the command to be asynchronous.\n
 ;
 MSG_CLI_NO_TEMPLATE
 Η εντολή δεν έχει ορίσματα
@@ -1994,15 +1795,8 @@ MSG_ICONPOS_WINDOW
 ; Icon positioning area
 ;
 MSG_ICONPOS_INSTRUCTIONS
-Ορίστε με το ποντίκι (πατώντας και τραβώντας) τις περιοχές όπυ θα\n\
-εμφανίζονται τα εικονίδια. Πατήστε\n\
-στο "Εντάξει" ή "Άκυρο" όταν τελειώσετε.
-; Click and drag to mark areas where icons can be positioned.\n\
-; Click OK or Cancel when finished.
-;
-MSG_ICONPOS_APPICON
-AppIcons
-; AppIcons
+Ορίστε με το ποντίκι (πατώντας και τραβώντας) τις περιοχές όπυ θα\nεμφανίζονται τα εικονίδια. Πατήστε\nστο "Εντάξει" ή "Άκυρο" όταν τελειώσετε.
+; Click and drag to mark areas where icons can be positioned.\nClick OK or Cancel when finished.
 ;
 MSG_ICONPOS_DISKS
 Δίσκοι
@@ -2020,10 +1814,6 @@ MSG_ICONPOS_GROUPS
 Ομάδες
 ; Groups
 ;
-MSG_ICONPOS_LEFTOUT
-Left-outs
-; Left-outs
-;
 MSG_COMMAND_SAVE
 Δώστε όνομα αρχείου για την εντολή καταχώρησης
 ; Enter Filename To Save Command
@@ -2035,14 +1825,6 @@ MSG_SAVING_COMMAND
 MSG_EDIT_COMMAND
 Επεξεργασία Εντολής...
 ; Edit Command...
-;
-MSG_COMMAND_DESCRIPTION
-Enter a description for this command.
-; Enter a description for this command.
-;
-MSG_COMMAND_LEAVEOUT
-Leave out on desktop
-; Leave out on desktop
 ;
 MSG_START_APPEARANCE
 Εμφάνιση
@@ -2077,44 +1859,32 @@ MSG_START_SELECT_LABEL
 ; Enter label for Start Menu.
 ;
 MSG_OPEN_STARTMENU_MENU
-Προσπαθείστε ξανά
+Άνοιγμα Menu έναρξης...
 ; Load Start Menu...
 ;
 MSG_START_SELECT_MENU
-Νέα προσπάθεια
+Επιλογή Menu έναρξης για άνοιγμα
 ; Select Start Menu To Load
 ;
 MSG_START_FONT
-Άκυρο
+Αλλαγή Γραμματοσειράς...
 ; Change Font...
 ;
 MSG_START_SELECT_FONT
-Αντικατάσταση
+Επιλογή Γραμ/ρας για το Menu έναρξης
 ; Select Font For Start Menu
 ;
 MSG_START_SCALING
-Παράκαμψη
+Σμίκρυνση εικόνων
 ; Scale Images
 ;
-MSG_START_DRAGBAR
-Παράκαμψη Όλων
-; Drag Bar
-;
 MSG_START_DRAGBAR_OFF
-Όλα
+Κλειστό
 ; Off
 ;
 MSG_START_LABEL_FONT
-Έξοδος
+Αλλαγή Γραμματοσειράς Ετικέττας...
 ; Change Label Font...
-;
-MSG_START_PICTURE
-Σώσιμο
-; Change Background...
-;
-MSG_START_SELECT_PICTURE
-Κλείσιμο
-; Select Background Picture For Start Menu
 ;
 MSG_KEYFINDER_TITLE
 Αναζήτηση Πλήκτρου

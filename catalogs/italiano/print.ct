@@ -70,18 +70,6 @@ MSG_PRINT_SPACING_8
 8 lin./poll.
 ; 8 LPI
 ;
-MSG_PRINT_PITCH_PICA
-Pica
-; Pica
-;
-MSG_PRINT_PITCH_ELITE
-Elite
-; Elite
-;
-MSG_PRINT_PITCH_FINE
-Fine
-; Fine
-;
 MSG_PRINT_CONFIGURATION
 c_onfigurazione...
 ; c_onfiguration...
@@ -166,17 +154,9 @@ MSG_PRINT_DESC
 Stampa files di testo
 ; Print text files
 ;
-MSG_PRINT_OUTPUT
-Outp_ut
-; Outp_ut
-;
 MSG_PRINT_OUTPUT_PRINTER
 Stampante
 ; Printer
-;
-MSG_PRINT_OUTPUT_FILE
-File
-; File
 ;
 MSG_SELECT_OUTPUT_FILE
 Seleziona il file di uscita

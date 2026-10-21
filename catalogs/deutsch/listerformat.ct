@@ -1,0 +1,112 @@
+## version $VER: listerformat.catalog 5.5 (03.09.96)
+## codeset 0
+## language deutsch
+;
+MSG_LISTER_FORMAT_TITLE
+Lister-Format
+; List Format
+;
+MSG_LISTER_AVAILABLE_DISPLAY_ITEMS
+Verfügbar...
+; Available...
+;
+MSG_LISTER_SELECTED_DISPLAY_ITEMS
+Anzeige/Sortieren...
+; Display/Sort...
+;
+MSG_LISTER_LIST_FILENAME
+Dateiname
+; File Name
+;
+MSG_LISTER_LIST_FILESIZE
+Dateigröße
+; File Size
+;
+MSG_LISTER_LIST_PROTECTION
+Schutzbits
+; Protection
+;
+MSG_LISTER_LIST_DATE
+Dateidatum
+; File Date
+;
+MSG_LISTER_LIST_COMMENT
+Kommentar
+; Comment
+;
+MSG_LISTER_LIST_FILETYPE
+Dateityp
+; File Type
+;
+MSG_LISTER_LIST_OWNER
+Besitzer
+; Owner
+;
+MSG_LISTER_LIST_GROUP
+Gruppe
+; Group
+;
+MSG_LISTER_LIST_NETPROTECTION
+Netzzugriff
+; Net Access
+;
+MSG_LISTER_ENTRY_SEPARATION
+_Eintragsordnung
+; _Entry Separation
+;
+MSG_LISTER_REVERSE_SORTING
+Sort. _umkehren
+; _Reverse Sorting
+;
+MSG_LISTER_SEPARATION_MIX
+Datei/Verzeichnis
+; Mix Files/Dirs
+;
+MSG_LISTER_SEPARATION_DIRS
+erst Verzeichnisse
+; Directories First
+;
+MSG_LISTER_SEPARATION_FILES
+erst Dateien
+; Files First
+;
+MSG_LISTER_SHOW
+Filter:  An_zeigen
+; _Show Filter
+;
+MSG_LISTER_HIDE
+Filter: _Verbergen
+; _Hide Filter
+;
+MSG_LISTER_REJECT_ICONS
+P_iktogrammfilter
+; _Filter Icons
+;
+MSG_LISTER_HIDDEN_BIT
+_H-Bit nutzen
+; H_idden
+;
+MSG_LISTER_USE
+_Benutzen
+; _Use
+;
+MSG_LISTER_CANCEL
+_Abbruch
+; _Cancel
+;
+MSG_LISTER_SAVE
+S_peichern
+; S_ave
+;
+MSG_DEFAULTS
+Standard_werte
+; Reset to _Defaults
+;
+MSG_FTP_DEFAULTS
+_Füllstandsanzeige
+; Reset FTP Defaults
+;
+MSG_LISTER_FUEL_GAUGE
+Vere_rben
+; Free Space _Gauge
+;

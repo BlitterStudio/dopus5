@@ -1,10 +1,6 @@
 ## version $VER: Misc.catalog 5.61 (08.07.1997)
 ## codeset 0
 ## language français
-; ************************************************* 
-; Catalog description file for misc.module
-; ************************************************* 
-;
 ;
 MSG_BEEP_DESC
 Fait un bip
@@ -15,6 +11,6 @@ Flashe l'écran
 ; Flashes the display
 ;
 MSG_ALARM_DESC
-Sonne une alarme\x00
+Sonne une alarme
 ; Sounds an alarm
 ;

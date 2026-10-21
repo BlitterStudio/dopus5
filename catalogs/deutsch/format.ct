@@ -18,10 +18,6 @@ MSG_FORMAT_CANCEL
 _Abbruch
 ; _Cancel
 ;
-MSG_FORMAT_NAME
-_Name
-; _Name
-;
 MSG_FORMAT_FFS
 Fas_t File System
 ; F_ast File System
@@ -83,19 +79,15 @@ Weiter|Abbruch
 ; Proceed|Cancel
 ;
 MSG_DISK_NOT_BLANK
-Disk im Laufwerk %s ist nicht leer!\n\
-%s enthält %s.\n\
-Alle Daten werden gelöscht.\n\
-Wählen Sie 'Weiter' um fortzufahren.
-; Disk in drive %s is not blank!\nVolume '%s' contains %s.\n\
-; All data will be erased.\nChoose Proceed to continue.
+Disk im Laufwerk %s ist nicht leer!\n%s enthält %s.\nAlle Daten werden gelöscht.\nWählen Sie 'Weiter' um fortzufahren.
+; Disk in drive %s is not blank!\nVolume '%s' contains %s.\nAll data will be erased.\nChoose Proceed to continue.
 ;
 MSG_ABORTED
 Abgebrochen.
 ; Aborted.
 ;
 MSG_FORMAT_INITIALISING
-Initialisiere Disk ...
+Initialisiere Disk...
 ; Initialising disk...
 ;
 MSG_FORMAT_FORMATTING
@@ -103,38 +95,38 @@ Formatiere ...
 ; Formatting...
 ;
 MSG_FORMAT_FORMATERROR
-Format error on track %ld.
+Formatier-Fehler auf Spur %ld.
 ; Format error on track %ld.
 ;
 MSG_FORMAT_VERIFYERROR
-Verify error on track %ld.
+Überprüfungs-Fehler auf Spur %ld.
 ; Verify error on track %ld.
 ;
 MSG_FORMAT_SUCCESSFUL
-Format successful!
+Formatieren erfolgreich!
 ; Format successful!
 ;
 MSG_FORMAT_FAILED
-Format failed.
+Formatieren fehlgeschlagen.
 ; Format failed.
 ;
 MSG_FORMAT_SETTING_UP
-Setting up ...
+Stelle ein...
 ; Setting up...
 ;
 MSG_FORMAT_CLEANING_UP
-Cleaning up ...
+Räume auf...
 ; Cleaning up...
 ;
 MSG_FORMAT_MAKING_TRASH
-Making Trashcan ...
+Erzeuge Mülleimer...
 ; Making Trashcan...
 ;
 MSG_INSTALLING_DISK
-Installing Bootblock ...
+Installiere Bootblock...
 ; Installing Bootblock...
 ;
 MSG_FORMAT_DESC
-Format disks
+Formatiere Datenträger
 ; Format disks
 ;

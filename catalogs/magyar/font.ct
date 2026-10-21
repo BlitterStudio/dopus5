@@ -1,0 +1,60 @@
+## version $VER: viewfont.catalog 2.1 (22.9.97) Készítette Miklós Árpád
+## codeset 0
+## language magyar
+;
+MSG_FONT_TITLE
+Betûkészlet-bemutató
+; Font Viewer
+;
+MSG_FONT_FONT
+_Betûkészlet
+; _Font
+;
+MSG_FONT_SIZE
+_Pontméret
+; _Size
+;
+MSG_FONT_PRINT
+_Nyomtasd
+; _Print
+;
+MSG_VIEWFONT_DESC
+Betûkészlet megmutatása
+; View a font
+;
+MSG_FONT_BOLD
+_F
+; _B
+;
+MSG_FONT_ITALIC
+_D
+; _I
+;
+MSG_FONT_ULINE
+_A
+; _U
+;
+MSG_FONT_SELECT
+Válasszon ki egy betûkészletet
+; Select Font
+;
+MSG_MENU_PROJECT
+Állomány
+; Project
+;
+MSG_MENU_OPEN_FONT
+Betûkészletet betölt...
+; Open Font...
+;
+MSG_MENU_SAVE_SETTINGS
+Beállításokat ment
+; Save Settings
+;
+MSG_MENU_QUIT
+Kilép
+; Quit
+;
+MSG_MENU_ABOUT
+A programról...
+; About...
+;

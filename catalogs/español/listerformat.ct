@@ -1,0 +1,124 @@
+## version $VER: listerformat.catalog 1.0 (26.06.02)
+## codeset 0
+## language español
+;
+MSG_LISTER_FORMAT_TITLE
+Formato de la Lista
+; List Format
+;
+MSG_LISTER_AVAILABLE_DISPLAY_ITEMS
+Disponible...
+; Available...
+;
+MSG_LISTER_SELECTED_DISPLAY_ITEMS
+Mostrar/Orden...
+; Display/Sort...
+;
+MSG_LISTER_LIST_FILENAME
+Nombre
+; File Name
+;
+MSG_LISTER_LIST_FILESIZE
+Tamaño
+; File Size
+;
+MSG_LISTER_LIST_PROTECTION
+Atributos
+; Protection
+;
+MSG_LISTER_LIST_DATE
+Fecha
+; File Date
+;
+MSG_LISTER_LIST_COMMENT
+Comentario
+; Comment
+;
+MSG_LISTER_LIST_FILETYPE
+Tipo Fichero
+; File Type
+;
+MSG_LISTER_LIST_OWNER
+Dueño
+; Owner
+;
+MSG_LISTER_LIST_GROUP
+Grupo
+; Group
+;
+MSG_LISTER_LIST_NETPROTECTION
+Atributos Red
+; Net Access
+;
+MSG_LISTER_ENTRY_SEPARATION
+_Mostrar
+; _Entry Separation
+;
+MSG_LISTER_REVERSE_SORTING
+Orde_n inverso
+; _Reverse Sorting
+;
+MSG_LISTER_SEPARATION_MIX
+Fich./Dirs. mezclados
+; Mix Files/Dirs
+;
+MSG_LISTER_SEPARATION_DIRS
+Directorios primero
+; Directories First
+;
+MSG_LISTER_SEPARATION_FILES
+Ficheros primero
+; Files First
+;
+MSG_LISTER_SHOW
+_Ver:
+; _Show Filter
+;
+MSG_LISTER_HIDE
+Oculta_r:
+; _Hide Filter
+;
+MSG_LISTER_REJECT_ICONS
+Ocultar icono_s
+; _Filter Icons
+;
+MSG_LISTER_HIDDEN_BIT
+Atrib. H = _oculto
+; H_idden
+;
+MSG_LISTER_USE
+_Usar
+; _Use
+;
+MSG_LISTER_CANCEL
+_Cancelar
+; _Cancel
+;
+MSG_LISTER_LIST_VERSION
+Versión
+; Version
+;
+MSG_LISTER_SAVE
+_Guardar
+; S_ave
+;
+MSG_DEFAULTS
+Opciones por _defecto
+; Reset to _Defaults
+;
+MSG_FTP_DEFAULTS
+Opc. FTP por defecto
+; Reset FTP Defaults
+;
+MSG_LISTER_FUEL_GAUGE
+_Barra Espacio Libre
+; Free Space _Gauge
+;
+MSG_LISTER_INHERIT
+_Heredar
+; I_nherit
+;
+MSG_SET_AS_DEFAULTS
+_Poner Por Defecto
+; Set _As Defaults
+;

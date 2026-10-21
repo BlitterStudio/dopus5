@@ -10,14 +10,6 @@ MSG_FIND_TITLE
 Przeszukiwanie opisów typów
 ; Filetype Finder
 ;
-MSG_FIND_PRI
-Pri
-; Pri
-;
-MSG_FIND_ID
-ID
-; ID
-;
 MSG_FIND_FILETYPE
 Typ
 ; Filetype
@@ -70,18 +62,6 @@ MSG_NONE_FOUND_4
 dla tego pliku?
 ; this file?
 ;
-MSG_NONE_FOUND_5
-\x00
-; 
-;
-MSG_NONE_FOUND_6
-\x00
-; 
-;
-MSG_NONE_FOUND_7
-\x00
-; 
-;
 MSG_STORED_FOUND_1
 Ûaden z zainstalowanych opisów
 ; No installed filetype matches the
@@ -101,14 +81,6 @@ MSG_STORED_FOUND_4
 MSG_STORED_FOUND_5
 czy wolisz utworzyê nowy opis?
 ; now or create a new one?
-;
-MSG_STORED_FOUND_6
-\x00
-; 
-;
-MSG_STORED_FOUND_7
-\x00
-; 
 ;
 MSG_BETTER_FOUND_1
 W archiwum znajduje sië opis pasujâcy
@@ -153,18 +125,6 @@ Czy chcesz uûyê tego opisu
 MSG_INSTALLED_FOUND_4
 czy wolisz utworzyê nowy?
 ; or create a new one?
-;
-MSG_INSTALLED_FOUND_5
-\x00
-; 
-;
-MSG_INSTALLED_FOUND_6
-\x00
-; 
-;
-MSG_INSTALLED_FOUND_7
-\x00
-; 
 ;
 MSG_CREATE_DESC
 Tworzy nowy opis typu pliku
@@ -239,11 +199,7 @@ Dodaj plik...
 ; Add a file...
 ;
 MSG_CREATE_WARN_EDITED
-UWAGA\n\n\
-Wszelkie zmiany dokonane podczas\n\
-uûywania edytora opisów typów\n\
-plików zostanâ stracone.\n\
-Na pewno chcesz kontynuowaê?
+UWAGA\n\nWszelkie zmiany dokonane podczas\nuûywania edytora opisów typów\nplików zostanâ stracone.\nNa pewno chcesz kontynuowaê?
 ; WARNING\n\nYou have used the editor.\nIf you continue your changes will be lost...
 ;
 MSG_CREATE_CONTINUE_CANCEL
@@ -255,7 +211,6 @@ Zastâp|Ponie_chaj
 ; Replace|Cancel
 ;
 MSG_FILETYPE_EXISTS
-Typ "%s" juû istnieje.\n\
-Czy chcesz go zastâpiê?
+Typ "%s" juû istnieje.\nCzy chcesz go zastâpiê?
 ; Filetype '%s' exists.\nDo you wish to replace it?
 ;

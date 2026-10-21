@@ -26,21 +26,9 @@ MSG_TYPE
 Soort:
 ; Type:
 ;
-MSG_TYPE_STEREO
-Stereo
-; Stereo
-;
-MSG_TYPE_MONO
-Mono
-; Mono
-;
 MSG_TYPE_RAW
 Rauw
 ; Raw
-;
-MSG_STATUS
-Status:
-; Status:
 ;
 MSG_STATUS_LOADING
 Lees bestand in...

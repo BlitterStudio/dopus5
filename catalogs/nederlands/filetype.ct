@@ -10,14 +10,6 @@ MSG_FIND_TITLE
 Vind bestandssoort
 ; Filetype Finder
 ;
-MSG_FIND_PRI
-Pri
-; Pri
-;
-MSG_FIND_ID
-ID
-; ID
-;
 MSG_FIND_FILETYPE
 Bestandssoort
 ; Filetype
@@ -70,18 +62,6 @@ MSG_NONE_FOUND_4
 bestandssoort voor dit bestand aanmaken?
 ; this file?
 ;
-MSG_NONE_FOUND_5
-
-; 
-;
-MSG_NONE_FOUND_6
-
-; 
-;
-MSG_NONE_FOUND_7
-
-; 
-;
 MSG_STORED_FOUND_1
 Geen geïnstalleerde bestandssoort komt
 ; No installed filetype matches the
@@ -104,10 +84,6 @@ Deze bestandssoort installeren of
 ;
 MSG_STORED_FOUND_6
 een nieuwe aanmaken?
-; 
-;
-MSG_STORED_FOUND_7
-
 ; 
 ;
 MSG_BETTER_FOUND_1
@@ -154,18 +130,6 @@ MSG_INSTALLED_FOUND_4
 gebruiken, of een nieuwe aanmaken?
 ; or create a new one?
 ;
-MSG_INSTALLED_FOUND_5
-
-; 
-;
-MSG_INSTALLED_FOUND_6
-
-; 
-;
-MSG_INSTALLED_FOUND_7
-
-; 
-;
 MSG_CREATE_DESC
 Nieuwe bestandssoort
 ; Create new filetype
@@ -198,25 +162,13 @@ MSG_CREATE_NAME
 Naa_m:
 ;  _Name:
 ;
-MSG_CREATE_IFF
-  _IFF:
-;   _IFF:
-;
 MSG_CREATE_GROUP
 _Groep:
 ; _Group:
 ;
-MSG_CREATE_ID
-   I_D:
-;    I_D:
-;
 MSG_CREATE_BYTES
 By_tes:
 ; _Bytes:
-;
-MSG_CREATE_CASE
-Case
-; Case
 ;
 MSG_CREATE_NOCASE
 NoCase
@@ -239,9 +191,7 @@ Nieuw bestand...
 ; Add a file...
 ;
 MSG_CREATE_WARN_EDITED
-WAARSCHUWING\n\n\
-U heeft de bewerker gebruikt.\n\
-Als u doorgaat zullen de wijzigingen verloren gaan...
+WAARSCHUWING\n\nU heeft de bewerker gebruikt.\nAls u doorgaat zullen de wijzigingen verloren gaan...
 ; WARNING\n\nYou have used the editor.\nIf you continue your changes will be lost...
 ;
 MSG_CREATE_CONTINUE_CANCEL
@@ -253,7 +203,6 @@ Vervang|Annuleer
 ; Replace|Cancel
 ;
 MSG_FILETYPE_EXISTS
-Bestandssoort '%s' bestaat al.\n\
-Wilt u hem vervangen?
+Bestandssoort '%s' bestaat al.\nWilt u hem vervangen?
 ; Filetype '%s' exists.\nDo you wish to replace it?
 ;

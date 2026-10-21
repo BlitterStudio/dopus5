@@ -39,6 +39,24 @@ static void set_default_tooltip_colours(CFG_ENVR *env)
 	env->tooltip_col[1] = 0;
 }
 
+// Striping starts off. The stripe colour is a light grey custom colour;
+// white is used if no pen can be had for it. The foreground pen is not used.
+static void set_default_stripe_colours(CFG_ENVR *env)
+{
+	short a;
+
+	env->env_flags &= ~ENVF_STRIPED_ROWS;
+	env->stripe_col[0] = 1;
+	env->stripe_col[1] = 2;
+	for (a = 0; a < 3; a++)
+	{
+		env->env_Colours[ENVCOL_STRIPE][0][a] = 0;
+		env->env_Colours[ENVCOL_STRIPE][1][a] = 0xbbbbbbbb;
+	}
+	env->env_ColourFlag &= ~(1 << ENVCOL_STRIPE);
+	env->env_ColourFlag |= 1 << (ENVCOL_STRIPE + CUST_PENS);
+}
+
 #ifdef __AROS__
 static void set_default_list_display(ListFormat *format)
 {
@@ -323,6 +341,7 @@ void LIBFUNC L_DefaultEnvironment(REG(a0, CFG_ENVR *env))
 	env->desktop_popup_default = DESKTOP_POPUP_NONE;
 	env->desktop_flags = DESKTOPF_NO_BORDERS;
 	env->env_flags = ENVF_BACKDROP;
+	set_default_stripe_colours(env);
 
 	// NewIcons stuff
 	env->env_NewIconsFlags = ENVNIF_ENABLE;
@@ -341,7 +360,7 @@ void LIBFUNC L_DefaultEnvironment(REG(a0, CFG_ENVR *env))
 	env->clock_format[0] = 0;
 
 	// Set version
-	env->version = CONFIG_VERSION_17;
+	env->version = CONFIG_VERSION_18;
 
 	// Get default settings
 	L_DefaultSettings(&env->settings);
@@ -661,11 +680,15 @@ void LIBFUNC L_UpdateEnvironment(REG(a0, CFG_ENVR *env))
 	if (env->version < CONFIG_VERSION_17)
 		env->clock_format[0] = 0;
 
+	// Pre-version 18
+	if (env->version < CONFIG_VERSION_18)
+		set_default_stripe_colours(env);
+
 	fix_list_format_display(&env->list_format);
 	fix_list_format_colours(&env->list_format, env->version < CONFIG_VERSION_12);
 
 	// Fix version
-	env->version = CONFIG_VERSION_17;
+	env->version = CONFIG_VERSION_18;
 
 	// Is themes path empty?
 	if (!env->themes_location[0])

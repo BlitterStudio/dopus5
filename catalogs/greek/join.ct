@@ -83,8 +83,7 @@ MSG_JOIN_ERROR_OPENING_OUTPUT
 ; Unable to open '%s' for output!
 ;
 MSG_JOIN_ERROR
-%s\n\
-Λάθος %ld %s
+%s\nΛάθος %ld %s
 ; %s\nError %ld %s
 ;
 MSG_JOIN_RETRY
@@ -146,36 +145,4 @@ MSG_SPLITTING_FILE
 MSG_ENTER_DISK
 Βάλτε νέα δισκέττα στο %s
 ; Insert next floppy into %s
-;
-MSG_CHUNK_CUSTOM
-Custom Size
-; Custom Size
-;
-MSG_CHUNK_FLOPPY_FFS
-865K (DD Floppy - FFS)
-; 865K (DD Floppy - FFS)
-;
-MSG_CHUNK_HD_FLOPPY_FFS
-1733K (HD Floppy - FFS)
-; 1733K (HD Floppy - FFS)
-;
-MSG_CHUNK_FLOPPY_OFS
-824K (DD Floppy - OFS)
-; 824K (DD Floppy - OFS)
-;
-MSG_CHUNK_HD_FLOPPY_OFS
-1651K (HD Floppy - OFS)
-; 1651K (HD Floppy - OFS)
-;
-MSG_CHUNK_MSDOS
-713K (DD MS-DOS)
-; 713K (DD MS-DOS)
-;
-MSG_CHUNK_MSDOS_HD
-1423K (HD MS-DOS)
-; 1423K (HD MS-DOS)
-;
-MSG_CHUNK_LAST
--
-; -
 ;

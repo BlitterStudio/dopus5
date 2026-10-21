@@ -83,18 +83,15 @@ A másolás nem sikerült.
 ; Diskcopy failed.
 ;
 MSG_READ_ERROR
-%s - a(z) %ld. sáv olvasásakor hiba történt:\n\
-%s
+%s - a(z) %ld. sáv olvasásakor hiba történt:\n%s
 ; Error reading %s track %ld\n%s
 ;
 MSG_WRITE_ERROR
-%s - a(z) %ld. sáv írásakor hiba történt:\n\
-%s
+%s - a(z) %ld. sáv írásakor hiba történt:\n%s
 ; Error writing %s track %ld\n%s
 ;
 MSG_VERIFY_ERROR
-%s - a(z) %ld. sáv ellenõrzésekor hiba történt:\n\
-%s
+%s - a(z) %ld. sáv ellenõrzésekor hiba történt:\n%s
 ; Error verifying %s track %ld\n%s
 ;
 MSG_DISKCOPY_READING
@@ -144,10 +141,6 @@ Névváltoztatás...
 MSG_INCOMPATIBLE
 A lemezek típusa nem kompatibilis, így nem másolhatók.
 ; Disks are of incompatible types and can not be copied.
-;
-MSG_OK
-OK
-; OK
 ;
 MSG_DISKCOPY_DESC
 Másolatok készítése lemezrõl

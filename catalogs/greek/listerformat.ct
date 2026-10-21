@@ -1,0 +1,116 @@
+## version $VER: listerformat.catalog 5.65 (8.9.97)
+## codeset 0
+## language greek
+;
+MSG_LISTER_FORMAT_TITLE
+Διαμόρφωση καταλόγου
+; List Format
+;
+MSG_LISTER_AVAILABLE_DISPLAY_ITEMS
+Διαθέσιμα...
+; Available...
+;
+MSG_LISTER_SELECTED_DISPLAY_ITEMS
+Εμφ./Ταξιν....
+; Display/Sort...
+;
+MSG_LISTER_LIST_FILENAME
+Όνομα Αρχείου
+; File Name
+;
+MSG_LISTER_LIST_FILESIZE
+Μέγεθος Αρχείου
+; File Size
+;
+MSG_LISTER_LIST_PROTECTION
+Προστασία
+; Protection
+;
+MSG_LISTER_LIST_DATE
+Ημ/νία Αρχείου
+; File Date
+;
+MSG_LISTER_LIST_COMMENT
+Σχόλιο
+; Comment
+;
+MSG_LISTER_LIST_FILETYPE
+Είδος Αρχείου
+; File Type
+;
+MSG_LISTER_LIST_OWNER
+Χρήστης
+; Owner
+;
+MSG_LISTER_LIST_GROUP
+Ομάδα
+; Group
+;
+MSG_LISTER_LIST_NETPROTECTION
+Πρόσβαση Δικτίου
+; Net Access
+;
+MSG_LISTER_ENTRY_SEPARATION
+Σύμβολο _Διαχωρισμού
+; _Entry Separation
+;
+MSG_LISTER_REVERSE_SORTING
+_Ανάποδη Ταξιν.
+; _Reverse Sorting
+;
+MSG_LISTER_SEPARATION_MIX
+Ανάμιξη Αρχείων/Καταλ.
+; Mix Files/Dirs
+;
+MSG_LISTER_SEPARATION_DIRS
+Πρώτα Κατάλογοι
+; Directories First
+;
+MSG_LISTER_SEPARATION_FILES
+Πρώτα Αρχεία
+; Files First
+;
+MSG_LISTER_SHOW
+_Εμφάνιση Φίλτρου
+; _Show Filter
+;
+MSG_LISTER_HIDE
+Α_πόκρυψη Φίλτρου
+; _Hide Filter
+;
+MSG_LISTER_REJECT_ICONS
+Φιλτράρισμα Εικονιδίων
+; _Filter Icons
+;
+MSG_LISTER_HIDDEN_BIT
+Κ_ρυμμένα
+; H_idden
+;
+MSG_LISTER_USE
+_Χρήση
+; _Use
+;
+MSG_LISTER_CANCEL
+_Ακύρωση
+; _Cancel
+;
+MSG_LISTER_LIST_VERSION
+Έκδοση
+; Version
+;
+MSG_LISTER_SAVE
+Σώσ_ιμο
+; S_ave
+;
+MSG_DEFAULTS
+Αρχικέ_ς Ρυθμίσεις
+; Reset to _Defaults
+;
+MSG_FTP_DEFAULTS
+Στήλη Ελευθ. Χώρ_ου
+; Reset FTP Defaults
+;
+MSG_LISTER_FUEL_GAUGE
+Δια_τήρηση
+; Free Space _Gauge
+;

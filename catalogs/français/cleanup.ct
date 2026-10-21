@@ -1,10 +1,6 @@
 ## version $VER: Cleanup.catalog 5.61 (08.07.97) par Georges 'Melkor' Goncalves & Kersten 'Emmy' Emmrich
 ## codeset 0
 ## language français
-; ************************************************* 
-; Catalog description file for cleanup.module
-; ************************************************* 
-;
 ;
 MSG_PLEASE_WAIT
 Veuillez patienter...
@@ -15,6 +11,6 @@ Directory Opus - Le génie du nettoyage
 ; Directory Opus - CleanUp Djinn
 ;
 MSG_CLEANUP_DESC
-Procède au nettoyage\x00
+Procède au nettoyage
 ; Perform cleanup maintenance
 ;

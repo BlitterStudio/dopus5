@@ -1,0 +1,84 @@
+## version $VER: xadopus.catalog 1.21 (29.11.00)
+## codeset 0
+## language español
+;
+MSG_TITLE
+Módulo XADopus
+; XADopus Module
+;
+MSG_XADOPEN_DESC
+Abrir archivo usando XAD
+; Open XAD Archive
+;
+MSG_XADEXTRACT_DESC
+Extraer archivo usando XAD
+; Extract XAD Archive
+;
+MSG_EXTRACTING
+Extrayendo...
+; Extracting ...
+;
+MSG_OPENING_ARC
+Abriendo archivo:
+; Opening archive:
+;
+MSG_DISKARC_EXTRACT
+¿A donde desea extraer el archivo?
+; Do you want to extract\narchive as files or to disk?
+;
+MSG_SELECT_DEST
+Elija disco destino...
+; Select destination
+;
+MSG_OK
+_Aceptar
+; _OK
+;
+MSG_FILES
+_Directorio
+; _Files
+;
+MSG_DISK
+D_isco
+; _Disk
+;
+MSG_RENAME
+_Renombrar
+; _Rename
+;
+MSG_REPLACE
+_Sí
+; _Replace
+;
+MSG_REPLACE_ALL
+_Todos
+; R_eplace All
+;
+MSG_SKIP
+_Saltar
+; _Skip
+;
+MSG_SKIP_ALL
+_Ninguno
+; S_kip All
+;
+MSG_ABORT
+A_bortar
+; _Abort
+;
+MSG_EXISTS_FORM
+El fichero '%s' ya existe. ¿Reemplazarlo?
+; File '%s' exists and would be replaced.
+;
+MSG_NO_PATH_ERR
+¡Ubicación no existe!
+; Path doesn't exist!
+;
+MSG_NO_HOOKS_ERR
+¡Imposible acceder a\nfunciones de DOpus!
+; Unable to get DOpus callback hooks !
+;
+MSG_READING_ARCHIVE
+Leyendo archivo...
+; Reading archive...
+;

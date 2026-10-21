@@ -184,6 +184,7 @@ unsigned long LIBFUNC L_Config_Environment(REG(a0, Cfg_Environment *env),
 		}
 		Att_NewNode(data->lister_items, GetString(locale, MSG_ENVIRONMENT_GAUGE_COLOUR), a, 0);
 		Att_NewNode(data->lister_items, GetString(locale, MSG_ENVIRONMENT_TOOLTIP_COLOUR), a + 1, 0);
+		Att_NewNode(data->lister_items, GetString(locale, MSG_ENVIRONMENT_STRIPE_COLOUR), a + 2, 0);
 	}
 
 	// Build icon settings list
@@ -601,6 +602,8 @@ unsigned long LIBFUNC L_Config_Environment(REG(a0, Cfg_Environment *env),
 							ptr = data->config->gauge_col;
 						else if (a == ENVCOL_TOOLTIP)
 							ptr = data->config->tooltip_col;
+						else if (a == ENVCOL_STRIPE)
+							ptr = data->config->stripe_col;
 						else
 							break;
 
@@ -1310,15 +1313,17 @@ unsigned long LIBFUNC L_Config_Environment(REG(a0, Cfg_Environment *env),
 					data->config->devices_col[a] != env->env->devices_col[a] ||
 					data->config->volumes_col[a] != env->env->volumes_col[a] ||
 					data->config->gauge_col[a] != env->env->gauge_col[a] ||
-					data->config->tooltip_col[a] != env->env->tooltip_col[a])
+					data->config->tooltip_col[a] != env->env->tooltip_col[a] ||
+					data->config->stripe_col[a] != env->env->stripe_col[a])
 				{
 					change_flags[0] |= CONFIG_CHANGE_LIST_DISPLAY;
 					break;
 				}
 			}
 
-			// Custom colours changed?
-			if (data->config->env_ColourFlag != env->env->env_ColourFlag)
+			// Custom colours or striping changed?
+			if (data->config->env_ColourFlag != env->env->env_ColourFlag ||
+				(data->config->env_flags & ENVF_STRIPED_ROWS) != (env->env->env_flags & ENVF_STRIPED_ROWS))
 				change_flags[0] |= CONFIG_CHANGE_LIST_DISPLAY;
 			else
 			{
@@ -1935,6 +1940,10 @@ void _config_env_set(config_env_data *data, short option)
 		SetGadgetValue(
 			data->option_list, GAD_ENVIRONMENT_DUAL_DEFAULT, data->config->lister_options & LISTEROPTF_DUAL_DEFAULT);
 
+		// Striped rows
+		SetGadgetValue(
+			data->option_list, GAD_ENVIRONMENT_STRIPED_ROWS, data->config->env_flags & ENVF_STRIPED_ROWS);
+
 		// Live folder updates / DOS patches (dopus/DOSPatch ENVARC: var)
 		SetGadgetValue(data->option_list, GAD_ENVIRONMENT_DOS_PATCH, data->dos_patch_state);
 		break;
@@ -2431,6 +2440,12 @@ void _config_env_store(config_env_data *data, short option)
 			data->config->lister_options |= LISTEROPTF_DUAL_DEFAULT;
 		else
 			data->config->lister_options &= ~LISTEROPTF_DUAL_DEFAULT;
+
+		// Striped rows
+		if (GetGadgetValue(data->option_list, GAD_ENVIRONMENT_STRIPED_ROWS))
+			data->config->env_flags |= ENVF_STRIPED_ROWS;
+		else
+			data->config->env_flags &= ~ENVF_STRIPED_ROWS;
 
 		// Live folder updates / DOS patches: track current state and only
 		// flag for write-back if the *net* change vs. the dialog-open

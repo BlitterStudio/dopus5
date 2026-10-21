@@ -1,0 +1,116 @@
+## version $VER: listerformat.catalog 5.61 (20.06.97)
+## codeset 0
+## language norsk
+;
+MSG_LISTER_FORMAT_TITLE
+Liste Format
+; List Format
+;
+MSG_LISTER_AVAILABLE_DISPLAY_ITEMS
+Tilgjengelige...
+; Available...
+;
+MSG_LISTER_SELECTED_DISPLAY_ITEMS
+Vis/Rekkefølge...
+; Display/Sort...
+;
+MSG_LISTER_LIST_FILENAME
+Filnavn
+; File Name
+;
+MSG_LISTER_LIST_FILESIZE
+Filstørrelse
+; File Size
+;
+MSG_LISTER_LIST_PROTECTION
+Beskyttelse
+; Protection
+;
+MSG_LISTER_LIST_DATE
+Fildato
+; File Date
+;
+MSG_LISTER_LIST_COMMENT
+Kommentar
+; Comment
+;
+MSG_LISTER_LIST_FILETYPE
+Filtype
+; File Type
+;
+MSG_LISTER_LIST_OWNER
+Eier
+; Owner
+;
+MSG_LISTER_LIST_GROUP
+Gruppe
+; Group
+;
+MSG_LISTER_LIST_NETPROTECTION
+Net Tilgang
+; Net Access
+;
+MSG_LISTER_ENTRY_SEPARATION
+_Post Separasjon
+; _Entry Separation
+;
+MSG_LISTER_REVERSE_SORTING
+_Omvendt Sortering
+; _Reverse Sorting
+;
+MSG_LISTER_SEPARATION_MIX
+Bland Filer/Skuffer
+; Mix Files/Dirs
+;
+MSG_LISTER_SEPARATION_DIRS
+Skuffer først
+; Directories First
+;
+MSG_LISTER_SEPARATION_FILES
+Filer Først
+; Files First
+;
+MSG_LISTER_SHOW
+_Vis Filter
+; _Show Filter
+;
+MSG_LISTER_HIDE
+_Gjem Filter
+; _Hide Filter
+;
+MSG_LISTER_REJECT_ICONS
+Filtrer _Ikoner
+; _Filter Icons
+;
+MSG_LISTER_HIDDEN_BIT
+Gjem '_Hidden'
+; H_idden
+;
+MSG_LISTER_USE
+_Bruk
+; _Use
+;
+MSG_LISTER_CANCEL
+_Avbryt
+; _Cancel
+;
+MSG_LISTER_LIST_VERSION
+Versjon
+; Version
+;
+MSG_LISTER_SAVE
+_Lagre
+; S_ave
+;
+MSG_DEFAULTS
+Tilbake til stan_dardverdier
+; Reset to _Defaults
+;
+MSG_FTP_DEFAULTS
+Ledig Plass _Måler
+; Reset FTP Defaults
+;
+MSG_LISTER_FUEL_GAUGE
+A_rv
+; Free Space _Gauge
+;

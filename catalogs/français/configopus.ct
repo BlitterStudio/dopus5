@@ -1,20 +1,13 @@
 ## version $VER: ConfigOpus.catalog 5.61 (08.07.97) par Georges 'Melkor' Goncalves & Kersten 'Emmy' Emmrich
 ## codeset 0
 ## language français
-; ************************************************* 
-; Catalog description file for ConfigOpus
-; Copyright © 1994 Jonathan Potter
-; ************************************************* 
-;
-;
-; Generic strings
 ;
 MSG_OKAY
 _Okay
 ; _OK
 ;
 MSG_CANCEL
-_Annuler\x00
+_Annuler
 ; _Cancel
 ;
 MSG_USE
@@ -49,15 +42,6 @@ MSG_ICON_MENU
 Menu icône
 ; Icon Menu
 ;
-;
-;
-;
-; Settings configuration
-;
-MSG_SETTINGS_TITLE
-
-; Options
-;
 MSG_SETTINGS_SUB_COPY
 Copie
 ; Copy
@@ -74,1783 +58,1759 @@ MSG_SETTINGS_WHEN_COPYING_FILES
 En copiant fichiers et répertoires...
 ; When copying files and directories...
 ;
-;
-MSG_UNKNOWN_1006
+MSG_SETTINGS_SET_ARCHIVE_BIT
 Ac_tiver le bit Archive
-; 
+; Set source _archive bit
 ;
-MSG_UNKNOWN_1007
-Copier également de la source...\x00
-; 
+MSG_SETTINGS_ALSO_COPY_SOURCE
+Copier également de la source...
+; Also copy source's...
 ;
-MSG_UNKNOWN_1008
+MSG_SETTINGS_COPY_DATESTAMP
 _Date
-; 
+; Da_testamp
 ;
-MSG_UNKNOWN_1009
+MSG_SETTINGS_COPY_PROTECTION
 _Bits de protection
-; 
+; _Protection Bits
 ;
-MSG_UNKNOWN_1010
-_Commentaire\x00
-; 
+MSG_SETTINGS_COPY_COMMENT
+_Commentaire
+; C_omment
 ;
-MSG_UNKNOWN_1012
+MSG_SETTINGS_ASK_BEFORE
 Demander avant...
-; 
+; Ask before...
 ;
-MSG_UNKNOWN_1013
+MSG_SETTINGS_COMMENCING_DELETE
 Le début de l'_effacement
-; 
+; C_ommencing delete
 ;
-MSG_UNKNOWN_1014
+MSG_SETTINGS_DELETING_FILES
 D'effacer les _fichiers
-; 
+; Deleting _files
 ;
-MSG_UNKNOWN_1015
+MSG_SETTINGS_DELETING_DIRS
 D'effacer les _répertoires
-; 
+; Deleting _directories
 ;
-MSG_UNKNOWN_1016
+MSG_SETTINGS_PERFORM_ALL_ACTIONS
 _Traiter également les icônes
-; 
+; Perform all actions on icons
 ;
-MSG_UNKNOWN_1017
+MSG_SETTINGS_SELECT_ICONS_AUTOMATICALLY
 Sé_lection automatique des icônes
-; 
+; Select icons automatically
 ;
-MSG_UNKNOWN_1018
+MSG_SETTINGS_MISC
 Attributs divers...
-; 
+; Misc. flags...
 ;
-MSG_UNKNOWN_1019
-Gestion des icônes...
-; 
-;
-MSG_UNKNOWN_1026
-Tampons
-; 
-;
-MSG_UNKNOWN_1027
+MSG_SETTINGS_CACHING_MAX_BUFFERS
 _Nombre maximum de répertoires
-; 
+; _Maximum number of dirs cached
 ;
-MSG_UNKNOWN_1028
+MSG_SETTINGS_DISABLE_CACHING
 _Désactiver les tampons
-; 
+; _Disable directory caching
 ;
-MSG_UNKNOWN_1029
-_Relire les tampons modifiés\x00
-; 
+MSG_SETTINGS_REREAD_CHANGED_BUFFERS
+_Relire les tampons modifiés
+; _Re-read modified caches
 ;
-MSG_UNKNOWN_1030
-Localisation\x00
-; 
+MSG_SETTINGS_SUB_DATE_FORMAT
+Localisation
+; Locale
 ;
-MSG_UNKNOWN_1031
-Format de la date...\x00
-; 
+MSG_SETTINGS_DATE_FORMAT
+Format de la date...
+; Date Format...
 ;
-MSG_UNKNOWN_1032
+MSG_SETTINGS_NAME_SUBSTITUTION
 Su_bstituer la date par le nom
-; 
+; _Name substitution
 ;
-MSG_UNKNOWN_1033
+MSG_SETTINGS_12_HOUR_CLOCK
 Format _12-heures
-; 
+; _12 hour clock
 ;
-MSG_UNKNOWN_1034
-JJ-MMM-AA    (22-Sep-73)\x00
-; 
+MSG_SETTINGS_DATEFORMAT_DDMMMYY
+JJ-MMM-AA    (22-Sep-73)
+; DD-MMM-YY    (22-Sep-73)
 ;
-MSG_UNKNOWN_1035
+MSG_SETTINGS_DATEFORMAT_YYMMDD
 AA-MM-JJ     (72-06-02)
-; 
+; YY-MM-DD     (72-06-02)
 ;
-MSG_UNKNOWN_1036
+MSG_SETTINGS_DATEFORMAT_MMDDYY
 MM-JJ-AA     (12-03-76)
-; 
+; MM-DD-YY     (12-03-76)
 ;
-MSG_UNKNOWN_1037
+MSG_SETTINGS_DATEFORMAT_DDMMYY
 JJ-MM-AA     (30-10-46)
-; 
+; DD-MM-YY     (30-10-46)
 ;
-MSG_UNKNOWN_1038
+MSG_SETTINGS_SUB_HIDE
 Iconifier
-; 
+; Hide Method
 ;
-MSG_UNKNOWN_1039
+MSG_SETTINGS_SUB_HIDE_TITLE
 Méthode d'iconification...
-; 
+; Hide Method...
 ;
-MSG_UNKNOWN_1040
+MSG_SETTINGS_SUB_HIDE_ICON
 AppIcon (Workbench seulement)
-; 
+; AppIcon (Workbench only)
 ;
-MSG_UNKNOWN_1041
+MSG_SETTINGS_SUB_HIDE_MENU
 AppMenu (Workbench seulement)
-; 
+; AppMenu (Workbench only)
 ;
-MSG_UNKNOWN_1042
+MSG_SETTINGS_SUB_HIDE_CLOCK
 Horloge
-; 
+; Clock
 ;
-MSG_UNKNOWN_1043
+MSG_SETTINGS_SUB_HIDE_NONE
 Raccourci clavier seulement
-; 
+; Hotkey only
 ;
-MSG_UNKNOWN_1044
+MSG_SETTINGS_UPDATE_FREE_SPACE
 _Mettre à jour la destination
-; 
+; Update _destination free space
 ;
-MSG_UNKNOWN_1046
+MSG_SETTINGS_THOUSANDS_SEPS
 Sépa_rer les milliers
-; 
+; _Thousands separator
 ;
-MSG_UNKNOWN_1048
+MSG_SETTINGS_TRAP_MORE
 Intercepter le programme  « _More »
-; 
+; Trap 'More' in default tool
 ;
-MSG_UNKNOWN_1049
+MSG_SETTINGS_SUB_MISC
 Divers
-; 
+; Miscellaneous
 ;
-MSG_UNKNOWN_1050
+MSG_SETTINGS_SUB_MISC_TITLE
 Réglages divers...
-; 
+; Miscellaneous Settings...
 ;
-MSG_UNKNOWN_1051
+MSG_SETTINGS_MOUSE_HOOK
 _Boutons souris sur banques inactives
-; 
+; _Mouse buttons over inactive banks
 ;
-MSG_UNKNOWN_1052
-Priorité\x00
-; 
+MSG_SETTINGS_SUB_PRI
+Priorité
+; Priority
 ;
-MSG_UNKNOWN_1053
+MSG_SETTINGS_SUB_PRI_TITLE
 Priorité des tâches...
-; 
+; Task priorities...
 ;
-MSG_UNKNOWN_1054
+MSG_SETTINGS_PRI_MAIN
 _Principale
-; 
+; _Main priority
 ;
-MSG_UNKNOWN_1055
-_Listeur\x00
-; 
+MSG_SETTINGS_PRI_LISTER
+_Listeur
+; _Listers
 ;
-MSG_UNKNOWN_1056
+MSG_SETTINGS_PRI_WHEN_BUSY
 Occupé
-; 
+; When busy
 ;
-MSG_UNKNOWN_1057
-Ouvrir options
-; 
-;
-MSG_UNKNOWN_1058
-Sauver options
-; 
-;
-MSG_UNKNOWN_1059
-« %s » n'est pas un fichier options valide !\x00
-; 
-;
-MSG_UNKNOWN_1060
+MSG_SETTINGS_VERBOSE_REPLACE
 _Requête de remplacement détaillée 
-; 
+; _Verbose 'Replace?' requester
 ;
-MSG_UNKNOWN_1061
+MSG_SETTINGS_QUICK_QUIT
 _Quitter rapidement
-; 
+; _Quick quit
 ;
-MSG_UNKNOWN_1062
-Remplacement\x00
-; 
+MSG_SETTINGS_SUB_REPLACE
+Remplacement
+; Replace
 ;
-MSG_UNKNOWN_1063
+MSG_SETTINGS_SUB_REPLACE_TITLE
 En remplaçant les fichiers...
-; 
+; When replacing files...
 ;
-MSG_UNKNOWN_1064
-_Vérification automatique de version\x00
-; 
+MSG_SETTINGS_CHECK_VERSION
+_Vérification automatique de version
+; Auto_matically check version
 ;
-MSG_UNKNOWN_1065
+MSG_SETTINGS_EXTENDED_KEY
 S_élection étendue au clavier
-; 
+; _Extended lister key selection
 ;
-MSG_UNKNOWN_1066
+MSG_SETTINGS_FILETYPE_SNIFFER
 _Renifleur de type de fichier
-; 
+; _Filetype Sniffer
 ;
-MSG_UNKNOWN_1067
+MSG_SETTINGS_POPKEY
 _Raccourci
-; 
+; _PopKey:
 ;
-MSG_UNKNOWN_2000
+MSG_ENVIRONMENT_TITLE
 Environnement
-; 
+; Environment
 ;
-MSG_UNKNOWN_2001
+MSG_ENVIRONMENT_SUB_DISPLAY
 Mode écran
-; 
+; Display
 ;
-MSG_UNKNOWN_2003
+MSG_ENVIRONMENT_SCREENMODE_MODE
 _Mode écran...
-; 
+; _Display Mode...
 ;
-MSG_UNKNOWN_2004
+MSG_ENVIRONMENT_SCREENMODE_WIDTH
 _Largeur :
-; 
+; _Width:
 ;
-MSG_UNKNOWN_2005
+MSG_ENVIRONMENT_SCREENMODE_HEIGHT
 _Hauteur :
-; 
+; _Height:
 ;
-MSG_UNKNOWN_2006
-Standard\x00
-; 
+MSG_ENVIRONMENT_SCREENMODE_DEFAULT
+Standard
+; Default
 ;
-MSG_UNKNOWN_2007
+MSG_ENVIRONMENT_SCREENMODE_COLORS
 _Couleurs :
-; 
+; C_olours:
 ;
-MSG_UNKNOWN_2008
-Workbench : Utiliser\x00
-; 
+MSG_ENVIRONMENT_SCREENMODE_WB_USE
+Workbench : Utiliser
+; Workbench:Use
 ;
-MSG_UNKNOWN_2009
+MSG_ENVIRONMENT_SCREENMODE_WB_CLONE
 Workbench : Cloner
-; 
+; Workbench:Clone
 ;
-MSG_UNKNOWN_2010
-_Rouge :\x00
-; 
+MSG_ENVIRONMENT_PALETTE_RED
+_Rouge :
+; _Red
 ;
-MSG_UNKNOWN_2011
+MSG_ENVIRONMENT_PALETTE_GREEN
 _Vert :
-; 
+; _Green
 ;
-MSG_UNKNOWN_2012
+MSG_ENVIRONMENT_PALETTE_BLUE
 _Bleu :
-; 
+; _Blue
 ;
-MSG_UNKNOWN_2013
-_Crayons\x00
-; 
+MSG_ENVIRONMENT_PALETTE_COUNT
+_Crayons
+; User _Pens
 ;
-MSG_UNKNOWN_2015
+MSG_ENVIRONMENT_LISTER_EXAMPLE
 Exemple
-; 
+; Example
 ;
-MSG_UNKNOWN_2016
+MSG_ENVIRONMENT_SUB_LISTER_DISPLAY
 Format listeur
-; 
+; Lister Display
 ;
-MSG_UNKNOWN_2017
+MSG_ENVIRONMENT_LISTER_COLOUR_ITEMS
 _Eléments listeur
-; 
+; Lister _Element Colours...
 ;
-MSG_UNKNOWN_2018
+MSG_ENVIRONMENT_LISTER_FG_PALETTE
 A_vant plan
-; 
+; _Foreground
 ;
-MSG_UNKNOWN_2019
+MSG_ENVIRONMENT_LISTER_BG_PALETTE
 _Fond
-; 
+; _Background
 ;
-MSG_UNKNOWN_2021
-Fichiers\x00
-; 
+MSG_ENVIRONMENT_LISTER_FILES
+Fichiers
+; Files
 ;
-MSG_UNKNOWN_2022
+MSG_ENVIRONMENT_LISTER_DIRS
 Répertoires
-; 
+; Directories
 ;
-MSG_UNKNOWN_2023
+MSG_ENVIRONMENT_LISTER_SEL_FILES
 Fich. sélect.
-; 
+; Selected Files
 ;
-MSG_UNKNOWN_2024
+MSG_ENVIRONMENT_LISTER_SEL_DIRS
 Réps. sélect.
-; 
+; Selected Dirs
 ;
-MSG_UNKNOWN_2027
+MSG_ENVIRONMENT_LISTER_DEVICES
 Périphériques
-; 
+; Devices
 ;
-MSG_UNKNOWN_2028
-Assignes\x00
-; 
+MSG_ENVIRONMENT_LISTER_VOLUMES
+Assignes
+; Assigns
 ;
-MSG_UNKNOWN_2029
-Utiliser\x00
-; 
+MSG_ENVIRONMENT_USE
+Utiliser
+; Use
 ;
-MSG_UNKNOWN_2033
-_Prefs :\x00
-; 
+MSG_ENVIRONMENT_BUTTONS_FIELD
+_Prefs :
+; _Prefs:
 ;
-MSG_UNKNOWN_2034
-_Défaire\x00
-; 
+MSG_ENVIRONMENT_PALETTE_RESET
+_Défaire
+; R_eset
 ;
-MSG_UNKNOWN_2036
+MSG_ENVIRONMENT_OUTPUT_SET
 _Réglage...
-; 
+; S_et...
 ;
-MSG_UNKNOWN_2037
-_Titre :\x00
-; 
+MSG_ENVIRONMENT_OUTPUT_NAME
+_Titre :
+; _Title:
 ;
-MSG_UNKNOWN_2038
-Taille :\x00
-; 
+MSG_ENVIRONMENT_OUTPUT_DIMENSIONS
+Taille :
+; Size:
 ;
-MSG_UNKNOWN_2039
-Dimensionnez et positionnez la fenêtre comme désiré.\x00
-; 
+MSG_ENVIRONMENT_SIZE_INST_1
+Dimensionnez et positionnez la fenêtre comme désiré.
+; Size and position window as desired.
 ;
-MSG_UNKNOWN_2040
+MSG_ENVIRONMENT_SIZE_INST_2
 Cliquez sur la cellule de fermeture pour quitter.
-; 
+; Click the close button when finished.
 ;
-MSG_UNKNOWN_2041
+MSG_ENVIRONMENT_OPTIONS_APPICONS
 Montrer les « App_Icons »
-; 
+; Display App_Icons
 ;
-MSG_UNKNOWN_2042
+MSG_ENVIRONMENT_OPTIONS_APPMENU
 Montrer le menu « _Outils »
-; 
+; Display '_Tools' Menu
 ;
-MSG_UNKNOWN_2044
+MSG_ENVIRONMENT_PATCH_OPTIONS
 Emulation Workbench...
-; 
+; Workbench Emulation...
 ;
-MSG_UNKNOWN_2046
+MSG_LISTER_SELECT_FONT
 Choisir une police...
-; 
+; Select Lister Font
 ;
-MSG_UNKNOWN_2047
+MSG_ENVIRONMENT_OPTIONS_HIDEBAD
 _Cacher les mauvais disques
-; 
+; _Hide Bad Disks
 ;
-MSG_UNKNOWN_2048
+MSG_ENVIRONMENT_SUB_LISTER_OPTIONS
 Options listeur
-; 
+; Lister Options
 ;
-MSG_UNKNOWN_2049
+MSG_ENVIRONMENT_NEW_DEVICELIST
 _Nouveau listeur : Liste périphériques
-; 
+; _Device List In New Lister
 ;
-MSG_UNKNOWN_2050
-Taille :\x00
-; 
+MSG_ENVIRONMENT_DEFAULT_SIZE
+Taille :
+; Default Size:
 ;
-MSG_UNKNOWN_2051
-Taille par défaut du listeur\x00
-; 
+MSG_ENVIRONMENT_DEFLISTER_SIZE
+Taille par défaut du listeur
+; Default Lister Size
 ;
-MSG_UNKNOWN_2052
+MSG_ENVIRONMENT_SIZE_INST_3
 Dimensionnez la fenêtre comme désiré.
-; 
+; Size window as desired.
 ;
-MSG_UNKNOWN_2053
-_Doubleclic droit : Editer le format\x00
-; 
+MSG_ENVIRONMENT_2XCLICK_EDITING
+_Doubleclic droit : Editer le format
+; _RMB Double-Click Editing
 ;
-MSG_UNKNOWN_2055
+MSG_ENVIRONMENT_LISTER_STATUS
 S_tatut :
-; 
+; S_tatus Text:
 ;
-MSG_UNKNOWN_2056
+MSG_ENVIRONMENT_LISTER_SELECT_STATUS
 Choisir le code
-; 
+; Select Code
 ;
-MSG_UNKNOWN_2057
+MSG_ENVIRONMENT_SIMPLE_REFRESH
 _Fenêtre en rafraichissement simple
-; 
+; S_impleRefresh Windows
 ;
-MSG_UNKNOWN_2058
+MSG_ENVIRONMENT_SCREENMODE_FONT
 _Police :
-; 
+; _Font:
 ;
-MSG_UNKNOWN_2059
+MSG_ENVIRONMENT_SUB_DESKTOP
 Bureau
-; 
+; Desktop
 ;
-MSG_UNKNOWN_2060
+MSG_ENVIRONMENT_DESKTOP_TITLE
 Icônes du bureau...
-; 
+; Desktop Icons...
 ;
-MSG_UNKNOWN_2063
+MSG_ENVIRONMENT_HIDDEN_DRIVES
 Lecteurs cachés...
-; 
+; Hidden drives...
 ;
-MSG_UNKNOWN_2064
+MSG_ENVIRONMENT_OUTPUT_DEVICE
 _Périph. :
-; 
+; _Device
 ;
-MSG_UNKNOWN_2065
-C_harger\x00
-; 
+MSG_ENVIRONMENT_PALETTE_LOAD
+C_harger
+; _Load...
 ;
-MSG_UNKNOWN_2066
+MSG_ENVIRONMENT_SELECT_PALETTE
 Choisir une palette
-; 
+; Select Palette
 ;
-MSG_UNKNOWN_2068
+MSG_ENVIRONMENT_LISTER_OPTIONS
 Options du listeur...
-; 
+; Lister Options...
 ;
-MSG_UNKNOWN_2069
+MSG_ENVIRONMENT_FIELD_TITLES
 T_itre des champs
-; 
+; F_ield Titles
 ;
-MSG_UNKNOWN_2070
-T_oujours utiliser la position figée\x00
-; 
+MSG_ENVIRONMENT_USE_SNAPSHOT
+T_oujours utiliser la position figée
+; _Always Use Snapshot Position
 ;
-MSG_UNKNOWN_2072
-_Menus contextuels en mode texte\x00
-; 
+MSG_ENVIRONMENT_NAME_POPUP
+_Menus contextuels en mode texte
+; _Name Mode PopUp
 ;
-MSG_UNKNOWN_2074
+MSG_ENVIRONMENT_LISTER_EDITING
 _Edition en ligne
-; 
+; Inline _Editing
 ;
-MSG_UNKNOWN_2075
+MSG_LISTEREDIT_DISABLED
 Désactivée
-; 
+; Disabled
 ;
-MSG_UNKNOWN_2076
+MSG_LISTEREDIT_LEFT
 Bouton gauche
-; 
+; Left Button
 ;
-MSG_UNKNOWN_2077
+MSG_LISTEREDIT_MIDDLE
 Bouton milieu
-; 
+; Middle Button
 ;
-MSG_UNKNOWN_2078
+MSG_LISTEREDIT_BOTH
 Gauche & milieu
-; 
+; Left & Middle
 ;
-MSG_UNKNOWN_2079
+MSG_ENVIRONMENT_OPTIONS_ICONPOS
 Utiliser la position _Workbench
-; 
+; Use Workbench icon positions
 ;
-MSG_UNKNOWN_2080
+MSG_ENVIRONMENT_CACHE_ICONS
 _Cache des images d'icônes
-; 
+; Cache icon images
 ;
-MSG_UNKNOWN_2081
+MSG_ENVIRONMENT_REMAP_ICONS
 _Remapper les images d'icônes
-; 
+; Remap icon images
 ;
-MSG_UNKNOWN_2082
+MSG_ENVIRONMENT_BORDERS_ON
 B_ords d'icônes
-; 
+; Icon borders on by default
 ;
-MSG_UNKNOWN_2083
-_Montrer la flèche de Sortie\x00
-; 
+MSG_ENVIRONMENT_ARROW_ON
+_Montrer la flèche de Sortie
+; Show arrow on left-out icons
 ;
-MSG_UNKNOWN_2084
+MSG_ENVIRONMENT_ICON_SETTINGS
 Réglages d'icône...
-; 
+; Icon Settings...
 ;
-MSG_UNKNOWN_2085
+MSG_ENVIRONMENT_ICON_FONTCOL
 Police et couleur des labels...
-; 
+; Label Font and Colour...
 ;
-MSG_UNKNOWN_2086
+MSG_ENVIRONMENT_ICON_FONT_DESKTOP
 _Bureau...
-; 
+; Des_ktop...
 ;
-MSG_UNKNOWN_2087
-_Fenêtres...\x00
-; 
+MSG_ENVIRONMENT_ICON_FONT_WINDOWS
+_Fenêtres...
+; _Windows...
 ;
-MSG_UNKNOWN_2088
+MSG_ENVIRONMENT_SUB_ICONS
 Réglages icône
-; 
+; Icon Settings
 ;
-MSG_UNKNOWN_2089
-Choisir la police et couleur\x00
-; 
+MSG_SELECT_FONT
+Choisir la police et couleur
+; Select Font And Colour
 ;
-MSG_UNKNOWN_2090
+MSG_FONT_DRAWMODE
 Mode :
-; 
+; Mode:
 ;
-MSG_UNKNOWN_2091
+MSG_FONT_TEXT
 Texte
-; 
+; Text
 ;
-MSG_UNKNOWN_2092
+MSG_FONT_FIELD_TEXT
 Texte + champs
-; 
+; Text+Field
 ;
-MSG_UNKNOWN_2093
+MSG_ENVIRONMENT_OPTIONS_APPTOOLS
 _Déplacer les AppIcons dans « Outils »
-; 
+; _Move AppIcons to 'Tools' Menu
 ;
-MSG_UNKNOWN_2094
-_Modifier...\x00
-; 
+MSG_ENVIRONMENT_COLOURS_MODIFY
+_Modifier...
+; _Modify...
 ;
-MSG_UNKNOWN_2096
+MSG_ENVIRONMENT_GAUGE_COLOUR
 Jauge
-; 
+; Gauge Fill
 ;
-MSG_UNKNOWN_2097
-Format :\x00
-; 
+MSG_ENVIRONMENT_DEFAULT_FORMAT
+Format :
+; Default Format:
 ;
-MSG_UNKNOWN_2098
+MSG_ENVIRONMENT_FORMAT_SET
 R_égler...
-; 
+; Se_t...
 ;
-MSG_UNKNOWN_2099
+MSG_ENVIRONMENT_SUB_LISTER_DEFAULT
 Défaut listeur
-; 
+; Lister Default
 ;
-MSG_UNKNOWN_2100
+MSG_ENVIRONMENT_SPLIT_LABELS
 _Découper les longs labels
-; 
+; Split long icon labels
 ;
-MSG_UNKNOWN_2101
-Couleurs listeur\x00
-; 
+MSG_ENVIRONMENT_SUB_LISTER_COLOURS
+Couleurs listeur
+; Lister Colours
 ;
-MSG_UNKNOWN_2102
-Fenêtre de sortie...\x00
-; 
+MSG_ENVIRONMENT_OUTPUT_WINDOW
+Fenêtre de sortie...
+; Output Window...
 ;
-MSG_UNKNOWN_2103
+MSG_ENVIRONMENT_STACK
 P_ile :
-; 
+; S_tack:
 ;
-MSG_UNKNOWN_2105
+MSG_ENVIRONMENT_SUB_LAUNCHING
 Lancement CLI
-; 
+; CLI Launching
 ;
-MSG_UNKNOWN_2106
+MSG_ENVIRONMENT_LISTER_SETTINGS
 Réglages d'affichage listeur...
-; 
+; Lister Display Settings...
 ;
-MSG_UNKNOWN_2107
+MSG_ENVIRONMENT_SUB_PICTURES
 Fonds
-; 
+; Backgrounds
 ;
-MSG_UNKNOWN_2108
+MSG_ENVIRONMENT_OPTIONS_DISPLAY_BACKDROPS
 Images de fond...
-; 
+; Background Pictures...
 ;
-MSG_UNKNOWN_2109
+MSG_ENVIRONMENT_OPTIONS_ENABLE_PATTERN
 Utiliser un _motif
-; 
+; _Enable Backgrounds
 ;
-MSG_UNKNOWN_2110
+MSG_ENVIRONMENT_PICTURE_DESKTOP
 _Bureau :
-; 
+; _Desktop:
 ;
-MSG_UNKNOWN_2111
+MSG_ENVIRONMENT_PICTURE_LISTER
 _Fenêtre :
-; 
+; _Window:
 ;
-MSG_UNKNOWN_2112
+MSG_ENVIRONMENT_PICTURE_REQUESTER
 _Requêtes :
-; 
+; _Requester:
 ;
-MSG_UNKNOWN_2113
+MSG_ENVIRONMENT_PICTURE_WBPATTERN
 Réglages WBPattern...
-; 
+; WBPattern Settings...
 ;
-MSG_UNKNOWN_2114
+MSG_ENVIRONMENT_PICTURE_USE_WBPATTERN
 Utiliser les préférences _WBPattern
-; 
+; Use W_BPattern Prefs
 ;
-MSG_UNKNOWN_2115
-Emulation WB\x00
-; 
+MSG_ENVIRONMENT_SUB_WBEMULATION
+Emulation WB
+; WB Emulation
 ;
-MSG_UNKNOWN_2116
+MSG_ENVIRONMENT_LISTER_DEFAULT
 Réglages par défaut du listeur...
-; 
+; Default Lister Settings...
 ;
-MSG_UNKNOWN_2117
+MSG_ENVIRONMENT_FULL_TRANSPARENCY
 _Transparence complète
-; 
+; Borderless icons are fully transparent
 ;
-MSG_UNKNOWN_2118
+MSG_ENVIRONMENT_OPTIONS_REMOVE_OPUS
 _Enlever les positions d'icône Opus
-; 
+; Remove Opus icon positions
 ;
-MSG_UNKNOWN_4000
+MSG_BUTTONS_TITLE
 Editeur de boutons
-; 
+; Button Bank Editor
 ;
-MSG_UNKNOWN_4001
-_Nom\x00
-; 
+MSG_BUTTONS_NAME
+_Nom
+; _Name
 ;
-MSG_UNKNOWN_4003
-Colonnes\x00
-; 
+MSG_BUTTONS_COLUMNS
+Colonnes
+; Columns
 ;
-MSG_UNKNOWN_4004
+MSG_BUTTONS_ROWS
 Lignes
-; 
+; Rows
 ;
-MSG_UNKNOWN_4005
+MSG_BUTTONS_ADD
 Ajouter
-; 
+; Add
 ;
-MSG_UNKNOWN_4006
+MSG_BUTTONS_REMOVE
 Refaire
-; 
+; Xform
 ;
-MSG_UNKNOWN_4007
+MSG_BUTTONS_INSERT
 Insérer
-; 
+; Insert
 ;
-MSG_UNKNOWN_4008
+MSG_BUTTONS_DELETE
 Effacer
-; 
+; Delete
 ;
-MSG_UNKNOWN_4009
+MSG_BUTTONS_FONT
 _Police
-; 
+; _Font
 ;
-MSG_UNKNOWN_4010
+MSG_BUTTONS_SELECT_FONT
 Choisir la police boutons
-; 
+; Select Button Font
 ;
-MSG_UNKNOWN_4011
+MSG_BUTTONS_BUTTON
 Bouton
-; 
+; Button
 ;
-MSG_UNKNOWN_4012
+MSG_BUTTONS_COPY
 Copier
-; 
+; Copy
 ;
-MSG_UNKNOWN_4013
+MSG_BUTTONS_CUT
 Couper
-; 
+; Cut
 ;
-MSG_UNKNOWN_4014
+MSG_BUTTONS_ERASE
 Effacer
-; 
+; Erase
 ;
-MSG_UNKNOWN_4015
+MSG_BUTTONS_EDIT
 Editer
-; 
+; Edit
 ;
-MSG_UNKNOWN_4016
+MSG_BUTTONS_PAINT_MODE
 Mode _peinture
-; 
+; _Paint Mode
 ;
-MSG_UNKNOWN_4017
-_Effacer\x00
-; 
+MSG_BUTTONS_CLIPBOARD_CLEAR
+_Effacer
+; _Clear
 ;
-MSG_UNKNOWN_4018
+MSG_BUTTONS_BANK_EDITING
 Banque
-; 
+; Bank
 ;
-MSG_UNKNOWN_4019
+MSG_BUTTONS_BANK_BORDER
 _Cadre complet
-; 
+; Full B_order
 ;
-MSG_UNKNOWN_4020
+MSG_BUTTONS_CLIPBOARD
 Bloc notes
-; 
+; Clipboard
 ;
-MSG_UNKNOWN_4021
+MSG_BUTTONS_BUTTON_EDITING
 Bouton
-; 
+; Button
 ;
-MSG_UNKNOWN_4022
-Orienter _déplaceur
-; 
-;
-MSG_UNKNOWN_4023
+MSG_BUTTONS_DRAG_AUTO
 Automatique
-; 
+; Automatic
 ;
-MSG_UNKNOWN_4026
+MSG_BUTTONS_BORDERLESS
 _Boutons sans bords
-; 
+; _Borderless Buttons
 ;
-MSG_UNKNOWN_4027
+MSG_BUTTONS_SIMPLE_REFRESH
 Rafraîch. s_imple
-; 
+; S_imple-Refresh
 ;
-MSG_UNKNOWN_4028
-Apparence
-; 
-;
-MSG_UNKNOWN_4029
-Apparence fenêtre
-; 
-;
-MSG_UNKNOWN_4030
+MSG_BUTTONS_SHOW_CLIPBOARD
 _Montrer bloc notes
-; 
+; Show C_lipboard
 ;
-MSG_UNKNOWN_4031
+MSG_BUTTONS_NO_DOGEARS
 Sans « _oreilles »
-; 
+; No 'Do_g ears'
 ;
-MSG_UNKNOWN_5000
-Editeur de fonctions\x00
-; 
+MSG_FUNCED_TITLE
+Editeur de fonctions
+; Function Editor
 ;
-MSG_UNKNOWN_5002
+MSG_FUNCED_KEY
 _Raccourci
-; 
+; _Key
 ;
-MSG_UNKNOWN_5003
+MSG_FUNCED_FLAGS
 Attributs
-; 
+; Flags
 ;
-MSG_UNKNOWN_5004
-Aj_outer\x00
-; 
+MSG_FUNCED_NEW_ENTRY
+Aj_outer
+; _Add
 ;
-MSG_UNKNOWN_5005
-In_sérer\x00
-; 
+MSG_FUNCED_INSERT
+In_sérer
+; _Insert
 ;
-MSG_UNKNOWN_5006
-_Effacer\x00
-; 
+MSG_FUNCED_DELETE
+_Effacer
+; _Delete
 ;
-MSG_UNKNOWN_5007
-Commande\x00
-; 
+MSG_FUNCED_FUNCTYPE_COMMAND
+Commande
+; Command
 ;
-MSG_UNKNOWN_5014
-Choisir une commande\x00
-; 
+MSG_FUNCED_SELECT_COMMAND
+Choisir une commande
+; Select Command
 ;
-MSG_UNKNOWN_5015
+MSG_SELECT_FILE
 Choisir un fichier
-; 
+; Select File
 ;
-MSG_UNKNOWN_5016
+MSG_FUNCED_SELECT_ARG
 Choisir un argument
-; 
+; Select Argument
 ;
-MSG_UNKNOWN_5017
-Exporter en ASCII...\x00
-; 
+MSG_FUNCED_EXPORT_ASCII_MENU
+Exporter en ASCII...
+; Export As ASCII...
 ;
-MSG_UNKNOWN_5018
-Entrer un nom de fichier\x00
-; 
+MSG_FUNCED_SELECT_FILE
+Entrer un nom de fichier
+; Enter Filename
 ;
-MSG_UNKNOWN_5020
+MSG_FUNCED_EXPORT_CMD_MENU
 Exporter en fichier de commandes...
-; 
+; Export As Command File...
 ;
-MSG_UNKNOWN_5021
+MSG_ENVIRONMENT_HIDDEN_BAD_DRIVES
 Lecteurs cachés (mauvais disques seuls)...
-; 
+; Hidden drives (bad disks only)...
 ;
-MSG_UNKNOWN_5022
+MSG_ENVIRONMENT_DESKTOP_LOCATION
 _Dossier bureau
-; 
+; Desktop _Folder:
 ;
-MSG_UNKNOWN_5023
-_Menu activé\x00
-; 
+MSG_ENVIRONMENT_DESKTOP_ENABLE
+_Menu activé
+; _PopUp Enabled
 ;
-MSG_UNKNOWN_5024
+MSG_ENVIRONMENT_DESKTOP_DEFAULT
 _Par défaut :
-; 
+; Default _Action:
 ;
-MSG_UNKNOWN_5025
-Rien\x00
-; 
+MSG_ENVIRONMENT_DEFAULT_NONE
+Rien
+; None
 ;
-MSG_UNKNOWN_5026
-Créer sortie\x00
-; 
+MSG_ENVIRONMENT_DEFAULT_LEFTOUT
+Créer sortie
+; Create Left-out
 ;
-MSG_UNKNOWN_5027
+MSG_ENVIRONMENT_DEFAULT_MOVE
 Déplacer sur le bureau
-; 
+; Move to Desktop
 ;
-MSG_UNKNOWN_5028
-Copier sur le bureau\x00
-; 
+MSG_ENVIRONMENT_DEFAULT_COPY
+Copier sur le bureau
+; Copy to Desktop
 ;
-MSG_UNKNOWN_5029
+MSG_ENVIRONMENT_NEWICONS
 Réglages de NewIcons...
-; 
+; NewIcons Settings...
 ;
-MSG_UNKNOWN_5030
+MSG_ENVIRONMENT_NEWICONS_ENABLE
 A_ctiver NewIcons
-; 
+; _Enable NewIcons
 ;
-MSG_UNKNOWN_5031
-_Décourager NewIcons\x00
-; 
+MSG_ENVIRONMENT_NEWICONS_DISCOURAGE
+_Décourager NewIcons
+; _Discourage NewIcons
 ;
-MSG_UNKNOWN_5032
+MSG_ENVIRONMENT_NEWICONS_DITHERING
 _Estomper image
-; 
+; D_ither Image
 ;
-MSG_UNKNOWN_5033
+MSG_ENVIRONMENT_NEWICONS_PRECISION
 _Précision crayon
-; 
+; _Pen Precision
 ;
-MSG_UNKNOWN_5034
+MSG_ENVIRONMENT_SUB_ICON_COLOURS
 Affichage icône
-; 
+; Icon Display
 ;
-MSG_UNKNOWN_5035
+MSG_ENVIRONMENT_PICTURE_CENTERED
 Centrer l'image
-; 
+; Centre
 ;
-MSG_UNKNOWN_5036
+MSG_ENVIRONMENT_PICTURE_NONE
 Sans remappage
-; 
+; None
 ;
-MSG_UNKNOWN_5037
+MSG_ENVIRONMENT_PICTURE_GUI
 Pire résultat
-; 
+; Worst Result
 ;
-MSG_UNKNOWN_5038
+MSG_ENVIRONMENT_PICTURE_ICON
 Pauvre résultat
-; 
+; Poor Result
 ;
-MSG_UNKNOWN_5039
+MSG_ENVIRONMENT_PICTURE_IMAGE
 Résultat décent
-; 
+; Decent Result
 ;
-MSG_UNKNOWN_5040
+MSG_ENVIRONMENT_PICTURE_EXACT
 Meilleur résultat
-; 
+; Best Result
 ;
-MSG_UNKNOWN_5041
+MSG_ENVIRONMENT_DROP_SUBDIR
 _Déplacer dans les sous répertoires
-; 
+; Dra_g Into Sub-Directories
 ;
-MSG_UNKNOWN_5042
+MSG_FUNCED_IMAGE
 _Image
-; 
+; I_mage
 ;
-MSG_UNKNOWN_20000
+MSG_FUNCED_FLAG_OUTPUT_WINDOW
 Fenêtre de sortie
-; 
+; Output to window
 ;
-MSG_UNKNOWN_20001
+MSG_FUNCED_FLAG_OUTPUT_FILE
 Sortie sur fichier
-; 
+; Output to reader
 ;
-MSG_UNKNOWN_20002
+MSG_FUNCED_FLAG_WORKBENCH_OUTPUT
 Fenêtre sur le WB
-; 
+; Window on Workbench
 ;
-MSG_UNKNOWN_20003
-Lancer en asynchrone\x00
-; 
+MSG_FUNCED_FLAG_RUN_ASYNC
+Lancer en asynchrone
+; Run asynchronously
 ;
-MSG_UNKNOWN_20006
+MSG_FUNCED_FLAG_DO_ALL_FILES
 Tous les fichiers
-; 
+; Do all files
 ;
-MSG_UNKNOWN_20007
+MSG_FUNCED_FLAG_RECURSE_DIRS
 Réps récursifs
-; 
+; Recursive dirs
 ;
-MSG_UNKNOWN_20008
+MSG_FUNCED_FLAG_RELOAD_EACH_FILE
 Relire les fichiers
-; 
+; Reload each file
 ;
-MSG_UNKNOWN_20009
+MSG_FUNCED_FLAG_NO_FILENAME_QUOTE
 Pas de guillemets
-; 
+; No file quote
 ;
-MSG_UNKNOWN_20010
+MSG_FUNCED_FLAG_RESCAN_SOURCE
 Relire source
-; 
+; Rescan source
 ;
-MSG_UNKNOWN_20011
+MSG_FUNCED_FLAG_RESCAN_DEST
 Relire destination
-; 
+; Rescan dest
 ;
-MSG_UNKNOWN_20012
-Cellule de fermeture\x00
-; 
+MSG_FUNCED_FLAG_WAIT_CLOSE
+Cellule de fermeture
+; Window close button
 ;
-MSG_UNKNOWN_21000
-{f}\tPremière entrée (Chemin)\x00
-; 
+MSG_FUNCED_ARGUMENT_1
+{f}\tPremière entrée (Chemin)
+; {f}\tFirst selected entry (with path)
 ;
-MSG_UNKNOWN_21001
+MSG_FUNCED_ARGUMENT_2
 {fu}\tPremère entrée (Chemin ; Reste sél.)
-; 
+; {fu}\tFirst entry (path ; no unselect)
 ;
-MSG_UNKNOWN_21002
+MSG_FUNCED_ARGUMENT_3
 {F}\tToutes les entrées (Chemin)
-; 
+; {F}\tAll selected entries (with paths)
 ;
-MSG_UNKNOWN_21003
+MSG_FUNCED_ARGUMENT_4
 {o}\tPremière entrée (Nom seul)
-; 
+; {o}\tFirst selected entry (name only)
 ;
-MSG_UNKNOWN_21004
+MSG_FUNCED_ARGUMENT_5
 {ou}\tPremière entrée (Nom ; Reste sél.)
-; 
+; {ou}\tFirst entry (name ; no unselect)
 ;
-MSG_UNKNOWN_21005
+MSG_FUNCED_ARGUMENT_6
 {O}\tToutes les entrées (Noms seuls)
-; 
+; {O}\tAll selected entries (names only)
 ;
-MSG_UNKNOWN_21006
+MSG_FUNCED_ARGUMENT_7
 {d}\tChemin de destination
-; 
+; {d}\tDestination directory name
 ;
-MSG_UNKNOWN_21007
-{s}\tChemin de source\x00
-; 
+MSG_FUNCED_ARGUMENT_8
+{s}\tChemin de source
+; {s}\tSource directory name
 ;
-MSG_UNKNOWN_21008
-{f!}\tComme {f} mais optionel\x00
-; 
+MSG_FUNCED_ARGUMENT_9
+{f!}\tComme {f} mais optionel
+; {f!}\tAs {f} but not required
 ;
-MSG_UNKNOWN_21009
+MSG_FUNCED_ARGUMENT_10
 {fu!}\tComme {fu} mais optionel
-; 
+; {fu!}\tAs {fu} but not required
 ;
-MSG_UNKNOWN_21010
-{F!}\tComme {F} mais optionel\x00
-; 
+MSG_FUNCED_ARGUMENT_11
+{F!}\tComme {F} mais optionel
+; {F!}\tAs {F} but not required
 ;
-MSG_UNKNOWN_21011
-{o!}\tComme {o} mais optionel\x00
-; 
+MSG_FUNCED_ARGUMENT_12
+{o!}\tComme {o} mais optionel
+; {o!}\tAs {o} but not required
 ;
-MSG_UNKNOWN_21012
+MSG_FUNCED_ARGUMENT_13
 {ou!}\tComme {ou} mais optionel
-; 
+; {ou!}\tAs {ou} but not required
 ;
-MSG_UNKNOWN_21013
-{O!}\tComme {O} mais optionel\x00
-; 
+MSG_FUNCED_ARGUMENT_14
+{O!}\tComme {O} mais optionel
+; {O!}\tAs {O} but not required
 ;
-MSG_UNKNOWN_21014
-{d!}\tComme {d} mais optionel\x00
-; 
+MSG_FUNCED_ARGUMENT_15
+{d!}\tComme {d} mais optionel
+; {d!}\tAs {d} but not required
 ;
-MSG_UNKNOWN_21015
-{s!}\tComme {s} mais optionel\x00
-; 
+MSG_FUNCED_ARGUMENT_16
+{s!}\tComme {s} mais optionel
+; {s!}\tAs {s} but not required
 ;
-MSG_UNKNOWN_21016
+MSG_FUNCED_ARGUMENT_17
 {Qa}\tPasser des arguments à la fonction
-; 
+; {Qa}\tArgument passed to function
 ;
-MSG_UNKNOWN_21017
+MSG_FUNCED_ARGUMENT_18
 {Qd}\tPilote listeur destination
-; 
+; {Qd}\tDestination lister handle
 ;
-MSG_UNKNOWN_21018
+MSG_FUNCED_ARGUMENT_19
 {Ql}\tPilote listeur source
-; 
+; {Ql}\tSource lister handle
 ;
-MSG_UNKNOWN_21019
+MSG_FUNCED_ARGUMENT_20
 {Qs}\tNom d'écran public
-; 
+; {Qs}\tPublic screen name
 ;
-MSG_UNKNOWN_21020
+MSG_FUNCED_ARGUMENT_21
 {Qp}\tNom du port ARexx
-; 
+; {Qp}\tAREXX port name
 ;
-MSG_UNKNOWN_21021
+MSG_FUNCED_ARGUMENT_22
 {Rs}\tRequête de saisie
-; 
+; {Rs}\tString requester
 ;
-MSG_UNKNOWN_21022
-{RS}\tRequête de saisie sécurisée\x00
-; 
+MSG_FUNCED_ARGUMENT_23
+{RS}\tRequête de saisie sécurisée
+; {RS}\tSecure string requester
 ;
-MSG_UNKNOWN_21023
+MSG_FUNCED_ARGUMENT_24
 {Rf}\tRequête de fichier
-; 
+; {Rf}\tFile requester
 ;
-MSG_UNKNOWN_21024
+MSG_FUNCED_ARGUMENT_25
 {RF}\tRequête de fichier (mode sauvegarde)
-; 
+; {RF}\tFile requester (save)
 ;
-MSG_UNKNOWN_21025
+MSG_FUNCED_ARGUMENT_26
 {Rd}\tRequête de répertoire
-; 
+; {Rd}\tDirectory requester
 ;
-MSG_UNKNOWN_21026
-{v}\tVariable d'environnement\x00
-; 
+MSG_FUNCED_ARGUMENT_27
+{v}\tVariable d'environnement
+; {v}\tEnvironment variable
 ;
-MSG_UNKNOWN_22000
+MSG_STATUSBAR_CODE_FIRST
 *bs\tTaille fichiers & répertoires sél.
-; 
+; *bs\tSelected byte count
 ;
-MSG_UNKNOWN_22001
-*bt\tTaille totale fichiers & répertoires\x00
-; 
+MSG_STATUSBAR_CODE_2
+*bt\tTaille totale fichiers & répertoires
+; *bt\tTotal byte count
 ;
-MSG_UNKNOWN_22002
+MSG_STATUSBAR_CODE_3
 *ds\tNombre de répertoires sélectionnés
-; 
+; *ds\tSelected directory count
 ;
-MSG_UNKNOWN_22003
+MSG_STATUSBAR_CODE_4
 *dt\tNombre de répertoires
-; 
+; *dt\tTotal directory count
 ;
-MSG_UNKNOWN_22004
+MSG_STATUSBAR_CODE_5
 *fs\tNombre de fichiers sélectionnés
-; 
+; *fs\tSelected file count
 ;
-MSG_UNKNOWN_22005
+MSG_STATUSBAR_CODE_6
 *ft\tNombre de fichiers
-; 
+; *ft\tTotal file count
 ;
-MSG_UNKNOWN_22006
+MSG_STATUSBAR_CODE_LAST
 *h*\tNombre de fichiers cachés
-; 
+; *h*\tHidden file count
 ;
-MSG_UNKNOWN_6000
+MSG_ENVIRONMENT_STRIPED_ROWS
+Lignes _zébrées
+; Stri_ped Rows
+;
+MSG_ENVIRONMENT_STRIPE_COLOUR
+Lignes alternées
+; Alternate Rows
+;
+MSG_BUTTONED_TITLE
 Editeur de boutons
-; 
+; Button Editor
 ;
-MSG_UNKNOWN_6001
+MSG_BUTTONED_FUNCTIONS
 Fonctions
-; 
+; Functions
 ;
-MSG_UNKNOWN_6002
-_Nom\x00
-; 
+MSG_BUTTONED_NAME
+_Nom
+; _Name
 ;
-MSG_UNKNOWN_6005
+MSG_BUTTONED_EDIT_FUNCTION
 E_diter fonction...
-; 
+; _Edit Function...
 ;
-MSG_UNKNOWN_6006
+MSG_BUTTONED_LEFT_FUNCTION
 Bouton gauche
-; 
+; Left
 ;
-MSG_UNKNOWN_6007
-Bouton droit\x00
-; 
+MSG_BUTTONED_RIGHT_FUNCTION
+Bouton droit
+; Right
 ;
-MSG_UNKNOWN_6008
+MSG_BUTTONED_MID_FUNCTION
 Bouton milieu
-; 
+; Middle
 ;
-MSG_UNKNOWN_6010
-Choisir les couleurs\x00
-; 
+MSG_SELECT_COLOURS
+Choisir les couleurs
+; Select Colours
 ;
-MSG_UNKNOWN_6011
+MSG_PALETTE_FOREGROUND
 A_vant plan
-; 
+; _Foreground
 ;
-MSG_UNKNOWN_6012
+MSG_PALETTE_BACKGROUND
 _Fond
-; 
+; _Background
 ;
-MSG_UNKNOWN_6013
+MSG_BUTTONED_BUTTON
 Bouton
-; 
+; Button
 ;
-MSG_UNKNOWN_6014
-Aj_outer\x00
-; 
+MSG_BUTTONED_ADD
+Aj_outer
+; _Add
 ;
-MSG_UNKNOWN_6015
-_Effacer\x00
-; 
+MSG_BUTTONED_DEL
+_Effacer
+; _Del
 ;
-MSG_UNKNOWN_6016
+MSG_BUTTONED_NEW_FUNC
 Nouvelle fonction
-; 
+; new function
 ;
-MSG_UNKNOWN_7000
+MSG_CONVERT_REQ_TITLE
 Conversion de la configuration
-; 
+; Convert configuration
 ;
-MSG_UNKNOWN_7001
-Ancienne configuration detectée.\x00
-; 
+MSG_CONVERT_TITLE_1
+Ancienne configuration detectée.
+; Old-style configuration detected.
 ;
-MSG_UNKNOWN_7002
-Quelles sections convertir ?\x00
-; 
+MSG_CONVERT_TITLE_2
+Quelles sections convertir ?
+; Convert which sections?
 ;
-MSG_UNKNOWN_7004
-_Boutons\x00
-; 
+MSG_CONVERT_BUTTONS
+_Boutons
+; _Buttons
 ;
-MSG_UNKNOWN_7006
+MSG_CONVERT_DRIVES
 _Lecteurs
-; 
+; _Drives
 ;
-MSG_UNKNOWN_7007
+MSG_CONVERT_FILETYPES
 _Types de fichiers
-; 
+; _File Types
 ;
-MSG_UNKNOWN_7008
+MSG_CONVERT_HOTKEYS
 _Raccourcis
-; 
+; _Hotkeys
 ;
-MSG_UNKNOWN_7009
-_Nom de base\x00
-; 
+MSG_CONVERT_BASENAME
+_Nom de base
+; Base_name
 ;
-MSG_UNKNOWN_7010
+MSG_CONVERT_CONVERT
 _Convertir
-; 
+; Con_vert
 ;
-MSG_UNKNOWN_7011
+MSG_CONVERT_OLD_BASENAME
 ancien
-; 
+; old
 ;
-MSG_UNKNOWN_7012
+MSG_CONVERTING_CONFIGURATION
 Conversion de l'ancienne configuration...
-; 
+; Converting old configuration...
 ;
-MSG_UNKNOWN_7013
+MSG_CONVERT_ENVIRONMENT
 _Environnement
-; 
+; _Environment
 ;
-MSG_UNKNOWN_8000
+MSG_FILETYPES_TITLE
 Types de fichiers
-; 
+; File Types
 ;
-MSG_UNKNOWN_8001
-Aj_outer\x00
-; 
+MSG_FILETYPES_ADD
+Aj_outer
+; _Add
 ;
-MSG_UNKNOWN_8002
+MSG_FILETYPES_DUPLICATE
 _Dupliquer
-; 
+; _Duplicate
 ;
-MSG_UNKNOWN_8003
+MSG_FILETYPES_REMOVE
 S_upprimer
-; 
+; _Remove
 ;
-MSG_UNKNOWN_8004
+MSG_FILETYPES_SAVE
 _Sauver
-; 
+; _Save
 ;
-MSG_UNKNOWN_8005
-Stoc_ker\x00
-; 
+MSG_FILETYPES_STORE
+Stoc_ker
+; S_tore
 ;
-MSG_UNKNOWN_8006
+MSG_FILETYPE_EDIT_CLASS
 _Définition...
-; 
+; Edit Cla_ss...
 ;
-MSG_UNKNOWN_8007
+MSG_FILETYPE_ACTION_DOUBLECLICK
 Double clic
-; 
+; Double-click
 ;
-MSG_UNKNOWN_8008
-TirerDéposer\x00
-; 
+MSG_FILETYPE_ACTION_DRAGNDROP
+TirerDéposer
+; Drag'n'drop
 ;
-MSG_UNKNOWN_8009
-Utilisateur1\x00
-; 
+MSG_FILETYPE_ACTION_USER1
+Utilisateur1
+; User Function 1
 ;
-MSG_UNKNOWN_8010
-Utilisateur2\x00
-; 
+MSG_FILETYPE_ACTION_USER2
+Utilisateur2
+; User Function 2
 ;
-MSG_UNKNOWN_8011
-Utilisateur3\x00
-; 
+MSG_FILETYPE_ACTION_USER3
+Utilisateur3
+; User Function 3
 ;
-MSG_UNKNOWN_8012
-Utilisateur4\x00
-; 
+MSG_FILETYPE_ACTION_USER4
+Utilisateur4
+; User Function 4
 ;
-MSG_UNKNOWN_8019
+MSG_FILETYPE_EDITOR_TITLE
 Editeur type de fichier
-; 
+; File Type Editor
 ;
-MSG_UNKNOWN_8020
+MSG_FILETYPE_REMOVE_REQ
 Vraiment supprimer le type\n« %s » ?
-; 
+; Really remove the '%s' file type?
 ;
-MSG_UNKNOWN_8021
+MSG_FILETYPE_SELECT_ICON
 _Choisir icône...
-; 
+; Select Ico_n
 ;
-MSG_UNKNOWN_8022
-Icône du type de fichier\x00
-; 
+MSG_FILETYPE_PICK_ICON
+Icône du type de fichier
+; File Type Icon
 ;
-MSG_UNKNOWN_8023
+MSG_FILETYPES_EDIT
 _Editer
-; 
+; _Edit
 ;
-MSG_UNKNOWN_8024
+MSG_FILETYPES_EVENTS
 E_vènements...
-; 
+; E_vents...
 ;
-MSG_UNKNOWN_8025
+MSG_FILETYPES_ICON_MENU
 Menu _icône...
-; 
+; Ic_on Menu...
 ;
-MSG_UNKNOWN_8026
+MSG_FILETYPES_EDIT_ACTION
 _Editer
-; 
+; _Edit
 ;
-MSG_UNKNOWN_8027
+MSG_FILETYPES_EDIT_ICON_MENU
 Ed_iter
-; 
+; Ed_it
 ;
-MSG_UNKNOWN_8028
-Aj_outer\x00
-; 
+MSG_FILETYPES_ADD_ICON_MENU
+Aj_outer
+; _Add
 ;
-MSG_UNKNOWN_8029
-Efface_r\x00
-; 
+MSG_FILETYPES_DEL_ICON_MENU
+Efface_r
+; De_l
 ;
-MSG_UNKNOWN_8030
-Icône...\x00
-; 
+MSG_FILETYPES_ICON
+Icône...
+; Default Icon...
 ;
-MSG_UNKNOWN_8031
-E_ffacer\x00
-; 
+MSG_CLASSED_DEL
+E_ffacer
+; _Del
 ;
-MSG_UNKNOWN_8032
-Utilisateur5\x00
-; 
+MSG_FILETYPE_ACTION_USER5
+Utilisateur5
+; User Function 5
 ;
-MSG_UNKNOWN_8033
-Utilisateur6\x00
-; 
+MSG_FILETYPE_ACTION_USER6
+Utilisateur6
+; User Function 6
 ;
-MSG_UNKNOWN_8034
-Utilisateur7\x00
-; 
+MSG_FILETYPE_ACTION_USER7
+Utilisateur7
+; User Function 7
 ;
-MSG_UNKNOWN_8035
-Utilisateur8\x00
-; 
+MSG_FILETYPE_ACTION_USER8
+Utilisateur8
+; User Function 8
 ;
-MSG_UNKNOWN_8036
-Utilisateur9\x00
-; 
+MSG_FILETYPE_ACTION_USER9
+Utilisateur9
+; User Function 9
 ;
-MSG_UNKNOWN_8037
+MSG_FILETYPE_ACTION_USER10
 Utilisateur10
-; 
+; User Function 10
 ;
-MSG_UNKNOWN_8038
+MSG_FILETYPE_ACTION_SHIFT_DCLICK
 Double clic (Shift)
-; 
+; Double-click (Shift)
 ;
-MSG_UNKNOWN_8039
-TirerDéposer (Shift)\x00
-; 
+MSG_FILETYPE_ACTION_SHIFT_DDROP
+TirerDéposer (Shift)
+; Drag'n'drop (Shift)
 ;
-MSG_UNKNOWN_8040
+MSG_FILETYPE_ACTION_CTRL_DCLICK
 Double clic (CTRL)
-; 
+; Double-click (Ctrl)
 ;
-MSG_UNKNOWN_8041
+MSG_FILETYPE_ACTION_CTRL_DDROP
 TirerDéposer (CTRL)
-; 
+; Drag'n'drop (Ctrl)
 ;
-MSG_UNKNOWN_8042
+MSG_FILETYPE_ACTION_ALT_DCLICK
 Double clic (Alt)
-; 
+; Double-click (Alt)
 ;
-MSG_UNKNOWN_8043
+MSG_FILETYPE_ACTION_ALT_DDROP
 TirerDéposer (Alt)
-; 
+; Drag'n'drop (Alt)
 ;
-MSG_UNKNOWN_9005
-_Nom\x00
-; 
+MSG_CLASSED_CLASS_NAME
+_Nom
+; _Name
 ;
-MSG_UNKNOWN_9007
-Aj_outer\x00
-; 
+MSG_CLASSED_ADD
+Aj_outer
+; _Add
 ;
-MSG_UNKNOWN_9008
-_Enlever\x00
-; 
+MSG_CLASSED_REMOVE
+_Enlever
+; _Remove
 ;
-MSG_UNKNOWN_9010
+MSG_CLASSED_MATCH_MATCHNAME
 Match name
-; 
+; Match Name
 ;
-MSG_UNKNOWN_9012
+MSG_CLASSED_MATCH_MATCHBITS
 Match bits
-; 
+; Match Bits
 ;
-MSG_UNKNOWN_9013
+MSG_CLASSED_MATCH_MATCHCOMMENT
 Match comment
-; 
+; Match Comment
 ;
-MSG_UNKNOWN_9014
+MSG_CLASSED_MATCH_MATCHDATE
 Comparer date
-; 
+; Match Date
 ;
-MSG_UNKNOWN_9015
+MSG_CLASSED_MATCH_MATCHSIZE
 Match size
-; 
+; Match Size
 ;
-MSG_UNKNOWN_9016
+MSG_CLASSED_MATCH_SEARCHFOR
 Search for
-; 
+; Search For
 ;
-MSG_UNKNOWN_9017
+MSG_CLASSED_MATCH_FINDCHUNK
 Find chunk
-; 
+; Find Chunk
 ;
-MSG_UNKNOWN_9019
+MSG_CLASSED_MATCH_MOVETO
 Move to
-; 
+; Move To
 ;
-MSG_UNKNOWN_9022
-_Insérer\x00
-; 
+MSG_CLASSED_INSERT
+_Insérer
+; In_sert
 ;
-MSG_UNKNOWN_9027
+MSG_CLASSED_MATCH_MATCH_DESC
 Correspond aux octets
-; 
+; Match bytes
 ;
-MSG_UNKNOWN_9028
+MSG_CLASSED_MATCH_MATCHNAME_DESC
 Nom de fichier
-; 
+; Match file name
 ;
-MSG_UNKNOWN_9029
-Le type IFF FORM\x00
-; 
+MSG_CLASSED_MATCH_MATCHFORM_DESC
+Le type IFF FORM
+; Match an IFF FORM type
 ;
-MSG_UNKNOWN_9030
+MSG_CLASSED_MATCH_MATCHBITS_DESC
 Bits de protection
-; 
+; Match protection bits
 ;
-MSG_UNKNOWN_9031
+MSG_CLASSED_MATCH_MATCHCOMMENT_DESC
 Commentaire du fichier
-; 
+; Match file comment
 ;
-MSG_UNKNOWN_9032
-Date de création\x00
-; 
+MSG_CLASSED_MATCH_MATCHDATE_DESC
+Date de création
+; Match creation date
 ;
-MSG_UNKNOWN_9033
+MSG_CLASSED_MATCH_MATCHSIZE_DESC
 Taille du fichier
-; 
+; Match file size
 ;
-MSG_UNKNOWN_9034
-Recherche des octets\x00
-; 
+MSG_CLASSED_MATCH_SEARCHFOR_DESC
+Recherche des octets
+; Search for bytes
 ;
-MSG_UNKNOWN_9035
-Cherche un chunk IFF\x00
-; 
+MSG_CLASSED_MATCH_FINDCHUNK_DESC
+Cherche un chunk IFF
+; Find an IFF chunk
 ;
-MSG_UNKNOWN_9036
-Saut à position relative\x00
-; 
+MSG_CLASSED_MATCH_MOVE_DESC
+Saut à position relative
+; Move to relative position
 ;
-MSG_UNKNOWN_9037
+MSG_CLASSED_MATCH_MOVETO_DESC
 Saut à position absolue
-; 
+; Move to absolute position
 ;
-MSG_UNKNOWN_9038
-Doit être aussi « vrai »\x00
-; 
+MSG_CLASSED_MATCH_AND_DESC
+Doit être aussi « vrai »
+; This must also be true
 ;
-MSG_UNKNOWN_9039
-Si cela échoue, essayer ceci\x00
-; 
+MSG_CLASSED_MATCH_OR_DESC
+Si cela échoue, essayer ceci
+; If that failed, try this
 ;
-MSG_UNKNOWN_9040
+MSG_CLASSED_MATCH_DTGROUP_DESC
 Un groupe datatypes
-; 
+; Match a DataTypes Group
 ;
-MSG_UNKNOWN_9041
+MSG_CLASSED_MATCH_DTID_DESC
 Un ID datatype
-; 
+; Match a DataTypes ID
 ;
-MSG_UNKNOWN_9042
+MSG_CLASSED_MATCH_MATCHI_DESC
 En ignorant les min/MAJ
-; 
+; Case-insensitive Match
 ;
-MSG_UNKNOWN_9044
+MSG_CLASSED_MATCH_DIRECTORY_DESC
 Le type « répertoire »
-; 
+; Matches directories
 ;
-MSG_UNKNOWN_9045
+MSG_CLASSED_VIEW_FILE
 _Visionner...
-; 
+; _View File
 ;
-MSG_UNKNOWN_9046
+MSG_CLASSED_SELECT_VIEW_FILE
 Choisir le fichier à visionner
-; 
+; Select File To View
 ;
-MSG_UNKNOWN_9047
-Sound module\x00
-; 
+MSG_CLASSED_MATCH_MODULE
+Sound module
+; Sound Module
 ;
-MSG_UNKNOWN_9048
+MSG_CLASSED_MATCH_MODULE_DESC
 Inovamusic.library requise
-; 
+; Requires inovamusic.library
 ;
-MSG_UNKNOWN_9050
+MSG_CLASSED_MATCH_DISK_DESC
 Le type « disque »
-; 
+; Matches disks
 ;
-MSG_UNKNOWN_10001
+MSG_LISTER_BUTTONS_USE
 _Utiliser
-; 
+; _Use
 ;
-MSG_UNKNOWN_10002
-_Annuler\x00
-; 
+MSG_LISTER_BUTTONS_CANCEL
+_Annuler
+; _Cancel
 ;
-MSG_UNKNOWN_10010
+MSG_LISTER_BUTTONS_MENU_NEW
 Nouveau
-; 
+; New
 ;
-MSG_UNKNOWN_10011
+MSG_LISTER_BUTTONS_MENU_OPEN
 Ouvrir...
-; 
+; Open...
 ;
-MSG_UNKNOWN_10012
+MSG_LISTER_BUTTONS_MENU_SAVE
 Sauver
-; 
+; Save
 ;
-MSG_UNKNOWN_10013
-Sauver en...\x00
-; 
+MSG_LISTER_BUTTONS_MENU_SAVEAS
+Sauver en...
+; Save As...
 ;
-MSG_UNKNOWN_10014
+MSG_LISTER_BUTTONS_MENU_QUIT
 Quitter
-; 
+; Quit
 ;
-MSG_UNKNOWN_10018
+MSG_SAVE_DISCARD
 Sauver|Perdre
-; 
+; Save|Discard
 ;
-MSG_UNKNOWN_10019
+MSG_SAVE_DISCARD_CANCEL
 Sauver|Perdre|Annuler
-; 
+; Save|Discard|Cancel
 ;
-MSG_UNKNOWN_10020
+MSG_UNTITLED
 SansTitre
-; 
+; Untitled
 ;
-MSG_UNKNOWN_10021
+MSG_LISTER_BUTTONS_SAVE
 _Sauver
-; 
+; _Save
 ;
-MSG_UNKNOWN_10022
+MSG_DISCARD_CANCEL
 Perdre|Annuler
-; 
+; Discard|Cancel
 ;
-MSG_UNKNOWN_10023
+MSG_RESET_DEFAULTS
 Valeurs par défaut
-; 
+; Reset To Defaults
 ;
-MSG_UNKNOWN_10024
+MSG_LAST_SAVED
 Dernières valeurs sauvées
-; 
+; Last Saved
 ;
-MSG_UNKNOWN_10025
+MSG_RESTORE
 Valeurs initiales
-; 
+; Restore
 ;
-MSG_UNKNOWN_11001
-_Eléments...\x00
-; 
+MSG_LISTER_MENU_ITEMS
+_Eléments...
+; I_tems...
 ;
-MSG_UNKNOWN_11002
-Aj_outer\x00
-; 
+MSG_LISTER_MENU_ADD
+Aj_outer
+; _Add
 ;
-MSG_UNKNOWN_11003
-_Insérer\x00
-; 
+MSG_LISTER_MENU_INSERT
+_Insérer
+; _Insert
 ;
-MSG_UNKNOWN_11004
-E_ffacer\x00
-; 
+MSG_LISTER_MENU_REMOVE
+E_ffacer
+; _Delete
 ;
-MSG_UNKNOWN_11007
+MSG_LISTER_MENU_EDIT
 Edi_ter
-; 
+; _Edit
 ;
-MSG_UNKNOWN_11008
-_Nom\x00
-; 
+MSG_LISTER_MENU_NAME
+_Nom
+; Item _Name
 ;
-MSG_UNKNOWN_11009
+MSG_LISTER_MENU_ENTER_NAME
 Sauver le menu
-; 
+; Save Menu
 ;
-MSG_UNKNOWN_11010
+MSG_LISTER_MENU_SELECT_FILE
 Ouvrir le menu
-; 
+; Open Menu
 ;
-MSG_UNKNOWN_11011
+MSG_LISTER_MENU_CHANGED
 Le menu courant (%s) a été modifié.\nVoulez-vous le sauver avant de continuer ?
-; 
+; The menu (%s) has been modified.\nDo you wish to save it before proceeding?
 ;
-MSG_UNKNOWN_11012
+MSG_LISTER_MENU_CHANGED_NOSAVE
 Le menu courant (%s) a été modifié.\nVoulez-vous le perdre ?
-; 
+; The menu (%s) has been modified.\nDo you wish to discard it?
 ;
-MSG_UNKNOWN_11013
+MSG_LISTER_MENU_DUPLICATE
 Du_pliquer
-; 
+; Dup_licate
 ;
-MSG_UNKNOWN_11014
+MSG_HOTKEYS_ENTER_NAME
 Sauver raccourcis
-; 
+; Save Hotkeys
 ;
-MSG_UNKNOWN_11015
+MSG_HOTKEYS_SELECT_FILE
 Ouvrir raccourcis
-; 
+; Open Hotkeys
 ;
-MSG_UNKNOWN_11016
+MSG_HOTKEYS_CHANGED
 Le fichier de raccourcis (%s) a été modifié.\nVoulez-vous le sauver avant de continuer ?
-; 
+; The hotkeys file (%s) has been modified.\nDo you wish to save it before proceeding?
 ;
-MSG_UNKNOWN_11017
+MSG_HOTKEYS_CHANGED_NOSAVE
 Le fichier de raccourcis (%s) a été modifié.\nVoulez-vous le détruire ?
-; 
+; The hotkeys file (%s) has been modified.\nDo you wish to discard it?
 ;
-MSG_UNKNOWN_11018
-_Raccourci global au système\x00
-; 
+MSG_HOTKEYS_GLOBAL
+_Raccourci global au système
+; System-_global Hotkey
 ;
-MSG_UNKNOWN_11019
+MSG_SCRIPTS_ENTER_NAME
 Sauver scripts
-; 
+; Save Scripts
 ;
-MSG_UNKNOWN_11020
+MSG_SCRIPTS_SELECT_FILE
 Ouvrir scripts
-; 
+; Open Scripts
 ;
-MSG_UNKNOWN_11021
-Le fichier script (%s) a été modifié.\nVoulez-vous le sauver avant de continuer ?\x00
-; 
+MSG_SCRIPTS_CHANGED
+Le fichier script (%s) a été modifié.\nVoulez-vous le sauver avant de continuer ?
+; The scripts file (%s) has been modified.\nDo you wish to save it before proceeding?
 ;
-MSG_UNKNOWN_11022
+MSG_SCRIPTS_CHANGED_NOSAVE
 Le fichier script (%s) a été modifié.\nVoulez-vous le détruire ?
-; 
+; The scripts file (%s) has been modified.\nDo you wish to discard it?
 ;
-MSG_UNKNOWN_12001
+MSG_ERROR_SAVING
 Erreur en sauvant !
-; 
+; An error occurred while saving!
 ;
-MSG_UNKNOWN_12002
+MSG_DOS_ERROR
 Erreur DOS
-; 
+; DOS error
 ;
-MSG_UNKNOWN_12003
+MSG_RETRY_CANCEL
 Réessayer|Annuler
-; 
+; Retry|Cancel
 ;
-MSG_UNKNOWN_12004
-Erreur en sauvant !\nErreur DOS %ld%s\x00
-; 
+MSG_ERROR_SAVING_BUILD
+Erreur en sauvant !\nErreur DOS %ld%s
+; An error occurred while saving!\nDOS error %ld%s
 ;
-MSG_UNKNOWN_12005
+MSG_ERROR_LOADING_BUILD
 Erreur en chargeant !\nErreur DOS %ld%s
-; 
+; An error occurred while loading!\nDOS error %ld%s
 ;
-MSG_UNKNOWN_13000
-      Nom : \x00
-; 
+MSG_FUNCTION_ASCII_NAME
+      Nom : 
+;     Name : 
 ;
-MSG_UNKNOWN_13001
-    Image : \x00
-; 
+MSG_FUNCTION_ASCII_IMAGE
+    Image : 
+;    Image : 
 ;
-MSG_UNKNOWN_13002
-    Label : \x00
-; 
+MSG_FUNCTION_ASCII_LABEL
+    Label : 
+;    Label : 
 ;
-MSG_UNKNOWN_13003
-Raccourci : \x00
-; 
+MSG_FUNCTION_ASCII_KEY
+Raccourci : 
+;      Key : 
 ;
-MSG_UNKNOWN_13004
- Fonction : \x00
-; 
+MSG_FUNCTION_ASCII_FUNCTION
+ Fonction : 
+; Function : 
 ;
-MSG_UNKNOWN_13005
-Attributs : \x00
-; 
+MSG_FUNCTION_ASCII_FLAGS
+Attributs : 
+;    Flags : 
 ;
-MSG_UNKNOWN_14000
+MSG_SCRIPTS_STARTUP
 Démarrage
-; 
+; Startup
 ;
-MSG_UNKNOWN_14001
+MSG_SCRIPTS_SHUTDOWN
 Extinction
-; 
+; Shutdown
 ;
-MSG_UNKNOWN_14002
+MSG_SCRIPTS_HIDE
 Iconification
-; 
+; Hide
 ;
-MSG_UNKNOWN_14003
-Réapparition\x00
-; 
+MSG_SCRIPTS_REVEAL
+Réapparition
+; Reveal
 ;
-MSG_UNKNOWN_14004
+MSG_SCRIPTS_DISKINSERT
 Disque inséré
-; 
+; Disk inserted
 ;
-MSG_UNKNOWN_14005
+MSG_SCRIPTS_BAD_DISKINSERT
 Disque illisible inséré
-; 
+; Bad disk inserted
 ;
-MSG_UNKNOWN_14006
+MSG_SCRIPTS_DISKREMOVE
 Disque enlevé
-; 
+; Disk removed
 ;
-MSG_UNKNOWN_14007
+MSG_SCRIPTS_DOUBLECLICK
 Double clic
-; 
+; Double-click
 ;
-MSG_UNKNOWN_14008
-Ouverture de listeur\x00
-; 
+MSG_SCRIPTS_OPEN_LISTER
+Ouverture de listeur
+; Open lister
 ;
-MSG_UNKNOWN_14009
-Ouverture de boutons\x00
-; 
+MSG_SCRIPTS_OPEN_BUTTONS
+Ouverture de boutons
+; Open buttons
 ;
-MSG_UNKNOWN_14010
+MSG_SCRIPTS_OPEN_GROUP
 Ouverture de groupe
-; 
+; Open group
 ;
-MSG_UNKNOWN_14011
-Fermeture de listeur\x00
-; 
+MSG_SCRIPTS_CLOSE_LISTER
+Fermeture de listeur
+; Close lister
 ;
-MSG_UNKNOWN_14012
-Fermeture de boutons\x00
-; 
+MSG_SCRIPTS_CLOSE_BUTTONS
+Fermeture de boutons
+; Close buttons
 ;
-MSG_UNKNOWN_14013
+MSG_SCRIPTS_CLOSE_GROUP
 Fermeture de groupe
-; 
+; Close group
 ;
-MSG_UNKNOWN_14014
+MSG_SCRIPTS_RIGHT_DOUBLECLICK
 Double clic droit
-; 
+; Right double-click
 ;
-MSG_UNKNOWN_14015
+MSG_SCRIPTS_MID_DOUBLECLICK
 Double clic milieu
-; 
+; Middle double-click
 ;
-MSG_UNKNOWN_15000
+MSG_MENUS_TITLE
 Menus utilisateur
-; 
+; User Menus
 ;
-MSG_UNKNOWN_15002
+MSG_MENUS_ITEM_TITLE
 _Elément menu
-; 
+; _Item
 ;
-MSG_UNKNOWN_15003
+MSG_MENUS_SUB_TITLE
 _Sous menu
-; 
+; Su_b-item
 ;
-MSG_UNKNOWN_15004
+MSG_MENUS_ADD
 Ajout
-; 
+; Add
 ;
-MSG_UNKNOWN_15005
+MSG_MENUS_COPY
 Copier
-; 
+; Copy
 ;
-MSG_UNKNOWN_15006
-Eff.\x00
-; 
+MSG_MENUS_DEL
+Eff.
+; Del
 ;
-MSG_UNKNOWN_15007
+MSG_MENUS_EDIT
 Edit.
-; 
+; Edit
 ;
-MSG_UNKNOWN_15008
-Menu utilisateur\x00
-; 
+MSG_USER_MENU_DEF_TITLE
+Menu utilisateur
+; User Menu
 ;
-MSG_UNKNOWN_15009
-Nouveau menu\x00
-; 
+MSG_USER_MENU_NEW_MENU
+Nouveau menu
+; New Menu
 ;
-MSG_UNKNOWN_15010
+MSG_USER_MENU_NEW_ITEM
 Nouvel élément
-; 
+; New Item
 ;
-MSG_UNKNOWN_15011
-Menu listeur\x00
-; 
+MSG_MENUS_LISTER_TITLE
+Menu listeur
+; Lister Menu
 ;
-MSG_UNKNOWN_15012
-Menu listeur\x00
-; 
+MSG_LISTER_MENU_DEF_TITLE
+Menu listeur
+; Lister Menu
 ;
-MSG_UNKNOWN_15013
+MSG_REPLACE_CANCEL
 Remplacer|Annuler
-; 
+; Replace|Cancel
 ;
-MSG_UNKNOWN_15014
+MSG_FILE_EXISTS
 Le fichier « %s » existe déjà\nOkay pour le remplacer ?
-; 
+; File '%s' already exists.\nOk to replace it?
 ;
-MSG_UNKNOWN_15015
-Okay\x00
-; 
+MSG_OK
+Okay
+; Ok
 ;
-MSG_UNKNOWN_15016
-« %s »\nn'est pas un fichier boutons valide !\x00
-; 
+MSG_INVALID_BUTTON_FILE
+« %s »\nn'est pas un fichier boutons valide !
+; '%s' is not a valid button file!
 ;
-MSG_UNKNOWN_15017
-Haut\x00
-; 
+MSG_MENUS_UP
+Haut
+; Up
 ;
-MSG_UNKNOWN_15018
+MSG_MENUS_DOWN
 Bas
-; 
+; Down
 ;
-MSG_UNKNOWN_15019
+MSG_MENUKEYS_TITLE
 Raccourcis menu
-; 
+; Menu Keys
 ;
-MSG_UNKNOWN_15020
+MSG_MENUKEYS_DEF_TITLE
 Raccourcis menu
-; 
+; Menu Keys
 ;
-MSG_UNKNOWN_15021
+MSG_MENUS_MENU_KEY
 _RAmiga +
-; 
+; _RAmiga + 
 ;
-MSG_UNKNOWN_15022
+MSG_MENUS_START_TITLE
 Menu démarrer
-; 
+; Start Menu
 ;
-MSG_UNKNOWN_15023
+MSG_START_DEF_TITLE
 Menu démarrer
-; 
+; Start Menu
+;

@@ -70,10 +70,6 @@ MSG_SEARCH_REVERSE
 _Keresés visszafelé
 ; _Reverse Search
 ;
-MSG_OK_BUTTON
-OK
-; OK
-;
 MSG_CANCEL_BUTTON
 Mégsem
 ; Cancel
@@ -93,10 +89,6 @@ MSG_MENU_MODE
 MSG_MENU_MODE_NORMAL
 Normál
 ; Normal
-;
-MSG_MENU_MODE_ANSI
-ANSI
-; ANSI
 ;
 MSG_MENU_MODE_HEX
 Hexa
@@ -157,8 +149,4 @@ Olvasom az állományt...
 MSG_COUNTING_LINES
 Számolom a sorokat...
 ; Counting lines...
-;
-MSG_CLOSE
-Close
-; Close
 ;

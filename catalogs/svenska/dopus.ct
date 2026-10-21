@@ -1,8 +1,6 @@
 ## version $VER: dopus.catalog 1.2 (9.7.97)
 ## codeset 0
 ## language svenska
-; Catalog updates Copyright 2023-2026 Dimitris Panokostas
-;
 ;
 MSG_ABORTED
 Avbruten...
@@ -59,10 +57,6 @@ Nej
 MSG_CONTINUE
 Fortsätt
 ; Continue
-;
-MSG_OKAY
-OK
-; OK
 ;
 MSG_CANCEL
 Avbryt
@@ -137,35 +131,27 @@ MSG_UNKNOWN_TYPE
 ; <unknown>
 ;
 MSG_SNIFF_CONFIRMATION
-Kunde inte identifiera filen\n\
-"%s".\n\
-Vill du starta filtypssnokaren\n\
-för att undersöka den?
-; The file '%s' could not be identified.\n\
-; Launch Filetype Sniffer to investigate?
+Kunde inte identifiera filen\n"%s".\nVill du starta filtypssnokaren\nför att undersöka den?
+; The file '%s' could not be identified.\nLaunch Filetype Sniffer to investigate?
 ;
 MSG_SNIFF
 Snoka!
 ; Sniff!
 ;
 MSG_SCRIPTS_CHANGED
-Du har ändrat dina skript och\n\
-inte sparat dem. Vill du spara dem?
+Du har ändrat dina skript och\ninte sparat dem. Vill du spara dem?
 ; You have modified your scripts and not\nsaved them. Would you like to?
 ;
 MSG_LISTER_MENU_CHANGED
-Du har ändrat din listarmeny och\n\
-inte sparat den. Vill du spara den?
+Du har ändrat din listarmeny och\ninte sparat den. Vill du spara den?
 ; You have modified your lister menu and not\nsaved it. Would you like to?
 ;
 MSG_USER_MENU_CHANGED
-Du har ändrat menyerna och inte\n\
-sparat dem. Vill du spara dem?
+Du har ändrat menyerna och inte\nsparat dem. Vill du spara dem?
 ; You have modified your user menus and not\nsaved them. Would you like to?
 ;
 MSG_HOTKEYS_CHANGED
-Du har ändrat dina direktval och\n\
-inte sparat dem. Vill du spara dem?
+Du har ändrat dina direktval och\ninte sparat dem. Vill du spara dem?
 ; You have modified your hotkeys and not\nsaved them. Would you like to?
 ;
 MSG_OPEN_NEW_WINDOW
@@ -197,13 +183,11 @@ Låda
 ; Directory 
 ;
 MSG_SELECT_UNPROTECT
-\n\
-Välj "Ta bort skydd" för att sätta raderingsflaggan.
+\nVälj "Ta bort skydd" för att sätta raderingsflaggan.
 ; \nSelect Unprotect to set the deletion bit.
 ;
 MSG_FOUND_A_MATCH
-Hittade texten i filen\n\
-"%s"
+Hittade texten i filen\n"%s"
 ; Found a match in the file\n'%s'
 ;
 MSG_COMMENTING
@@ -259,329 +243,288 @@ Directory Opus - Förfrågan
 ; Directory Opus Request
 ;
 MSG_MULTI_DRAG
-Avbryt
+Multidrag - %ld filer, %ld lådor valda
 ; Multi-drag - %ld files, %ld dirs selected
 ;
 MSG_PRESS_MOUSE_BUTTON
-Ersätt
+Stäng fönstret för att fortsätta...
 ; Click close button to continue...
 ;
 MSG_COMMENT
-Hoppa över
+kommentar
 ; comment
 ;
 MSG_PROTECT
-Hoppa över alla
+skydda
 ; protect
 ;
 MSG_DATESTAMP
-Alla
+datum
 ; date stamp
 ;
 MSG_PROGRESS_OPERATION_MOVING
-Avsluta
+Flyttar...
 ; Moving...
 ;
 MSG_PROGRAM_LOADING
-Spara
+Laddar Directory Opus 5... Var god vänta.
 ; Opus 5 loading... please wait.
 ;
 MSG_OPEN_MENU
-Stäng
+Öppna...
 ; Load...
 ;
 MSG_SAVE_MENU
-Ja
+Spara
 ; Save
 ;
 MSG_SAVEAS_MENU
-Nej
+Spara som...
 ; Save As...
 ;
 MSG_ACT_RECURSIVELY
-Fortsätt
+Agera på filer i underlådor?
 ; Act on files in sub-directories?
 ;
 MSG_PROGRESS_OPERATION_COMMENT
-Setting comments...
+Sätter kommentarer...
 ; Setting comments...
 ;
 MSG_PROGRESS_OPERATION_PROTECT
-Avbryt
+Sätter skyddsflaggor...
 ; Setting protections...
 ;
 MSG_PROGRESS_OPERATION_DATESTAMP
-Ersätt alla
+Sätter datum...
 ; Setting datestamps...
 ;
 MSG_SET_PROTECT_OLD
-Fortsätt
+Nuvarande
 ; Current
 ;
 MSG_SET_PROTECT_SET
-Flytta
+Sätt
 ; Set
 ;
 MSG_SET_PROTECT_CLEAR
-Kasta bort
+Rensa
 ; Clear
 ;
-MSG_OK_BUTTON
-block
-; _OK
-;
 MSG_ALL_BUTTON
-fritt
+_Alla
 ; A_ll
 ;
 MSG_SKIP_BUTTON
-Skapa länk
+_Skippa
 ; S_kip
 ;
 MSG_ABORT_BUTTON
-Välj fil
+A_vbryt
 ; A_bort
 ;
 MSG_PROGRESS_OPERATION_ENCRYPTING
-Välj låda
+Krypterar...
 ; Encrypting...
 ;
 MSG_USER_MENU
-Ange filnamn
+Användare
 ; User
 ;
 MSG_LISTER_MENU_TITLE
-Öppna...
+Listarmeny
 ; Lister Pop-Up Menu
 ;
 MSG_USER_MENU_TITLE
-Förinställda värden
+Menyer
 ; User Menus
 ;
 MSG_EMPTY
-Senast sparade
+tom
 ; empty
 ;
 MSG_CANCEL_BUTTON
-Återställ
+A_vbryt
 ; _Cancel
 ;
 MSG_OPEN_BUTTON
-Arkiv
+Ö_ppna
 ; _Open
 ;
 MSG_NEW_BUTTON
-Redigera
+_Ny
 ; _New
 ;
 MSG_PARENT
-<okänd>
+Moderlåda
 ; Parent Directory
 ;
 MSG_ROOT
-Kunde inte identifiera filen\n\
-"%s".\n\
-Vill du starta filtypssnokaren\n\
-för att undersöka den?
+Rotlåda
 ; Root Directory
 ;
 MSG_DEVICE_LIST
-Snoka!
+Enhetslista
 ; Device List
 ;
 MSG_SCANNING_DIRECTORIES
-Du har ändrat dina skript och\n\
-inte sparat dem. Vill du spara dem?
+Söker igenom lådor...
 ; Scanning directories...
 ;
 MSG_READING_DIRECTORY
-Du har ändrat din listarmeny och\n\
-inte sparat den. Vill du spara den?
+Läser låda...
 ; Reading directory...
 ;
 MSG_CHECK_FIT_RESULTS
-Du har ändrat menyerna och inte\n\
-sparat dem. Vill du spara dem?
+Resultat av platstest:\n
 ; Results of fit test:\n
 ;
 MSG_FIT
-Du har ändrat dina direktval och\n\
-inte sparat dem. Vill du spara dem?
+får plats
 ; fit
 ;
 MSG_BLOCKS_NEEDED
-Öppna i ny listare
+block behövs.
 ; blocks needed.
 ;
 MSG_EXECUTE_ENTER_COMMAND
-Öppna med...
+Ange kommando samt eventuella argument.
 ; Enter command and arguments.
 ;
 MSG_TOOL_MENU
-Välj program för att öppna "%s"
+Verktyg
 ; Tools
 ;
 MSG_BUFFER_LIST
-Öppna med
+Fickminneslista
 ; Cache List
 ;
 MSG_REREAD_DIR
-Andra...
+Läs in låda igen
 ; Re-read Directory
 ;
 MSG_ASSIGN
-Assign
+Tilldelning
 ; Assign
 ;
-MSG_FULL
-full
-; full
-;
 MSG_USED
-in use
+används
 ; in use
 ;
 MSG_VALIDATING
-disk validating
+validerar
 ; disk validating
 ;
 MSG_ENTER_FILTER_STRING
-Directories selected - enter filter pattern.
+Lådor valda - ange filtreringsmönster.
 ; Directories selected - enter filter pattern.
 ;
 MSG_VOLUME
-Volume
+Volym
 ; Volume
 ;
 MSG_SELECT_SOURCE
-Select Source
+Välj källa
 ; Select Source
 ;
 MSG_SELECT_DESTINATION
-Select Destination
+Välj destination
 ; Select Destination
 ;
 MSG_NO_OWNER
-<No Owner>
+<Ingen ägare>
 ; <No Owner>
 ;
 MSG_NO_GROUP
-<No Group>
+<Ingen grupp>
 ; <No Group>
 ;
 MSG_SCRIPTS_TITLE
-Scripts
+Skript
 ; Scripts
 ;
 MSG_PROGRESS_OPERATION_LINKING
-Making Links...
+Skapar länkar...
 ; Making Links...
 ;
 MSG_LINKING
-making a link to
+skapa en länk till
 ; making a link to
 ;
 MSG_DECRYPT
-_Decrypt files
+_Dekrypterar filer
 ; _Decrypt files
 ;
 MSG_EMPTY_TRASH
-Empty Trash
+Töm soptunnan
 ; Empty Trash
 ;
 MSG_REALLY_EMPTY_TRASH
-The contents of the trashcan will be lost!\nDo you really want to empty it?
+Innehållet i soptunnan kommer att försvinna!\nVill du verkligen tömma den?
 ; The contents of the trashcan will be lost!\nDo you really want to empty it?
 ;
 MSG_ENTER_ASSIGN_NAME
-Enter name to assign to '%s'
+Ange namn att tilldela till "%s"
 ; Enter name to assign to '%s'
 ;
 MSG_ADD
-Add
+Lägg till
 ; Add
 ;
 MSG_PATH
-Path
+Sökväg
 ; Path
 ;
 MSG_DEFER
-Defer
+Fördröjd
 ; Defer
 ;
 MSG_ASSIGNING
-assigning
+tilldela
 ; assigning
 ;
 MSG_CHANGE_NEEDS_RESET
-Some changes you made will not be\neffective until you next reboot.
+Några av de ändringar du gjort kommer inte\natt aktiveras förrän efter nästa omstart.
 ; Some changes you made will not be\neffective until you next reboot.
 ;
 MSG_OPENING
-opening
+öppna
 ; opening
 ;
 MSG_LIBRARY_ERROR
-Unable to open %s (%s)
+Kunde inte öppna %s\n(%s)!
 ; Unable to open %s (%s)
 ;
 MSG_LIBRARY_ANY_VERSION
-any version
+godtycklig version
 ; any version
 ;
-MSG_CLI
-CLI
-; CLI
-;
 MSG_CX_DESC
-The Complete Workbench Replacement!
+Den kompletta Workbench-ersättaren!
 ; The Complete Workbench Replacement!
 ;
 MSG_ABORT_STARTUP
-Do you want to abort startup?
+Vill du avbryta startupen?
 ; Do you want to abort startup?
 ;
 MSG_ABORT_STARTUP_BUTTONS
-Continue|Abort
+Fortsätt|Avbryt
 ; Continue|Abort
 ;
 MSG_PROTECT_TITLE
-Protect
+Skydda
 ; Protect
 ;
 MSG_DATESTAMP_TITLE
-Datestamp
+Datum
 ; Datestamp
 ;
 MSG_COMMENT_TITLE
-Comment
+Kommentar
 ; Comment
 ;
 MSG_PATTERN_OFF
-The backdrop picture is disabled in the Environment.\n\
-; Would you like it enabled?
-; The backdrop picture is disabled in the Environment.\n\
-; Would you like it enabled?
-;
-MSG_THEMES_MENU
-Themes
-; Themes
-;
-MSG_THEMES_LOAD
-Load Theme...
-; Load Theme...
-;
-MSG_THEMES_SAVE
-Save Theme...
-; Save Theme...
-;
-MSG_THEMES_BUILD
-Build Theme...
-; Build Theme...
-;
-MSG_ADDICONING
-adding icons to
-; adding icons to
+Bakgrundsbilden är avstängd i miljöinställningarna.\nVill du aktivera den?
+; The backdrop picture is disabled in the Environment.\nWould you like it enabled?
 ;
 MSG_REGISTERED_TO
 Den här kopian är registrerad till:
@@ -640,8 +583,7 @@ Söker...
 ; Searching...
 ;
 MSG_SEARCH_OUTPUT_HEADER
-Filer innehållande\n\
-"%s":\n\n
+Filer innehållande\n"%s":\n\n
 ; Files containing '%s'\n\n
 ;
 MSG_SEARCH_READ
@@ -661,8 +603,7 @@ Byt namn
 ; Rename
 ;
 MSG_RENAME_DISK
-Ange nytt namn för\n\
-"%s":
+Ange nytt namn för\n"%s":
 ; Enter a new name for '%s'.
 ;
 MSG_ENTER_ANOTHER_NAME
@@ -690,9 +631,7 @@ Lägger till ikoner...
 ; Adding icons...
 ;
 MSG_ICON_ALREADY_EXISTS
-En ikon finns redan för\n\
-"%s".\n\
-Vill du ersätta den?
+En ikon finns redan för\n"%s".\nVill du ersätta den?
 ; An icon already exists for '%s'.\nDo you wish to replace it?
 ;
 MSG_ICON_REPLACE_IMAGE
@@ -708,8 +647,7 @@ Kopierar...
 ; Copying...
 ;
 MSG_CANT_OVERCOPY_FILES
-Käll- och destinationslådan måste\n\
-vara olika för att kopiera filer.
+Käll- och destinationslådan måste\nvara olika för att kopiera filer.
 ; Source and destination directories\nmust be different to copy files.
 ;
 MSG_COPY
@@ -733,8 +671,7 @@ flytta
 ; moving
 ;
 MSG_CANT_OVERLINK_FILES
-Käll- och destinationslådan måste\n\
-vara olika för att skapa länkar.
+Käll- och destinationslådan måste\nvara olika för att skapa länkar.
 ; Source and destination directories\nmust be different to make links.
 ;
 MSG_CANT_LINK_DIR_INTO_ITSELF
@@ -748,10 +685,6 @@ Från "%s" till "%s"
 MSG_FROM
 Från "%s"
 ; From '%s'
-;
-MSG_PROJECT_MENU
-Opus
-; Opus
 ;
 MSG_BACKDROP_MENU
 Bakgrund
@@ -772,10 +705,6 @@ Avsluta...
 MSG_EXECUTE_MENU
 Utför kommando...
 ; Execute Command...
-;
-MSG_NEWSHELL_MENU
-NewShell...
-; NewShell...
 ;
 MSG_HELP_MENU
 Hjälp!
@@ -917,10 +846,6 @@ MSG_OPEN_PARENT_MENU
 Öppna moder
 ; Open Parent
 ;
-MSG_LISTER_RESTORE
-Restore
-; Restore
-;
 MSG_ICONS_MENU
 Ikoner
 ; Icons
@@ -928,10 +853,6 @@ Ikoner
 MSG_ICON_OPEN_MENU
 Öppna
 ; Open
-;
-MSG_ICON_INFO_MENU
-Information...
-; Information...
 ;
 MSG_ICON_SNAPSHOT_MENU
 Memorera placering
@@ -974,96 +895,64 @@ Glöm placering
 ; Un-Snapshot
 ;
 MSG_ICON_COPY
-Försök igen
+Kopiera
 ; Copy
 ;
 MSG_ICONS_NEW_MENU
-Försök igen
+Ny
 ; New
 ;
 MSG_ICONS_MAKEDIR_MENU
-Avbryt
+Låda...
 ; Drawer...
 ;
 MSG_ICONS_NEWGROUP_MENU
-Ersätt
+Grupp...
 ; Group...
 ;
 MSG_ICON_COPY_RAM
-Hoppa över
+Till Ram:
 ; to RAM:
 ;
 MSG_ICON_COPY_DF0
-Hoppa över alla
+Till DF0:
 ; to DF0:
 ;
 MSG_ICON_COPY_OTHER
-Alla
+Till annan...
 ; to other...
 ;
 MSG_ICON_COPY2
-Avsluta
+Kopiera...
 ; Copy...
 ;
 MSG_ICON_COPY_TO
-Spara
+Till
 ; to
 ;
 MSG_ICONS_NEWCOMMAND_MENU
-Stäng
+Kommando...
 ; Command...
 ;
 MSG_ICONS_SHORTCUT_MENU
-Ja
+Skapa snabbval
 ; Create Shortcut
 ;
 MSG_DESKTOP_POPUP_LEFTOUT
-Nej
+Skapa lämnad utanför
 ; Create Left-out
 ;
 MSG_DESKTOP_POPUP_COPY
-Fortsätt
+Kopiera till arbetsbänk
 ; Copy to Desktop
 ;
 MSG_DESKTOP_POPUP_MOVE
-Move to Desktop
+Flytta till arbetsbänk
 ; Move to Desktop
 ;
 MSG_ICON_COPY_DESKTOP
-Avbryt
+Till arbetsbänk
 ; to Desktop
-;
-MSG_ICON_LINEUP
-Ersätt alla
-; Line Up
-;
-MSG_ICON_SNAPSHOT_LISTER
-Fortsätt
-; Snapshot Lister
-;
-MSG_ICON_SNAPSHOT_ICONS
-Flytta
-; Snapshot Icons
-;
-MSG_ICON_SNAPSHOT_ALL
-Kasta bort
-; Snapshot All
-;
-MSG_ICON_SNAPSHOT_WINDOW
-block
-; Snapshot Window
-;
-MSG_ICON_EJECT
-Eject Disk
-; Eject Disk
-;
-MSG_EJECTING
-ejecting
-; ejecting
-;
-MSG_EJECT_UNSUPPORTED
-%s cannot be ejected.
-; %s cannot be ejected.
 ;
 MSG_BUTTONS_MENU
 Docka
@@ -1122,44 +1011,28 @@ Alternativ...
 ; Options...
 ;
 MSG_DEFPUBSCR_MENU
-Försök igen
+Förvald allmän skärm?
 ; Default PubScreen
 ;
 MSG_MENU_HOTKEYS
-Försök igen
+Direktval...
 ; Hotkeys...
 ;
 MSG_HOTKEYS_TITLE
-Försök igen
+Direktval
 ; Hotkeys
 ;
 MSG_MENU_SCRIPTS
-Avbryt
+Skript...
 ; Scripts...
 ;
 MSG_MENU_SYSMENU
-Ersätt
+Systemmenyer...
 ; System Menus...
 ;
 MSG_MENU_ICONPOS
-Hoppa över
+Ikonområden...
 ; Icon Positioning...
-;
-MSG_ENVIRONMENT_SAVE_LAYOUT_NEW
-Hoppa över alla
-; Save Layout
-;
-MSG_ENVIRONMENT_EDIT
-Alla
-; Environment...
-;
-MSG_ENVIRONMENT_LOAD_NEW
-Avsluta
-; Load Environment...
-;
-MSG_ENVIRONMENT_SAVE_NEW
-Spara
-; Save Environment
 ;
 MSG_SELECT_TITLE
 Filväljning
@@ -1258,9 +1131,7 @@ Fel %ld
 ; Error %ld
 ;
 MSG_ERROR_OCCURED
-Kunde inte %s\n\
-"%s":\n\
-%s!
+Kunde inte %s\n"%s":\n%s!
 ; An error occured %s '%s'\n%s
 ;
 MSG_ERROR_DEST_IS_DIRECTORY
@@ -1272,73 +1143,71 @@ Målet "%s" är en fil!
 ; Destination '%s' is a file.
 ;
 MSG_ERROR_UNKNOWN_CODE
-Försök igen
+Okänt fel
 ; Unknown error code
 ;
 MSG_BUTTONS_ERROR_SAVING
-Försök igen
+Kunde inte spara docka!
 ; Error saving button bank!
 ;
 MSG_BUTTONS_ERROR_LOADING
-Avbryt
+Kunde inte ladda docka!
 ; Error loading button bank!
 ;
 MSG_ERROR_CREATING_DIRECTORY
-Ersätt
-; creating the directory
+skapa lådan
+; Error creating the directory
 ;
 MSG_CUSTPORT_NOT_FOUND
-Hoppa över
+Kunde inte hitta den användar-\nspecifierade hanterarporten\n"%s"!
 ; User-specified custom handler port\n'%s'\ncould not be found!
 ;
 MSG_ALREADY_RUNNING
-Hoppa över alla
-; Directory Opus appears to be already running!\n\
-; Running a second copy has the potential to cause\n\
-; problems, and it is recommended that you do not.
+Det verkar som om Directory Opus redan är igång.\nAtt köra en kopia till kan orsaka problem.\nDet rekommenderas att du inte gör det.
+; Directory Opus appears to be already running!\nRunning a second copy has the potential to cause\nproblems, and it is recommended that you do not.
 ;
 MSG_ALREADY_RUNNING_BUTTONS
-Alla
+Avbryt|Starta igen
 ; Cancel|Run Again
 ;
 MSG_UNABLE_TO_CLOSE_SCREEN
-Avsluta
+Directory Opus kunde inte stänga sin skärm.\nVar god stäng alla fönster och försök igen.
 ; Directory Opus is unable to close its screen.\nPlease close all windows and try again.
 ;
 MSG_ERROR_INVALID_DATE
-Spara
+Ogiltligt datum angett!
 ; Invalid date string entered!
 ;
 MSG_UNABLE_TO_OPEN_SCREEN
-Stäng
+Kunde inte öppna skärmen!
 ; Can't open screen!
 ;
 MSG_AN_ERROR_OCCURED
-Ja
+Kunde inte 
 ; An error occured 
 ;
 MSG_ERROR
-Nej
+Fel
 ; Error 
 ;
 MSG_SIZE
-Fortsätt
+Storlek
 ; Size
 ;
 MSG_DATE
-Date
+Datum
 ; Date
 ;
 MSG_OLD
-Avbryt
+Gammal
 ; Old
 ;
 MSG_NEW
-Ersätt alla
+Ny
 ; New
 ;
 MSG_FILE_EXISTS
-Fortsätt
+Filen "%s"\nfinns redan!
 ; File '%s' already exists!
 ;
 MSG_PROGRESS_OPERATION_DELETING
@@ -1346,12 +1215,8 @@ Raderar...
 ; Deleting...
 ;
 MSG_DELETE_CONFIRM
-Varning: Du kan inte få tillbaka\n\
-det du raderar! OK att radera:\n\n\
-%ld fil/filer och\n\
-%ld låda/lådor (samt deras innehåll)?
-; Warning: you cannot get back\nwhat you delete! OK to delete:\n\n\
-; %ld file(s) and\n%ld drawer(s) (and their contents)?
+Varning: Du kan inte få tillbaka\ndet du raderar! OK att radera:\n\n%ld fil/filer och\n%ld låda/lådor (samt deras innehåll)?
+; Warning: you cannot get back\nwhat you delete! OK to delete:\n\n%ld file(s) and\n%ld drawer(s) (and their contents)?
 ;
 MSG_DELETE
 Radera
@@ -1366,16 +1231,12 @@ Radera "%s"?
 ; Delete '%s'?
 ;
 MSG_DELETE_DIR_CONFIRM
-"%s" är en låda.\n\
-Vill du fortsätta med raderingen?
+"%s" är en låda.\nVill du fortsätta med raderingen?
 ; '%s' is a directory.\nProceed with delete operation?
 ;
 MSG_DELETE_PROTECTED
-"%s"\n\
-är skyddad mot radering.\n\
-Vill du ta bort skyddet och försök igen?
-; '%s' is protected against deletion.\n\
-; Unprotect and try again?
+"%s"\när skyddad mot radering.\nVill du ta bort skyddet och försök igen?
+; '%s' is protected against deletion.\nUnprotect and try again?
 ;
 MSG_UNPROTECT
 Ta bort
@@ -1386,13 +1247,11 @@ Ta bort alla
 ; Unprotect All
 ;
 MSG_DELETE_LINK_CONFIRM_SINGLE
-Vill du verkligen ta bort\n\
-den här länken?
+Vill du verkligen ta bort\nden här länken?
 ; Really delete this shortcut?
 ;
 MSG_DELETE_LINK_CONFIRM_MULTI
-Vill du verkligen ta bort\n\
-de här länkarna?
+Vill du verkligen ta bort\nde här länkarna?
 ; Really delete these shortcuts?
 ;
 MSG_BUTTONS_ENTER_NAME
@@ -1428,17 +1287,12 @@ Sparar mijlöfil...
 ; Saving environment file...
 ;
 MSG_BUTTONS_CHANGE_WARNING
-Dockan "%s" har ändrats.\n\
-Vill du spara den?
+Dockan "%s" har ändrats.\nVill du spara den?
 ; Button bank '%s' has been modified.\nDo you wish to save it?
 ;
 MSG_BUTTONS_CREATE_WHICH_TYPE
 Vad för sorts docka vill du skapa?
 ; Which button bank type do you wish to create?
-;
-MSG_BUTTONS_TEXT
-Text
-; Text
 ;
 MSG_BUTTONS_ICONS
 Grafik
@@ -1509,18 +1363,12 @@ Ange filmönster att söka efter:
 ; Enter file pattern to search for.
 ;
 MSG_HUNT_FOUND_FILE
-Hittade filen "%s"\n\
-i lådan "%s"\n\
-Ska jag gå dit?
+Hittade filen "%s"\ni lådan "%s"\nSka jag gå dit?
 ; Found the file '%s' in the directory\n'%s'\nShall I go there?
 ;
 MSG_NEW_LISTER
 Ny listare
 ; New Lister
-;
-MSG_SEARCH_COMMENTS
-Search file comments
-; Search file comments
 ;
 MSG_FUNC_DESC_ADDICON
 Lägger till ikoner till filer
@@ -1758,20 +1606,12 @@ MSG_FUNC_DESC_SETBACKGROUND
 Sätt som bakgrundsbild
 ; Set as background picture
 ;
-MSG_FUNC_DESC_RESET
-Reset Things
-; Reset Things
-;
-MSG_FUNC_DESC_STOPSNIFFER
-Stop Filetype Sniffer
-; Stop Filetype Sniffer
-;
 MSG_ICON_GROUP
 Programgrupper
 ; Program Groups
 ;
 MSG_GROUP_ENTER_NAME
-Försök igen
+Ange namn för programgrupp
 ; Enter Program Group Name
 ;
 MSG_RXERR_1
@@ -1819,8 +1659,7 @@ Okänd felkod
 ; Unknown error code
 ;
 MSG_DESKTOP_REALLY_DELETE
-Varning: Du kan inte få tillbaka\n\
-det du raderar! OK att radera:\n\n
+Varning: Du kan inte få tillbaka\ndet du raderar! OK att radera:\n\n
 ; Warning: you cannot get back\nwhat you delete! OK to delete:\n\n
 ;
 MSG_DESKTOP_DELETE_GROUPS
@@ -1828,19 +1667,19 @@ MSG_DESKTOP_DELETE_GROUPS
 ; %ld program group(s)
 ;
 MSG_DESKTOP_DELETE_ASSIGNS
-Avbryt
+%ld tilldelning/tilldelningar
 ; %ld assign(s)
 ;
 MSG_DESKTOP_DELETE_GROUP_OBJECTS
-Ersätt
+%ld gruppobjekt
 ; %ld group object(s)
 ;
 MSG_DESKTOP_DELETE_DESKTOP_FILES
-Hoppa över
+%ld fil/filer
 ; %ld file(s)
 ;
 MSG_DESKTOP_DELETE_DESKTOP_DIRS
-Hoppa över alla
+%ld låda/lådor
 ; %ld dir(s)
 ;
 MSG_REPLACE_SAME
@@ -1859,18 +1698,6 @@ MSG_REPLACE_VERSION_OLDER
 Den nya filen är av en lägre version (%ld.%ld.%ld).
 ; The new file is an earlier version (%ld.%ld.%ld).
 ;
-MSG_REPLACE_SIZE_BIGGER
-Den nya filen är större än den gamla (med %lD bytes).\n
-; The new file is larger than the old one (by %ld bytes).\n
-;
-MSG_REPLACE_SIZE_SMALLER
-Den nya filen är mindre än den gamla (med %lD bytes).\n
-; The new file is smaller than the old one (by %ld bytes).\n
-;
-MSG_REPLACE_SIZE_SAME
-De två filerna är lika stora (%lD bytes).\n
-; The two files are the same size (%ld bytes).\n
-;
 MSG_REPLACE_DATE_NEWER
 Den nya filen är av ett senare datum (%s).\n
 ; The new file has a more recent date (%s).\n
@@ -1887,25 +1714,9 @@ MSG_FILE_ALREADY_EXISTS
 Filen "%s" finns redan och skulle ersättas.\n
 ; File '%s' exists and would be replaced.\n
 ;
-MSG_BRIEF_FILE_EXISTS
-File "%s" finns redan. Ersätta den?\n\n\
-Ny - Storlek: %lD  Datum: %s%s\n\
-Gammal - Storlek: %lD  Datum: %s%s
-; File '%s' already exists. Replace it?\n\n\
-; New - Size : %7ld  Date : %19s%s\n\
-; Old - Size : %7ld  Date : %19s%s
-;
-MSG_REPLACE_VER
-  Version: %ld.%ld.%ld
-;   Ver : %ld.%ld.%ld
-;
 MSG_REPLACE_VER_UNKNOWN
   Version: ?????
 ;   Ver : ?????
-;
-MSG_GET_VERSION
-Version
-; Version
 ;
 MSG_REPLACE_VERSION_TITLE
 Letar efter versionsinformation....
@@ -1947,10 +1758,6 @@ MSG_LISTER_TITLE_NETPROT
 Nät
 ; Net
 ;
-MSG_LISTER_TITLE_VERSION
-Version
-; Version
-;
 MSG_LISTER_TITLE_VOLUME
 Volym
 ; Volume
@@ -1958,10 +1765,6 @@ Volym
 MSG_LISTER_TITLE_DEVICE
 Enhet
 ; Device
-;
-MSG_LISTER_TITLE_FULL
-Full
-; Full
 ;
 MSG_LISTER_TITLE_FREE
 Fritt
@@ -1972,21 +1775,8 @@ Används
 ; In Use
 ;
 MSG_CLI_HELP
-Skriv "help list" för en lista över kommandon,\n\
-eller "help <kommando>" för mallen för ett kommando.\n\
-Skriv "quit" för att avsluta kommandotolken.\n\n\
-Skriv ett internt kommando med argument för att\n\
-utföra det. För att utföra ett DOpus ARexx-kommando,\n\
-skriv ett '+'-tecken före kommandot. Lägg till ett\n\
-'&'-tecken efteråt om du vill att kommandot skall\n\
-utföras asynkront.\n
-; Type 'help list' for a list of commands,\n\
-; or 'help <command>' for a command template.\n\
-; Type 'quit' to exit the CLI.\n\n\
-; Enter an internal command with arguments to\n\
-; execute it. To execute a DOpus ARexx command,\n\
-; enter a + symbol before the command. Append a &\n\
-; if you want the command to be asynchronous.\n
+Skriv "help list" för en lista över kommandon,\neller "help <kommando>" för mallen för ett kommando.\nSkriv "quit" för att avsluta kommandotolken.\n\nSkriv ett internt kommando med argument för att\nutföra det. För att utföra ett DOpus ARexx-kommando,\nskriv ett '+'-tecken före kommandot. Lägg till ett\n'&'-tecken efteråt om du vill att kommandot skall\nutföras asynkront.\n
+; Type 'help list' for a list of commands,\nor 'help <command>' for a command template.\nType 'quit' to exit the CLI.\n\nEnter an internal command with arguments to\nexecute it. To execute a DOpus ARexx command,\nenter a + symbol before the command. Append a &\nif you want the command to be asynchronous.\n
 ;
 MSG_CLI_NO_TEMPLATE
 Kommandot har inte någon mall.
@@ -2005,11 +1795,8 @@ Ikonplaceringsområde
 ; Icon positioning area
 ;
 MSG_ICONPOS_INSTRUCTIONS
-Klicka och dra för att markera\n\
-områden där ikoner kan placeras.\n\
-Välj "OK" eller "Avbryt" när du är klar.
-; Click and drag to mark areas where icons can be positioned.\n\
-; Click OK or Cancel when finished.
+Klicka och dra för att markera\nområden där ikoner kan placeras.\nVälj "OK" eller "Avbryt" när du är klar.
+; Click and drag to mark areas where icons can be positioned.\nClick OK or Cancel when finished.
 ;
 MSG_ICONPOS_APPICON
 Applikationsikoner
@@ -2047,14 +1834,6 @@ MSG_EDIT_COMMAND
 Redigera kommando...
 ; Edit Command...
 ;
-MSG_COMMAND_DESCRIPTION
-Enter a description for this command.
-; Enter a description for this command.
-;
-MSG_COMMAND_LEAVEOUT
-Leave out on desktop
-; Leave out on desktop
-;
 MSG_START_APPEARANCE
 Utseende
 ; Appearance
@@ -2088,44 +1867,36 @@ Ange text för startmeny
 ; Enter label for Start Menu.
 ;
 MSG_OPEN_STARTMENU_MENU
-Försök igen
+Öppna startmeny...
 ; Load Start Menu...
 ;
 MSG_START_SELECT_MENU
-Försök igen
+Välj startmeny att öppna
 ; Select Start Menu To Load
 ;
 MSG_START_FONT
-Avbryt
+Ändra teckensnitt...
 ; Change Font...
 ;
 MSG_START_SELECT_FONT
-Ersätt
+Välj teckensnitt för startmeny
 ; Select Font For Start Menu
 ;
 MSG_START_SCALING
-Hoppa över
+Skala bilder
 ; Scale Images
 ;
 MSG_START_DRAGBAR
-Hoppa över alla
+Dragkant
 ; Drag Bar
 ;
 MSG_START_DRAGBAR_OFF
-Alla
+Av
 ; Off
 ;
 MSG_START_LABEL_FONT
-Avsluta
+Ändra teckensnitt för etikett...
 ; Change Label Font...
-;
-MSG_START_PICTURE
-Spara
-; Change Background...
-;
-MSG_START_SELECT_PICTURE
-Stäng
-; Select Background Picture For Start Menu
 ;
 MSG_KEYFINDER_TITLE
 Tangenthittare

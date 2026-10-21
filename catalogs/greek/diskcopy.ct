@@ -6,10 +6,6 @@ MSG_DISKCOPY_TITLE
 Αντιγραφή Δίσκων
 ; Diskcopy
 ;
-MSG_DISKCOPY_DISKCOPY
-_Diskcopy
-; _Diskcopy
-;
 MSG_DISKCOPY_CANCEL
 Ά_κυρο
 ; _Cancel
@@ -83,18 +79,15 @@ MSG_DISKCOPY_FAILED
 ; Diskcopy failed.
 ;
 MSG_READ_ERROR
-Λάθος στην ανάγνωση %s τομέας %ld\n\
-%s
+Λάθος στην ανάγνωση %s τομέας %ld\n%s
 ; Error reading %s track %ld\n%s
 ;
 MSG_WRITE_ERROR
-Λάθος στην εγγραφή %s τομέας %ld\n\
-%s
+Λάθος στην εγγραφή %s τομέας %ld\n%s
 ; Error writing %s track %ld\n%s
 ;
 MSG_VERIFY_ERROR
-Λάθος στην επαλήθευση %s τομέας %ld\n\
-%s
+Λάθος στην επαλήθευση %s τομέας %ld\n%s
 ; Error verifying %s track %ld\n%s
 ;
 MSG_DISKCOPY_READING

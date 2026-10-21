@@ -94,14 +94,6 @@ MSG_MENU_MODE_NORMAL
 Normalt
 ; Normal
 ;
-MSG_MENU_MODE_ANSI
-ANSI
-; ANSI
-;
-MSG_MENU_MODE_HEX
-Hex
-; Hex
-;
 MSG_MENU_USE_SCREEN
 Använd egen skärm
 ; Use Screen
@@ -147,8 +139,7 @@ OK|Avbryt
 ; OK|Cancel
 ;
 MSG_SELECT_EDITOR
-Ange kommando för att\n\
-starta textredigerare
+Ange kommando för att\nstarta textredigerare
 ; Enter function to call text editor
 ;
 MSG_READING_FILE_TITLE
@@ -158,8 +149,4 @@ Läser fil...
 MSG_COUNTING_LINES
 Räknar rader...
 ; Counting lines...
-;
-MSG_CLOSE
-Close
-; Close
 ;

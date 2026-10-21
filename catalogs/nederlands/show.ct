@@ -62,10 +62,6 @@ MSG_PRINT_PRINT_TITLE
 Print t_itel
 ; Print _Title
 ;
-MSG_PRINT
-_Print
-; _Print
-;
 MSG_PRINT_ASPECT_PORTRAIT
 Portret
 ; Portrait

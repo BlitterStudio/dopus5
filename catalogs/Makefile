@@ -18,19 +18,19 @@ deutsch:
 	$(CATCOMP) /source/Program/dopus.cd			$@/dopus.ct CATALOG $@/dopus.catalog
 	$(CATCOMP) /source/Library/dopuslib.cd			$@/dopuslib.ct CATALOG $@/dopuslib.catalog
 	$(CATCOMP) /source/Modules/filetype/filetype.cd		$@/filetype.ct CATALOG $@/filetype.catalog
-	$(CATCOMP) /source/Misc/C/ViewFont/font.cd		$@/font.ct CATALOG $L$@/viewfont.catalog
+	#$(CATCOMP) /source/Misc/C/ViewFont/font.cd		$@/font.ct CATALOG $L$@/viewfont.catalog
 	$(CATCOMP) /source/Modules/format/format.cd		$@/format.ct CATALOG $@/format.catalog
 	$(CATCOMP) /source/Modules/ftp/ftp.cd			$@/ftp.ct CATALOG $@/ftp.catalog
 	$(CATCOMP) /source/Modules/icon/icon.cd			$@/icon.ct CATALOG $@/icon.catalog
 	$(CATCOMP) /source/Modules/join/join.cd			$@/join.ct CATALOG $@/join.catalog
 	$(CATCOMP) /source/Modules/listerformat/listerformat.cd	$@/listerformat.ct CATALOG $@/listerformat.catalog
 	$(CATCOMP) /source/Modules/misc/misc.cd			$@/misc.ct CATALOG $@/misc.catalog
-	$(CATCOMP) /source/Modules/pathformat/pathformat.cd	$@/pathformat.ct CATALOG $@/pathformat.catalog
+	#$(CATCOMP) /source/Modules/pathformat/pathformat.cd	$@/pathformat.ct CATALOG $@/pathformat.catalog
 	$(CATCOMP) /source/Modules/play/play.cd			$@/play.ct CATALOG $@/play.catalog
 	$(CATCOMP) /source/Modules/print/print.cd		$@/print.ct CATALOG $@/print.catalog
 	$(CATCOMP) /source/Modules/read/read.cd			$@/read.ct CATALOG $@/read.catalog
 	$(CATCOMP) /source/Modules/show/show.cd			$@/show.ct CATALOG $@/show.catalog
-	$(CATCOMP) /source/Modules/xadopus/xadopus.cd		$@/xadopus.ct CATALOG $@/xadopus.catalog
+	#$(CATCOMP) /source/Modules/xadopus/xadopus.cd		$@/xadopus.ct CATALOG $@/xadopus.catalog
 
 español:
 	$(CATCOMP) /source/Modules/cleanup/cleanup.cd		$@/cleanup.ct CATALOG $@/cleanup.catalog
@@ -40,14 +40,14 @@ español:
 	$(CATCOMP) /source/Program/dopus.cd			$@/dopus.ct CATALOG $@/dopus.catalog
 	$(CATCOMP) /source/Library/dopuslib.cd			$@/dopuslib.ct CATALOG $@/dopuslib.catalog
 	$(CATCOMP) /source/Modules/filetype/filetype.cd		$@/filetype.ct CATALOG $@/filetype.catalog
-	#$(CATCOMP) /source/Misc/C/ViewFont/font.cd		$@/font.ct CATALOG $L$@/viewfont.catalog
+	$(CATCOMP) /source/Misc/C/ViewFont/font.cd		$@/font.ct CATALOG $L$@/viewfont.catalog
 	$(CATCOMP) /source/Modules/format/format.cd		$@/format.ct CATALOG $@/format.catalog
 	$(CATCOMP) /source/Modules/ftp/ftp.cd			$@/ftp.ct CATALOG $@/ftp.catalog
 	$(CATCOMP) /source/Modules/icon/icon.cd			$@/icon.ct CATALOG $@/icon.catalog
 	$(CATCOMP) /source/Modules/join/join.cd			$@/join.ct CATALOG $@/join.catalog
 	$(CATCOMP) /source/Modules/listerformat/listerformat.cd	$@/listerformat.ct CATALOG $@/listerformat.catalog
 	$(CATCOMP) /source/Modules/misc/misc.cd			$@/misc.ct CATALOG $@/misc.catalog
-	$(CATCOMP) /source/Modules/pathformat/pathformat.cd	$@/pathformat.ct CATALOG $@/pathformat.catalog
+	#$(CATCOMP) /source/Modules/pathformat/pathformat.cd	$@/pathformat.ct CATALOG $@/pathformat.catalog
 	$(CATCOMP) /source/Modules/play/play.cd			$@/play.ct CATALOG $@/play.catalog
 	$(CATCOMP) /source/Modules/print/print.cd		$@/print.ct CATALOG $@/print.catalog
 	$(CATCOMP) /source/Modules/read/read.cd			$@/read.ct CATALOG $@/read.catalog
@@ -62,7 +62,7 @@ français:
 	$(CATCOMP) /source/Program/dopus.cd			$@/dopus.ct CATALOG $@/dopus.catalog
 	$(CATCOMP) /source/Library/dopuslib.cd			$@/dopuslib.ct CATALOG $@/dopuslib.catalog
 	$(CATCOMP) /source/Modules/filetype/filetype.cd		$@/filetype.ct CATALOG $@/filetype.catalog
-	#$(CATCOMP) /source/Misc/C/ViewFont/font.cd		$@/font.ct CATALOG $L$@/viewfont.catalog
+	$(CATCOMP) /source/Misc/C/ViewFont/font.cd		$@/font.ct CATALOG $L$@/viewfont.catalog
 	$(CATCOMP) /source/Modules/format/format.cd		$@/format.ct CATALOG $@/format.catalog
 	$(CATCOMP) /source/Modules/ftp/ftp.cd			$@/ftp.ct CATALOG $@/ftp.catalog
 	$(CATCOMP) /source/Modules/icon/icon.cd			$@/icon.ct CATALOG $@/icon.catalog
@@ -83,14 +83,14 @@ greek:
 	$(CATCOMP) /source/Program/dopus.cd			$@/dopus.ct CATALOG $@/dopus.catalog
 	$(CATCOMP) /source/Library/dopuslib.cd			$@/dopuslib.ct CATALOG $@/dopuslib.catalog
 	$(CATCOMP) /source/Modules/filetype/filetype.cd		$@/filetype.ct CATALOG $@/filetype.catalog
-	#$(CATCOMP) /source/Misc/C/ViewFont/font.cd		$@/font.ct CATALOG $L$@/viewfont.catalog
+	$(CATCOMP) /source/Misc/C/ViewFont/font.cd		$@/font.ct CATALOG $L$@/viewfont.catalog
 	$(CATCOMP) /source/Modules/format/format.cd		$@/format.ct CATALOG $@/format.catalog
 	$(CATCOMP) /source/Modules/ftp/ftp.cd			$@/ftp.ct CATALOG $@/ftp.catalog
 	$(CATCOMP) /source/Modules/icon/icon.cd			$@/icon.ct CATALOG $@/icon.catalog
 	$(CATCOMP) /source/Modules/join/join.cd			$@/join.ct CATALOG $@/join.catalog
 	$(CATCOMP) /source/Modules/listerformat/listerformat.cd	$@/listerformat.ct CATALOG $@/listerformat.catalog
 	$(CATCOMP) /source/Modules/misc/misc.cd			$@/misc.ct CATALOG $@/misc.catalog
-	$(CATCOMP) /source/Modules/pathformat/pathformat.cd	$@/pathformat.ct CATALOG $@/pathformat.catalog
+	#$(CATCOMP) /source/Modules/pathformat/pathformat.cd	$@/pathformat.ct CATALOG $@/pathformat.catalog
 	$(CATCOMP) /source/Modules/play/play.cd			$@/play.ct CATALOG $@/play.catalog
 	$(CATCOMP) /source/Modules/print/print.cd		$@/print.ct CATALOG $@/print.catalog
 	$(CATCOMP) /source/Modules/read/read.cd			$@/read.ct CATALOG $@/read.catalog
@@ -111,7 +111,7 @@ italiano:
 	$(CATCOMP) /source/Modules/join/join.cd			$@/join.ct CATALOG $@/join.catalog
 	$(CATCOMP) /source/Modules/listerformat/listerformat.cd	$@/listerformat.ct CATALOG $@/listerformat.catalog
 	$(CATCOMP) /source/Modules/misc/misc.cd			$@/misc.ct CATALOG $@/misc.catalog
-	$(CATCOMP) /source/Modules/pathformat/pathformat.cd	$@/pathformat.ct CATALOG $@/pathformat.catalog
+	#$(CATCOMP) /source/Modules/pathformat/pathformat.cd	$@/pathformat.ct CATALOG $@/pathformat.catalog
 	$(CATCOMP) /source/Modules/play/play.cd			$@/play.ct CATALOG $@/play.catalog
 	$(CATCOMP) /source/Modules/print/print.cd		$@/print.ct CATALOG $@/print.catalog
 	$(CATCOMP) /source/Modules/read/read.cd			$@/read.ct CATALOG $@/read.catalog
@@ -125,14 +125,14 @@ magyar:
 	$(CATCOMP) /source/Program/dopus.cd			$@/dopus.ct CATALOG $@/dopus.catalog
 	$(CATCOMP) /source/Library/dopuslib.cd			$@/dopuslib.ct CATALOG $@/dopuslib.catalog
 	$(CATCOMP) /source/Modules/filetype/filetype.cd		$@/filetype.ct CATALOG $@/filetype.catalog
-	#$(CATCOMP) /source/Misc/C/ViewFont/font.cd		$@/font.ct CATALOG $L$@/viewfont.catalog
+	$(CATCOMP) /source/Misc/C/ViewFont/font.cd		$@/font.ct CATALOG $L$@/viewfont.catalog
 	$(CATCOMP) /source/Modules/format/format.cd		$@/format.ct CATALOG $@/format.catalog
 	$(CATCOMP) /source/Modules/ftp/ftp.cd			$@/ftp.ct CATALOG $@/ftp.catalog
 	$(CATCOMP) /source/Modules/icon/icon.cd			$@/icon.ct CATALOG $@/icon.catalog
 	$(CATCOMP) /source/Modules/join/join.cd			$@/join.ct CATALOG $@/join.catalog
 	$(CATCOMP) /source/Modules/listerformat/listerformat.cd	$@/listerformat.ct CATALOG $@/listerformat.catalog
 	$(CATCOMP) /source/Modules/misc/misc.cd			$@/misc.ct CATALOG $@/misc.catalog
-	$(CATCOMP) /source/Modules/pathformat/pathformat.cd	$@/pathformat.ct CATALOG $@/pathformat.catalog
+	#$(CATCOMP) /source/Modules/pathformat/pathformat.cd	$@/pathformat.ct CATALOG $@/pathformat.catalog
 	$(CATCOMP) /source/Modules/play/play.cd			$@/play.ct CATALOG $@/play.catalog
 	$(CATCOMP) /source/Modules/print/print.cd		$@/print.ct CATALOG $@/print.catalog
 	$(CATCOMP) /source/Modules/read/read.cd			$@/read.ct CATALOG $@/read.catalog
@@ -146,7 +146,7 @@ nederlands:
 	$(CATCOMP) /source/Program/dopus.cd			$@/dopus.ct CATALOG $@/dopus.catalog
 	$(CATCOMP) /source/Library/dopuslib.cd			$@/dopuslib.ct CATALOG $@/dopuslib.catalog
 	$(CATCOMP) /source/Modules/filetype/filetype.cd		$@/filetype.ct CATALOG $@/filetype.catalog
-	#$(CATCOMP) /source/Misc/C/ViewFont/font.cd		$@/font.ct CATALOG $L$@/viewfont.catalog
+	$(CATCOMP) /source/Misc/C/ViewFont/font.cd		$@/font.ct CATALOG $L$@/viewfont.catalog
 	$(CATCOMP) /source/Modules/format/format.cd		$@/format.ct CATALOG $@/format.catalog
 	$(CATCOMP) /source/Modules/ftp/ftp.cd			$@/ftp.ct CATALOG $@/ftp.catalog
 	$(CATCOMP) /source/Modules/icon/icon.cd			$@/icon.ct CATALOG $@/icon.catalog
@@ -167,19 +167,19 @@ norsk:
 	$(CATCOMP) /source/Program/dopus.cd			$@/dopus.ct CATALOG $@/dopus.catalog
 	$(CATCOMP) /source/Library/dopuslib.cd			$@/dopuslib.ct CATALOG $@/dopuslib.catalog
 	$(CATCOMP) /source/Modules/filetype/filetype.cd		$@/filetype.ct CATALOG $@/filetype.catalog
-	#$(CATCOMP) /source/Misc/C/ViewFont/font.cd		$@/font.ct CATALOG $L$@/viewfont.catalog
+	$(CATCOMP) /source/Misc/C/ViewFont/font.cd		$@/font.ct CATALOG $L$@/viewfont.catalog
 	$(CATCOMP) /source/Modules/format/format.cd		$@/format.ct CATALOG $@/format.catalog
 	$(CATCOMP) /source/Modules/ftp/ftp.cd			$@/ftp.ct CATALOG $@/ftp.catalog
 	$(CATCOMP) /source/Modules/icon/icon.cd			$@/icon.ct CATALOG $@/icon.catalog
 	$(CATCOMP) /source/Modules/join/join.cd			$@/join.ct CATALOG $@/join.catalog
 	$(CATCOMP) /source/Modules/listerformat/listerformat.cd	$@/listerformat.ct CATALOG $@/listerformat.catalog
 	$(CATCOMP) /source/Modules/misc/misc.cd			$@/misc.ct CATALOG $@/misc.catalog
-	$(CATCOMP) /source/Modules/pathformat/pathformat.cd	$@/pathformat.ct CATALOG $@/pathformat.catalog
+	#$(CATCOMP) /source/Modules/pathformat/pathformat.cd	$@/pathformat.ct CATALOG $@/pathformat.catalog
 	$(CATCOMP) /source/Modules/play/play.cd			$@/play.ct CATALOG $@/play.catalog
 	$(CATCOMP) /source/Modules/print/print.cd		$@/print.ct CATALOG $@/print.catalog
 	$(CATCOMP) /source/Modules/read/read.cd			$@/read.ct CATALOG $@/read.catalog
 	$(CATCOMP) /source/Modules/show/show.cd			$@/show.ct CATALOG $@/show.catalog
-	$(CATCOMP) /source/Modules/xadopus/xadopus.cd		$@/xadopus.ct CATALOG $@/xadopus.catalog
+	#$(CATCOMP) /source/Modules/xadopus/xadopus.cd		$@/xadopus.ct CATALOG $@/xadopus.catalog
 
 polski:
 	$(CATCOMP) /source/Modules/cleanup/cleanup.cd		$@/cleanup.ct CATALOG $@/cleanup.catalog
@@ -189,7 +189,7 @@ polski:
 	$(CATCOMP) /source/Program/dopus.cd			$@/dopus.ct CATALOG $@/dopus.catalog
 	$(CATCOMP) /source/Library/dopuslib.cd			$@/dopuslib.ct CATALOG $@/dopuslib.catalog
 	$(CATCOMP) /source/Modules/filetype/filetype.cd		$@/filetype.ct CATALOG $@/filetype.catalog
-	#$(CATCOMP) /source/Misc/C/ViewFont/font.cd		$@/font.ct CATALOG $L$@/viewfont.catalog
+	$(CATCOMP) /source/Misc/C/ViewFont/font.cd		$@/font.ct CATALOG $L$@/viewfont.catalog
 	$(CATCOMP) /source/Modules/format/format.cd		$@/format.ct CATALOG $@/format.catalog
 	$(CATCOMP) /source/Modules/ftp/ftp.cd			$@/ftp.ct CATALOG $@/ftp.catalog
 	$(CATCOMP) /source/Modules/icon/icon.cd			$@/icon.ct CATALOG $@/icon.catalog
@@ -201,7 +201,7 @@ polski:
 	$(CATCOMP) /source/Modules/print/print.cd		$@/print.ct CATALOG $@/print.catalog
 	$(CATCOMP) /source/Modules/read/read.cd			$@/read.ct CATALOG $@/read.catalog
 	$(CATCOMP) /source/Modules/show/show.cd			$@/show.ct CATALOG $@/show.catalog
-	$(CATCOMP) /source/Modules/xadopus/xadopus.cd		$@/xadopus.ct CATALOG $@/xadopus.catalog
+	#$(CATCOMP) /source/Modules/xadopus/xadopus.cd		$@/xadopus.ct CATALOG $@/xadopus.catalog
 
 português:
 	$(CATCOMP) /source/Modules/cleanup/cleanup.cd		$@/cleanup.ct CATALOG $@/cleanup.catalog
@@ -218,7 +218,7 @@ português:
 	$(CATCOMP) /source/Modules/join/join.cd			$@/join.ct CATALOG $@/join.catalog
 	$(CATCOMP) /source/Modules/listerformat/listerformat.cd	$@/listerformat.ct CATALOG $@/listerformat.catalog
 	$(CATCOMP) /source/Modules/misc/misc.cd			$@/misc.ct CATALOG $@/misc.catalog
-	$(CATCOMP) /source/Modules/pathformat/pathformat.cd	$@/pathformat.ct CATALOG $@/pathformat.catalog
+	#$(CATCOMP) /source/Modules/pathformat/pathformat.cd	$@/pathformat.ct CATALOG $@/pathformat.catalog
 	$(CATCOMP) /source/Modules/play/play.cd			$@/play.ct CATALOG $@/play.catalog
 	$(CATCOMP) /source/Modules/print/print.cd		$@/print.ct CATALOG $@/print.catalog
 	$(CATCOMP) /source/Modules/read/read.cd			$@/read.ct CATALOG $@/read.catalog
@@ -232,14 +232,14 @@ svenska:
 	$(CATCOMP) /source/Program/dopus.cd			$@/dopus.ct CATALOG $@/dopus.catalog
 	$(CATCOMP) /source/Library/dopuslib.cd			$@/dopuslib.ct CATALOG $@/dopuslib.catalog
 	$(CATCOMP) /source/Modules/filetype/filetype.cd		$@/filetype.ct CATALOG $@/filetype.catalog
-	#$(CATCOMP) /source/Misc/C/ViewFont/font.cd		$@/font.ct CATALOG $L$@/viewfont.catalog
+	$(CATCOMP) /source/Misc/C/ViewFont/font.cd		$@/font.ct CATALOG $L$@/viewfont.catalog
 	$(CATCOMP) /source/Modules/format/format.cd		$@/format.ct CATALOG $@/format.catalog
 	$(CATCOMP) /source/Modules/ftp/ftp.cd			$@/ftp.ct CATALOG $@/ftp.catalog
 	$(CATCOMP) /source/Modules/icon/icon.cd			$@/icon.ct CATALOG $@/icon.catalog
 	$(CATCOMP) /source/Modules/join/join.cd			$@/join.ct CATALOG $@/join.catalog
 	$(CATCOMP) /source/Modules/listerformat/listerformat.cd	$@/listerformat.ct CATALOG $@/listerformat.catalog
 	$(CATCOMP) /source/Modules/misc/misc.cd			$@/misc.ct CATALOG $@/misc.catalog
-	$(CATCOMP) /source/Modules/pathformat/pathformat.cd	$@/pathformat.ct CATALOG $@/pathformat.catalog
+	#$(CATCOMP) /source/Modules/pathformat/pathformat.cd	$@/pathformat.ct CATALOG $@/pathformat.catalog
 	$(CATCOMP) /source/Modules/play/play.cd			$@/play.ct CATALOG $@/play.catalog
 	$(CATCOMP) /source/Modules/print/print.cd		$@/print.ct CATALOG $@/print.catalog
 	$(CATCOMP) /source/Modules/read/read.cd			$@/read.ct CATALOG $@/read.catalog

@@ -18,10 +18,6 @@ MSG_CANCEL
 A_vbryt
 ; _Cancel
 ;
-MSG_TEXT
-Text
-; Text
-;
 MSG_HEADER_FOOTER
 Huvud/fot
 ; Header/Footer
@@ -70,18 +66,6 @@ MSG_PRINT_SPACING_8
 8 rpt
 ; 8 LPI
 ;
-MSG_PRINT_PITCH_PICA
-Pica
-; Pica
-;
-MSG_PRINT_PITCH_ELITE
-Elite
-; Elite
-;
-MSG_PRINT_PITCH_FINE
-Fine
-; Fine
-;
 MSG_PRINT_CONFIGURATION
 K_onfiguration...
 ; c_onfiguration...
@@ -110,10 +94,6 @@ MSG_PRINT_STYLE
 S_til
 ; St_yle
 ;
-MSG_PRINT_STYLE_NORMAL
-Normal
-; Normal
-;
 MSG_PRINT_STYLE_BOLD
 Fet
 ; Bold
@@ -130,10 +110,6 @@ MSG_ABORT
 Avbryt
 ; Abort
 ;
-MSG_OK
-OK
-; OK
-;
 MSG_OPENING_PRINTER
 Öppnar skrivare...
 ; Opening printer...
@@ -143,13 +119,11 @@ Kunde inte öppna skrivaren!
 ; Couldn't open printer!
 ;
 MSG_PRINTER_ERROR
-Kunde inte skriva ut!\n\
-(Fel %ld)
+Kunde inte skriva ut!\n(Fel %ld)
 ; An error occurred (%ld) while printing.
 ;
 MSG_REALLY_ABORT
-Vill du verkligen\n\
-avbryta utskriften?
+Vill du verkligen\navbryta utskriften?
 ; Really abort print?
 ;
 MSG_RETRY_CANCEL

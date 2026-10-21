@@ -1,17 +1,13 @@
 ## version $VER: Read.catalog 5.61 (08.07.1997)
 ## codeset 0
 ## language français
-; ************************************************* 
-; Catalog description file for read.module
-; ************************************************* 
-;
 ;
 MSG_READING_FILE
-Lecture du fichier « %s »...\x00
+Lecture du fichier « %s »...
 ; Reading file '%s'...
 ;
 MSG_CANT_OPEN_FILE
-Impossible d'ouvrir « %s » !\x00
+Impossible d'ouvrir « %s » !
 ; Unable to open file '%s'!
 ;
 MSG_FILE_TITLE
@@ -31,7 +27,7 @@ Chercher...
 ; Search...
 ;
 MSG_MENU_REPEAT
-Chercher suivant\x00
+Chercher suivant
 ; Repeat Search  
 ;
 MSG_MENU_PRINT
@@ -43,7 +39,7 @@ Quitter
 ; Quit
 ;
 MSG_MENU_SETTINGS
-Réglages\x00
+Réglages
 ; Settings
 ;
 MSG_MENU_TAB
@@ -59,7 +55,7 @@ Entrez la chaîne à chercher
 ; Enter text to search for.
 ;
 MSG_SEARCH_NO_CASE
-_Ignorer min/MAJ\x00
+_Ignorer min/MAJ
 ; _Ignore Case
 ;
 MSG_SEARCH_WILD
@@ -75,7 +71,7 @@ _En arrière
 ; _Reverse Search
 ;
 MSG_OK_BUTTON
-Okay\x00
+Okay
 ; OK
 ;
 MSG_CANCEL_BUTTON
@@ -86,51 +82,32 @@ MSG_STRING_NOT_FOUND
 Chaîne introuvable.
 ; String not found.
 ;
-;
 MSG_READ_DESCRIPTION
 Lit les fichiers texte
 ; Read text files
-;
-;
-MSG_MENU_MODE
-
-; Mode
-;
-MSG_MENU_MODE_NORMAL
-
-; Normal
-;
-MSG_MENU_MODE_ANSI
-
-; ANSI
-;
-MSG_MENU_MODE_HEX
-
-; Hex
-;
 ;
 MSG_MENU_USE_SCREEN
 Utiliser un écran
 ; Use Screen
 ;
 MSG_MENU_SCREEN_MODE
-Choisir le mode écran...\x00
+Choisir le mode écran...
 ; Pick Screen Mode...
 ;
 MSG_MENU_SELECT_FONT
-Choisir la police...\x00
+Choisir la police...
 ; Pick Font...
 ;
 MSG_SCREEN_TITLE
-Afficheur de textes - Directory Opus\x00
+Afficheur de textes - Directory Opus
 ; Directory Opus Text Viewer
 ;
 MSG_MENU_SAVE_AS
-Sauver en...\x00
+Sauver en...
 ; Save As...
 ;
 MSG_ENTER_FILENAME
-Entrez le nom du fichier\x00
+Entrez le nom du fichier
 ; Enter Filename
 ;
 MSG_IO_ERROR
@@ -150,7 +127,7 @@ Choisir l'éditeur
 ; Pick Editor...
 ;
 MSG_OK_CANCEL_BUTTON
-Okay|Annuler\x00
+Okay|Annuler
 ; OK|Cancel
 ;
 MSG_SELECT_EDITOR
@@ -164,8 +141,4 @@ Lecture du fichier...
 MSG_COUNTING_LINES
 Comptage des lignes...
 ; Counting lines...
-;
-MSG_CLOSE
-
-; Close
 ;

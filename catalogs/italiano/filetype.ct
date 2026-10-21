@@ -10,21 +10,9 @@ MSG_FIND_TITLE
 Identificatore di tipi di file
 ; Filetype Finder
 ;
-MSG_FIND_PRI
-Pri
-; Pri
-;
-MSG_FIND_ID
-ID
-; ID
-;
 MSG_FIND_FILETYPE
 Tipo file
 ; Filetype
-;
-MSG_FIND_FILE
-File...
-; File...
 ;
 MSG_FIND_USE
 _Usa
@@ -66,22 +54,6 @@ MSG_NONE_FOUND_3
 creare un nuovo tipo per questo?
 ; wish to create a new filetype for
 ;
-MSG_NONE_FOUND_4
-\x00
-; this file?
-;
-MSG_NONE_FOUND_5
-
-; 
-;
-MSG_NONE_FOUND_6
-
-; 
-;
-MSG_NONE_FOUND_7
-
-; 
-;
 MSG_STORED_FOUND_1
 Nessun tipo installato corrisponde
 ; No installed filetype matches the
@@ -101,14 +73,6 @@ Vuoi installare questo tipo di file
 MSG_STORED_FOUND_5
 adesso o crearne uno nuovo?
 ; now or create a new one?
-;
-MSG_STORED_FOUND_6
-
-; 
-;
-MSG_STORED_FOUND_7
-
-; 
 ;
 MSG_BETTER_FOUND_1
 C'è un tipo di file in magazzino che
@@ -154,18 +118,6 @@ MSG_INSTALLED_FOUND_4
 o crearne uno nuovo?
 ; or create a new one?
 ;
-MSG_INSTALLED_FOUND_5
-
-; 
-;
-MSG_INSTALLED_FOUND_6
-
-; 
-;
-MSG_INSTALLED_FOUND_7
-
-; 
-;
 MSG_CREATE_DESC
 Crea un nuovo tipo di file
 ; Create new filetype
@@ -173,10 +125,6 @@ Crea un nuovo tipo di file
 MSG_CREATE_TITLE
 Creatore di tipi di file
 ; Filetype Creator
-;
-MSG_CREATE_FILES
-Files...
-; Files...
 ;
 MSG_CREATE_ADD
 _Agg.
@@ -210,10 +158,6 @@ MSG_CREATE_ID
 I_D:
 ;    I_D:
 ;
-MSG_CREATE_BYTES
-_Bytes:
-; _Bytes:
-;
 MSG_CREATE_CASE
 Maiuscolo
 ; Case
@@ -239,9 +183,7 @@ Aggiungi un file...
 ; Add a file...
 ;
 MSG_CREATE_WARN_EDITED
-ATTENZIONE\n\n\
-Avete usato l'editor.\n\
-Se continuate i cambiamenti saranno persi...
+ATTENZIONE\n\nAvete usato l'editor.\nSe continuate i cambiamenti saranno persi...
 ; WARNING\n\nYou have used the editor.\nIf you continue your changes will be lost...
 ;
 MSG_CREATE_CONTINUE_CANCEL
@@ -253,7 +195,6 @@ Sostituisci|Annulla
 ; Replace|Cancel
 ;
 MSG_FILETYPE_EXISTS
-Il tipo di file '%s' esiste già.\n\
-Vuoi sostituirlo?
+Il tipo di file '%s' esiste già.\nVuoi sostituirlo?
 ; Filetype '%s' exists.\nDo you wish to replace it?
 ;

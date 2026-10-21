@@ -3,11 +3,11 @@
 ## language español
 ;
 MSG_JOIN_DESC
-Unir ficheros
+Unir partes en un fichero
 ; Join files together
 ;
 MSG_SPLIT_DESC
-Cortar un fichero en partes
+Separar fichero en partes
 ; Split a file into parts
 ;
 MSG_JOIN_LISTER
@@ -19,7 +19,7 @@ _Añadir
 ; _Add
 ;
 MSG_JOIN_REMOVE
-_Eliminar
+_Borrar
 ; _Remove
 ;
 MSG_JOIN_CLEAR
@@ -27,7 +27,7 @@ _Limpiar
 ; C_lear
 ;
 MSG_JOIN_MOVE_UP
-_Arriba
+A_rriba
 ; _Up
 ;
 MSG_JOIN_MOVE_DOWN
@@ -47,11 +47,11 @@ Unir
 ; Join
 ;
 MSG_JOIN_TO
-A:
+_En:
 ; _To:
 ;
 MSG_JOIN_SELECT_FILE
-Seleccionar Fichero
+Elija fichero...
 ; Select File
 ;
 MSG_REPLACE_RENAME_ABORT
@@ -63,11 +63,11 @@ MSG_FILE_EXISTS
 ; File '%s' already exists!
 ;
 MSG_ENTER_FILENAME
-Introduzca el nombre del fichero de destino
+Introduzca fichero destino:
 ; Enter destination filename.
 ;
 MSG_OK
-Ok
+Aceptar
 ; Ok
 ;
 MSG_CANCEL
@@ -79,103 +79,94 @@ Uniendo ficheros...
 ; Joining files...
 ;
 MSG_JOIN_ERROR_OPENING_OUTPUT
-¡No se puede abrir '%s' para salida!
+¡No puedo abrir '%s' para salida!
 ; Unable to open '%s' for output!
-;
-MSG_JOIN_ERROR
-%s\n\
-Error %ld %s
-; %s\nError %ld %s
 ;
 MSG_JOIN_RETRY
 Reintentar
 ; Retry
 ;
 MSG_REMOVE
-Eliminar
+Borrar
 ; Remove
 ;
 MSG_JOIN_ERROR_OPENING_INPUT
-¡No se puede abrir '%s'!
+¡No puedo abrir '%s'!
 ; Unable to open '%s'!
 ;
 MSG_JOIN_ERROR_READING
-¡Error leyendo de '%s'!
+¡Error al leer '%s'!
 ; Error reading from '%s'!
 ;
 MSG_SPLIT_FROM
-Partir _fichero
+Separa_r:
 ; Split _file
 ;
 MSG_SPLIT_STEM
-Con stem
+Nombre _base:
 ; _With stem
 ;
 MSG_SPLIT_INTO
-Tamaño de segmento
+_Tamaño (KB):
 ; _Chunk size
 ;
 MSG_SPLIT_SPLIT
-_Partir
+_Separar
 ; _Split
 ;
 MSG_SPLIT_SKIP
-Saltar
+Sa_ltar
 ; S_kip
 ;
 MSG_SPLIT_TO
-_A
+_A:
 ; _To
 ;
 MSG_SPLIT_TITLE
-Partir
+Separar
 ; Split
 ;
 MSG_SPLIT_ERROR_OPENING_FILE
-¡No se puede abrir '%s'!
+¡No puedo abrir '%s'!
 ; Unable to open '%s'!
 ;
 MSG_SPLIT_NO_MEMORY
-¡No hay memoria!
+¡Memoria insuficiente!
 ; No memory!
 ;
 MSG_SPLITTING_FILE
-Partiendo fichero...
+Creando partes...
 ; Splitting file...
 ;
 MSG_ENTER_DISK
-Inserte el siguiente diskete en %s
+Inserte otro disco en %s
 ; Insert next floppy into %s
 ;
 MSG_CHUNK_CUSTOM
-Custom Size
+Definido por el usuario
 ; Custom Size
 ;
 MSG_CHUNK_FLOPPY_FFS
-865K (DD Floppy - FFS)
+865KB (Amiga DD - FFS)
 ; 865K (DD Floppy - FFS)
 ;
 MSG_CHUNK_HD_FLOPPY_FFS
-1733K (HD Floppy - FFS)
+1733 (Amiga HD - FFS)
 ; 1733K (HD Floppy - FFS)
 ;
 MSG_CHUNK_FLOPPY_OFS
-824K (DD Floppy - OFS)
+824KB (Amiga DD - OFS)
 ; 824K (DD Floppy - OFS)
 ;
 MSG_CHUNK_HD_FLOPPY_OFS
-1651K (HD Floppy - OFS)
+1651KB (Amiga HD - OFS)
 ; 1651K (HD Floppy - OFS)
 ;
 MSG_CHUNK_MSDOS
-713K (DD MS-DOS)
+713KB (MS-DOS DD)
 ; 713K (DD MS-DOS)
 ;
 MSG_CHUNK_MSDOS_HD
-1423K (HD MS-DOS)
+1423KB (MS-DOS HD)
 ; 1423K (HD MS-DOS)
-;
-MSG_CHUNK_LAST
--
-; -
 ;

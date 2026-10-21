@@ -90,14 +90,6 @@ MSG_MENU_MODE
 Modo
 ; Mode
 ;
-MSG_MENU_MODE_NORMAL
-Normal
-; Normal
-;
-MSG_MENU_MODE_ANSI
-ANSI
-; ANSI
-;
 MSG_MENU_MODE_HEX
 Hexadécimal
 ; Hex
@@ -157,8 +149,4 @@ A ler o ficheiro...
 MSG_COUNTING_LINES
 Estou a contar as linhas...
 ; Counting lines...
-;
-MSG_CLOSE
-Close
-; Close
 ;

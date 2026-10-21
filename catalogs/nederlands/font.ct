@@ -1,0 +1,36 @@
+## version $VER: viewfont.catalog 2.0 (29.5.96)
+## codeset 0
+## language nederlands
+;
+MSG_FONT_TITLE
+Toon lettertype
+; Font Viewer
+;
+MSG_FONT_FONT
+_Lettertype
+; _Font
+;
+MSG_FONT_SIZE
+_Grootte
+; _Size
+;
+MSG_VIEWFONT_DESC
+Toon een lettertype
+; View a font
+;
+MSG_FONT_BOLD
+_V
+; _B
+;
+MSG_FONT_ITALIC
+_C
+; _I
+;
+MSG_FONT_ULINE
+_O
+; _U
+;
+MSG_FONT_SELECT
+Selecteer lettertype
+; Select Font
+;

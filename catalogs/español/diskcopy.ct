@@ -3,11 +3,11 @@
 ## language español
 ;
 MSG_DISKCOPY_TITLE
-Copia de Discos
+Copiar Discos
 ; Diskcopy
 ;
 MSG_DISKCOPY_DISKCOPY
-Copia de _discos
+Copiar _disco
 ; _Diskcopy
 ;
 MSG_DISKCOPY_CANCEL
@@ -19,7 +19,7 @@ _Verificar
 ; _Verify
 ;
 MSG_DISKCOPY_BUMP
-_Auto nombrar
+Dif. _nombre
 ; _Bump Name
 ;
 MSG_DISKCOPY_FROM
@@ -27,11 +27,11 @@ De...
 ; From...
 ;
 MSG_DISKCOPY_TO
-a...
+A...
 ; To...
 ;
 MSG_DISKCOPY_STATUS
-%s, %s usado
+%s, %s usados
 ; %s, %s used
 ;
 MSG_DISKCOPY_OPEN_DEVICES
@@ -39,27 +39,27 @@ Abriendo dispositivos...
 ; Opening devices...
 ;
 MSG_CANT_OPEN_DEVICE
-¡No se puede abrir el dispositivo fuente!
+¡No puedo abrir ORIGEN!
 ; Can't open source device!
 ;
 MSG_NO_DISK_PRESENT
-¡No hay disco en la fuente!
+¡Disco NO presente en ORIGEN!
 ; No disk present in source!
 ;
 MSG_CANT_OPEN_DESTINATION
-No se puede abrir el destino %s
+Imposible abrir DESTINO %s
 ; Unable to open destination %s
 ;
 MSG_NO_DISK_PRESENT_DEST
-No hay disco en %s
+No hay disco en unidad %s
 ; No disk present in %s
 ;
 MSG_WRITE_PROTECTED_DEST
-¡El disco en %s está protegido contra escritura!
+¡Disco en %s PROTEGIDO!
 ; Disk in %s is write protected!
 ;
 MSG_ABORTED
-Abortado.
+Interrumpido.
 ; Aborted.
 ;
 MSG_RETRY_CANCEL
@@ -67,7 +67,7 @@ Reintentar|Cancelar
 ; Retry|Cancel
 ;
 MSG_RETRY_REMOVE_CANCEL
-Reintentar|Quitar|Cancelar
+Reintentar|Saltar|Cancelar
 ; Retry|Remove|Cancel
 ;
 MSG_PROCEED_CANCEL
@@ -75,85 +75,82 @@ Proceder|Cancelar
 ; Proceed|Cancel
 ;
 MSG_DISKCOPY_SUCCESSFUL
-¡Copiado de discos correcto!
+¡Copia realizada con éxito!
 ; Diskcopy successful!
 ;
 MSG_DISKCOPY_FAILED
-Falló el copiado de discos
+Intento de copia fallido.
 ; Diskcopy failed.
 ;
 MSG_READ_ERROR
-Error leyendo %s pista %ld\n\
-%s
+Error leyendo %s pista %ld\n%s
 ; Error reading %s track %ld\n%s
 ;
 MSG_WRITE_ERROR
-Error escribiendo %s pista %ld\n\
-%s
+Error escribiendo %s pista %ld\n%s
 ; Error writing %s track %ld\n%s
 ;
 MSG_VERIFY_ERROR
-Error verificando %s pista %ld\n\
-%s
+Error verificando %s pista %ld\n%s
 ; Error verifying %s track %ld\n%s
 ;
 MSG_DISKCOPY_READING
-Leyendo pista %ld, %ld para acabar.
+Leyendo pista %ld, quedan %ld.
 ; Reading track %ld, %ld to go.
 ;
 MSG_DISKCOPY_WRITING
-Escribiendo pista %ld, %ld para acabar.
+Escribiendo pista %ld, quedan %ld.
 ; Writing track %ld, %ld to go.
 ;
 MSG_DISKCOPY_VERIFYING
-Verificando pista %ld, %ld para acabar.
+Verificando pista %ld, quedan %ld.
 ; Verifying track %ld, %ld to go.
 ;
 MSG_DISKCOPY_TO_TITLE
-a
+->
 ; to
 ;
 MSG_INSERT_DESTINATION
-Insertar disco de destino en %s
+Inserte disco DESTINO en %s
 ; Insert destination disk in %s
 ;
 MSG_INSERT_SOURCE
-Insertar disco fuente en %s
+Inserte disco ORIGEN en %s
 ; Insert source disk in %s
 ;
 MSG_ERROR_WRITE_PROT
-Disco protegido contra escritura
+Disco PROTEGIDO contra escritura.
 ; Disk is write protected
 ;
 MSG_ERROR_NO_DISK
-No hay disco
+No hay disco en la unidad.
 ; No disk in drive
 ;
 MSG_ERROR_UNKNOWN
-Código de error desconocido
+Código de error desconocido.
 ; Unknown error code
 ;
 MSG_ERROR_VERIFY
-Los datos no se han escrito correctamente..
+Datos no copiados correctamente.
 ; Data not written correctly.
 ;
 MSG_BUMPING_NAMES
-Cambiando nombres...
+Cambiando nombre...
 ; Bumping names...
 ;
 MSG_INCOMPATIBLE
-Los discos son de distinto tipo y no pueden ser copiados.
+Discos de formatos incompatibles y no se pueden copiar.
 ; Disks are of incompatible types and can not be copied.
 ;
 MSG_OK
-OK
+Aceptar
 ; OK
 ;
 MSG_DISKCOPY_DESC
-Hacer copias de un disco
+Hacer copias de discos
 ; Make copies of a disk
 ;
 MSG_DISKCOPY_COPYING
-Copiando el disco...
+Copiando disco...
 ; Copying disk...
 ;
