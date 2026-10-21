@@ -1,6 +1,6 @@
 [dopus5 next] Striped lister rows (issue #225); catalogs repaired
-Program, dopus5.library, configopus and themes change; environment
-config version 18; version bump deferred.
+Program, dopus5.library and configopus change; environment config
+version 18; version bump deferred.
 
 - Name mode listers can draw every second row in a different
   background colour.  Turn it on with Striped Rows in Environment >
@@ -16,7 +16,9 @@ config version 18; version bump deferred.
   numbers and the other way round), which also matters for the line
   being edited and the keyboard selector arrow.
 - ARexx 'dopus set pens' and 'dopus query pens' take 'tooltips' and
-  'stripes'.  Saved themes store both.
+  'stripes'.  Saved themes do not include them: a theme stores pen
+  numbers only, and applying it would replace the default light grey
+  stripe colour with white.
 - The translated catalogs (catalogs/*.ct) had wrong text in many
   places.  The files were generated in 2015 from the 1997 Magellan
   catalogs with the string IDs counted wrongly after every gap in
