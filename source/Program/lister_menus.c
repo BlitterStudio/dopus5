@@ -294,6 +294,10 @@ UWORD lister_listerpopup(Lister *lister, UWORD code)
 		}
 	}
 
+	// View modes, so they don't need the menu strip (pointer outside the window)
+	PopUpSeparator(menu);
+	popup_lister_view_menu(lister, menu);
+
 	// Clear 'separator' flag
 	menu->ph_Flags &= ~POPHF_SEP;
 

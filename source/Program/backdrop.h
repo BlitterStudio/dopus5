@@ -504,6 +504,7 @@ enum {
 #define WBSHOWFLAG_ACTION (1 << 28)
 
 void popup_default_menu(BackdropInfo *, PopUpHandle *, short *);
+BOOL popup_lister_view_menu(Lister *, PopUpHandle *);
 MatchHandle *popup_build_icon_menu(BackdropInfo *, char *, BackdropObject *, ULONG, short *, PopUpHandle *);
 
 void backdrop_bad_disk_name(BackdropObject *, char *);
