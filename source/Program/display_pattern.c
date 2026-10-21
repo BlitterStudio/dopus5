@@ -102,12 +102,14 @@ static void display_prepare_wbpattern_data(struct WBPatternPrefs *prefs, char *d
 }
 
 // Take the pattern lock (see close_display()). FALSE, without the lock, if the
-// screen has gone: patterns are freed with it, and display_open() loads them again
+// screen has gone: patterns are freed with it, and display_open() starts a new
+// pattern process for the next display, as this one may still be in the list
 static BOOL display_lock_pattern(void)
 {
 	ObtainSemaphore(&GUI->pattern_lock);
 	if (GUI->screen_pointer)
 		return TRUE;
+	GUI->pattern_gave_up = TRUE;
 	ReleaseSemaphore(&GUI->pattern_lock);
 	return FALSE;
 }

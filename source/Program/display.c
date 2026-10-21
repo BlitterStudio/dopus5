@@ -68,6 +68,32 @@ static BOOL display_wait_pattern(void)
 	return GUI->pattern[PATTERN_MAIN].valid;
 }
 
+// Start the pattern process for this display, unless one is still working for it.
+// One that gave up while the screen was closed (display_get_pattern()) may not
+// have left the process list yet, so it does not count. Under pattern_lock, as the
+// process records giving up under it.
+static BOOL display_start_pattern(void)
+{
+	BOOL start;
+
+	ObtainSemaphore(&GUI->pattern_lock);
+	start = (!GUI->pattern[PATTERN_MAIN].valid &&
+			 (GUI->pattern_gave_up || !IPC_FindProc(&GUI->process_list, NAME_PATTERNS, FALSE, 0)));
+	if (start)
+	{
+		GUI->pattern_gave_up = FALSE;
+		GUI->pattern_main_pending = TRUE;
+	}
+	ReleaseSemaphore(&GUI->pattern_lock);
+
+	if (start && !misc_startup(NAME_PATTERNS, CMD_REMAP_PATTERNS, 0, 0, FALSE))
+	{
+		GUI->pattern_main_pending = FALSE;
+		start = FALSE;
+	}
+	return start;
+}
+
 // Icon for iconified listers or button banks. Loaded the first time one is iconified:
 // reading the shipped OS 3.5 colour icons was a noticeable part of startup.
 struct DiskObject *get_iconify_icon(BOOL buttons)
@@ -517,12 +543,8 @@ BOOL display_open(long flags)
 
 			// Start loading the backdrop pictures now, so decoding overlaps the icon scan below.
 			// A pattern process that is already running may be past the main backdrop and
-			// waiting on us, so leave that one to the launch at the end of display_open().
-			if (!GUI->pattern[PATTERN_MAIN].valid && !IPC_FindProc(&GUI->process_list, NAME_PATTERNS, FALSE, 0))
-			{
-				GUI->pattern_main_pending = TRUE;
-				pattern_started = misc_startup(NAME_PATTERNS, CMD_REMAP_PATTERNS, 0, 0, TRUE) != 0;
-			}
+			// waiting on us; it starts again for this display (display_get_pattern()).
+			pattern_started = display_start_pattern();
 
 			// Get all icons
 			backdrop_get_objects(GUI->backdrop, BGOF_ALL | (flags & BGOF_DESKTOP));
@@ -608,11 +630,8 @@ BOOL display_open(long flags)
 	lister_smart_source(0);
 
 	// Get backdrop patterns (window was already open, or the early launch failed)
-	if (!pattern_started && !GUI->pattern[PATTERN_MAIN].valid)
-	{
-		// Launch process to read pattern
-		misc_startup(NAME_PATTERNS, CMD_REMAP_PATTERNS, 0, 0, TRUE);
-	}
+	if (!pattern_started)
+		display_start_pattern();
 
 	// Clear busy pointer
 	ClearPointer(GUI->window);

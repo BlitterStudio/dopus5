@@ -268,6 +268,7 @@ typedef struct
 
 	struct SignalSemaphore pattern_lock;
 	ULONG pattern_generation;			 // Bumped under pattern_lock when the patterns or screen go
+	BOOL pattern_gave_up;				 // Pattern process stopped because the screen had gone
 	volatile BOOL pattern_main_pending;	 // Pattern process has not settled the main backdrop yet
 
 	Att_List *icon_sel_list;  // List of selected icons
