@@ -1,3 +1,27 @@
+[dopus5 next] Build without compiler warnings on GCC 16 (issue #228)
+Program, dopus5.library, all modules and build-system change; version
+bump deferred.
+
+- The warning flags are passed to the linker too, because LTO generates
+  the code at link time, and the code is built with
+  -fno-strict-aliasing because it casts between Exec list structures.
+- dopus5.library takes const pointers in AddObjectList(),
+  AddWindowMenus(), BuildMenuStrip(), CalcWindowDims(),
+  SetConfigWindowLimits(), Att_NewNode() and WriteBuf(), and in
+  NewConfigWindow.dims.  The library vectors and registers do not
+  change.
+- Module source change: NewConfigWindow.dims now points to a const
+  ConfigWindow, so modules that write the window size through
+  newwin.dims->... must set it in their own ConfigWindow instead, as
+  the ftp module now does.
+- Opus no longer redefines the ILBM chunk IDs or AFF_68060 that the NDK
+  provides, and each module's libinit.c tells the compiler that exit()
+  does not return.
+- Initializer braces, pointer types, const qualifiers, ctype arguments,
+  old-style function definitions, unused variables, trigraphs and
+  misleading indentation are fixed across the program, the library and
+  the modules.  None of this is meant to change behaviour.
+
 [dopus5 next] Quitting Opus leaves later system patches in place
 dopus5.library change; version bump deferred.
 
