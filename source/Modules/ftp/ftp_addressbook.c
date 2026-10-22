@@ -2413,7 +2413,7 @@ static struct window_params *show_connect(struct display_globals *dg, struct sub
 	struct connect_msg *cm;
 	cm = (struct connect_msg *)imsg->data;
 
-	if (cm && cm->cm_opus)	// Is this a valid message ?
+	if (cm)	// Is this a valid message ?
 	{
 		struct site_entry *e;
 		struct window_params *wp;
@@ -2487,7 +2487,7 @@ static struct window_params *add_entry(struct display_globals *dg, struct subpro
 
 	cm = (struct connect_msg *)imsg->data;
 
-	if (cm && cm->cm_opus)	// Is this a valid message ?
+	if (cm)	// Is this a valid message ?
 	{
 		struct site_entry *e;
 
@@ -3363,7 +3363,7 @@ static struct window_params *show_addrbook(struct display_globals *dg, struct su
 
 	am = (struct addrbook_msg *)imsg->data;
 
-	if (am && am->am_opus)
+	if (am)
 	{
 		struct IBox pos;
 		short old_font_size = 0;
