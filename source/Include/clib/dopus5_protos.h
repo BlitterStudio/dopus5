@@ -115,7 +115,7 @@ int CalcObjectDims(void *,
 				   GL_Object *);
 int CalcWindowDims(struct Screen *, ConfigWindow *, struct IBox *, struct TextFont *, ULONG);
 //-----
-ObjectList *AddObjectList(struct Window *, ObjectDef *);
+ObjectList *AddObjectList(struct Window *, const ObjectDef *);
 void FreeObject(ObjectList *, GL_Object *);
 void FreeObjectList(ObjectList *);
 void RefreshObjectList(struct Window *, ObjectList *);
@@ -134,7 +134,7 @@ void DisplayObject(struct Window *, GL_Object *, int fg, int bg, char *txt);
 void DisableObject(ObjectList *, ULONG, BOOL);
 int BoundsCheckGadget(ObjectList *, ULONG, int, int);
 //-----
-void AddWindowMenus(struct Window *, MenuData *);
+void AddWindowMenus(struct Window *, const MenuData *);
 void FreeWindowMenus(struct Window *);
 //-----
 void SetWindowBusy(struct Window *);
@@ -150,7 +150,7 @@ ULONG GetWindowID(struct Window *);
 struct MsgPort *GetWindowAppPort(struct Window *);
 //-----
 Att_List *Att_NewList(ULONG);
-Att_Node *Att_NewNode(Att_List *list, char *name, IPTR data, ULONG flags);
+Att_Node *Att_NewNode(Att_List *list, const char *name, IPTR data, ULONG flags);
 void Att_RemNode(Att_Node *node);
 void Att_PosNode(Att_List *, Att_Node *, Att_Node *);
 void Att_RemList(Att_List *list, long);
@@ -164,7 +164,7 @@ void Att_ChangeNodeName(Att_Node *node, char *name);
 long Att_FindNodeNumber(Att_List *list, Att_Node *node);
 void AddSorted(struct List *list, struct Node *node);
 //-----
-struct Menu *BuildMenuStrip(MenuData *, struct DOpusLocale *);
+struct Menu *BuildMenuStrip(const MenuData *, struct DOpusLocale *);
 struct MenuItem *FindMenuItem(struct Menu *, UWORD);
 UWORD DoPopUpMenu(struct Window *, PopUpMenu *, PopUpItem **, UWORD);
 PopUpItem *GetPopUpItem(PopUpMenu *, UWORD);
@@ -254,7 +254,7 @@ void GetPalette32(struct ViewPort *, ULONG *, UWORD, short);
 APTR OpenBuf(char *name, long mode, long buffer_size);
 long CloseBuf(APTR file);
 long ReadBuf(APTR file, char *data, long size);
-long WriteBuf(APTR file, char *data, long size);
+long WriteBuf(APTR file, const char *data, long size);
 long FlushBuf(APTR file);
 long SeekBuf(APTR file, long offset, long mode);
 long ExamineBuf(APTR file, struct FileInfoBlock *fib);
@@ -464,7 +464,7 @@ void DisposeBitMap(struct BitMap *);
 FuncArgs *ParseArgs(char *, char *);
 void DisposeArgs(FuncArgs *);
 //-----
-void SetConfigWindowLimits(struct Window *, ConfigWindow *, ConfigWindow *);
+void SetConfigWindowLimits(struct Window *, const ConfigWindow *, const ConfigWindow *);
 //-----
 void SetEnv(char *, char *, BOOL);
 BOOL IsListLockEmpty(struct ListLock *);

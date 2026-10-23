@@ -1260,14 +1260,14 @@ BOOL convert_instructions(APTR memory, struct MinList *list, char *string)
 		else
 		{
 			// If not at the start of the buffer, or this isn't a space
-			if (buf_pos > 0 || !isspace(string[pos]))
+			if (buf_pos > 0 || !isspace((unsigned char)string[pos]))
 			{
 				// Separator?
 				if (string[pos] == '|' && string[pos + 1] == '|')
 					sep_flag = 1;
 
 				// If this is a space, store pointer to it
-				else if (isspace(string[pos]))
+				else if (isspace((unsigned char)string[pos]))
 				{
 					if (last_space == -1)
 						last_space = buf_pos;
@@ -1331,7 +1331,7 @@ void convert_old_commands(char *cmd)
 	char buf[256];
 
 	// Skip over any leading spaces
-	while (*cmd && isspace(*cmd))
+	while (*cmd && isspace((unsigned char)*cmd))
 		++cmd;
 
 	// Go through command table

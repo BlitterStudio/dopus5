@@ -33,7 +33,7 @@ For more information on Directory Opus for Windows please see:
 
 void remap_logo(struct Screen *scr);
 void free_logo_remap(void);
-void about_show_image(struct Window *, GL_Object *, image_data *);
+void about_show_image(struct Window *, GL_Object *, const image_data *);
 void about_scroll_text(about_data *data);
 void free_about_data(about_data *data);
 void about_next_line(about_data *data);
@@ -321,7 +321,7 @@ int LIBFUNC L_Module_Entry(REG(a0, struct List *files),
 				logo.TopEdge = top;
 
 				// Show first frame
-				logo.ImageData = logo_image[0];
+				logo.ImageData = (UWORD *)logo_image[0];
 				DrawImage(data.window->RPort, &logo, 0, 0);
 			}
 		}
@@ -360,7 +360,7 @@ int LIBFUNC L_Module_Entry(REG(a0, struct List *files),
 				else
 				{
 					// Show next frame
-					logo.ImageData = logo_image[frame];
+					logo.ImageData = (UWORD *)logo_image[frame];
 					DrawImage(data.window->RPort, &logo, 0, 0);
 				}
 
@@ -529,7 +529,7 @@ void remap_logo(struct Screen *scr)
 	for (frame = 0; frame < logo_frames; frame++)
 	{
 		// Get data
-		info.oi_ImageData = logo_image[frame];
+		info.oi_ImageData = (UWORD *)logo_image[frame];
 
 		// Get image
 		if (!(im = OpenImage(0, &info)))
@@ -547,15 +547,15 @@ void remap_logo(struct Screen *scr)
 		free_logo_remap();
 }
 
-void about_show_image(struct Window *win, GL_Object *object, image_data *image)
+void about_show_image(struct Window *win, GL_Object *object, const image_data *image)
 {
 	OpenImageInfo info;
 	APTR im;
 	short x, y;
 
 	// Fill out info
-	info.oi_ImageData = image->imagedata;
-	info.oi_Palette = image->palette;
+	info.oi_ImageData = (UWORD *)image->imagedata;
+	info.oi_Palette = (ULONG *)image->palette;
 	info.oi_Width = image->width;
 	info.oi_Height = image->height;
 	info.oi_Depth = image->depth;

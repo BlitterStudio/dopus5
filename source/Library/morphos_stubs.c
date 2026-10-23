@@ -221,7 +221,7 @@ LIBSTUB_5(L_CalcWindowDims,
 LIBSTUB_3(L_AddObjectList,
 		  ObjectList *,
 		  REG(a0, struct Window *window),
-		  REG(a1, ObjectDef *objects),
+		  REG(a1, const ObjectDef *objects),
 		  REG(a6, struct MyLibrary *libbase))
 LIBSTUB_2(L_FreeObject, void, REG(a0, ObjectList *objlist), REG(a1, GL_Object *object))
 LIBSTUB_1(L_FreeObjectList, void, REG(a0, ObjectList *objlist))
@@ -247,7 +247,7 @@ LIBSTUB_5(L_DisplayObject,
 		  REG(d0, int fg),
 		  REG(d1, int bg),
 		  REG(a2, char *txt))
-LIBSTUB_2(L_AddWindowMenus, void, REG(a0, struct Window *window), REG(a1, MenuData *menudata))
+LIBSTUB_2(L_AddWindowMenus, void, REG(a0, struct Window *window), REG(a1, const MenuData *menudata))
 LIBSTUB_1(L_FreeWindowMenus, void, REG(a0, struct Window *window))
 LIBSTUB_1(L_SetWindowBusy, void, REG(a0, struct Window *window))
 LIBSTUB_1(L_ClearWindowBusy, void, REG(a0, struct Window *window))
@@ -283,7 +283,7 @@ LIBSTUB_2(L_StartRefreshConfigWindow, void, REG(a0, struct Window *window), REG(
 LIBSTUB_1(L_EndRefreshConfigWindow, void, REG(a0, struct Window *window))
 
 // menu_routines.c
-LIBSTUB_2(L_BuildMenuStrip, struct Menu *, REG(a0, MenuData *menudata), REG(a1, struct DOpusLocale *locale))
+LIBSTUB_2(L_BuildMenuStrip, struct Menu *, REG(a0, const MenuData *menudata), REG(a1, struct DOpusLocale *locale))
 LIBSTUB_2(L_FindMenuItem, struct MenuItem *, REG(a0, struct Menu *menu), REG(d0, UWORD id))
 
 // list_management.c
@@ -291,7 +291,7 @@ LIBSTUB_1(L_Att_NewList, Att_List *, REG(d0, ULONG flags))
 LIBSTUB_4(L_Att_NewNode,
 		  Att_Node *,
 		  REG(a0, Att_List *list),
-		  REG(a1, char *name),
+		  REG(a1, const char *name),
 		  REG(d0, IPTR data),
 		  REG(d1, ULONG flags))
 LIBSTUB_1(L_Att_RemNode, void, REG(a0, Att_Node *node))
@@ -573,7 +573,7 @@ LIBSTUB_1(L_CloseBuf, long, REG(a0, APTR file))
 
 LIBSTUB_3(L_ReadBuf, long, REG(a0, APTR file), REG(a1, char *data), REG(d0, long size))
 
-LIBSTUB_3(L_WriteBuf, long, REG(a0, APTR file), REG(a1, char *data), REG(d0, long size))
+LIBSTUB_3(L_WriteBuf, long, REG(a0, APTR file), REG(a1, const char *data), REG(d0, long size))
 
 LIBSTUB_1(L_FlushBuf, long, REG(a0, APTR file))
 
@@ -846,8 +846,8 @@ LIBSTUB_3(L_LoadPos, BOOL, REG(a0, char *name), REG(a1, struct IBox *box), REG(d
 LIBSTUB_3(L_SetConfigWindowLimits,
 		  void,
 		  REG(a0, struct Window *window),
-		  REG(a1, ConfigWindow *mindims),
-		  REG(a2, ConfigWindow *maxdims))
+		  REG(a1, const ConfigWindow *mindims),
+		  REG(a2, const ConfigWindow *maxdims))
 LIBSTUB_3(L_OpenIFFFile, struct IFFHandle *, REG(a0, char *name), REG(d0, int mode), REG(d1, ULONG check_id))
 LIBSTUB_1(L_CloseIFFFile, void, REG(a0, struct IFFHandle *iff))
 LIBSTUB_12(L_SelectionList,

@@ -164,7 +164,7 @@ struct DOpusIFace
 								  struct IBox *dest,
 								  struct TextFont *font,
 								  ULONG flags);
-	ObjectList *APICALL (*AddObjectList)(struct DOpusIFace *Self, struct Window *window, ObjectDef *objects);
+	ObjectList *APICALL (*AddObjectList)(struct DOpusIFace *Self, struct Window *window, const ObjectDef *objects);
 	void APICALL (*FreeObject)(struct DOpusIFace *Self, ObjectList *objlist, GL_Object *object);
 	void APICALL (*FreeObjectList)(struct DOpusIFace *Self, ObjectList *objlist);
 	void APICALL (*RefreshObjectList)(struct DOpusIFace *Self, struct Window *window, ObjectList *list);
@@ -180,7 +180,7 @@ struct DOpusIFace
 		*DisplayObject)(struct DOpusIFace *Self, struct Window *window, GL_Object *object, int fg, int bg, char *txt);
 	void APICALL (*DisableObject)(struct DOpusIFace *Self, ObjectList *list, ULONG id, BOOL state);
 	int APICALL (*BoundsCheckGadget)(struct DOpusIFace *Self, ObjectList *list, ULONG id, int min, int max);
-	void APICALL (*AddWindowMenus)(struct DOpusIFace *Self, struct Window *window, MenuData *data);
+	void APICALL (*AddWindowMenus)(struct DOpusIFace *Self, struct Window *window, const MenuData *data);
 	void APICALL (*FreeWindowMenus)(struct DOpusIFace *Self, struct Window *window);
 	void APICALL (*SetWindowBusy)(struct DOpusIFace *Self, struct Window *window);
 	void APICALL (*ClearWindowBusy)(struct DOpusIFace *Self, struct Window *window);
@@ -196,7 +196,7 @@ struct DOpusIFace
 	ULONG APICALL (*GetWindowID)(struct DOpusIFace *Self, struct Window *window);
 	struct MsgPort *APICALL (*GetWindowAppPort)(struct DOpusIFace *Self, struct Window *window);
 	Att_List *APICALL (*Att_NewList)(struct DOpusIFace *Self, ULONG flags);
-	Att_Node *APICALL (*Att_NewNode)(struct DOpusIFace *Self, Att_List *list, char *name, IPTR data, ULONG flags);
+	Att_Node *APICALL (*Att_NewNode)(struct DOpusIFace *Self, Att_List *list, const char *name, IPTR data, ULONG flags);
 	void APICALL (*Att_RemNode)(struct DOpusIFace *Self, Att_Node *node);
 	void APICALL (*Att_PosNode)(struct DOpusIFace *Self, Att_List *list, Att_Node *node, Att_Node *before);
 	void APICALL (*Att_RemList)(struct DOpusIFace *Self, Att_List *list, long flags);
@@ -209,7 +209,7 @@ struct DOpusIFace
 	void APICALL (*Att_ChangeNodeName)(struct DOpusIFace *Self, Att_Node *node, char *name);
 	long APICALL (*Att_FindNodeNumber)(struct DOpusIFace *Self, Att_List *list, Att_Node *node);
 	void APICALL (*AddSorted)(struct DOpusIFace *Self, struct List *list, struct Node *node);
-	struct Menu *APICALL (*BuildMenuStrip)(struct DOpusIFace *Self, MenuData *data, struct DOpusLocale *locale);
+	struct Menu *APICALL (*BuildMenuStrip)(struct DOpusIFace *Self, const MenuData *data, struct DOpusLocale *locale);
 	struct MenuItem *APICALL (*FindMenuItem)(struct DOpusIFace *Self, struct Menu *menu, UWORD id);
 	UWORD APICALL (
 		*DoPopUpMenu)(struct DOpusIFace *Self, struct Window *window, PopUpMenu *menu, PopUpItem **item, UWORD code);
@@ -339,7 +339,7 @@ struct DOpusIFace
 	APTR APICALL (*OpenBuf)(struct DOpusIFace *Self, char *name, long mode, long buffer_size);
 	long APICALL (*CloseBuf)(struct DOpusIFace *Self, APTR file);
 	long APICALL (*ReadBuf)(struct DOpusIFace *Self, APTR file, char *data, long size);
-	long APICALL (*WriteBuf)(struct DOpusIFace *Self, APTR file, char *data, long size);
+	long APICALL (*WriteBuf)(struct DOpusIFace *Self, APTR file, const char *data, long size);
 	long APICALL (*FlushBuf)(struct DOpusIFace *Self, APTR file);
 	long APICALL (*SeekBuf)(struct DOpusIFace *Self, APTR file, long offset, long mode);
 	long APICALL (*ExamineBuf)(struct DOpusIFace *Self, APTR file, struct FileInfoBlock *fib);
@@ -542,8 +542,8 @@ struct DOpusIFace
 	void APICALL (*DisposeArgs)(struct DOpusIFace *Self, FuncArgs *args);
 	void APICALL (*SetConfigWindowLimits)(struct DOpusIFace *Self,
 										  struct Window *window,
-										  ConfigWindow *min,
-										  ConfigWindow *max);
+										  const ConfigWindow *min,
+										  const ConfigWindow *max);
 	void APICALL (*SetEnv)(struct DOpusIFace *Self, char *name, char *data, BOOL save);
 	BOOL APICALL (*IsListLockEmpty)(struct DOpusIFace *Self, struct ListLock *list);
 	DOpusAppMessage *APICALL (*AllocAppMessage)(struct DOpusIFace *Self, APTR mem, struct MsgPort *reply, short num);

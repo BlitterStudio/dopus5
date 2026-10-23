@@ -544,7 +544,7 @@ static ObjectList *stub_AddObjectListPPC(uint32 *regarray)
 	struct ExtendedLibrary *ExtLib = (struct ExtendedLibrary *)((uint32)Base + Base->lib_PosSize);
 	struct DOpusIFace *Self = (struct DOpusIFace *)ExtLib->MainIFace;
 
-	return Self->AddObjectList((struct Window *)regarray[8], (ObjectDef *)regarray[9]);
+	return Self->AddObjectList((struct Window *)regarray[8], (const ObjectDef *)regarray[9]);
 }
 STATIC CONST struct EmuTrap stub_AddObjectList = {TRAPINST, TRAPTYPE, (uint32(*)(uint32 *))stub_AddObjectListPPC};
 
@@ -706,7 +706,7 @@ static void stub_AddWindowMenusPPC(uint32 *regarray)
 	struct ExtendedLibrary *ExtLib = (struct ExtendedLibrary *)((uint32)Base + Base->lib_PosSize);
 	struct DOpusIFace *Self = (struct DOpusIFace *)ExtLib->MainIFace;
 
-	Self->AddWindowMenus((struct Window *)regarray[8], (MenuData *)regarray[9]);
+	Self->AddWindowMenus((struct Window *)regarray[8], (const MenuData *)regarray[9]);
 }
 STATIC CONST struct EmuTrap stub_AddWindowMenus = {TRAPINST, TRAPTYPENR, (uint32(*)(uint32 *))stub_AddWindowMenusPPC};
 
@@ -820,7 +820,7 @@ static Att_Node *stub_Att_NewNodePPC(uint32 *regarray)
 	struct ExtendedLibrary *ExtLib = (struct ExtendedLibrary *)((uint32)Base + Base->lib_PosSize);
 	struct DOpusIFace *Self = (struct DOpusIFace *)ExtLib->MainIFace;
 
-	return Self->Att_NewNode((Att_List *)regarray[8], (char *)regarray[9], (ULONG)regarray[0], (ULONG)regarray[1]);
+	return Self->Att_NewNode((Att_List *)regarray[8], (const char *)regarray[9], (ULONG)regarray[0], (ULONG)regarray[1]);
 }
 STATIC CONST struct EmuTrap stub_Att_NewNode = {TRAPINST, TRAPTYPE, (uint32(*)(uint32 *))stub_Att_NewNodePPC};
 
@@ -956,7 +956,7 @@ static struct Menu *stub_BuildMenuStripPPC(uint32 *regarray)
 	struct ExtendedLibrary *ExtLib = (struct ExtendedLibrary *)((uint32)Base + Base->lib_PosSize);
 	struct DOpusIFace *Self = (struct DOpusIFace *)ExtLib->MainIFace;
 
-	return Self->BuildMenuStrip((MenuData *)regarray[8], (struct DOpusLocale *)regarray[9]);
+	return Self->BuildMenuStrip((const MenuData *)regarray[8], (struct DOpusLocale *)regarray[9]);
 }
 STATIC CONST struct EmuTrap stub_BuildMenuStrip = {TRAPINST, TRAPTYPE, (uint32(*)(uint32 *))stub_BuildMenuStripPPC};
 
@@ -1807,7 +1807,7 @@ static long stub_WriteBufPPC(uint32 *regarray)
 	struct ExtendedLibrary *ExtLib = (struct ExtendedLibrary *)((uint32)Base + Base->lib_PosSize);
 	struct DOpusIFace *Self = (struct DOpusIFace *)ExtLib->MainIFace;
 
-	return Self->WriteBuf((APTR)regarray[8], (char *)regarray[9], (long)regarray[0]);
+	return Self->WriteBuf((APTR)regarray[8], (const char *)regarray[9], (long)regarray[0]);
 }
 STATIC CONST struct EmuTrap stub_WriteBuf = {TRAPINST, TRAPTYPE, (uint32(*)(uint32 *))stub_WriteBufPPC};
 
@@ -3355,7 +3355,7 @@ static void stub_SetConfigWindowLimitsPPC(uint32 *regarray)
 	struct DOpusIFace *Self = (struct DOpusIFace *)ExtLib->MainIFace;
 
 	Self->SetConfigWindowLimits(
-		(struct Window *)regarray[8], (ConfigWindow *)regarray[9], (ConfigWindow *)regarray[10]);
+		(struct Window *)regarray[8], (const ConfigWindow *)regarray[9], (const ConfigWindow *)regarray[10]);
 }
 STATIC CONST struct EmuTrap stub_SetConfigWindowLimits = {TRAPINST,
 														  TRAPTYPENR,

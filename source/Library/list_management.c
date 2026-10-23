@@ -56,7 +56,7 @@ Att_List *LIBFUNC L_Att_NewList(REG(d0, ULONG flags))
 						  Add a node to an Att_List
  ****************************************************************************/
 
-Att_Node *LIBFUNC L_Att_NewNode(REG(a0, Att_List *list), REG(a1, char *name), REG(d0, IPTR data), REG(d1, ULONG flags))
+Att_Node *LIBFUNC L_Att_NewNode(REG(a0, Att_List *list), REG(a1, const char *name), REG(d0, IPTR data), REG(d1, ULONG flags))
 {
 	Att_Node *node;
 	BOOL added = 0;

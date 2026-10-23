@@ -47,7 +47,7 @@ typedef struct
 
 	FunctionStartup func_startup;  // Data for function editor
 
-	ObjectDef *obj_def;	 // Pointer to objects
+	const ObjectDef *obj_def;	 // Pointer to objects
 
 	NewConfigWindow new_win;  // New window data
 	struct Window *window;	  // Window pointer
@@ -57,13 +57,13 @@ typedef struct
 	IPCData *editor[32];		// Function editors
 
 	Att_List *action_list;	// Action list
-	short *action_lookup;	// Lookup table
+	const short *action_lookup;	// Lookup table
 
 	IPCData *class_editor;	  // File class editor
-	ConfigWindow *class_win;  // Class editor window
-	ObjectDef *class_obj;	  // Class editor objects
-	short *class_lookup;	  // Class lookup table
-	short *class_strings;	  // Match strings
+	const ConfigWindow *class_win;  // Class editor window
+	const ObjectDef *class_obj;	  // Class editor objects
+	const short *class_lookup;	  // Class lookup table
+	const UWORD *class_strings;// Match strings
 	short edit_flag;		  // Go straight to class editor?
 
 	APTR icon_image;				// Icon image
@@ -96,11 +96,11 @@ typedef struct
 
 	NewConfigWindow new_win;  // New window data
 	struct Window *window;	  // Window pointer
-	ObjectDef *obj_def;		  // Object definitions
+	const ObjectDef *obj_def;	  // Object definitions
 	ObjectList *objlist;	  // Object list
 
-	short *lookup;	// Class lookup table
-	short *strings;
+	const short *lookup;	// Class lookup table
+	const UWORD *strings;
 
 	Att_List *match_list;  // List of matches
 	Att_Node *match_edit;  // Current match being edited

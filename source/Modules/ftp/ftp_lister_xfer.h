@@ -26,8 +26,8 @@ For more information on Directory Opus for Windows please see:
 
 int replace_requester(struct hook_rec_data *, ULONG flags, struct entry_info *src, struct entry_info *dst);
 
-int xfer_update(struct update_info *ui, unsigned int total, unsigned int bytes);
-int getput_update(struct update_info *ui, unsigned int total, unsigned int bytes);
+int xfer_update(void *ui, unsigned int total, unsigned int bytes);
+int getput_update(void *ui, unsigned int total, unsigned int bytes);
 
 //
 //	Flags for replace_requester()

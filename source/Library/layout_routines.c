@@ -801,7 +801,7 @@ int LIBFUNC L_CalcWindowDims(REG(a0, struct Screen *screen),
  ****************************************************************************/
 
 ObjectList *LIBFUNC L_AddObjectList(REG(a0, struct Window *window),
-									REG(a1, ObjectDef *objects),
+									REG(a1, const ObjectDef *objects),
 									REG(a6, struct MyLibrary *libbase))
 {
 	ObjectList *list;
@@ -2288,7 +2288,7 @@ void LIBFUNC L_DisplayObject(REG(a0, struct Window *window),
 						  Attach a menu to a window
  ****************************************************************************/
 
-void LIBFUNC L_AddWindowMenus(REG(a0, struct Window *window), REG(a1, MenuData *menudata))
+void LIBFUNC L_AddWindowMenus(REG(a0, struct Window *window), REG(a1, const MenuData *menudata))
 {
 	struct TagItem tags[2];
 

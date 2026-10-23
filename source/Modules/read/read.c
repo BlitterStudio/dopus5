@@ -3621,11 +3621,12 @@ BOOL read_search_line(read_data *data, read_line *line, short start)
 					match = 0;
 
 					// Character before match string must be valid (or start of line)
-					if (matchstart == 0 || isspace(textptr[matchstart - 1]) || ispunct(textptr[matchstart - 1]))
+					if (matchstart == 0 || isspace((unsigned char)textptr[matchstart - 1]) ||
+						ispunct((unsigned char)textptr[matchstart - 1]))
 					{
 						// Character after match string must be likewise
-						if (matchstart + matchpos > length || isspace(textptr[matchstart + matchpos]) ||
-							ispunct(textptr[matchstart + matchpos]))
+						if (matchstart + matchpos > length || isspace((unsigned char)textptr[matchstart + matchpos]) ||
+							ispunct((unsigned char)textptr[matchstart + matchpos]))
 							match = 1;
 					}
 				}

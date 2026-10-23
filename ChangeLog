@@ -1,3 +1,22 @@
+[dopus5 next] Build without compiler warnings on GCC 16 (issue #228)
+Program, dopus5.library, all modules and build-system change; version
+bump deferred.
+
+- The warning flags are passed to the linker too, because LTO generates
+  the code at link time, and the code is built with
+  -fno-strict-aliasing because it casts between Exec list structures.
+- dopus5.library takes const pointers in AddObjectList(),
+  AddWindowMenus(), BuildMenuStrip(), SetConfigWindowLimits(),
+  Att_NewNode() and WriteBuf(), and in NewConfigWindow.dims.  The
+  library vectors and registers do not change.
+- Opus no longer redefines the ILBM chunk IDs or AFF_68060 that the NDK
+  provides, and each module's libinit.c tells the compiler that exit()
+  does not return.
+- Initializer braces, pointer types, const qualifiers, ctype arguments,
+  old-style function definitions, unused variables, trigraphs, format
+  strings and misleading indentation are fixed across the program, the
+  library and the modules.  None of this is meant to change behaviour.
+
 [dopus5 5.104] Release summary
 Program bumps to 5.104, library and modules to v73r8, commands to
 v65r6.  The release adds striped lister rows, repairs the translated

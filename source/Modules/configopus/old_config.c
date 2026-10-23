@@ -271,9 +271,7 @@ void DoAssignMenu(ConfigStuff *cstuff, int men, char *name, char *func)
 	}
 }
 
-void DoAssignDrive(cstuff, drv, name, path) ConfigStuff *cstuff;
-int drv;
-char *name, *path;
+void DoAssignDrive(ConfigStuff *cstuff, int drv, char *name, char *path)
 {
 	struct Config *config;
 
@@ -293,8 +291,7 @@ char *name, *path;
 	}
 }
 
-void linkinnewfiletype(cstuff, temp) ConfigStuff *cstuff;
-struct dopusfiletype *temp;
+void linkinnewfiletype(ConfigStuff *cstuff, struct dopusfiletype *temp)
 {
 	struct dopusfiletype *pos;
 

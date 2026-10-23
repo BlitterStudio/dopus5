@@ -152,7 +152,7 @@ void backdrop_position_object(BackdropInfo *info,
 	BackdropObject *first = 0;
 	struct Rectangle rect;
 	long x, y;
-	short border_x = 0, border_y_top = 0, border_y_bottom = 0, off_x, off_y;
+	short border_x = 0, border_y_top = 0, off_x, off_y;
 	iconpos_data *pos_area = 0, fake_area;
 	ULONG type;
 
@@ -393,7 +393,6 @@ void backdrop_position_object(BackdropInfo *info,
 	{
 		border_x = ICON_BORDER_X;
 		border_y_top = ICON_BORDER_Y_TOP;
-		border_y_bottom = ICON_BORDER_Y_BOTTOM;
 	}
 
 	// Save position

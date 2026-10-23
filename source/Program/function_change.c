@@ -783,11 +783,11 @@ static BOOL function_change_arg_empty(char *arg)
 	if (!arg)
 		return 0;
 
-	while (*arg && isspace(*arg))
+	while (*arg && isspace((unsigned char)*arg))
 		++arg;
 
 	end = arg + strlen(arg);
-	while (end > arg && isspace(*(end - 1)))
+	while (end > arg && isspace((unsigned char)*(end - 1)))
 		--end;
 
 	if (end == arg)
@@ -798,9 +798,9 @@ static BOOL function_change_arg_empty(char *arg)
 		++arg;
 		--end;
 
-		while (arg < end && isspace(*arg))
+		while (arg < end && isspace((unsigned char)*arg))
 			++arg;
-		while (end > arg && isspace(*(end - 1)))
+		while (end > arg && isspace((unsigned char)*(end - 1)))
 			--end;
 
 		return (end == arg);

@@ -56,6 +56,7 @@ int _start(void)  // must be first for 68k library
 __stdargs void exit(int status)
 {
 	Exit(status);
+	__builtin_unreachable();  // Exit() is not declared noreturn by the NDK
 }
 #endif
 #endif
@@ -1052,7 +1053,7 @@ ModuleInfo *LIBFUNC L_Module_Identify(REG(d0, int num))
 {
 	// Return module information
 	if (num == -1)
-		return &module_info;
+		return (ModuleInfo *)&module_info;  // Read-only for the caller; this module keeps it const
 
 	// Valid function number?
 	if (num > module_info.function_count || !(module_info.function[num].desc))

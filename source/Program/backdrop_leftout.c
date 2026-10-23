@@ -547,7 +547,8 @@ void backdrop_add_leftouts(BackdropInfo *info)
 	if ((environment->env->display_options & DISPOPTF_SHOW_WBLEFTOUTS) &&
 		(wbl = AllocVec(sizeof(*wbl), MEMF_ANY)))
 	{
-		BackdropObject *object, *newobject;
+		BackdropObject *object;
+		BackdropObject *newobject UNUSED;  // Only used by the disabled code below
 		char *buf = wbl->path, *leftout = wbl->line;
 		BPTR backdrop;
 		char *pos;

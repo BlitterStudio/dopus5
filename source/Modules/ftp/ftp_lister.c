@@ -122,7 +122,6 @@ void STDARGS logprintf(char *fmt, ...)
 	va_list ap;
 	char *buf;
 	IPCData *master_ipc = GETGLOBAL(FindTask(NULL), g_master_ipc);
-	int ok = 0;
 
 	if (master_ipc && strlen(fmt) < 256)
 	{
@@ -133,7 +132,6 @@ void STDARGS logprintf(char *fmt, ...)
 			va_end(ap);
 
 			IPC_Command(master_ipc, IPC_PRINT, 0, 0, buf, 0);
-			ok = 1;
 		}
 	}
 }
@@ -933,7 +931,7 @@ int lst_dos_err(struct opusftp_globals *og, struct ftp_node *ftpnode, ULONG flag
 		return 0;
 
 	// Trigger script
-	if (og->og_hooks.dc_Script && ((ftpnode->fn_flags & LST_LOCAL) && og->og_oc.oc_env.e_script_error) ||
+	if ((og->og_hooks.dc_Script && ((ftpnode->fn_flags & LST_LOCAL) && og->og_oc.oc_env.e_script_error)) ||
 		ftpnode->fn_site.se_env->e_script_error)
 	{
 		ftp_format_handle(handle, ftpnode->fn_handle);
@@ -1454,7 +1452,6 @@ static void lister_rename(struct ftp_node *ftpnode, IPCMessage *msg)
 	char **namep;
 	BOOL gotfileinfo;  // Real name (for links)
 	struct entry_info ei = {0};
-	BOOL abort = FALSE;
 	int reply;				   // FTP reply
 	BOOL exactname = TRUE;	   // Is req'd file's name exact match with one in lister ?
 	int total = 0, count = 1;  // Used in bar graph display
@@ -1586,11 +1583,7 @@ static void lister_rename(struct ftp_node *ftpnode, IPCMessage *msg)
 						lst_server_reply(ftpnode->fn_og, ftpnode, ftpnode, MSG_FTP_RENAME_ERROR);
 					}
 
-					if (reply == 421)
-						abort = TRUE;
 				}
-				else
-					abort = TRUE;
 			}
 		}
 
@@ -1821,9 +1814,6 @@ static void lister_delete(struct ftp_node *ftpnode, IPCMessage *msg)
 					}
 
 					// Delete all?  Show no more confirmation requesters
-					if (confirm_entry == 2)
-						quiet = 1;
-
 					if (confirm_entry == 1 || confirm_entry == 2)
 					{
 						// Delete entry (and contents if it's a dir)
@@ -2486,7 +2476,6 @@ static void lister_findfile(struct ftp_node *ftpnode, IPCMessage *msg)
 	char *names = NULL, *p;
 	int entrycount;		  // Total number of entries to search
 	int entrynumber = 1;  // Number of entry being searched
-	int quiet;			  // Don't show confirmation requesters
 	endpoint *source;
 	char srcname[FILENAMELEN + 1];	// Source name of this entry
 	struct entry_info ei;			// Info on this entry
@@ -2517,7 +2506,6 @@ static void lister_findfile(struct ftp_node *ftpnode, IPCMessage *msg)
 	{
 		entrycount = count_entries(names);
 
-		quiet = 0;
 
 		// Create endpoint
 		if ((source = create_endpoint_tags(ftpnode->fn_og, EP_TYPE, ENDPOINT_FTP, EP_FTPNODE, ftpnode, TAG_DONE)))
@@ -2593,9 +2581,6 @@ static void lister_findfile(struct ftp_node *ftpnode, IPCMessage *msg)
 					if (entry_info_from_lister(ftpnode, srcname, &ei, ENTRYFROMF_DEFAULT | ENTRYFROMF_DEFDIR))
 					{
 						int confirm_entry = 1;
-
-						if (confirm_entry == 2)
-							quiet = 1;
 
 						if (confirm_entry == 1 || confirm_entry == 2)
 						{
@@ -2674,8 +2659,6 @@ static void lister_getsizes(struct ftp_node *ftpnode, IPCMessage *msg)
 	char *names = NULL, *p;
 	int entrycount;		  // Total number of entries to delete
 	int entrynumber = 1;  // Number of entry being deleted
-	int dircount = 0;
-	int quiet;	// Don't show confirmation requesters
 	endpoint *source;
 	char srcname[FILENAMELEN + 1];	// Source name of this entry
 	struct entry_info ei;			// Info on this entry
@@ -2702,13 +2685,10 @@ static void lister_getsizes(struct ftp_node *ftpnode, IPCMessage *msg)
 	{
 		entrycount = count_entries(names);
 
-		quiet = 0;
 
 		// Create endpoint
 		if ((source = create_endpoint_tags(ftpnode->fn_og, EP_TYPE, ENDPOINT_FTP, EP_FTPNODE, ftpnode, TAG_DONE)))
 		{
-			dircount = entrycount;
-
 			// Get path
 			lister_get_path(ftpnode, path);
 
@@ -2748,9 +2728,6 @@ static void lister_getsizes(struct ftp_node *ftpnode, IPCMessage *msg)
 				if (entry_info_from_lister(ftpnode, srcname, &ei, ENTRYFROMF_DEFAULT | ENTRYFROMF_DEFDIR))
 				{
 					int confirm_entry = 1;
-
-					if (confirm_entry == 2)
-						quiet = 1;
 
 					if (confirm_entry == 1 || confirm_entry == 2)
 					{
@@ -3007,7 +2984,7 @@ static void lister_protect(struct ftp_node *ftpnode, IPCMessage *msg)
 	struct protect_msg *pm;
 	char *names = NULL, *p;
 	int entrycount;	 // Total number of entries to delete
-	int filecount = 0, dircount = 0;
+	int dircount = 0;
 	int quiet = 0;	// Don't show confirmation requesters
 	endpoint *source;
 	char srcname[FILENAMELEN + 1];	// Source name of this entry
@@ -3070,8 +3047,6 @@ static void lister_protect(struct ftp_node *ftpnode, IPCMessage *msg)
 				{
 					if (ei.ei_type >= 0)
 						dircount = 1;
-					else
-						filecount = 1;
 				}
 				else
 					D(bug("** entry not in lister - should use special delete\n"));
@@ -3080,7 +3055,6 @@ static void lister_protect(struct ftp_node *ftpnode, IPCMessage *msg)
 			// Multiple entries.  Query using callbacks.
 			else
 			{
-				filecount = rexx_lst_query_numselfiles(ftpnode->fn_opus, ftpnode->fn_handle);
 				dircount = rexx_lst_query_numseldirs(ftpnode->fn_opus, ftpnode->fn_handle);
 			}
 
@@ -3303,115 +3277,34 @@ struct lister_msg_info
 };
 
 static struct lister_msg_info lister_msg_table[] = {
-	IPC_DOUBLECLICK,
-	lister_doubleclick,
-	0,
-	1,
-	IPC_TRAPTEMP,
-	lister_traptemp,
-	0,
-	1,
-	IPC_GET,
-	lister_xfer,
-	0,
-	1,
-	IPC_PUT,
-	lister_xfer,
-	0,
-	1,
-	IPC_GETPUT,
-	lister_getput,
-	0,
-	1,
-	IPC_MAKEDIR,
-	lister_makedir,
-	0,
-	1,
-	IPC_RENAME,
-	lister_rename,
-	0,
-	1,
-	IPC_DELETE,
-	lister_delete,
-	0,
-	1,
-	IPC_REREAD,
-	lister_reread,
-	0,
-	0,
-	IPC_PARENT,
-	lister_parent,
-	0,
-	0,
-	IPC_ROOT,
-	lister_root,
-	0,
-	0,
-	IPC_CD,
-	lister_path,
-	0,
-	0,
-	IPC_CDCACHE,
-	lister_cache_path,
-	0,
-	0,
-	IPC_FTPCOMMAND,
-	(void (*)(struct ftp_node *, IPCMessage *))lister_cmd,
-	1,
-	0,
-	IPC_SETVAR,
-	(void (*)(struct ftp_node *, IPCMessage *))lister_setvar,
-	1,
-	0,
-	IPC_FAVOUR,
-	(void (*)(struct ftp_node *, IPCMessage *))lister_favour,
-	1,
-	0,
-	IPC_EDIT,
-	lister_edit,
-	0,
-	1,
-	IPC_FINDFILE,
-	lister_findfile,
-	0,
-	1,
-	IPC_GETSIZES,
-	lister_getsizes,
-	0,
-	1,
-	IPC_PROTECT,
-	lister_protect,
-	0,
-	1,
-	IPC_SNAPSHOT,
-	lister_snapshot,
-	0,
-	0,
-	IPC_UNSNAPSHOT,
-	lister_unsnapshot,
-	0,
-	0,
-	IPC_ADD,
-	lister_ftpadd,
-	0,
-	0,
-	IPC_OPTIONS,
-	lister_ftpoptions,
-	0,
-	0,
-	IPC_CONFIGURE,
-	ftplister_configure,
-	0,
-	0,
-	IPC_SELECTPATTERN,
-	ftplister_select_pattern,
-	0,
-	0,
-	IPC_ALIVE,
-	(void (*)(struct ftp_node *, IPCMessage *))lister_alive,
-	1,
-	0,
-	0,
+	{IPC_DOUBLECLICK, lister_doubleclick, 0, 1},
+	{IPC_TRAPTEMP, lister_traptemp, 0, 1},
+	{IPC_GET, lister_xfer, 0, 1},
+	{IPC_PUT, lister_xfer, 0, 1},
+	{IPC_GETPUT, lister_getput, 0, 1},
+	{IPC_MAKEDIR, lister_makedir, 0, 1},
+	{IPC_RENAME, lister_rename, 0, 1},
+	{IPC_DELETE, lister_delete, 0, 1},
+	{IPC_REREAD, lister_reread, 0, 0},
+	{IPC_PARENT, lister_parent, 0, 0},
+	{IPC_ROOT, lister_root, 0, 0},
+	{IPC_CD, lister_path, 0, 0},
+	{IPC_CDCACHE, lister_cache_path, 0, 0},
+	{IPC_FTPCOMMAND, (void (*)(struct ftp_node *, IPCMessage *))lister_cmd, 1, 0},
+	{IPC_SETVAR, (void (*)(struct ftp_node *, IPCMessage *))lister_setvar, 1, 0},
+	{IPC_FAVOUR, (void (*)(struct ftp_node *, IPCMessage *))lister_favour, 1, 0},
+	{IPC_EDIT, lister_edit, 0, 1},
+	{IPC_FINDFILE, lister_findfile, 0, 1},
+	{IPC_GETSIZES, lister_getsizes, 0, 1},
+	{IPC_PROTECT, lister_protect, 0, 1},
+	{IPC_SNAPSHOT, lister_snapshot, 0, 0},
+	{IPC_UNSNAPSHOT, lister_unsnapshot, 0, 0},
+	{IPC_ADD, lister_ftpadd, 0, 0},
+	{IPC_OPTIONS, lister_ftpoptions, 0, 0},
+	{IPC_CONFIGURE, ftplister_configure, 0, 0},
+	{IPC_SELECTPATTERN, ftplister_select_pattern, 0, 0},
+	{IPC_ALIVE, (void (*)(struct ftp_node *, IPCMessage *))lister_alive, 1, 0},
+	{0},
 };
 
 //

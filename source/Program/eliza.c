@@ -34,7 +34,7 @@ static void reformat_input(struct eliza_data *);
 static char *find_keyword(struct eliza_data *);
 static char *conjugate(char *found, struct eliza_data *);
 static void response(char *tail, struct eliza_data *);
-char *strstri(char *, char *);
+char *strstri(const char *, const char *);
 
 static unsigned char keyword[][16] = {"thank",		  "opus",	  "dopus",		"directory opus",
 									  "fuck",		  "shit",	  "cunt",		"dick",
@@ -48,7 +48,7 @@ static unsigned char keyword[][16] = {"thank",		  "opus",	  "dopus",		"directory
 									  "dream",		  "hello ",	  "hi ",		"maybe ",
 									  "no ",		  "not ",	  "nothing ",	"you ",
 									  "always ",	  "think ",	  "alike ",		"yes ",
-									  "friend ",	  "computer", "nokeyfound", 0};
+									  "friend ",	  "computer", "nokeyfound", {0}};
 
 static unsigned char wordin[][10] = {" are ",
 									 " were ",
@@ -63,7 +63,7 @@ static unsigned char wordin[][10] = {" are ",
 									 " you've ",
 									 " you're ",
 									 " you ",
-									 0};
+									 {0}};
 
 static unsigned char wordout[][10] = {" am ",
 									  " was ",
@@ -78,7 +78,7 @@ static unsigned char wordout[][10] = {" am ",
 									  " I've ",
 									  " I'm ",
 									  " me ",
-									  0};
+									  {0}};
 
 static unsigned char replies[][66] = {
 	// THANK
@@ -267,7 +267,7 @@ static unsigned char replies[][66] = {
 	"That is quite interesting.",
 	"Say, do you have any psychological problems?",
 
-	0};
+	{0}};
 
 static int num_of_responses[] = {
 	/* This tells how many responses are available for each keyword.  A -1
@@ -400,7 +400,7 @@ static void reformat_input(struct eliza_data *data)
 	/* Second, strip punctuation */
 	for (loop = 0; loop < strlen(data->input_string); loop++)
 	{
-		while (!isalnum(data->input_string[loop]) && data->input_string[loop] != '\'' &&
+		while (!isalnum((unsigned char)data->input_string[loop]) && data->input_string[loop] != '\'' &&
 			   data->input_string[loop] != ' ' && data->input_string[loop] != '\0')
 		{
 			memmove(data->input_string + loop, data->input_string + loop + 1, strlen(data->input_string) - loop);
