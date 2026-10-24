@@ -1,6 +1,6 @@
 @database dopus5
 @master dopus5.guide
-@$VER: Dopus5Guide 58.21 (21.10.2026)
+@$VER: Dopus5Guide 58.22 (24.10.2026)
 @author "Mark Anderson, Andrew Dunbar, Dr Greg Perry, Leo Davidson and Dave Clarke"
 @(c) "Directory Opus 5 Help Guide (c) GPSoftware 1999"
 @(c) "Directory Opus 5 Help Guide (c) DOPUS5 Open Source Team 2012-2026"
@@ -117,6 +117,17 @@ Images and icons:
   MagicWB, turn off 'Remap icon images' yourself.  The archive has the
   MagicWB files in IconSets/MagicWB, laid out like the archive itself,
   for installing by hand.
+
+Translations:
+  The installer asks which translations to install: deutsch, español,
+  français, greek, italiano, magyar, nederlands, norsk, polski,
+  português and svenska.  It preselects the language the installer runs
+  in and the languages whose Directory Opus catalogs are installed
+  already, and copies the catalogs of each chosen language to
+  LOCALE:Catalogs/<language>.  Directory Opus uses the first language of
+  the Locale preferences it has a translation for; texts a translation
+  lacks are shown in English.  The archive has the catalogs in Catalogs,
+  one drawer per language, for installing by hand.
 
 How Directory Opus starts:
   The installer asks how Directory Opus should start, and offers the

@@ -88,6 +88,14 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      # The AROS images have no FlexCat; compile the catalogs (the same files
+      # for every target) in the os3 image, so release-package finds them up
+      # to date.
+      - name: Build catalogs (${{ matrix.platform.name }})
+        if: endsWith(matrix.platform.name, '-aros')
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/work sacredbanana/amiga-compiler@sha256:7fa7056330ce0e7b31b5e497070b3380b4f672d7d6f169ac5b3003c1af483215 sh -c "cd /work/source && make ${{ matrix.platform.name }} catalogs"
+
       - name: Build (${{ matrix.platform.name }} ${{ matrix.variant.name }})
         run: |
           docker run --rm -v ${{ github.workspace }}:/work ${{ matrix.platform.image }} sh -c "cd /work/source && make ${{ matrix.platform.name }} all ${{ matrix.variant.flags }}"

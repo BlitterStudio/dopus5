@@ -120,17 +120,22 @@ ifeq ($(HOST), Linux)
 	SYSTEM := linux
 endif
 ###########################################################
-# Sets destination directory and lha command for releases
+# Sets destination directory and lha command for releases.
+# LHA_RAW_NAMES keeps LHa for UNIX from converting file names (it takes
+# them as UTF-8 and fails on the ISO-8859-1 catalog drawer names).
 DEST := ../releases/
 ifeq ($(SYSTEM), amiga)
 ARCDEST := /releases/
 LHA := lha a -a -r -q
+LHA_RAW_NAMES :=
 else ifeq ($(SYSTEM), linux)
 ARCDEST := $(DEST)
 LHA := lha a -q
+LHA_RAW_NAMES := --system-kanji-code=utf8 --archive-kanji-code=utf8
 else
 ARCDEST := $(DEST)
 LHA := lha ao5q
+LHA_RAW_NAMES := --system-kanji-code=utf8 --archive-kanji-code=utf8
 endif
 ###########################################################
 # Sets base archive to use for releases
@@ -138,6 +143,11 @@ BASEARC := basedata.lha
 RELEASE_DIR := DOpus5.$(NAME)
 RELEASE_ROOT := $(RELEASE_DIR)/DOpus5
 RELEASE_ARCDEST := $(abspath $(ARCDEST))
+# Translated catalogs: compiled into CATALOG_BIN (needs FlexCat unless they
+# are up to date), staged with their ISO-8859-1 language names outside the
+# source tree, which can be a macOS volume that refuses such names.
+CATALOG_BIN := ../catalogs/bin
+CATALOG_STAGE := /tmp/dopus5-catalogs.$(NAME)
 ###########################################################
 # Commands
 REMOVE := rm -rf
@@ -213,6 +223,12 @@ clean-commands:
 
 ###########################################################
 
+.PHONY : catalogs
+catalogs:
+	@sh ../catalogs/catalogs.sh build $(CATALOG_BIN)
+
+###########################################################
+
 .PHONY : release
 release: all release-package
 
@@ -228,6 +244,7 @@ release-package:
 		exit 1; \
 	fi
 	@echo " "
+	@sh ../catalogs/catalogs.sh build $(CATALOG_BIN)
 	@echo ">>>>>Creating release archive: DOpus5$(VERSION)$(NAME)$(TYPE).lha"
 	@$(REMOVE) $(RELEASE_DIR)
 	@$(MAKEDIR) $(RELEASE_ROOT)/Libs
@@ -263,6 +280,10 @@ endif
 	@$(COPY) ../archive/$(BASEARC) $(DEST)DOpus5$(VERSION)$(NAME)$(TYPE).lha
 	@cd $(RELEASE_DIR) && $(LHA) $(RELEASE_ARCDEST)/DOpus5$(VERSION)$(NAME)$(TYPE).lha DOpus5 "Install DOpus5" "Install DOpus5.info"
 	@$(REMOVE) $(RELEASE_DIR)
+	@$(REMOVE) $(CATALOG_STAGE)
+	@sh ../catalogs/catalogs.sh stage $(CATALOG_BIN) $(CATALOG_STAGE)
+	@cd $(CATALOG_STAGE) && $(LHA) $(LHA_RAW_NAMES) $(RELEASE_ARCDEST)/DOpus5$(VERSION)$(NAME)$(TYPE).lha Catalogs
+	@$(REMOVE) $(CATALOG_STAGE)
 	@echo ">>>>>Release date:" $(shell $(DATE) "+%m/%d/%Y")
 
 .PHONY : verify-aarch64-aros
@@ -278,6 +299,7 @@ clean-release: cleanall
 	@echo "++++++++++++++ clean release +++++++++++++++"
 	@$(REMOVE) $(DEST)
 	@$(REMOVE) bin.*
+	@$(REMOVE) $(CATALOG_BIN)
 
 ###########################################################
 
