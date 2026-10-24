@@ -168,9 +168,17 @@ make os3 release debug=no
 
 The release archive ends up under `releases/` as
 `DOpus5_<rev>_<platform>.lha` (or `..._dev_<platform>.lha` for the debug
-variant). It holds the `DOpus5` drawer, the `Install DOpus5` script and
-the `IconSets/MagicWB` drawer. `make <platform> release-package` packs an
-existing build without compiling again.
+variant). It holds the `DOpus5` drawer, the `Install DOpus5` script, the
+`IconSets/MagicWB` drawer and `Catalogs/<language>` with the translated
+catalogs. `make <platform> release-package` packs an existing build
+without compiling again.
+
+The catalogs are compiled from `catalogs/<language>/*.ct` with
+[FlexCat](https://github.com/adtools/flexcat) into `catalogs/bin/`
+(`make <platform> catalogs`, also run by `release-package`). FlexCat is
+only needed when a catalog is missing or older than its `.ct` or `.cd`;
+the AROS images do not have it, so compile the catalogs in the os3, os4
+or mos image first, as CI does.
 
 ### SFTP support
 

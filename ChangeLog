@@ -1,3 +1,24 @@
+[dopus5 next] Release archives carry the translated catalogs
+Release packaging and installer change; version bump deferred.
+
+- The release archives have Catalogs/<language> with the compiled
+  catalogs of every translation (deutsch, español, français, greek,
+  italiano, magyar, nederlands, norsk, polski, português, svenska).
+  Earlier releases had none, so Opus ran in English unless catalogs
+  were installed by hand.
+- The installer asks which translations to install, preselecting the
+  language it runs in and the languages already installed, and copies
+  them to LOCALE:Catalogs/<language>.  Not to DOpus5:Catalogs:
+  dopus5.library opens its catalog in the first program that opens
+  the library, often DOpus5:C/LoadDB or LoadDOpusLib, whose PROGDIR:
+  is DOpus5:C.
+- catalogs/catalogs.sh compiles the .ct files with FlexCat and stages
+  them under their ISO-8859-1 language names; 'make <target>
+  catalogs' runs it, and release-package needs FlexCat unless the
+  catalogs are up to date.  CI compiles them in the os3 image for the
+  AROS targets, whose images have no FlexCat.  It replaces the
+  hand-written catalogs/Makefile.
+
 [dopus5 5.104] Release summary
 Program bumps to 5.104, library and modules to v73r8, commands to
 v65r6.  The release adds striped lister rows, repairs the translated

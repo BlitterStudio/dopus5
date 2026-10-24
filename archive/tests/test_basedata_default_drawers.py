@@ -234,6 +234,30 @@ class InstallerTests(unittest.TestCase):
                 self.assertIn("DOpus5/Buttons/" + bank, standard)
                 self.assertIn(MAGICWB + "DOpus5/Buttons/" + bank, magicwb)
 
+    def test_translation_choices_are_the_shipped_languages(self):
+        # The release archive has Catalogs/<language> for the "## language"
+        # of every translation; the installer lists the languages twice
+        # (choices and P_CATALOG_LANGUAGE), and bit n of the answer must
+        # name the same language in both, so a language missing from
+        # either list, or listed in another order, is never installed.
+        shipped = set()
+        for ct in (ROOT / "catalogs").glob("*/*.ct"):
+            match = re.search(rb"^## language[ \t]*(\S+)", ct.read_bytes(), re.M)
+            self.assertIsNotNone(match, ct)
+            shipped.add(match.group(1).decode("latin-1"))
+
+        select = re.search(r'\(select #cat-n((?:\s+"[^"]*")+)\)', self.script)
+        choices = re.search(r'\(choices((?:\s+"[^"]*")+)\)\s+\(default #cat-default\)', self.script)
+        count = re.search(r'\(set #cat-count (\d+)\)', self.script)
+        self.assertIsNotNone(select)
+        self.assertIsNotNone(choices)
+        self.assertIsNotNone(count)
+
+        languages = re.findall(r'"([^"]*)"', select.group(1))
+        self.assertEqual(languages, re.findall(r'"([^"]*)"', choices.group(1)))
+        self.assertEqual(len(languages), int(count.group(1)))
+        self.assertEqual(shipped, set(languages))
+
 
 def image_references(bank):
     """Images a button bank loads, relative to DOpus5: and in lower case."""

@@ -5,9 +5,10 @@
 ; version 1.1 (see COPYING).
 ;
 ; The release archive holds this script, its icon, DOpus5.info, the
-; DOpus5 drawer and IconSets/MagicWB.  The script copies the DOpus5
-; drawer to the chosen place, with the MagicWB images and icons over the
-; standard ones if the user wants them.  On an upgrade it replaces the
+; DOpus5 drawer, IconSets/MagicWB and Catalogs.  The script copies the
+; DOpus5 drawer to the chosen place, with the MagicWB images and icons
+; over the standard ones if the user wants them, and the chosen
+; translations to LOCALE:Catalogs.  On an upgrade it replaces the
 ; program files and keeps the user's configuration: configuration
 ; drawers only receive the files they lack.
 ;
@@ -143,6 +144,50 @@
                 "The MagicWB images draw their own button border, so these banks have borderless buttons in the MagicWB set and bordered ones in the standard set.\n\n"
                 "Your current Toolbar and FTP_image are kept as Toolbar.old and FTP_image.old; Toolbar.default is replaced.")
           (default 1))))
+
+
+; --------------------------------------------------------------------
+; Translations
+; --------------------------------------------------------------------
+;
+; Catalogs/<language> holds the translated catalogs.  They go to
+; LOCALE:Catalogs/<language>, not DOpus5:Catalogs: locale.library looks
+; in PROGDIR:Catalogs and LOCALE:Catalogs, and dopus5.library opens its
+; catalog in the program that opens it first, often DOpus5:C/LoadDB or
+; LoadDOpusLib, whose PROGDIR: is DOpus5:C.  Preselected: the language
+; the Installer runs in, and languages that already have Opus catalogs.
+; Bit #cat-n of #catalogs selects language #cat-n of P_CATALOG_LANGUAGE,
+; in the order of the askoptions choices.
+
+(procedure P_CATALOG_LANGUAGE
+   (set #cat-lang
+      (select #cat-n "deutsch" "español" "français" "greek" "italiano"
+                     "magyar" "nederlands" "norsk" "polski" "português"
+                     "svenska")))
+(set #cat-count 11)
+
+(set #catalogs 0)
+(if (= 2 (exists "Catalogs" (noreq)))
+    (
+       (set #cat-default 0)
+       (set #cat-n 0)
+       (while (< #cat-n #cat-count)
+          (P_CATALOG_LANGUAGE)
+          (if (or (= @language #cat-lang)
+                  (= 1 (exists (tackon (tackon "LOCALE:Catalogs" #cat-lang) "dopus.catalog") (noreq))))
+              (set #cat-default (bitor #cat-default (shiftleft 1 #cat-n))))
+          (set #cat-n (+ #cat-n 1)))
+       (set #catalogs
+          (askoptions
+             (prompt "Which translations of Directory Opus 5 should be installed?\n\nDirectory Opus uses the first language of the Locale preferences that it has a translation for.")
+             (help "The catalogs of each language you choose are copied to LOCALE:Catalogs/<language>. "
+                   "Untranslated texts are shown in English, and so is everything when no language is chosen.\n\n"
+                   "Preselected are the language the Installer runs in and languages whose Directory Opus catalogs are already installed.")
+             (choices "deutsch" "español" "français" "greek" "italiano"
+                      "magyar" "nederlands" "norsk" "polski" "português"
+                      "svenska")
+             (default #cat-default)))
+    ))
 
 (complete 5)
 
@@ -318,6 +363,34 @@
        (set #bank-keep 0)
        (set #bank "Toolbar.default") (P_BANK)
     ))
+
+; Translations
+(set #cat-n 0)
+(while (< #cat-n #cat-count)
+   (if (bitand #catalogs (shiftleft 1 #cat-n))
+       (
+          (P_CATALOG_LANGUAGE)
+          (set #cat-src (tackon "Catalogs" #cat-lang))
+          (set #cat-dst (tackon "LOCALE:Catalogs" #cat-lang))
+          (if (= 2 (exists #cat-src (noreq)))
+              (
+                 (if (= 0 (exists "LOCALE:Catalogs" (noreq)))
+                     (makedir "LOCALE:Catalogs"
+                        (prompt "Create LOCALE:Catalogs")
+                        (help "")))
+                 (if (= 0 (exists #cat-dst (noreq)))
+                     (makedir #cat-dst
+                        (prompt "Create " #cat-dst)
+                        (help "")))
+                 (copyfiles
+                    (prompt "Install the " #cat-lang " translation in " #cat-dst)
+                    (help "")
+                    (source #cat-src)
+                    (dest #cat-dst)
+                    (all))
+              ))
+       ))
+   (set #cat-n (+ #cat-n 1)))
 
 (complete 75)
 
