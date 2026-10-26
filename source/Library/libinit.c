@@ -852,7 +852,11 @@ static BPTR LIBFUNC LibExpunge(REG(a6, struct MyLibrary *base))
 		// unprotect
 		ReleaseSemaphore(&base->libSem);
 
-		rc = LibDelete(base);
+		// A patch of ours that another program chained onto must keep its code
+		if (wb_patches_installed())
+			rc = 0;
+		else
+			rc = LibDelete(base);
 	}
 
 	return rc;
@@ -969,8 +973,9 @@ static BPTR LIBFUNC LibClose(REG(a6, struct MyLibrary *base))
 		ReleaseSemaphore(&base->libSem);
 
 		// in case the late expunge flag is set we go and
-		// expunge the library base right now
-		if (base->libBase.lib_Flags & LIBF_DELEXP)
+		// expunge the library base right now, unless a patch of
+		// ours is still in a vector chain and needs its code
+		if ((base->libBase.lib_Flags & LIBF_DELEXP) && !wb_patches_installed())
 		{
 			rc = LibDelete(base);
 		}

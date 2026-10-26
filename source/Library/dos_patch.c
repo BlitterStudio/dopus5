@@ -25,60 +25,19 @@ For more information on Directory Opus for Windows please see:
 
 //#define DOSBase (data->dos_base)
 
-#ifdef __amigaos3__
-static inline void atomic_inc(ULONG *counter)
-{
-	asm volatile("addql #1,%0" : "+m"(*counter));
-}
-
-static inline void atomic_dec(ULONG *counter)
-{
-	asm volatile("subql #1,%0" : "+m"(*counter));
-}
-#elif defined(__AROS__) && defined(__arm__)
-	#include <aros/atomic.h>
-static inline void atomic_inc(ULONG *counter)
-{
-	__AROS_ATOMIC_INC_L(*counter);
-}
-
-static inline void atomic_dec(ULONG *counter)
-{
-	__AROS_ATOMIC_DEC_L(*counter);
-}
-#elif defined(__MORPHOS__)
-	#include <hardware/atomic.h>
-static inline void atomic_inc(ULONG *counter)
-{
-	ATOMIC_ADD(counter, 1);
-}
-
-static inline void atomic_dec(ULONG *counter)
-{
-	ATOMIC_SUB(counter, 1);
-}
-#else
-static inline void atomic_inc(ULONG *counter)
-{
-	__sync_add_and_fetch(counter, 1);
-}
-
-static inline void atomic_dec(ULONG *counter)
-{
-	__sync_sub_and_fetch(counter, 1);
-}
-#endif
-
-extern ULONG usecount[WB_PATCH_COUNT];
-
 /********************************** CreateDir **********************************/
 
 // Patched CreateDir()
 PATCHED_1(BPTR, LIBFUNC L_PatchedCreateDir, d1, char *, name)
 {
 	atomic_inc(&usecount[WB_PATCH_CREATEDIR]);
+	if (!WB_PATCH_ACTIVE(WB_PATCH_CREATEDIR))
 	{
-		struct LibData *data;
+		BPTR res = WB_CALL_OLD_1(BPTR, WB_PATCH_CREATEDIR, d1, name);
+		atomic_dec(&usecount[WB_PATCH_CREATEDIR]);
+		return res;
+	}
+	{
 		struct MyLibrary *libbase;
 		struct FileInfoBlock *fib;
 		BPTR lock;
@@ -90,11 +49,8 @@ PATCHED_1(BPTR, LIBFUNC L_PatchedCreateDir, d1, char *, name)
 			return 0;
 		}
 
-		// Get data pointer
-		data = (struct LibData *)libbase->ml_UserData;
-
 		// Call original function
-		lock = LIBCALL_1(BPTR, data->wb_data.old_function[WB_PATCH_CREATEDIR], DOSBase, IDOS, d1, name);
+		lock = WB_CALL_OLD_1(BPTR, WB_PATCH_CREATEDIR, d1, name);
 
 		// Failed?
 		if (!lock)
@@ -122,21 +78,12 @@ PATCH_END
 // Calls original CreateDir directly
 BPTR LIBFUNC L_OriginalCreateDir(REG(d1, char *name), REG(a6, struct MyLibrary *libbase))
 {
-	struct LibData *data;
-
-#if defined(__amigaos4__) || defined(__AROS__)
-	libbase = dopuslibbase_global;
-#endif
-
-	// Get data pointer
-	data = (struct LibData *)libbase->ml_UserData;
-
-	// If patch wasn't installed, call DOS directly
-	if (!(data->flags & LIBDF_DOS_PATCH))
+	// Without our patch running there is nothing to bypass
+	if (!WB_PATCH_ACTIVE(WB_PATCH_CREATEDIR))
 		return CreateDir(name);
 
 	// Create directory
-	return LIBCALL_1(BPTR, data->wb_data.old_function[WB_PATCH_CREATEDIR], DOSBase, IDOS, d1, name);
+	return WB_CALL_OLD_1(BPTR, WB_PATCH_CREATEDIR, d1, name);
 }
 
 /********************************** DeleteFile **********************************/
@@ -145,8 +92,13 @@ BPTR LIBFUNC L_OriginalCreateDir(REG(d1, char *name), REG(a6, struct MyLibrary *
 PATCHED_1(long, LIBFUNC L_PatchedDeleteFile, d1, char *, name)
 {
 	atomic_inc(&usecount[WB_PATCH_DELETEFILE]);
+	if (!WB_PATCH_ACTIVE(WB_PATCH_DELETEFILE))
 	{
-		struct LibData *data;
+		long res = WB_CALL_OLD_1(long, WB_PATCH_DELETEFILE, d1, name);
+		atomic_dec(&usecount[WB_PATCH_DELETEFILE]);
+		return res;
+	}
+	{
 		struct MyLibrary *libbase;
 		char *buf = NULL;
 		BPTR lock;
@@ -160,9 +112,6 @@ PATCHED_1(long, LIBFUNC L_PatchedDeleteFile, d1, char *, name)
 			atomic_dec(&usecount[WB_PATCH_DELETEFILE]);
 			return 0;
 		}
-
-		// Get data pointer
-		data = (struct LibData *)libbase->ml_UserData;
 
 		// Find process
 		if ((task = (struct Process *)FindTask(NULL)))
@@ -197,7 +146,7 @@ PATCHED_1(long, LIBFUNC L_PatchedDeleteFile, d1, char *, name)
 			task->pr_WindowPtr = wsave;
 
 		// Call original function
-		res = LIBCALL_1(long, data->wb_data.old_function[WB_PATCH_DELETEFILE], DOSBase, IDOS, d1, name);
+		res = WB_CALL_OLD_1(long, WB_PATCH_DELETEFILE, d1, name);
 
 		// Failed?
 		if (!res)
@@ -225,21 +174,12 @@ PATCH_END
 // Original DeleteFile
 long LIBFUNC L_OriginalDeleteFile(REG(d1, char *name), REG(a6, struct MyLibrary *libbase))
 {
-	struct LibData *data;
-
-#if defined(__amigaos4__) || defined(__AROS__)
-	libbase = dopuslibbase_global;
-#endif
-
-	// Get data pointer
-	data = (struct LibData *)libbase->ml_UserData;
-
-	// If patch wasn't installed, call DOS directly
-	if (!(data->flags & LIBDF_DOS_PATCH))
+	// Without our patch running there is nothing to bypass
+	if (!WB_PATCH_ACTIVE(WB_PATCH_DELETEFILE))
 		return DeleteFile(name);
 
 	// Delete file
-	return LIBCALL_1(long, data->wb_data.old_function[WB_PATCH_DELETEFILE], DOSBase, IDOS, d1, name);
+	return WB_CALL_OLD_1(long, WB_PATCH_DELETEFILE, d1, name);
 }
 
 /********************************** SetFileDate **********************************/
@@ -248,8 +188,13 @@ long LIBFUNC L_OriginalDeleteFile(REG(d1, char *name), REG(a6, struct MyLibrary 
 PATCHED_2(BOOL, LIBFUNC L_PatchedSetFileDate, d1, char *, name, d2, struct DateStamp *, date)
 {
 	atomic_inc(&usecount[WB_PATCH_SETFILEDATE]);
+	if (!WB_PATCH_ACTIVE(WB_PATCH_SETFILEDATE))
 	{
-		struct LibData *data;
+		BOOL res = WB_CALL_OLD_2(BOOL, WB_PATCH_SETFILEDATE, d1, name, d2, date);
+		atomic_dec(&usecount[WB_PATCH_SETFILEDATE]);
+		return res;
+	}
+	{
 		struct MyLibrary *libbase;
 		BOOL res;
 		BPTR lock;
@@ -263,11 +208,8 @@ PATCHED_2(BOOL, LIBFUNC L_PatchedSetFileDate, d1, char *, name, d2, struct DateS
 			return FALSE;
 		}
 
-		// Get data pointer
-		data = (struct LibData *)libbase->ml_UserData;
-
 		// Call original function
-		res = LIBCALL_2(BOOL, data->wb_data.old_function[WB_PATCH_SETFILEDATE], DOSBase, IDOS, d1, name, d2, date);
+		res = WB_CALL_OLD_2(BOOL, WB_PATCH_SETFILEDATE, d1, name, d2, date);
 
 		// Failed?
 		if (!res)
@@ -324,21 +266,12 @@ BOOL LIBFUNC L_OriginalSetFileDate(REG(d1, char *name),
 								   REG(d2, struct DateStamp *date),
 								   REG(a6, struct MyLibrary *libbase))
 {
-	struct LibData *data;
-
-#if defined(__amigaos4__) || defined(__AROS__)
-	libbase = dopuslibbase_global;
-#endif
-
-	// Get data pointer
-	data = (struct LibData *)libbase->ml_UserData;
-
-	// If patch wasn't installed, call DOS directly
-	if (!(data->flags & LIBDF_DOS_PATCH))
+	// Without our patch running there is nothing to bypass
+	if (!WB_PATCH_ACTIVE(WB_PATCH_SETFILEDATE))
 		return (BOOL)SetFileDate(name, date);
 
 	// Set date
-	return LIBCALL_2(BOOL, data->wb_data.old_function[WB_PATCH_SETFILEDATE], DOSBase, IDOS, d1, name, d2, date);
+	return WB_CALL_OLD_2(BOOL, WB_PATCH_SETFILEDATE, d1, name, d2, date);
 }
 
 /********************************** SetComment **********************************/
@@ -347,8 +280,13 @@ BOOL LIBFUNC L_OriginalSetFileDate(REG(d1, char *name),
 PATCHED_2(BOOL, LIBFUNC L_PatchedSetComment, d1, char *, name, d2, char *, comment)
 {
 	atomic_inc(&usecount[WB_PATCH_SETCOMMENT]);
+	if (!WB_PATCH_ACTIVE(WB_PATCH_SETCOMMENT))
 	{
-		struct LibData *data;
+		BOOL res = WB_CALL_OLD_2(BOOL, WB_PATCH_SETCOMMENT, d1, name, d2, comment);
+		atomic_dec(&usecount[WB_PATCH_SETCOMMENT]);
+		return res;
+	}
+	{
 		struct MyLibrary *libbase;
 		BOOL res;
 		BPTR lock;
@@ -362,11 +300,8 @@ PATCHED_2(BOOL, LIBFUNC L_PatchedSetComment, d1, char *, name, d2, char *, comme
 			return FALSE;
 		}
 
-		// Get data pointer
-		data = (struct LibData *)libbase->ml_UserData;
-
 		// Call original function
-		res = LIBCALL_2(BOOL, data->wb_data.old_function[WB_PATCH_SETCOMMENT], DOSBase, IDOS, d1, name, d2, comment);
+		res = WB_CALL_OLD_2(BOOL, WB_PATCH_SETCOMMENT, d1, name, d2, comment);
 
 		// Failed?
 		if (!res)
@@ -421,21 +356,12 @@ PATCH_END
 // Calls original SetComment directly
 BOOL LIBFUNC L_OriginalSetComment(REG(d1, char *name), REG(d2, char *comment), REG(a6, struct MyLibrary *libbase))
 {
-	struct LibData *data;
-
-#if defined(__amigaos4__) || defined(__AROS__)
-	libbase = dopuslibbase_global;
-#endif
-
-	// Get data pointer
-	data = (struct LibData *)libbase->ml_UserData;
-
-	// If patch wasn't installed, call DOS directly
-	if (!(data->flags & LIBDF_DOS_PATCH))
+	// Without our patch running there is nothing to bypass
+	if (!WB_PATCH_ACTIVE(WB_PATCH_SETCOMMENT))
 		return (BOOL)SetComment(name, comment);
 
 	// Set comment
-	return LIBCALL_2(BOOL, data->wb_data.old_function[WB_PATCH_SETCOMMENT], DOSBase, IDOS, d1, name, d2, comment);
+	return WB_CALL_OLD_2(BOOL, WB_PATCH_SETCOMMENT, d1, name, d2, comment);
 }
 
 /********************************** SetProtection **********************************/
@@ -444,8 +370,13 @@ BOOL LIBFUNC L_OriginalSetComment(REG(d1, char *name), REG(d2, char *comment), R
 PATCHED_2(BOOL, LIBFUNC L_PatchedSetProtection, d1, char *, name, d2, ULONG, mask)
 {
 	atomic_inc(&usecount[WB_PATCH_SETPROTECTION]);
+	if (!WB_PATCH_ACTIVE(WB_PATCH_SETPROTECTION))
 	{
-		struct LibData *data;
+		BOOL res = WB_CALL_OLD_2(BOOL, WB_PATCH_SETPROTECTION, d1, name, d2, mask);
+		atomic_dec(&usecount[WB_PATCH_SETPROTECTION]);
+		return res;
+	}
+	{
 		struct MyLibrary *libbase;
 		BOOL res;
 		BPTR lock;
@@ -459,11 +390,8 @@ PATCHED_2(BOOL, LIBFUNC L_PatchedSetProtection, d1, char *, name, d2, ULONG, mas
 			return FALSE;
 		}
 
-		// Get data pointer
-		data = (struct LibData *)libbase->ml_UserData;
-
 		// Call original function
-		res = LIBCALL_2(BOOL, data->wb_data.old_function[WB_PATCH_SETPROTECTION], DOSBase, IDOS, d1, name, d2, mask);
+		res = WB_CALL_OLD_2(BOOL, WB_PATCH_SETPROTECTION, d1, name, d2, mask);
 
 		// Failed?
 		if (!res)
@@ -518,21 +446,12 @@ PATCH_END
 // Calls original SetProtection directly
 BOOL LIBFUNC L_OriginalSetProtection(REG(d1, char *name), REG(d2, ULONG mask), REG(a6, struct MyLibrary *libbase))
 {
-	struct LibData *data;
-
-#if defined(__amigaos4__) || defined(__AROS__)
-	libbase = dopuslibbase_global;
-#endif
-
-	// Get data pointer
-	data = (struct LibData *)libbase->ml_UserData;
-
-	// If patch wasn't installed, call DOS directly
-	if (!(data->flags & LIBDF_DOS_PATCH))
+	// Without our patch running there is nothing to bypass
+	if (!WB_PATCH_ACTIVE(WB_PATCH_SETPROTECTION))
 		return (BOOL)SetProtection(name, mask);
 
 	// Set protection
-	return LIBCALL_2(BOOL, data->wb_data.old_function[WB_PATCH_SETPROTECTION], DOSBase, IDOS, d1, name, d2, mask);
+	return WB_CALL_OLD_2(BOOL, WB_PATCH_SETPROTECTION, d1, name, d2, mask);
 }
 
 /********************************** Rename **********************************/
@@ -541,9 +460,14 @@ BOOL LIBFUNC L_OriginalSetProtection(REG(d1, char *name), REG(d2, ULONG mask), R
 PATCHED_2(BOOL, LIBFUNC L_PatchedRename, d1, char *, oldname, d2, char *, newname)
 {
 	atomic_inc(&usecount[WB_PATCH_RENAME]);
+	if (!WB_PATCH_ACTIVE(WB_PATCH_RENAME))
+	{
+		BOOL res = WB_CALL_OLD_2(BOOL, WB_PATCH_RENAME, d1, oldname, d2, newname);
+		atomic_dec(&usecount[WB_PATCH_RENAME]);
+		return res;
+	}
 	{
 		struct FileInfoBlock *fib = NULL;
-		struct LibData *data;
 		struct MyLibrary *libbase;
 		BOOL res;
 		BPTR lock;
@@ -557,9 +481,6 @@ PATCHED_2(BOOL, LIBFUNC L_PatchedRename, d1, char *, oldname, d2, char *, newnam
 			atomic_dec(&usecount[WB_PATCH_RENAME]);
 			return FALSE;
 		}
-
-		// Get data pointer
-		data = (struct LibData *)libbase->ml_UserData;
 
 		// Find process
 		if ((task = (struct Process *)FindTask(NULL)))
@@ -592,7 +513,7 @@ PATCHED_2(BOOL, LIBFUNC L_PatchedRename, d1, char *, oldname, d2, char *, newnam
 			task->pr_WindowPtr = wsave;
 
 		// Call original function
-		res = LIBCALL_2(BOOL, data->wb_data.old_function[WB_PATCH_RENAME], DOSBase, IDOS, d1, oldname, d2, newname);
+		res = WB_CALL_OLD_2(BOOL, WB_PATCH_RENAME, d1, oldname, d2, newname);
 
 		// Failure?
 		if (!res)
@@ -654,21 +575,12 @@ PATCH_END
 // Calls original Rename directly
 BOOL LIBFUNC L_OriginalRename(REG(d1, char *oldname), REG(d2, char *newname), REG(a6, struct MyLibrary *libbase))
 {
-	struct LibData *data;
-
-#if defined(__amigaos4__) || defined(__AROS__)
-	libbase = dopuslibbase_global;
-#endif
-
-	// Get data pointer
-	data = (struct LibData *)libbase->ml_UserData;
-
-	// If patch wasn't installed, call DOS directly
-	if (!(data->flags & LIBDF_DOS_PATCH))
+	// Without our patch running there is nothing to bypass
+	if (!WB_PATCH_ACTIVE(WB_PATCH_RENAME))
 		return (BOOL)Rename(oldname, newname);
 
 	// Rename file
-	return LIBCALL_2(BOOL, data->wb_data.old_function[WB_PATCH_RENAME], DOSBase, IDOS, d1, oldname, d2, newname);
+	return WB_CALL_OLD_2(BOOL, WB_PATCH_RENAME, d1, oldname, d2, newname);
 }
 
 /********************************** Relabel **********************************/
@@ -677,8 +589,13 @@ BOOL LIBFUNC L_OriginalRename(REG(d1, char *oldname), REG(d2, char *newname), RE
 PATCHED_2(BOOL, LIBFUNC L_PatchedRelabel, d1, char *, volumename, d2, char *, name)
 {
 	atomic_inc(&usecount[WB_PATCH_RELABEL]);
+	if (!WB_PATCH_ACTIVE(WB_PATCH_RELABEL))
 	{
-		struct LibData *data;
+		BOOL res = WB_CALL_OLD_2(BOOL, WB_PATCH_RELABEL, d1, volumename, d2, name);
+		atomic_dec(&usecount[WB_PATCH_RELABEL]);
+		return res;
+	}
+	{
 		struct MyLibrary *libbase;
 		struct FileInfoBlock fib;
 		BOOL res;
@@ -690,11 +607,8 @@ PATCHED_2(BOOL, LIBFUNC L_PatchedRelabel, d1, char *, volumename, d2, char *, na
 			return FALSE;
 		}
 
-		// Get data pointer
-		data = (struct LibData *)libbase->ml_UserData;
-
 		// Call original function
-		res = LIBCALL_2(BOOL, data->wb_data.old_function[WB_PATCH_RELABEL], DOSBase, IDOS, d1, volumename, d2, name);
+		res = WB_CALL_OLD_2(BOOL, WB_PATCH_RELABEL, d1, volumename, d2, name);
 
 		// Failure?
 		if (!res)
@@ -718,17 +632,12 @@ PATCH_END
 // Calls original Relabel directly
 BOOL LIBFUNC L_OriginalRelabel(REG(d1, char *volumename), REG(d2, char *name), REG(a6, struct MyLibrary *libbase))
 {
-	struct LibData *data;
-
-#if defined(__amigaos4__) || defined(__AROS__)
-	libbase = dopuslibbase_global;
-#endif
-
-	// Get data pointer
-	data = (struct LibData *)libbase->ml_UserData;
+	// Without our patch running there is nothing to bypass
+	if (!WB_PATCH_ACTIVE(WB_PATCH_RELABEL))
+		return (BOOL)Relabel(volumename, name);
 
 	// Relabel disk
-	return LIBCALL_2(BOOL, data->wb_data.old_function[WB_PATCH_RELABEL], DOSBase, IDOS, d1, volumename, d2, name);
+	return WB_CALL_OLD_2(BOOL, WB_PATCH_RELABEL, d1, volumename, d2, name);
 }
 
 /********************************** Open **********************************/
@@ -737,6 +646,12 @@ BOOL LIBFUNC L_OriginalRelabel(REG(d1, char *volumename), REG(d2, char *name), R
 PATCHED_2(BPTR, LIBFUNC L_PatchedOpen, d1, char *, name, d2, LONG, accessMode)
 {
 	atomic_inc(&usecount[WB_PATCH_OPEN]);
+	if (!WB_PATCH_ACTIVE(WB_PATCH_OPEN))
+	{
+		BPTR res = WB_CALL_OLD_2(BPTR, WB_PATCH_OPEN, d1, name, d2, accessMode);
+		atomic_dec(&usecount[WB_PATCH_OPEN]);
+		return res;
+	}
 	{
 		struct LibData *data;
 		struct MyLibrary *libbase;
@@ -794,7 +709,7 @@ PATCHED_2(BPTR, LIBFUNC L_PatchedOpen, d1, char *, name, d2, LONG, accessMode)
 			task->pr_WindowPtr = wsave;
 
 		// Call original function
-		file = LIBCALL_2(BPTR, data->wb_data.old_function[WB_PATCH_OPEN], DOSBase, IDOS, d1, name, d2, accessMode);
+		file = WB_CALL_OLD_2(BPTR, WB_PATCH_OPEN, d1, name, d2, accessMode);
 
 		// Failure?
 		if (!file)
@@ -891,21 +806,12 @@ PATCH_END
 // Calls original Open directly
 BPTR LIBFUNC L_OriginalOpen(REG(d1, char *name), REG(d2, LONG accessMode), REG(a6, struct MyLibrary *libbase))
 {
-	struct LibData *data;
-
-#if defined(__amigaos4__) || defined(__AROS__)
-	libbase = dopuslibbase_global;
-#endif
-
-	// Get data pointer
-	data = (struct LibData *)libbase->ml_UserData;
-
-	// If patch wasn't installed, call DOS directly
-	if (!(data->flags & LIBDF_DOS_PATCH))
+	// Without our patch running there is nothing to bypass
+	if (!WB_PATCH_ACTIVE(WB_PATCH_OPEN))
 		return Open(name, accessMode);
 
 	// Open file
-	return LIBCALL_2(BPTR, data->wb_data.old_function[WB_PATCH_OPEN], DOSBase, IDOS, d1, name, d2, accessMode);
+	return WB_CALL_OLD_2(BPTR, WB_PATCH_OPEN, d1, name, d2, accessMode);
 }
 
 /********************************** Close **********************************/
@@ -914,6 +820,12 @@ BPTR LIBFUNC L_OriginalOpen(REG(d1, char *name), REG(d2, LONG accessMode), REG(a
 PATCHED_1(BOOL, LIBFUNC L_PatchedClose, d1, BPTR, file)
 {
 	atomic_inc(&usecount[WB_PATCH_CLOSE]);
+	if (!WB_PATCH_ACTIVE(WB_PATCH_CLOSE))
+	{
+		BOOL res = WB_CALL_OLD_1(BOOL, WB_PATCH_CLOSE, d1, file);
+		atomic_dec(&usecount[WB_PATCH_CLOSE]);
+		return res;
+	}
 	{
 		struct LibData *data;
 		struct MyLibrary *libbase;
@@ -1010,7 +922,7 @@ PATCHED_1(BOOL, LIBFUNC L_PatchedClose, d1, BPTR, file)
 		}
 
 		// Close file
-		res = LIBCALL_1(BOOL, data->wb_data.old_function[WB_PATCH_CLOSE], DOSBase, IDOS, d1, file);
+		res = WB_CALL_OLD_1(BOOL, WB_PATCH_CLOSE, d1, file);
 
 		atomic_dec(&usecount[WB_PATCH_CLOSE]);
 		return res;
@@ -1021,21 +933,12 @@ PATCH_END
 // Calls original Close directly
 BOOL LIBFUNC L_OriginalClose(REG(d1, BPTR file), REG(a6, struct MyLibrary *libbase))
 {
-	struct LibData *data;
-
-#if defined(__amigaos4__) || defined(__AROS__)
-	libbase = dopuslibbase_global;
-#endif
-
-	// Get data pointer
-	data = (struct LibData *)libbase->ml_UserData;
-
-	// If patch wasn't installed, call DOS directly
-	if (!(data->flags & LIBDF_DOS_PATCH))
+	// Without our patch running there is nothing to bypass
+	if (!WB_PATCH_ACTIVE(WB_PATCH_CLOSE))
 		return (BOOL)Close(file);
 
 	// Close file
-	return LIBCALL_1(BOOL, data->wb_data.old_function[WB_PATCH_CLOSE], DOSBase, IDOS, d1, file);
+	return WB_CALL_OLD_1(BOOL, WB_PATCH_CLOSE, d1, file);
 }
 
 /********************************** Write **********************************/
@@ -1044,6 +947,12 @@ BOOL LIBFUNC L_OriginalClose(REG(d1, BPTR file), REG(a6, struct MyLibrary *libba
 PATCHED_3(LONG, LIBFUNC L_PatchedWrite, d1, BPTR, file, d2, void *, wdata, d3, LONG, length)
 {
 	atomic_inc(&usecount[WB_PATCH_WRITE]);
+	if (!WB_PATCH_ACTIVE(WB_PATCH_WRITE))
+	{
+		LONG res = WB_CALL_OLD_3(LONG, WB_PATCH_WRITE, d1, file, d2, wdata, d3, length);
+		atomic_dec(&usecount[WB_PATCH_WRITE]);
+		return res;
+	}
 	{
 		struct LibData *data;
 		struct MyLibrary *libbase;
@@ -1078,8 +987,7 @@ PATCHED_3(LONG, LIBFUNC L_PatchedWrite, d1, BPTR, file, d2, void *, wdata, d3, L
 		}
 
 		// Write data
-		res =
-			LIBCALL_3(LONG, data->wb_data.old_function[WB_PATCH_WRITE], DOSBase, IDOS, d1, file, d2, wdata, d3, length);
+		res = WB_CALL_OLD_3(LONG, WB_PATCH_WRITE, d1, file, d2, wdata, d3, length);
 
 		atomic_dec(&usecount[WB_PATCH_WRITE]);
 		return res;
@@ -1093,21 +1001,12 @@ LONG LIBFUNC L_OriginalWrite(REG(d1, BPTR file),
 							 REG(d3, LONG length),
 							 REG(a6, struct MyLibrary *libbase))
 {
-	struct LibData *data;
-
-#if defined(__amigaos4__) || defined(__AROS__)
-	libbase = dopuslibbase_global;
-#endif
-
-	// Get data pointer
-	data = (struct LibData *)libbase->ml_UserData;
-
-	// If patch wasn't installed, call DOS directly
-	if (!(data->flags & LIBDF_DOS_PATCH))
+	// Without our patch running there is nothing to bypass
+	if (!WB_PATCH_ACTIVE(WB_PATCH_WRITE))
 		return Write(file, wdata, length);
 
 	// Write data
-	return LIBCALL_3(LONG, data->wb_data.old_function[WB_PATCH_WRITE], DOSBase, IDOS, d1, file, d2, wdata, d3, length);
+	return WB_CALL_OLD_3(LONG, WB_PATCH_WRITE, d1, file, d2, wdata, d3, length);
 }
 
 /******************************************************************************/

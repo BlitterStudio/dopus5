@@ -433,6 +433,93 @@ enum {
 	WB_PATCH_DATATYPES,
 };
 
+// Patch state. It lives outside LibData: when another program patches one of
+// our vectors after us, our function has to stay in that chain after the
+// library data is freed, and it then passes every call straight on.
+#define WBPF_INSTALLED (1 << 0)	 // our function is in the vector chain
+#define WBPF_ACTIVE (1 << 1)	 // Opus handles the calls; otherwise they go straight to wb_old_function
+
+extern ULONG usecount[WB_PATCH_COUNT];
+extern APTR wb_old_function[WB_PATCH_COUNT];
+extern APTR wb_patch_base[WB_PATCH_COUNT];
+extern volatile UBYTE wb_patch_flags[WB_PATCH_COUNT];
+
+#define WB_PATCH_ACTIVE(patch) (wb_patch_flags[patch] & WBPF_ACTIVE)
+
+BOOL wb_patches_installed(void);
+
+// Call the next function in the chain, with the library (OS4: interface) the patch is in
+#define WB_CALL_OLD_0(ret, patch) LIBCALL_0(ret, wb_old_function[patch], wb_patch_base[patch], wb_patch_base[patch])
+#define WB_CALL_OLD_1(ret, patch, r1, n1) \
+	LIBCALL_1(ret, wb_old_function[patch], wb_patch_base[patch], wb_patch_base[patch], r1, n1)
+#define WB_CALL_OLD_1NR(patch, r1, n1) \
+	LIBCALL_1NR(wb_old_function[patch], wb_patch_base[patch], wb_patch_base[patch], r1, n1)
+#define WB_CALL_OLD_2(ret, patch, r1, n1, r2, n2) \
+	LIBCALL_2(ret, wb_old_function[patch], wb_patch_base[patch], wb_patch_base[patch], r1, n1, r2, n2)
+#define WB_CALL_OLD_3(ret, patch, r1, n1, r2, n2, r3, n3) \
+	LIBCALL_3(ret, wb_old_function[patch], wb_patch_base[patch], wb_patch_base[patch], r1, n1, r2, n2, r3, n3)
+#define WB_CALL_OLD_5(ret, patch, r1, n1, r2, n2, r3, n3, r4, n4, r5, n5) \
+	LIBCALL_5(ret,                                                       \
+			  wb_old_function[patch],                                    \
+			  wb_patch_base[patch],                                      \
+			  wb_patch_base[patch],                                      \
+			  r1,                                                        \
+			  n1,                                                        \
+			  r2,                                                        \
+			  n2,                                                        \
+			  r3,                                                        \
+			  n3,                                                        \
+			  r4,                                                        \
+			  n4,                                                        \
+			  r5,                                                        \
+			  n5)
+
+// The use count goes up before a patch reads its state; the barrier keeps
+// the compiler from reading wb_patch_flags first
+#ifdef __amigaos3__
+static inline void atomic_inc(ULONG *counter)
+{
+	asm volatile("addql #1,%0" : "+m"(*counter) : : "memory");
+}
+
+static inline void atomic_dec(ULONG *counter)
+{
+	asm volatile("subql #1,%0" : "+m"(*counter) : : "memory");
+}
+#elif defined(__AROS__) && defined(__arm__)
+	#include <aros/atomic.h>
+static inline void atomic_inc(ULONG *counter)
+{
+	__AROS_ATOMIC_INC_L(*counter);
+}
+
+static inline void atomic_dec(ULONG *counter)
+{
+	__AROS_ATOMIC_DEC_L(*counter);
+}
+#elif defined(__MORPHOS__)
+	#include <hardware/atomic.h>
+static inline void atomic_inc(ULONG *counter)
+{
+	ATOMIC_ADD((LONG *)counter, 1);
+}
+
+static inline void atomic_dec(ULONG *counter)
+{
+	ATOMIC_SUB((LONG *)counter, 1);
+}
+#else
+static inline void atomic_inc(ULONG *counter)
+{
+	__sync_add_and_fetch(counter, 1);
+}
+
+static inline void atomic_dec(ULONG *counter)
+{
+	__sync_sub_and_fetch(counter, 1);
+}
+#endif
+
 AppEntry *
 new_app_entry(ULONG type, IPTR id, IPTR userdata, APTR object, char *text, struct MsgPort *port, WB_Data *wb_data);
 APTR rem_app_entry(AppEntry *entry, WB_Data *wb_data, BOOL *);

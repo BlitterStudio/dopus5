@@ -1,3 +1,28 @@
+[dopus5 next] Quitting Opus leaves later system patches in place
+dopus5.library change; version bump deferred.
+
+- dopus5.library patches exec, DOS, Intuition, icon.library and
+  workbench.library functions.  When the library closed, it wrote the
+  saved vectors back without looking at them, so a program that had
+  patched the same functions after Opus lost those patches.
+  sysmon.library, which SysInfo.library loads when the clock task
+  opens it for the CPU display, patches AddTask(), RemTask() and
+  FindTask() among others; after Opus quit it was left half
+  installed, and the machine could freeze or reboot soon after, for
+  example when a font was opened or Opus was started again (#231).
+- A vector that still points to Opus is restored as before.  If
+  another program has patched it since, Opus puts that patch back and
+  its own function stays in the chain, passing every call straight
+  on.  dopus5.library then stays in memory until reboot, and starting
+  Opus again switches the patch back on.
+- OriginalOpen() and the other calls that bypass the DOS and icon
+  patches use the plain system function when the patches are not
+  running.  With dopus/NoSysPatch set, OriginalRelabel(),
+  DeleteIcon(), and WriteIcon() before icon.library V44, read a patch
+  table that was never allocated.
+- OS4: the OpenWorkbenchObject() patch returned FALSE even when the
+  object was opened.
+
 [dopus5 next] Release archives carry the translated catalogs
 Release packaging and installer change; version bump deferred.
 
