@@ -121,7 +121,6 @@ typedef struct	// Moved here from wb.h
 	// struct Library		*int_base;
 	ULONG pad2[2];
 	struct MyLibrary *dopus_base;
-	APTR *old_function;
 
 	UWORD lock_count;
 	UWORD pad;

@@ -41,16 +41,6 @@ For more information on Directory Opus for Windows please see:
 //#define DOSBase	(data->dos_base)
 
 #ifdef __amigaos3__
-static inline void atomic_inc(ULONG *counter)
-{
-	asm volatile("addql #1,%0" : "+m"(*counter));
-}
-
-static inline void atomic_dec(ULONG *counter)
-{
-	asm volatile("subql #1,%0" : "+m"(*counter));
-}
-
 // Calls the original AddAppIconA. A C call through a function pointer cannot
 // load d0/d1/a0-a4/a6 and still keep an address register for the target, so
 // the stub loads the target into a5 (saved here).
@@ -81,45 +71,14 @@ asm(".text                       \n\
       jsr a5@                    \n\
       moveml sp@+,a2-a6          \n\
       rts");
-#elif defined(__AROS__) && defined(__arm__)
-	#include <aros/atomic.h>
-static inline void atomic_inc(ULONG *counter)
-{
-	__AROS_ATOMIC_INC_L(*counter);
-}
-
-static inline void atomic_dec(ULONG *counter)
-{
-	__AROS_ATOMIC_DEC_L(*counter);
-}
-#elif defined(__MORPHOS__)
-	#include <hardware/atomic.h>
-static inline void atomic_inc(ULONG *counter)
-{
-	ATOMIC_ADD(counter, 1);
-}
-
-static inline void atomic_dec(ULONG *counter)
-{
-	ATOMIC_SUB(counter, 1);
-}
-#else
-static inline void atomic_inc(ULONG *counter)
-{
-	__sync_add_and_fetch(counter, 1);
-}
-
-static inline void atomic_dec(ULONG *counter)
-{
-	__sync_sub_and_fetch(counter, 1);
-}
 #endif
 
-// the use count has to be increased as soon as we enter a function,
-// so this can't be stored in wb_data, unless we introduce a global
-// pointer to it
+// Patch state (see wb.h). The use count has to be increased as soon as we
+// enter a function, so none of this can be stored in wb_data.
 ULONG usecount[WB_PATCH_COUNT];
-static APTR old_findtask_function;
+APTR wb_old_function[WB_PATCH_COUNT];
+APTR wb_patch_base[WB_PATCH_COUNT];
+volatile UBYTE wb_patch_flags[WB_PATCH_COUNT];
 
 //// AddAppWindow patch
 PATCHED_5(struct AppWindow *,
@@ -141,6 +100,13 @@ PATCHED_5(struct AppWindow *,
 		  tags)
 {
 	atomic_inc(&usecount[WB_PATCH_ADDAPPWINDOWA]);
+	if (!WB_PATCH_ACTIVE(WB_PATCH_ADDAPPWINDOWA))
+	{
+		struct AppWindow *res =
+			WB_CALL_OLD_5(struct AppWindow *, WB_PATCH_ADDAPPWINDOWA, d0, id, d1, userdata, a0, window, a1, port, a2, tags);
+		atomic_dec(&usecount[WB_PATCH_ADDAPPWINDOWA]);
+		return res;
+	}
 	{
 		struct MyLibrary *libbase;
 		AppEntry *app_entry;
@@ -177,7 +143,7 @@ PATCHED_5(struct AppWindow *,
 			else
 			{
 				app_entry->os_object = LIBCALL_5(struct AppWindow *,
-												 wb_data->old_function[WB_PATCH_ADDAPPWINDOWA],
+												 wb_old_function[WB_PATCH_ADDAPPWINDOWA],
 												 WorkbenchBase,
 												 IWorkbench,
 												 d0,
@@ -223,6 +189,13 @@ PATCHED_5(struct AppMenuItem *,
 		  tags)
 {
 	atomic_inc(&usecount[WB_PATCH_ADDAPPMENUA]);
+	if (!WB_PATCH_ACTIVE(WB_PATCH_ADDAPPMENUA))
+	{
+		struct AppMenuItem *res =
+			WB_CALL_OLD_5(struct AppMenuItem *, WB_PATCH_ADDAPPMENUA, d0, id, d1, userdata, a0, text, a1, port, a2, tags);
+		atomic_dec(&usecount[WB_PATCH_ADDAPPMENUA]);
+		return res;
+	}
 	{
 		struct MyLibrary *libbase;
 		AppEntry *app_entry = NULL;
@@ -260,7 +233,7 @@ PATCHED_5(struct AppMenuItem *,
 			else
 			{
 				object = LIBCALL_5(APTR,
-								   wb_data->old_function[WB_PATCH_ADDAPPMENUA],
+								   wb_old_function[WB_PATCH_ADDAPPMENUA],
 								   WorkbenchBase,
 								   IWorkbench,
 								   d0,
@@ -329,6 +302,43 @@ PATCHED_7(struct AppIcon *,
 		  tags)
 {
 	atomic_inc(&usecount[WB_PATCH_ADDAPPICONA]);
+	if (!WB_PATCH_ACTIVE(WB_PATCH_ADDAPPICONA))
+	{
+		struct AppIcon *res;
+
+#ifdef __amigaos3__
+		res = wb_call_addappicon(wb_old_function[WB_PATCH_ADDAPPICONA],
+								 wb_patch_base[WB_PATCH_ADDAPPICONA],
+								 id,
+								 userdata,
+								 text,
+								 port,
+								 lock,
+								 icon,
+								 tags);
+#else
+		res = LIBCALL_7(struct AppIcon *,
+						wb_old_function[WB_PATCH_ADDAPPICONA],
+						wb_patch_base[WB_PATCH_ADDAPPICONA],
+						wb_patch_base[WB_PATCH_ADDAPPICONA],
+						d0,
+						id,
+						d1,
+						userdata,
+						a0,
+						text,
+						a1,
+						port,
+						a2,
+						lock,
+						a3,
+						icon,
+						a4,
+						tags);
+#endif
+		atomic_dec(&usecount[WB_PATCH_ADDAPPICONA]);
+		return res;
+	}
 	{
 		struct MyLibrary *libbase;
 		AppEntry *app_entry = NULL;
@@ -489,7 +499,7 @@ PATCHED_7(struct AppIcon *,
 			else
 			{
 #ifdef __amigaos3__
-				object = wb_call_addappicon(wb_data->old_function[WB_PATCH_ADDAPPICONA],
+				object = wb_call_addappicon(wb_old_function[WB_PATCH_ADDAPPICONA],
 											WorkbenchBase,
 											id,
 											userdata,
@@ -500,7 +510,7 @@ PATCHED_7(struct AppIcon *,
 											tags);
 #else
 				object = LIBCALL_7(APTR,
-								   wb_data->old_function[WB_PATCH_ADDAPPICONA],
+								   wb_old_function[WB_PATCH_ADDAPPICONA],
 								   WorkbenchBase,
 								   IWorkbench,
 								   d0,
@@ -538,6 +548,12 @@ PATCH_END
 PATCHED_1(BOOL, LIBFUNC L_WB_RemoveAppWindow, a0, struct AppWindow *, window)
 {
 	atomic_inc(&usecount[WB_PATCH_REMAPPWINDOW]);
+	if (!WB_PATCH_ACTIVE(WB_PATCH_REMAPPWINDOW))
+	{
+		BOOL res = WB_CALL_OLD_1(BOOL, WB_PATCH_REMAPPWINDOW, a0, window);
+		atomic_dec(&usecount[WB_PATCH_REMAPPWINDOW]);
+		return res;
+	}
 	{
 		AppEntry *entry;
 		struct MyLibrary *libbase;
@@ -568,7 +584,7 @@ PATCHED_1(BOOL, LIBFUNC L_WB_RemoveAppWindow, a0, struct AppWindow *, window)
 		if (os_object)
 		{
 			// Remove workbench object
-			LIBCALL_1(BOOL, wb_data->old_function[WB_PATCH_REMAPPWINDOW], WorkbenchBase, IWorkbench, a0, os_object);
+			LIBCALL_1(BOOL, wb_old_function[WB_PATCH_REMAPPWINDOW], WorkbenchBase, IWorkbench, a0, os_object);
 		}
 
 		// Send notification
@@ -584,6 +600,12 @@ PATCH_END
 PATCHED_1(BOOL, LIBFUNC L_WB_RemoveAppMenuItem, a0, struct AppMenuItem *, item)
 {
 	atomic_inc(&usecount[WB_PATCH_REMAPPMENU]);
+	if (!WB_PATCH_ACTIVE(WB_PATCH_REMAPPMENU))
+	{
+		BOOL res = WB_CALL_OLD_1(BOOL, WB_PATCH_REMAPPMENU, a0, item);
+		atomic_dec(&usecount[WB_PATCH_REMAPPMENU]);
+		return res;
+	}
 	{
 		AppEntry *entry;
 		struct MyLibrary *libbase;
@@ -615,7 +637,7 @@ PATCHED_1(BOOL, LIBFUNC L_WB_RemoveAppMenuItem, a0, struct AppMenuItem *, item)
 		if (os_object)
 		{
 			// Remove workbench object
-			LIBCALL_1(BOOL, wb_data->old_function[WB_PATCH_REMAPPMENU], WorkbenchBase, IWorkbench, a0, os_object);
+			LIBCALL_1(BOOL, wb_old_function[WB_PATCH_REMAPPMENU], WorkbenchBase, IWorkbench, a0, os_object);
 		}
 
 		// Send notification
@@ -632,6 +654,12 @@ PATCH_END
 PATCHED_1(BOOL, LIBFUNC L_WB_RemoveAppIcon, a0, struct AppIcon *, icon)
 {
 	atomic_inc(&usecount[WB_PATCH_REMAPPICON]);
+	if (!WB_PATCH_ACTIVE(WB_PATCH_REMAPPICON))
+	{
+		BOOL res = WB_CALL_OLD_1(BOOL, WB_PATCH_REMAPPICON, a0, icon);
+		atomic_dec(&usecount[WB_PATCH_REMAPPICON]);
+		return res;
+	}
 	{
 		AppEntry *entry;
 		struct MyLibrary *libbase;
@@ -691,7 +719,7 @@ PATCHED_1(BOOL, LIBFUNC L_WB_RemoveAppIcon, a0, struct AppIcon *, icon)
 		if ((os_object = rem_app_entry(entry, wb_data, &local)))
 		{
 			// Remove workbench object
-			LIBCALL_1(BOOL, wb_data->old_function[WB_PATCH_REMAPPICON], WorkbenchBase, IWorkbench, a0, os_object);
+			LIBCALL_1(BOOL, wb_old_function[WB_PATCH_REMAPPICON], WorkbenchBase, IWorkbench, a0, os_object);
 		}
 
 		atomic_dec(&usecount[WB_PATCH_REMAPPICON]);
@@ -1032,25 +1060,15 @@ PATCHED_0(LONG, LIBFUNC L_WB_CloseWorkBench)
 {
 	atomic_inc(&usecount[WB_PATCH_CLOSEWORKBENCH]);
 	{
-		WB_Data *wb_data;
 		struct MyLibrary *libbase;
 		LONG result;
 
-		// Open library
-		if (!(libbase = GET_DOPUSLIB))
-		{
-			atomic_dec(&usecount[WB_PATCH_CLOSEWORKBENCH]);
-			return 0;
-		}
-
-		// Get Workbench data pointer
-		wb_data = &((struct LibData *)libbase->ml_UserData)->wb_data;
-
-		// Send notification
-		L_SendNotifyMsg(DN_CLOSE_WORKBENCH, 0, 0, FALSE, 0, 0, libbase);
+		// Notify Opus while it handles the patch
+		if (WB_PATCH_ACTIVE(WB_PATCH_CLOSEWORKBENCH) && (libbase = GET_DOPUSLIB))
+			L_SendNotifyMsg(DN_CLOSE_WORKBENCH, 0, 0, FALSE, 0, 0, libbase);
 
 		// Close workbench screen
-		result = LIBCALL_0(LONG, wb_data->old_function[WB_PATCH_CLOSEWORKBENCH], IntuitionBase, IIntuition);
+		result = WB_CALL_OLD_0(LONG, WB_PATCH_CLOSEWORKBENCH);
 
 		atomic_dec(&usecount[WB_PATCH_CLOSEWORKBENCH]);
 		return result;
@@ -1063,25 +1081,15 @@ PATCHED_0(ULONG, LIBFUNC L_WB_OpenWorkBench)
 {
 	atomic_inc(&usecount[WB_PATCH_OPENWORKBENCH]);
 	{
-		WB_Data *wb_data;
 		struct MyLibrary *libbase;
 		ULONG result;
 
-		// Open library
-		if (!(libbase = GET_DOPUSLIB))
-		{
-			atomic_dec(&usecount[WB_PATCH_OPENWORKBENCH]);
-			return 0;
-		}
-
-		// Get Workbench data pointer
-		wb_data = &((struct LibData *)libbase->ml_UserData)->wb_data;
-
-		// Send notification
-		L_SendNotifyMsg(DN_OPEN_WORKBENCH, 0, 0, FALSE, 0, 0, libbase);
+		// Notify Opus while it handles the patch
+		if (WB_PATCH_ACTIVE(WB_PATCH_OPENWORKBENCH) && (libbase = GET_DOPUSLIB))
+			L_SendNotifyMsg(DN_OPEN_WORKBENCH, 0, 0, FALSE, 0, 0, libbase);
 
 		// Open workbench screen
-		result = LIBCALL_0(ULONG, wb_data->old_function[WB_PATCH_OPENWORKBENCH], IntuitionBase, IIntuition);
+		result = WB_CALL_OLD_0(ULONG, WB_PATCH_OPENWORKBENCH);
 
 		atomic_dec(&usecount[WB_PATCH_OPENWORKBENCH]);
 		return result;
@@ -1154,7 +1162,6 @@ VARARGS68K BOOL L_WB_OpenWorkbenchObject_stubs(struct WorkbenchIFace *IWorkbench
 {
 	atomic_inc(&usecount[WB_PATCH_OPENWORKBENCHOBJECT]);
 	{
-		WB_Data *wb_data;
 		struct MyLibrary *libbase;
 		va_list ap;
 		struct TagItem *tags;
@@ -1166,38 +1173,21 @@ VARARGS68K BOOL L_WB_OpenWorkbenchObject_stubs(struct WorkbenchIFace *IWorkbench
 
 		D(bug("called by %s\n", FindTask(NULL)->tc_Node.ln_Name));
 
-		// Open library
-		if (!(libbase = GET_DOPUSLIB))
-		{
-			atomic_dec(&usecount[WB_PATCH_OPENWORKBENCHOBJECT]);
-			return FALSE;
-		}
-
-		// Get Workbench data pointer
-		wb_data = &((struct LibData *)libbase->ml_UserData)->wb_data;
-
-		if (FindPort("WORKBENCH"))
+		if (!WB_PATCH_ACTIVE(WB_PATCH_OPENWORKBENCHOBJECT) || FindPort("WORKBENCH"))
 		{
 			// D(bug("Workbench available, calling original vector\n"));
 
 			// call original, but check examples of how all of this can be handled in another PATCHED functions there.
-			result = LIBCALL_2(BOOL,
-							   wb_data->old_function[WB_PATCH_OPENWORKBENCHOBJECTA],
-							   WorkbenchBase,
-							   IWorkbench,
-							   a0,
-							   name,
-							   a1,
-							   tags);
+			result = WB_CALL_OLD_2(BOOL, WB_PATCH_OPENWORKBENCHOBJECTA, a0, name, a1, tags);
 		}
-		else
+		else if ((libbase = GET_DOPUSLIB))
 		{
 			// D(bug("Workbench not found, launching %s ourselves\n", name));
 			result = internalOpenWBObject(libbase, name, tags);
 		}
 
 		atomic_dec(&usecount[WB_PATCH_OPENWORKBENCHOBJECT]);
-		return FALSE;
+		return result;
 	}
 }
 
@@ -1206,37 +1196,19 @@ PATCHED_2(BOOL, LIBFUNC L_WB_OpenWorkbenchObjectA, a0, CONST_STRPTR, name, a1, c
 {
 	atomic_inc(&usecount[WB_PATCH_OPENWORKBENCHOBJECTA]);
 	{
-		WB_Data *wb_data;
 		struct MyLibrary *libbase;
 		BOOL result = FALSE;
 
 		D(bug("called by %s\n", FindTask(NULL)->tc_Node.ln_Name));
 
-		// Open library
-		if (!(libbase = GET_DOPUSLIB))
-		{
-			atomic_dec(&usecount[WB_PATCH_OPENWORKBENCHOBJECTA]);
-			return FALSE;
-		}
-
-		// Get Workbench data pointer
-		wb_data = &((struct LibData *)libbase->ml_UserData)->wb_data;
-
-		if (FindPort("WORKBENCH"))
+		if (!WB_PATCH_ACTIVE(WB_PATCH_OPENWORKBENCHOBJECTA) || FindPort("WORKBENCH"))
 		{
 			// D(bug("Workbench available, calling original vector\n"));
 
 			// call original, but check examples of how all of this can be handled in another PATCHED functions there.
-			result = LIBCALL_2(BOOL,
-							   wb_data->old_function[WB_PATCH_OPENWORKBENCHOBJECTA],
-							   WorkbenchBase,
-							   IWorkbench,
-							   a0,
-							   name,
-							   a1,
-							   tags);
+			result = WB_CALL_OLD_2(BOOL, WB_PATCH_OPENWORKBENCHOBJECTA, a0, name, a1, tags);
 		}
-		else
+		else if ((libbase = GET_DOPUSLIB))
 		{
 			// D(bug("Workbench not found, launching %s ourselves\n", name ));
 			result = internalOpenWBObject(libbase, name, tags);
@@ -1451,8 +1423,7 @@ static BOOL wb_workbench_control(struct MyLibrary *libbase, CONST_STRPTR name, c
 		result = internalWBCtrl(libbase, name, tags);
 	else
 #endif
-		result = LIBCALL_2(
-			BOOL, wb_data->old_function[WB_PATCH_WORKBENCHCONTROLA], WorkbenchBase, IWorkbench, a0, name, a1, tags);
+		result = WB_CALL_OLD_2(BOOL, WB_PATCH_WORKBENCHCONTROLA, a0, name, a1, tags);
 
 	FreeTagItems(os_tags);
 	return result;
@@ -1475,14 +1446,11 @@ VARARGS68K BOOL L_WB_WorkbenchControl_stubs(struct WorkbenchIFace *IWorkbench, C
 
 		D(bug("called by %s\n", FindTask(NULL)->tc_Node.ln_Name));
 
-		// Open library
-		if (!(libbase = GET_DOPUSLIB))
-		{
-			atomic_dec(&usecount[WB_PATCH_WORKBENCHCONTROL]);
-			return FALSE;
-		}
-
-		result = wb_workbench_control(libbase, name, tags);
+		// Pass straight on, or open library
+		if (!WB_PATCH_ACTIVE(WB_PATCH_WORKBENCHCONTROL) || !(libbase = GET_DOPUSLIB))
+			result = WB_CALL_OLD_2(BOOL, WB_PATCH_WORKBENCHCONTROLA, a0, name, a1, tags);
+		else
+			result = wb_workbench_control(libbase, name, tags);
 
 		atomic_dec(&usecount[WB_PATCH_WORKBENCHCONTROL]);
 		return result;
@@ -1498,14 +1466,11 @@ PATCHED_2(BOOL, LIBFUNC L_WB_WorkbenchControlA, a0, CONST_STRPTR, name, a1, cons
 		struct MyLibrary *libbase;
 		BOOL result;
 
-		// Open library
-		if (!(libbase = GET_DOPUSLIB))
-		{
-			atomic_dec(&usecount[WB_PATCH_WORKBENCHCONTROLA]);
-			return FALSE;
-		}
-
-		result = wb_workbench_control(libbase, name, tags);
+		// Pass straight on, or open library
+		if (!WB_PATCH_ACTIVE(WB_PATCH_WORKBENCHCONTROLA) || !(libbase = GET_DOPUSLIB))
+			result = WB_CALL_OLD_2(BOOL, WB_PATCH_WORKBENCHCONTROLA, a0, name, a1, tags);
+		else
+			result = wb_workbench_control(libbase, name, tags);
 
 		atomic_dec(&usecount[WB_PATCH_WORKBENCHCONTROLA]);
 		return result;
@@ -1880,7 +1845,6 @@ PATCHED_1(void, LIBFUNC L_WB_AddPort, a1, struct MsgPort *, port)
 	atomic_inc(&usecount[WB_PATCH_ADDPORT]);
 	{
 		struct MyLibrary *libbase;
-		WB_Data *wb_data;
 
 		// Invalid port?
 		if (!port)
@@ -1889,25 +1853,16 @@ PATCHED_1(void, LIBFUNC L_WB_AddPort, a1, struct MsgPort *, port)
 			return;
 		}
 
-		// Get library pointer
-		if (!(libbase = GET_DOPUSLIB))
-		{
-			atomic_dec(&usecount[WB_PATCH_ADDPORT]);
-			return;
-		}
-
-		// Get Workbench data pointer
-		wb_data = &((struct LibData *)libbase->ml_UserData)->wb_data;
-
-		// ARexx?
-		if (port->mp_Node.ln_Name && strcmp(port->mp_Node.ln_Name, "REXX") == 0)
+		// ARexx? Tell Opus while it handles the patch
+		if (WB_PATCH_ACTIVE(WB_PATCH_ADDPORT) && port->mp_Node.ln_Name &&
+			strcmp(port->mp_Node.ln_Name, "REXX") == 0 && (libbase = GET_DOPUSLIB))
 		{
 			// Send notification
 			L_SendNotifyMsg(DN_REXX_UP, 0, 0, 0, 0, 0, libbase);
 		}
 
 		// Pass through
-		LIBCALL_1NR(wb_data->old_function[WB_PATCH_ADDPORT], SysBase, IExec, a1, port);
+		WB_CALL_OLD_1NR(WB_PATCH_ADDPORT, a1, port);
 
 		atomic_dec(&usecount[WB_PATCH_ADDPORT]);
 	}
@@ -1921,7 +1876,6 @@ PATCHED_1(void, LIBFUNC L_WB_CloseWindow, a0, struct Window *, window)
 	{
 		struct PubScreenNode *node;
 		struct MyLibrary *DOpusBase;
-		WB_Data *wb_data;
 		struct Task *sigtask = NULL;
 		UBYTE sigbit = 0;
 
@@ -1932,18 +1886,9 @@ PATCHED_1(void, LIBFUNC L_WB_CloseWindow, a0, struct Window *, window)
 			return;
 		}
 
-		// Get library pointer
-		if (!(DOpusBase = GET_DOPUSLIB))
-		{
-			atomic_dec(&usecount[WB_PATCH_CLOSEWINDOW]);
-			return;
-		}
-
-		// Get Workbench data pointer
-		wb_data = &((struct LibData *)DOpusBase->ml_UserData)->wb_data;
-
-		// See if the screen is public
-		if ((node = FindPubScreen(window->WScreen, 0)))
+		// See if the screen is public (while Opus handles the patch)
+		if (WB_PATCH_ACTIVE(WB_PATCH_CLOSEWINDOW) && (DOpusBase = GET_DOPUSLIB) &&
+			(node = FindPubScreen(window->WScreen, 0)))
 		{
 			// Is it the Opus screen?
 			if (strncmp(node->psn_Node.ln_Name, "DOPUS.", 6) == 0)
@@ -1955,7 +1900,7 @@ PATCHED_1(void, LIBFUNC L_WB_CloseWindow, a0, struct Window *, window)
 		}
 
 		// Close window
-		LIBCALL_1NR(wb_data->old_function[WB_PATCH_CLOSEWINDOW], IntuitionBase, IIntuition, a0, window);
+		WB_CALL_OLD_1NR(WB_PATCH_CLOSEWINDOW, a0, window);
 
 		// Task to signal?
 		if (sigtask)
@@ -2050,11 +1995,16 @@ static APTR wb_get_patchbase(short type, struct LibData *data)
 PATCHED_3(ULONG, LIBFUNC L_PatchedWBInfo, a0, BPTR, lock, a1, char *, name, a2, struct Screen *, screen)
 {
 	atomic_inc(&usecount[WB_PATCH_WBINFO]);
+	if (!WB_PATCH_ACTIVE(WB_PATCH_WBINFO))
+	{
+		ULONG res = WB_CALL_OLD_3(ULONG, WB_PATCH_WBINFO, a0, lock, a1, name, a2, screen);
+		atomic_dec(&usecount[WB_PATCH_WBINFO]);
+		return res;
+	}
 	{
 		struct MyLibrary *libbase;
 		struct DOpusSemaphore *sem;
 		IPCData *main_ipc = NULL;
-		struct LibData *data;
 		char buf[10];
 		ULONG res = 0;
 
@@ -2064,9 +2014,6 @@ PATCHED_3(ULONG, LIBFUNC L_PatchedWBInfo, a0, BPTR, lock, a1, char *, name, a2, 
 			atomic_dec(&usecount[WB_PATCH_WBINFO]);
 			return 0;
 		}
-
-		// Get data pointer
-		data = (struct LibData *)libbase->ml_UserData;
 
 		// Get DOpus semaphore?
 		if ((sem = (struct DOpusSemaphore *)FindSemaphore("DOpus Public Semaphore")))
@@ -2119,16 +2066,7 @@ PATCHED_3(ULONG, LIBFUNC L_PatchedWBInfo, a0, BPTR, lock, a1, char *, name, a2, 
 		//#undef DOSBase
 
 		// Call original function
-		res = LIBCALL_3(ULONG,
-						data->wb_data.old_function[WB_PATCH_WBINFO],
-						WorkbenchBase,
-						IWorkbench,
-						a0,
-						lock,
-						a1,
-						name,
-						a2,
-						screen);
+		res = WB_CALL_OLD_3(ULONG, WB_PATCH_WBINFO, a0, lock, a1, name, a2, screen);
 
 		atomic_dec(&usecount[WB_PATCH_WBINFO]);
 		return res;
@@ -2140,6 +2078,12 @@ PATCH_END
 PATCHED_3(APTR, LIBFUNC L_PatchedAddTask, a1, struct Task *, task, a2, APTR, initialPC, a3, APTR, finalPC)
 {
 	atomic_inc(&usecount[WB_PATCH_ADDTASK]);
+	if (!WB_PATCH_ACTIVE(WB_PATCH_ADDTASK))
+	{
+		APTR res = WB_CALL_OLD_3(APTR, WB_PATCH_ADDTASK, a1, task, a2, initialPC, a3, finalPC);
+		atomic_dec(&usecount[WB_PATCH_ADDTASK]);
+		return res;
+	}
 	{
 		struct MyLibrary *libbase;
 		struct LibData *data;
@@ -2159,8 +2103,7 @@ PATCHED_3(APTR, LIBFUNC L_PatchedAddTask, a1, struct Task *, task, a2, APTR, ini
 		++data->task_count;
 
 		// Call original function
-		ret = LIBCALL_3(
-			APTR, data->wb_data.old_function[WB_PATCH_ADDTASK], SysBase, IExec, a1, task, a2, initialPC, a3, finalPC);
+		ret = WB_CALL_OLD_3(APTR, WB_PATCH_ADDTASK, a1, task, a2, initialPC, a3, finalPC);
 
 		atomic_dec(&usecount[WB_PATCH_ADDTASK]);
 		return ret;
@@ -2172,6 +2115,13 @@ PATCH_END
 PATCHED_1(void, LIBFUNC L_PatchedRemTask, a1, struct Task *, task)
 {
 	atomic_inc(&usecount[WB_PATCH_REMTASK]);
+	if (!WB_PATCH_ACTIVE(WB_PATCH_REMTASK))
+	{
+		// the usage count has to be decreased before the task kicks the bucket
+		atomic_dec(&usecount[WB_PATCH_REMTASK]);
+		WB_CALL_OLD_1NR(WB_PATCH_REMTASK, a1, task);
+		return;
+	}
 	{
 		struct MyLibrary *libbase;
 		struct LibData *data;
@@ -2193,7 +2143,7 @@ PATCHED_1(void, LIBFUNC L_PatchedRemTask, a1, struct Task *, task)
 		atomic_dec(&usecount[WB_PATCH_REMTASK]);
 
 		// Call original function
-		LIBCALL_1NR(data->wb_data.old_function[WB_PATCH_REMTASK], SysBase, IExec, a1, task);
+		WB_CALL_OLD_1NR(WB_PATCH_REMTASK, a1, task);
 	}
 }
 PATCH_END
@@ -2207,23 +2157,21 @@ PATCHED_1(struct Task *, LIBFUNC L_PatchedFindTask, a1, char *, name)
 		struct LibData *data;
 		struct Task *task;
 
-		// Preserve the native FindTask(NULL) path even when dopus5.library
-		// is unavailable during patch installation/removal.
-		if (!name)
+		// Pass straight on; FindTask(NULL) never needs Opus
+		if (!name || !WB_PATCH_ACTIVE(WB_PATCH_FINDTASK))
 		{
-			if (old_findtask_function)
-			{
-				task = LIBCALL_1(struct Task *, old_findtask_function, SysBase, IExec, a1, NULL);
-				atomic_dec(&usecount[WB_PATCH_FINDTASK]);
-				return task;
-			}
+			// Not stored yet while the patch is being installed
+			if (wb_old_function[WB_PATCH_FINDTASK])
+				task = WB_CALL_OLD_1(struct Task *, WB_PATCH_FINDTASK, a1, name);
 #ifndef __AROS__
-			atomic_dec(&usecount[WB_PATCH_FINDTASK]);
-			return ((struct ExecBase *)SysBase)->ThisTask;
-#else
-			atomic_dec(&usecount[WB_PATCH_FINDTASK]);
-			return NULL;
+			else if (!name)
+				task = ((struct ExecBase *)SysBase)->ThisTask;
 #endif
+			else
+				task = NULL;
+
+			atomic_dec(&usecount[WB_PATCH_FINDTASK]);
+			return task;
 		}
 
 		// Get library pointer
@@ -2237,7 +2185,7 @@ PATCHED_1(struct Task *, LIBFUNC L_PatchedFindTask, a1, char *, name)
 		data = (struct LibData *)libbase->ml_UserData;
 
 		// Call original function
-		if ((task = LIBCALL_1(struct Task *, data->wb_data.old_function[WB_PATCH_FINDTASK], SysBase, IExec, a1, name)))
+		if ((task = WB_CALL_OLD_1(struct Task *, WB_PATCH_FINDTASK, a1, name)))
 		{
 			atomic_dec(&usecount[WB_PATCH_FINDTASK]);
 			return task;
@@ -2265,10 +2213,15 @@ PATCH_END
 PATCHED_2(struct Window *, LIBFUNC L_PatchedOpenWindowTags, a0, struct NewWindow *, newwin, a1, struct TagItem *, tags)
 {
 	atomic_inc(&usecount[WB_PATCH_OPENWINDOWTAGS]);
+	if (!WB_PATCH_ACTIVE(WB_PATCH_OPENWINDOWTAGS))
+	{
+		struct Window *res = WB_CALL_OLD_2(struct Window *, WB_PATCH_OPENWINDOWTAGS, a0, newwin, a1, tags);
+		atomic_dec(&usecount[WB_PATCH_OPENWINDOWTAGS]);
+		return res;
+	}
 	{
 		struct MyLibrary *libbase;
 		struct LibData *data;
-		WB_Data *wb_data;
 		struct Window *ret;
 
 		// Get library pointer
@@ -2278,9 +2231,8 @@ PATCHED_2(struct Window *, LIBFUNC L_PatchedOpenWindowTags, a0, struct NewWindow
 			return NULL;
 		}
 
-		// Get data pointers
+		// Get data pointer
 		data = (struct LibData *)libbase->ml_UserData;
-		wb_data = &data->wb_data;
 
 		// Is window being opened by the kludge task?
 		if (data->open_window_kludge == (struct Process *)FindTask(NULL))
@@ -2330,14 +2282,7 @@ PATCHED_2(struct Window *, LIBFUNC L_PatchedOpenWindowTags, a0, struct NewWindow
 		}
 
 		// Open window
-		ret = LIBCALL_2(struct Window *,
-						wb_data->old_function[WB_PATCH_OPENWINDOWTAGS],
-						IntuitionBase,
-						IIntuition,
-						a0,
-						newwin,
-						a1,
-						tags);
+		ret = WB_CALL_OLD_2(struct Window *, WB_PATCH_OPENWINDOWTAGS, a0, newwin, a1, tags);
 
 		atomic_dec(&usecount[WB_PATCH_OPENWINDOWTAGS]);
 		return ret;
@@ -2589,6 +2534,52 @@ static PatchList wb_patches[WB_PATCH_COUNT] = {
 
 };
 
+// Our entry for a vector
+static APTR wb_patch_function(short patch)
+{
+#if defined(__MORPHOS__)
+	return (APTR)&wb_patches[patch].trap;
+#else
+	return wb_patches[patch].function;
+#endif
+}
+
+// Set a vector, returns the previous one
+static APTR wb_set_vector(APTR lib, short patch, APTR function)
+{
+#ifdef __amigaos4__
+	return SetMethod(lib, wb_patches[patch].offset, function);
+#else
+	return SetFunction(lib, wb_patches[patch].offset, function);
+#endif
+}
+
+// Wait until no task is inside a patch function
+static void wb_wait_patches(void)
+{
+	short patch;
+
+	for (patch = 0; patch < WB_PATCH_COUNT; patch++)
+	{
+		while (usecount[patch] != 0)
+			Delay(1);
+	}
+}
+
+// Is any of our functions still in a vector chain? The library code has to stay loaded then.
+BOOL wb_patches_installed(void)
+{
+	short patch;
+
+	for (patch = 0; patch < WB_PATCH_COUNT; patch++)
+	{
+		if (wb_patch_flags[patch] & WBPF_INSTALLED)
+			return TRUE;
+	}
+
+	return FALSE;
+}
+
 // Install workbench emulation patches
 void LIBFUNC L_WB_Install_Patch(REG(a6, struct MyLibrary *libbase))
 {
@@ -2609,68 +2600,57 @@ void LIBFUNC L_WB_Install_Patch(REG(a6, struct MyLibrary *libbase))
 	{
 		short patch;
 
-		// Allocate patch table
-		if ((wb_data->old_function = AllocVec(sizeof(APTR) * WB_PATCH_COUNT, MEMF_CLEAR)))
+		// Forbid while we install the patches
+		Forbid();
+
+		// Install patches
+		for (patch = 0; patch < WB_PATCH_COUNT; patch++)
 		{
-			memset(usecount, 0, sizeof(usecount));
-
-			// Forbid while we install the patches
-			Forbid();
-
-			// Install patches
-			for (patch = 0; patch < WB_PATCH_COUNT; patch++)
-			{
-				APTR libptr;
+			APTR libptr;
 
 #ifndef __amigaos4__
-				// WorkbenchControlA() is V44; older workbench.library has no such vector
-				if (patch == WB_PATCH_WORKBENCHCONTROLA && WorkbenchBase->lib_Version < 44)
-					continue;
+			// WorkbenchControlA() is V44; older workbench.library has no such vector
+			if (patch == WB_PATCH_WORKBENCHCONTROLA && WorkbenchBase->lib_Version < 44)
+				continue;
 #endif
 
-				// Get library
-				if ((libptr = wb_get_patchbase(wb_patches[patch].type, (struct LibData *)libbase->ml_UserData)))
-				{
-// Patch this function
-#if defined(__amigaos4__)
-					wb_data->old_function[patch] =
-						SetMethod(libptr, wb_patches[patch].offset, wb_patches[patch].function);
-#endif
-#if defined(__MORPHOS__)
-					wb_data->old_function[patch] =
-						SetFunction(libptr, wb_patches[patch].offset, (APTR)&wb_patches[patch].trap);
-#endif
-#if defined(__amigaos3__) || defined(__AROS__)
-					wb_data->old_function[patch] =
-						SetFunction(libptr, wb_patches[patch].offset, wb_patches[patch].function);
-#endif
-					if (patch == WB_PATCH_FINDTASK)
-						old_findtask_function = wb_data->old_function[patch];
-				}
+			// Get library
+			if (!(libptr = wb_get_patchbase(wb_patches[patch].type, (struct LibData *)libbase->ml_UserData)))
+				continue;
+
+			// Still in this vector's chain from an earlier run, because another
+			// program patched it after us? Then it only needs switching back on.
+			if (!(wb_patch_flags[patch] & WBPF_INSTALLED) || wb_patch_base[patch] != libptr)
+			{
+				wb_patch_base[patch] = libptr;
+				wb_old_function[patch] = wb_set_vector(libptr, patch, wb_patch_function(patch));
+				wb_patch_flags[patch] |= WBPF_INSTALLED;
 			}
+
+			// Opus handles the calls from now on
+			wb_patch_flags[patch] |= WBPF_ACTIVE;
+		}
 
 // Clear the cache and Permit
 #if !defined(__MORPHOS__)
-			CacheClearU();
+		CacheClearU();
 #endif
-			Permit();
+		Permit();
 
-			// Increment patch count
-			++wb_data->patch_count;
-		}
+		// Increment patch count
+		++wb_data->patch_count;
 	}
 
 	// Unlock patch information
 	L_FreeSemaphore(&wb_data->patch_lock);
 }
 
-// Remove workbench patches
+// Remove workbench patches. Returns FALSE if a patch had to stay in a
+// vector chain because another program patched the same function after us.
 BOOL LIBFUNC L_WB_Remove_Patch(REG(a6, struct MyLibrary *libbase))
 {
-	short patch;
-	BOOL fail = FALSE;
-	APTR old_patch_val[WB_PATCH_COUNT];
 	WB_Data *wb_data;
+	BOOL removed = TRUE;
 
 #if defined(__amigaos4__) || defined(__AROS__)
 	libbase = dopuslibbase_global;
@@ -2685,134 +2665,53 @@ BOOL LIBFUNC L_WB_Remove_Patch(REG(a6, struct MyLibrary *libbase))
 	// Really remove patches?
 	if (wb_data->patch_count == 1)
 	{
-#if 1
-		// Try to remove patches
+		short patch;
+
+		// From now on every call goes straight to the next function
 		for (patch = 0; patch < WB_PATCH_COUNT; patch++)
-		{
-			// Patch installed for this function?
-			if (wb_data->old_function[patch])
-			{
-				APTR libptr;
+			wb_patch_flags[patch] &= ~WBPF_ACTIVE;
 
-				// Get library
-				if ((libptr = wb_get_patchbase(wb_patches[patch].type, (struct LibData *)libbase->ml_UserData)))
-				{
-					D(bug("waiting for the usecount (%d) to be zero (patch type %d at LVO %ld)\n",
-						  usecount[patch],
-						  wb_patches[patch].type,
-						  (long)wb_patches[patch].offset));
-					while (usecount[patch] != 0)
-						Delay(1);
-					Forbid();
-					D(bug("ok, trying to remove the patch\n"));
+		// Let calls still running Opus code finish; they use the library data
+		wb_wait_patches();
 
-					// Restore old value
-					old_patch_val[patch] =
-	#ifdef __amigaos4__
-						SetMethod(libptr, wb_patches[patch].offset, wb_data->old_function[patch]);
-	#else
-						SetFunction(libptr, wb_patches[patch].offset, wb_data->old_function[patch]);
-	#endif
-
-	// The value returned should have been our patch
-	#if defined(__MORPHOS__)
-					if ((ULONG)old_patch_val[patch] != (ULONG)&wb_patches[patch].trap)
-	#else
-					if (old_patch_val[patch] != wb_patches[patch].function)
-	#endif
-					{
-						// There's no good way to handle this without waiting for an indefinite amount of time
-						D(bug("something went wrong, the function have been repatched by someone else\n"));
-					}
-
-					CacheClearU();
-					Permit();
-				}
-			}
-		}
-		FreeVec(wb_data->old_function);
-		wb_data->old_function = 0;
-		old_findtask_function = NULL;
-#else
-		// Try to remove patches
 		Forbid();
 		for (patch = 0; patch < WB_PATCH_COUNT; patch++)
 		{
-			// Patch installed for this function?
-			if (wb_data->old_function[patch])
+			APTR current;
+
+			if (!(wb_patch_flags[patch] & WBPF_INSTALLED))
+				continue;
+
+			// Restore the vector if it still points to us
+			current = wb_set_vector(wb_patch_base[patch], patch, wb_old_function[patch]);
+			if (current == wb_patch_function(patch))
+				wb_patch_flags[patch] &= ~WBPF_INSTALLED;
+
+			// Someone patched it after us and calls us as their old function.
+			// Restoring would throw their patch out, so put it back; ours
+			// stays in the chain and passes calls on.
+			else
 			{
-				APTR libptr;
-
-				// Get library
-				if ((libptr = wb_get_patchbase(wb_patches[patch].type, (struct LibData *)libbase->ml_UserData)))
-				{
-					// Restore old value
-					old_patch_val[patch] =
-	#ifdef __amigaos4__
-						SetMethod(libptr, wb_patches[patch].offset, wb_data->old_function[patch]);
-	#else
-						SetFunction(libptr, wb_patches[patch].offset, wb_data->old_function[patch]);
-	#endif
-
-	// The value returned should have been our patch
-	#if defined(__MORPHOS__)
-					if ((ULONG)old_patch_val[patch] != (ULONG)&wb_patches[patch].trap)
-	#else
-					if (old_patch_val[patch] != wb_patches[patch].function)
-	#endif
-					{
-						// Something's in there
-						fail = TRUE;
-						break;
-					}
-				}
+				D(bug("patch %ld was patched again after us, staying in the chain\n", (long)patch));
+				wb_set_vector(wb_patch_base[patch], patch, current);
+				removed = FALSE;
 			}
 		}
-
-		// Did remove fail?
-		if (fail)
-		{
-			// Restore the vectors that we've changed
-			for (; patch >= 0; patch--)
-			{
-				// Patch installed for this function?
-				if (wb_data->old_function[patch])
-				{
-					APTR libptr;
-
-					// Get library
-					if ((libptr = wb_get_patchbase(wb_patches[patch].type, (struct LibData *)libbase->ml_UserData)))
-					{
-	// Reinstall patch
-	#ifdef __amigaos4__
-						SetMethod(libptr, wb_patches[patch].offset, wb_data->old_function[patch]);
-	#else
-						SetFunction(libptr, wb_patches[patch].offset, wb_data->old_function[patch]);
-	#endif
-					}
-				}
-			}
-		}
-
-		// Otherwise, clear our patch pointers
-		else
-		{
-			FreeVec(wb_data->old_function);
-			wb_data->old_function = 0;
-			old_findtask_function = NULL;
-		}
-
+#if !defined(__MORPHOS__)
 		CacheClearU();
-		Permit();
 #endif
+		Permit();
+
+		// Calls that entered a vector before it was restored
+		wb_wait_patches();
 	}
 
-	// If we didn't fail, decrement patch count
-	if (!fail && wb_data->patch_count > 0)
+	// Decrement patch count
+	if (wb_data->patch_count > 0)
 		--wb_data->patch_count;
 
 	// Unlock patch information
 	L_FreeSemaphore(&wb_data->patch_lock);
 
-	return (BOOL)(!fail);
+	return removed;
 }

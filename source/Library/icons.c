@@ -30,56 +30,16 @@ For more information on Directory Opus for Windows please see:
 
 */
 
-#ifdef __amigaos3__
-static inline void atomic_inc(ULONG *counter)
-{
-	asm volatile("addql #1,%0" : "+m"(*counter));
-}
-
-static inline void atomic_dec(ULONG *counter)
-{
-	asm volatile("subql #1,%0" : "+m"(*counter));
-}
-#elif defined(__AROS__) && defined(__arm__)
-	#include <aros/atomic.h>
-static inline void atomic_inc(ULONG *counter)
-{
-	__AROS_ATOMIC_INC_L(*counter);
-}
-
-static inline void atomic_dec(ULONG *counter)
-{
-	__AROS_ATOMIC_DEC_L(*counter);
-}
-#elif defined(__MORPHOS__)
-	#include <hardware/atomic.h>
-static inline void atomic_inc(ULONG *counter)
-{
-	ATOMIC_ADD(counter, 1);
-}
-
-static inline void atomic_dec(ULONG *counter)
-{
-	ATOMIC_SUB(counter, 1);
-}
-#else
-static inline void atomic_inc(ULONG *counter)
-{
-	__sync_add_and_fetch(counter, 1);
-}
-
-static inline void atomic_dec(ULONG *counter)
-{
-	__sync_sub_and_fetch(counter, 1);
-}
-#endif
-
-extern ULONG usecount[WB_PATCH_COUNT];
-
 // Patched PutDiskObject()
 PATCHED_2(BOOL, LIBFUNC L_WB_PutDiskObject, a0, char *, name, a1, struct DiskObject *, diskobj)
 {
 	atomic_inc(&usecount[WB_PATCH_PUTDISKOBJECT]);
+	if (!WB_PATCH_ACTIVE(WB_PATCH_PUTDISKOBJECT))
+	{
+		BOOL res = WB_CALL_OLD_2(BOOL, WB_PATCH_PUTDISKOBJECT, a0, name, a1, diskobj);
+		atomic_dec(&usecount[WB_PATCH_PUTDISKOBJECT]);
+		return res;
+	}
 	{
 		struct LibData *data;
 		struct MyLibrary *libbase;
@@ -122,6 +82,12 @@ PATCH_END
 PATCHED_1(BOOL, LIBFUNC L_WB_DeleteDiskObject, a0, char *, name)
 {
 	atomic_inc(&usecount[WB_PATCH_DELETEDISKOBJECT]);
+	if (!WB_PATCH_ACTIVE(WB_PATCH_DELETEDISKOBJECT))
+	{
+		BOOL res = WB_CALL_OLD_1(BOOL, WB_PATCH_DELETEDISKOBJECT, a0, name);
+		atomic_dec(&usecount[WB_PATCH_DELETEDISKOBJECT]);
+		return res;
+	}
 	{
 		struct LibData *data;
 		struct MyLibrary *libbase;
@@ -254,14 +220,7 @@ char *icon_fullname(struct LibData *data, char *name)
 // PutDiskObject without notification
 BOOL LIBFUNC L_WriteIcon(REG(a0, char *name), REG(a1, struct DiskObject *icon), REG(a6, struct MyLibrary *libbase))
 {
-	struct LibData *data;
 	BOOL result;
-
-#if defined(__amigaos4__) || defined(__AROS__)
-	libbase = dopuslibbase_global;
-#endif
-	// Get data pointer
-	data = (struct LibData *)libbase->ml_UserData;
 
 	// No icon?
 	if (!icon)
@@ -324,10 +283,12 @@ BOOL LIBFUNC L_WriteIcon(REG(a0, char *name), REG(a1, struct DiskObject *icon), 
 		if (IconBase->lib_Version >= 44)
 			result = PutIconTags(name, icon, TAG_DONE);
 
+		else if (WB_PATCH_ACTIVE(WB_PATCH_PUTDISKOBJECT))
+			// Write the icon, bypassing our patch
+			result = WB_CALL_OLD_2(BOOL, WB_PATCH_PUTDISKOBJECT, a0, name, a1, icon);
+
 		else
-			// Write the icon
-			result = LIBCALL_2(
-				BOOL, data->wb_data.old_function[WB_PATCH_PUTDISKOBJECT], IconBase, IIcon, a0, name, a1, icon);
+			result = PutDiskObject(name, icon);
 	}
 
 	//#undef IconBase
@@ -339,17 +300,12 @@ BOOL LIBFUNC L_WriteIcon(REG(a0, char *name), REG(a1, struct DiskObject *icon), 
 // DeleteDiskObject without notification
 BOOL LIBFUNC L_DeleteIcon(REG(a0, char *name), REG(a6, struct MyLibrary *libbase))
 {
-	struct LibData *data;
-
-#if defined(__amigaos4__) || defined(__AROS__)
-	libbase = dopuslibbase_global;
-#endif
-
-	// Get data pointer
-	data = (struct LibData *)libbase->ml_UserData;
+	// Without our patch running there is nothing to bypass
+	if (!WB_PATCH_ACTIVE(WB_PATCH_DELETEDISKOBJECT))
+		return DeleteDiskObject(name);
 
 	// Delete it
-	return LIBCALL_1(BOOL, data->wb_data.old_function[WB_PATCH_DELETEDISKOBJECT], IconBase, IIcon, a0, name);
+	return WB_CALL_OLD_1(BOOL, WB_PATCH_DELETEDISKOBJECT, a0, name);
 }
 
 // Get icon flags
