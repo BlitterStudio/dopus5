@@ -1604,7 +1604,6 @@ struct DiskObject *LIBFUNC L_CopyDiskObject(REG(a0, struct DiskObject *icon),
 	DiskObjectCopy *copy;
 	long planesize;
 	struct LibData *data;
-	WB_Data *wb_data;
 
 #if defined(__amigaos4__) || defined(__AROS__)
 	libbase = dopuslibbase_global;
@@ -1614,9 +1613,8 @@ struct DiskObject *LIBFUNC L_CopyDiskObject(REG(a0, struct DiskObject *icon),
 	if (!icon)
 		return 0;
 
-	// Get data pointers
+	// Get data pointer
 	data = (struct LibData *)libbase->ml_UserData;
-	wb_data = &data->wb_data;
 
 	//#define IconBase	(data->icon_base)
 
@@ -1763,15 +1761,11 @@ struct DiskObject *LIBFUNC L_CopyDiskObject(REG(a0, struct DiskObject *icon),
 // Free a DiskObject copy
 void LIBFUNC L_FreeDiskObjectCopy(REG(a0, struct DiskObject *icon), REG(a6, struct MyLibrary *libbase))
 {
-	struct LibData *data;
 	short type;
 
 #if defined(__amigaos4__) || defined(__AROS__)
 	libbase = dopuslibbase_global;
 #endif
-
-	// Get data pointer
-	data = (struct LibData *)libbase->ml_UserData;
 
 	// Valid icon?
 	if (!icon)

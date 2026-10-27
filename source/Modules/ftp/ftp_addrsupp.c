@@ -307,7 +307,7 @@ static int disk_error(struct opusftp_globals *ogp, struct Window *win, LONG err,
 	char buf[80], error_text[140];
 	int result = 1;
 	struct TagItem tags[] = {
-		AR_Window, 0, AR_Screen, 0, AR_Message, 0, AR_Button, 0, AR_Button, 0, TAG_DONE};
+		{AR_Window, 0}, {AR_Screen, 0}, {AR_Message, 0}, {AR_Button, 0}, {AR_Button, 0}, {TAG_DONE}};
 
 	struct Screen *screen;
 
@@ -1786,10 +1786,10 @@ static Att_List *do_import_amftp(struct display_globals *dg, char *path)
 					{
 						// get main settings from amftp config
 
-						if (p->amftp_name)
+						if (*p->amftp_name)
 							stccpy(e->se_name, p->amftp_name, HOSTNAMELEN);
 
-						if (p->amftp_host)
+						if (*p->amftp_host)
 							stccpy(e->se_host, p->amftp_host, HOSTNAMELEN);
 
 						e->se_protocol = FTP_PROTOCOL_FTP;
@@ -1799,10 +1799,10 @@ static Att_List *do_import_amftp(struct display_globals *dg, char *path)
 
 						if (!e->se_anon)
 						{
-							if (p->amftp_login)
+							if (*p->amftp_login)
 								stccpy(e->se_user, p->amftp_login, USERNAMELEN);
 
-							if (p->amftp_pass)
+							if (*p->amftp_pass)
 								stccpy(e->se_pass, p->amftp_pass, PASSWORDLEN);
 						}
 
@@ -1811,7 +1811,7 @@ static Att_List *do_import_amftp(struct display_globals *dg, char *path)
 						if (e->se_port <= 0 || e->se_port > 16384)
 							e->se_port = ftp_protocol_default_port(e->se_protocol);
 
-						if (p->amftp_remote)
+						if (*p->amftp_remote)
 							stccpy(e->se_path, p->amftp_remote, PATHLEN);
 
 						// get global default  env and mark as custom

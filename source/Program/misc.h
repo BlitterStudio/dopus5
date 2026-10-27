@@ -60,7 +60,7 @@ void getsizestring(char *, ULONG);
 BOOL copy_string(char *, char **, struct DOpusRemember **);
 void do_title_string(char *, char *, char *);
 char *get_our_pubscreen(void);
-const char *strstri(const char *, const char *);
+char *strstri(const char *, const char *);
 struct Node *next_node(struct List *, struct Node *, int);
 struct IntuiMessage *get_imsg(struct Window *);
 void lock_listlock(struct ListLock *list, BOOL exclusive);

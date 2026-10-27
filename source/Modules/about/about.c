@@ -33,7 +33,7 @@ For more information on Directory Opus for Windows please see:
 
 void remap_logo(struct Screen *scr);
 void free_logo_remap(void);
-void about_show_image(struct Window *, GL_Object *, image_data *);
+void about_show_image(struct Window *, GL_Object *, const image_data *);
 void about_scroll_text(about_data *data);
 void free_about_data(about_data *data);
 void about_next_line(about_data *data);
@@ -547,7 +547,7 @@ void remap_logo(struct Screen *scr)
 		free_logo_remap();
 }
 
-void about_show_image(struct Window *win, GL_Object *object, image_data *image)
+void about_show_image(struct Window *win, GL_Object *object, const image_data *image)
 {
 	OpenImageInfo info;
 	APTR im;
@@ -555,7 +555,7 @@ void about_show_image(struct Window *win, GL_Object *object, image_data *image)
 
 	// Fill out info
 	info.oi_ImageData = image->imagedata;
-	info.oi_Palette = image->palette;
+	info.oi_Palette = (ULONG *)image->palette;
 	info.oi_Width = image->width;
 	info.oi_Height = image->height;
 	info.oi_Depth = image->depth;

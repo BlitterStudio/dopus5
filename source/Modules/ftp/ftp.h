@@ -261,7 +261,7 @@ int list(struct ftp_info *,
 unsigned int get(struct ftp_info *,
 				 int (*updatefn)(void *, unsigned int, unsigned int),
 				 void *updateinfo,
-				 char *remote,
+				 const char *remote,
 				 char *local,
 				 BOOL restart);
 unsigned int put(struct ftp_info *,
@@ -281,7 +281,7 @@ BOOL epsv_to_port(unsigned int *port, const char *buf);
 
 // Custom string functions
 #if !defined(__MORPHOS__) && !defined(__AROS__)
-char *stpblk(char *p);
+char *stpblk(const char *p);
 #endif
 char *stptok(const char *s, char *tok, size_t toklen, char *brk);
 

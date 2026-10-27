@@ -876,7 +876,7 @@ typedef struct _ConfigWindow
 typedef struct _NewConfigWindow
 {
 	void *parent;				 // Parent to open on
-	ConfigWindow *dims;			 // Window dimensions
+	const ConfigWindow *dims;	 // Window dimensions
 	char *title;				 // Window title
 	struct DOpusLocale *locale;	 // Locale to use
 	struct MsgPort *port;		 // Message port to use

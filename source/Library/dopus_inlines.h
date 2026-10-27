@@ -25,7 +25,7 @@
 		Att_List *,                          \
 		list,                                \
 		a0,                                  \
-		char *,                              \
+		const char *,                              \
 		name,                                \
 		a1,                                  \
 		IPTR,                                \

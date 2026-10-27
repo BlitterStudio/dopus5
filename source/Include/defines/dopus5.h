@@ -47,14 +47,14 @@
 			 187,                                       \
 			 /* s */)
 
-#define AddObjectList(___window, ___objects)             \
-	AROS_LC2(ObjectList *,                               \
-			 AddObjectList,                              \
-			 AROS_LCA(struct Window *, (___window), A0), \
-			 AROS_LCA(ObjectDef *, (___objects), A1),    \
-			 struct Library *,                           \
-			 DOPUS_BASE_NAME,                            \
-			 48,                                         \
+#define AddObjectList(___window, ___objects)                \
+	AROS_LC2(ObjectList *,                                  \
+			 AddObjectList,                                 \
+			 AROS_LCA(struct Window *, (___window), A0),    \
+			 AROS_LCA(const ObjectDef *, (___objects), A1), \
+			 struct Library *,                              \
+			 DOPUS_BASE_NAME,                               \
+			 48,                                            \
 			 /* s */)
 
 #define AddScrollBars(___win, ___list, ___drawinfo, ___noidcmp) \
@@ -79,14 +79,14 @@
 			 86,                                     \
 			 /* s */)
 
-#define AddWindowMenus(___window, ___data)               \
+#define AddWindowMenus(___window, ___data)                  \
 	AROS_LC2NR(void,                                        \
-			 AddWindowMenus,                             \
-			 AROS_LCA(struct Window *, (___window), A0), \
-			 AROS_LCA(MenuData *, (___data), A1),        \
-			 struct Library *,                           \
-			 DOPUS_BASE_NAME,                            \
-			 63,                                         \
+			 AddWindowMenus,                                \
+			 AROS_LCA(struct Window *, (___window), A0),    \
+			 AROS_LCA(const MenuData *, (___data), A1),     \
+			 struct Library *,                              \
+			 DOPUS_BASE_NAME,                               \
+			 63,                                            \
 			 /* s */)
 
 #define AllocAppMessage(___mem, ___reply, ___num)        \
@@ -223,7 +223,7 @@
 	AROS_LC4(Att_Node *,                                 \
 			 Att_NewNode,                                \
 			 AROS_LCA(Att_List *, (___list), A0),        \
-			 AROS_LCA(char *, (___name), A1),            \
+			 AROS_LCA(const char *, (___name), A1),      \
 			 AROS_LCA(IPTR, (___data), D0),              \
 			 AROS_LCA(ULONG, (___flags), D1),            \
 			 struct Library *,                           \
@@ -331,7 +331,7 @@
 #define BuildMenuStrip(___data, ___locale)                    \
 	AROS_LC2(struct Menu *,                                   \
 			 BuildMenuStrip,                                  \
-			 AROS_LCA(MenuData *, (___data), A0),             \
+			 AROS_LCA(const MenuData *, (___data), A0),       \
 			 AROS_LCA(struct DOpusLocale *, (___locale), A1), \
 			 struct Library *,                                \
 			 DOPUS_BASE_NAME,                                 \
@@ -443,7 +443,7 @@
 	AROS_LC5(int,                                                     \
 			 CalcWindowDims,                                          \
 			 AROS_LCA(struct Screen *, (___screen), A0),              \
-			 AROS_LCA(ConfigWindow *, (___pos), A1),                  \
+			 AROS_LCA(const ConfigWindow *, (___pos), A1),            \
 			 AROS_LCA(struct IBox *, (___dest), A2),                  \
 			 AROS_LCA(struct TextFont *, (___font), A3),              \
 			 AROS_LCA(ULONG, (___flags), D0),                         \
@@ -2648,15 +2648,15 @@
 	AROS_LC1NR(void,  SetBusyPointer, AROS_LCA(struct Window *, (___window), A0), struct Library *, DOPUS_BASE_NAME, 15, \
 			 /* s */)
 
-#define SetConfigWindowLimits(___window, ___min, ___max) \
+#define SetConfigWindowLimits(___window, ___min, ___max)    \
 	AROS_LC3NR(void,                                        \
-			 SetConfigWindowLimits,                      \
-			 AROS_LCA(struct Window *, (___window), A0), \
-			 AROS_LCA(ConfigWindow *, (___min), A1),     \
-			 AROS_LCA(ConfigWindow *, (___max), A2),     \
-			 struct Library *,                           \
-			 DOPUS_BASE_NAME,                            \
-			 310,                                        \
+			 SetConfigWindowLimits,                         \
+			 AROS_LCA(struct Window *, (___window), A0),    \
+			 AROS_LCA(const ConfigWindow *, (___min), A1),  \
+			 AROS_LCA(const ConfigWindow *, (___max), A2),  \
+			 struct Library *,                              \
+			 DOPUS_BASE_NAME,                               \
+			 310,                                           \
 			 /* s */)
 
 #define SetEnv(___name, ___data, ___save)     \
@@ -3173,15 +3173,15 @@
 
 #define WB_Remove_Patch() AROS_LC0(BOOL, WB_Remove_Patch, struct Library *, DOPUS_BASE_NAME, 178, /* s */)
 
-#define WriteBuf(___file, ___data, ___size)   \
-	AROS_LC3(long,                            \
-			 WriteBuf,                        \
-			 AROS_LCA(APTR, (___file), A0),   \
-			 AROS_LCA(char *, (___data), A1), \
-			 AROS_LCA(long, (___size), D0),   \
-			 struct Library *,                \
-			 DOPUS_BASE_NAME,                 \
-			 167,                             \
+#define WriteBuf(___file, ___data, ___size)         \
+	AROS_LC3(long,                                  \
+			 WriteBuf,                              \
+			 AROS_LCA(APTR, (___file), A0),         \
+			 AROS_LCA(const char *, (___data), A1), \
+			 AROS_LCA(long, (___size), D0),         \
+			 struct Library *,                      \
+			 DOPUS_BASE_NAME,                       \
+			 167,                                   \
 			 /* s */)
 
 #define WriteClipString(___clip, ___string, ___len)        \

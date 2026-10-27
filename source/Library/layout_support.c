@@ -1667,7 +1667,7 @@ void LIBFUNC L_SetWindowID(REG(a0, struct Window *window),
 ULONG LIBFUNC L_GetWindowID(REG(a0, struct Window *window))
 {
 	WindowID *id;
-	STRPTR name = NULL;
+	STRPTR name UNUSED = NULL;  // Only used on AmigaOS 4
 
 	// Valid window?
 	if (!window)
@@ -1703,7 +1703,7 @@ ULONG LIBFUNC L_GetWindowID(REG(a0, struct Window *window))
 struct MsgPort *LIBFUNC L_GetWindowAppPort(REG(a0, struct Window *window))
 {
 	WindowID *id;
-	STRPTR name = NULL;
+	STRPTR name UNUSED = NULL;  // Only used on AmigaOS 4
 
 	// Valid window?
 	if (!window)
