@@ -1543,6 +1543,8 @@ IPC_EntryCode(lister_code)
 					// Icon mode?
 					if (flags & LISTERF_VIEW_ICONS)
 					{
+						ULONG old_flags = lister->flags;
+
 						// Get flags
 						lister->flags &= ~LISTERF_SHOW_ALL;
 						lister->flags |= flags & ~(LISTERF_ICON_ACTION | LISTERF_VIEW_ICONS);
@@ -1550,6 +1552,17 @@ IPC_EntryCode(lister_code)
 						// Switch to icon mode
 						lister_do_function(
 							lister, (flags & LISTERF_ICON_ACTION) ? MENU_LISTER_ICON_ACTION : MENU_LISTER_VIEW_ICON);
+
+						// Already in that mode, so the switch did nothing; read the icons again
+						// for the new Show All setting and update the menu
+						if (lister->window &&
+							(old_flags & (LISTERF_VIEW_ICONS | LISTERF_ICON_ACTION)) ==
+								(flags & (LISTERF_VIEW_ICONS | LISTERF_ICON_ACTION)) &&
+							(old_flags ^ lister->flags) & LISTERF_SHOW_ALL)
+						{
+							IPC_Command(lister->ipc, LISTER_GET_ICONS, 0, 0, 0, 0);
+							lister_fix_menus(lister, 0);
+						}
 					}
 
 					// Name mode

@@ -45,6 +45,19 @@ BOOL display_rtg_bitmap(struct BitMap *bm)
 	return FALSE;
 }
 
+// Does this bitmap draw in the pens of a colour map (8 bits or fewer)? RTG
+// bitmaps can claim 8 in BMA_DEPTH whatever their real depth, so ask P96/CGX
+BOOL display_clut_bitmap(struct BitMap *bm)
+{
+	if (!display_rtg_bitmap(bm))
+		return TRUE;
+#if !defined(__AROS__)
+	if (P96Base && p96GetBitMapAttr(bm, P96BMA_ISP96))
+		return (BOOL)(p96GetBitMapAttr(bm, P96BMA_DEPTH) <= 8);
+#endif
+	return (BOOL)(GetCyberMapAttr(bm, CYBRMATTR_DEPTH) <= 8);
+}
+
 // How long display_open() holds the first icon paint for the backdrop picture (ticks)
 #define PATTERN_WAIT_TICKS 100
 
