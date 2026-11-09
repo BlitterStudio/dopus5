@@ -1282,6 +1282,81 @@ BOOL backdrop_masks_misplaced(BackdropObject *object)
 #endif
 }
 
+#ifndef USE_DRAWICONSTATE
+// Build the mask of an OS 3.5 palette icon image from its own transparent
+// colour. Remapped to the screen, any colour close to the background colour
+// is drawn in pen 0, so the remapped planes can't tell those pixels from the
+// background. Returns FALSE if the icon has no palette image for it.
+static BOOL backdrop_palette_mask(BackdropObject *object, short which, struct Image *image, UWORD *mask)
+{
+	LONG palette = FALSE, width = 0, height = 0, trans = -1;
+	UBYTE *data = 0;
+	short row, col, columns;
+
+	if (IconBase->lib_Version < 44)
+		return FALSE;
+
+	// Only on screens with a colour map. On hi/truecolor screens the icon's
+	// colours get pens of their own, and IconLib draws palette icons for Opus
+	// itself in true colour; asked for the image data it draws them through
+	// remapped pens instead
+	if (!GUI->screen_pointer || !display_clut_bitmap(GUI->screen_pointer->RastPort.BitMap))
+		return FALSE;
+#if defined(__MORPHOS__)
+	// Drawn from its PNG bitmap, not through the mask
+	if (ISOWN(object->icon))
+		return FALSE;
+#endif
+
+	// Palette-mapped icon of the same size as the image we draw?
+	IconControl(object->icon,
+				ICONCTRLA_IsPaletteMapped,
+				(IPTR)&palette,
+				ICONCTRLA_GetWidth,
+				(IPTR)&width,
+				ICONCTRLA_GetHeight,
+				(IPTR)&height,
+				TAG_DONE);
+	if (!palette || width != image->Width || height != image->Height)
+		return FALSE;
+
+	// Second image; icon.library makes the selected image from the first
+	// one if the icon has only one, so that one has the first one's shape
+	if (which)
+		IconControl(object->icon,
+					ICONCTRLA_GetImageData2,
+					(IPTR)&data,
+					ICONCTRLA_GetTransparentColor2,
+					(IPTR)&trans,
+					TAG_DONE);
+	if (!data)
+	{
+		trans = -1;
+		IconControl(object->icon,
+					ICONCTRLA_GetImageData1,
+					(IPTR)&data,
+					ICONCTRLA_GetTransparentColor1,
+					(IPTR)&trans,
+					TAG_DONE);
+	}
+	if (!data)
+		return FALSE;
+
+	// Every pixel not in the transparent colour is opaque (all of them if the
+	// icon has no transparent colour, as Workbench draws it)
+	columns = (width + 15) >> 4;
+	for (row = 0; row < height; row++, mask += columns)
+	{
+		for (col = 0; col < width; col++, data++)
+		{
+			if (trans < 0 || *data != trans)
+				mask[col >> 4] |= 0x8000 >> (col & 15);
+		}
+	}
+	return TRUE;
+}
+#endif
+
 // Get image mask for an icon
 void backdrop_get_masks(BackdropObject *object)
 {
@@ -1314,8 +1389,21 @@ void backdrop_get_masks(BackdropObject *object)
 												   backdrop_mask_memory() | MEMF_CLEAR)))
 				break;
 
+			// Palette icon? Its own transparent colour says what is background
+			if (backdrop_palette_mask(object, a, image, object->image_mask[a]))
+			{
+				// Only transparent around the edge
+				if (!(environment->env->desktop_flags & DESKTOPF_TRANSPARENCY))
+					BuildTransDragMask(object->image_mask[a],
+									   image->ImageData,
+									   image->Width,
+									   image->Height,
+									   image->Depth,
+									   DRAGF_CUSTOM);
+			}
+
 			// Full transparency? (quicker)
-			if (environment->env->desktop_flags & DESKTOPF_TRANSPARENCY)
+			else if (environment->env->desktop_flags & DESKTOPF_TRANSPARENCY)
 			{
 				UWORD *data = image->ImageData, *mask;
 				long planesize = ((image->Width + 15) >> 4) * image->Height, word;

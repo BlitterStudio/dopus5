@@ -1,3 +1,30 @@
+[dopus5 next] Palette icons keep colours drawn in colour 0
+Program change; version bump deferred.
+
+- Opus built the mask of a borderless icon from the image remapped to
+  the screen, so every pixel drawn in colour 0 counted as background.
+  Colours of an OS 3.5 icon close to the screen's colour 0 (the gray
+  of a 4-colour screen, for example) are remapped to it and became
+  transparent, around the edge in the default mode and everywhere with
+  "Borderless icons are fully transparent".  Workbench showed them
+  gray.  On screens of up to 256 colours the mask of a palette icon
+  now comes from the icon's own transparent colour; an icon without
+  one is drawn whole, as on Workbench.  Dragged icons use the same
+  mask.  Planar icons, and hi/truecolor screens, where the icon's
+  colours get pens of their own, are unchanged.  On those screens
+  IconLib draws palette icons for Opus in true colour, but only until
+  something asks it for their image data, so Opus does not ask there
+  (reported by Peter Keunecke).
+
+[dopus5 next] ARexx Show All on an icon mode lister
+Program change; version bump deferred.
+
+- 'lister set <h> mode icon showall' (or 'mode icon' to turn it off)
+  on a lister already in that icon mode answered with the new mode,
+  but did not show the other files and left Show All unchecked in the
+  lister's View As menu.  The files are read again and the menu is
+  updated.
+
 [dopus5 next] Build without compiler warnings on GCC 16 (issue #228)
 Program, dopus5.library, all modules and build-system change; version
 bump deferred.

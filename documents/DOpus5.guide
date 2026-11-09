@@ -1,6 +1,6 @@
 @database dopus5
 @master dopus5.guide
-@$VER: Dopus5Guide 58.22 (24.10.2026)
+@$VER: Dopus5Guide 58.23 (09.11.2026)
 @author "Mark Anderson, Andrew Dunbar, Dr Greg Perry, Leo Davidson and Dave Clarke"
 @(c) "Directory Opus 5 Help Guide (c) GPSoftware 1999"
 @(c) "Directory Opus 5 Help Guide (c) DOPUS5 Open Source Team 2012-2026"
@@ -3794,6 +3794,9 @@ This section controls various aspects of Opus's icon display routines.
     Makes Opus render its borderless icons with colour 0 transparent over
     the whole icon, rather than just colour 0 around the edge. This
     results in quite a large speed increase when loading borderless icons.
+    On screens of up to 256 colours, OS 3.5 (palette) icons use their own
+    transparent colour instead of colour 0, as Workbench does, so colours
+    of the icon that are drawn in the screen's colour 0 stay visible.
 
   Cache icon images:
     Icon caching improves the speed of displaying icon mode and icon action

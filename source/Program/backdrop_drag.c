@@ -102,6 +102,7 @@ BOOL backdrop_start_drag(BackdropInfo *info, short x, short y)
 BOOL backdrop_drag_object(BackdropInfo *info, BackdropObject *object)
 {
 	struct Image *image;
+	UWORD *mask;
 	ULONG flags = 0;
 
 	// Is object already being dragged?
@@ -148,6 +149,21 @@ BOOL backdrop_drag_object(BackdropInfo *info, BackdropObject *object)
 	else
 		object->drag_info->flags |= DRAGF_TRANSPARENT | DRAGF_OPAQUE;
 	GetDragMask(object->drag_info);
+
+	// GetDragMask() sees only pens; where the icon's own mask is set, the image
+	// is opaque even in pen 0 (palette colours remapped to the background)
+	if (object->drag_info->bob.ImageShadow &&
+		(mask = object->image_mask[(image == (struct Image *)object->icon->do_Gadget.GadgetRender) ? 0 : 1]))
+	{
+		short row, col, columns = (image->Width + 15) >> 4, drag_columns = (object->drag_info->width + 15) >> 4;
+		UWORD *shadow = (UWORD *)object->drag_info->bob.ImageShadow;
+
+		for (row = 0; row < image->Height; row++, mask += columns, shadow += drag_columns)
+		{
+			for (col = 0; col < columns; col++)
+				shadow[col] |= mask[col];
+		}
+	}
 
 	return 1;
 }
