@@ -649,6 +649,8 @@ unsigned long LIBFUNC L_Config_Environment(REG(a0, Cfg_Environment *env),
 							data->palette_count - ((((struct Library *)IntuitionBase)->lib_Version >= 39) ? 8 : 4);
 						for (a = 0; a < 16; a++)
 							scrdata.pen_array[a] = data->palette_array[a];
+						for (; a < 24; a++)
+							scrdata.pen_array2[a - 16] = data->palette_array[a];
 
 						// Get current pens
 						fgpen = data->colour_selection[0];
@@ -1683,7 +1685,7 @@ BOOL _config_env_open(config_env_data *data, struct Screen *screen)
 		short base, a;
 
 		// Initialise table
-		for (base = 0; base < 16; base++)
+		for (base = 0; base < 24; base++)
 			data->palette_edit_pens[base] = -1;
 		base = 0;
 
@@ -1709,7 +1711,7 @@ BOOL _config_env_open(config_env_data *data, struct Screen *screen)
 		}
 
 		// Get pens we're given initially
-		for (a = 0; a < 8; a++)
+		for (a = 0; a < 16; a++)
 		{
 			// Pen allocated?
 			if (data->initial_pen_alloc & (1 << a))
@@ -1724,19 +1726,20 @@ BOOL _config_env_open(config_env_data *data, struct Screen *screen)
 		// Try and allocate our own pens to play with
 		if (((struct Library *)GfxBase)->lib_Version >= 39)
 		{
-			for (a = 0; a < 8; a++)
+			for (a = 0; a < 16; a++)
 			{
 				// Nothing already allocated?
 				if (data->palette_edit_pens[a + base] == -1)
 				{
 					short pen;
+					const ULONG *rgb = CFG_USER_PEN_RGB(data->config, a);
 
 					// Allocate a pen
 					if ((pen = ObtainPen(data->window->WScreen->ViewPort.ColorMap,
 										 -1,
-										 data->config->palette[25 + a * 3],
-										 data->config->palette[26 + a * 3],
-										 data->config->palette[27 + a * 3],
+										 rgb[0],
+										 rgb[1],
+										 rgb[2],
 										 PEN_EXCLUSIVE)) != -1)
 					{
 						// Got a pen!
@@ -1809,7 +1812,7 @@ void _config_env_close(config_env_data *data)
 		{
 			short a;
 
-			for (a = 0; a < 16; a++)
+			for (a = 0; a < 24; a++)
 			{
 				// Got a pen?
 				if (data->palette_edit_freepen & (1 << a))

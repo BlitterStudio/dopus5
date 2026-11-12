@@ -1,5 +1,5 @@
 @DATABASE DOpusM2_ARexx
-@$VER: DOpusM2_ARexx.guide 57.9 (21.10.2026)
+@$VER: DOpusM2_ARexx.guide 57.10 (12.11.2026)
 @AUTHOR "Dr Greg Perry, Jonathan Potter, Leo Davidson, Andrew Dunbar and Dave Clarke"
 @(c) GPSoftware 1999
 @(c) DOPUS5 Open Source Team 2012-2014
@@ -930,14 +930,15 @@ For example,
 
 @{fg shine}dopus query palette
 @{fg text}
-Returns the current Opus palette information as a group of 16 hex numbers.
-The last 8 represent the Opus colours, the first 8 represent the system
-colours when Opus is on it's own screen.
+Returns the current Opus palette information as a group of 24 hex numbers.
+The first 8 represent the system colours when Opus is on it's own screen, the
+last 16 the user pens.
 
 For example,
         + @{b}dopus query palette@{ub}
         > @{i}0x909090 0x000000 0xF0F0F0 0x606DA0 0x808080 0xA0A0A0 0xA09070 0xF0A090
-          0xB4E494 0xC8FC00 0x004C94 0xFCFCD4 0xD8D8D8 0x183454 0xE8E8E8 0x505050@{ui}
+          0xB4E494 0xC8FC00 0x004C94 0xFCFCD4 0xD8D8D8 0x183454 0xE8E8E8 0x505050
+          0x00FFFF 0xFF0000 0x00FF00 0x0000FF 0xFF6000 0xAAAAAA 0x555555 0xFFDBBB@{ui}
 
 
 @{fg shine}See also:@{fg text}
@@ -975,7 +976,7 @@ The pen number is mapped in the following way:
 
   1-4    bottom four system colours
   5-8    top four system colours
- 9-16    Opus user pens
+ 9-24    Opus user pens
 
 For example,
         + @{b}dopus query pens icons@{ub}
@@ -1367,8 +1368,8 @@ For example,
 @{fg shine}dopus set palette @{fg fill}<@{fg text}values@{fg fill}>
 @{fg text}
 This command allows you to configure the Opus palette.  It accepts a string
-of up to 16 hex values; the last 8 represent the Opus colours, the first 8
-represent the system colours when Opus is on it's own screen.
+of up to 24 hex values; the first 8 represent the system colours when Opus is
+on it's own screen, the last 16 the user pens.
 
 For example,
         + @{b}dopus set palette 0xffaabc 0x00aa55@{ub}
@@ -1411,7 +1412,7 @@ The pen number is mapped in the following way:
 
  1-4     bottom four system colours
  5-8     top four system colours
- 9-16    Opus user pens
+ 9-24    Opus user pens
 
 For example,
         + @{b}dopus set pens icons 1 2 2 5 7 2@{ub}

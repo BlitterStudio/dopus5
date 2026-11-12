@@ -1623,7 +1623,7 @@ void start_change_font(StartMenu *menu, short id)
 	short size;
 	char name[256];
 	unsigned short font_pen_count;
-	unsigned char font_pen_table[16];
+	unsigned char font_pen_table[24];
 	short a, pen, fpen;
 
 	// Hide the start menu

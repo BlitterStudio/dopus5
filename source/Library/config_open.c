@@ -1452,6 +1452,10 @@ BOOL LIBFUNC L_OpenEnvironment(REG(a0, char *name), REG(a1, struct OpenEnvironme
 				for (i = 0; i < 50; i++)
 					data->env.palette[i] = AROS_BE2LONG(data->env.palette[i]);
 
+				// User pen colours 9-16 (CONFIG_VERSION_19)
+				for (i = 0; i < 24; i++)
+					data->env.palette2[i] = AROS_BE2LONG(data->env.palette2[i]);
+
 				data->env.window_pos.Left = AROS_BE2WORD(data->env.window_pos.Left);
 				data->env.window_pos.Top = AROS_BE2WORD(data->env.window_pos.Top);
 				data->env.window_pos.Width = AROS_BE2WORD(data->env.window_pos.Width);

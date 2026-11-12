@@ -224,7 +224,7 @@ long LIBFUNC L_ShowPaletteBox(REG(a0, struct Window *parent),
 	short a, extra = 0;
 	struct Window *window;
 	ConfigWindow dims;
-	short pen_array2[18], slide_gun = -1, ret = -1;
+	short pen_array2[26], slide_gun = -1, ret = -1;
 	short quit_flag = 0;
 	ColourSpec32 spec_backup[2];
 
@@ -257,6 +257,11 @@ long LIBFUNC L_ShowPaletteBox(REG(a0, struct Window *parent),
 	{
 		data->pen_array[a] = screen_data->pen_array[a];
 		pen_array2[a] = screen_data->pen_array[a];
+	}
+	for (; a < 24; a++)
+	{
+		data->pen_array[a] = screen_data->pen_array2[a - 16];
+		pen_array2[a] = screen_data->pen_array2[a - 16];
 	}
 
 	// Get pen count

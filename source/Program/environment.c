@@ -884,6 +884,10 @@ int environment_save(Cfg_Environment *env, char *name, short snapshot, CFG_ENVR 
 			for (i = 0; i < 50; i++)
 				env_be->palette[i] = AROS_LONG2BE(env_be->palette[i]);
 
+			// User pen colours 9-16 (CONFIG_VERSION_19)
+			for (i = 0; i < 24; i++)
+				env_be->palette2[i] = AROS_LONG2BE(env_be->palette2[i]);
+
 			env_be->window_pos.Left = AROS_WORD2BE(env_be->window_pos.Left);
 			env_be->window_pos.Top = AROS_WORD2BE(env_be->window_pos.Top);
 			env_be->window_pos.Width = AROS_WORD2BE(env_be->window_pos.Width);
@@ -1544,7 +1548,7 @@ IPC_EntryCode(environment_proc)
 												 GUI->pens,
 												 ipc,
 												 &main_ipc,
-												 (UWORD)(GUI->pen_alloc & 0xff),
+												 (UWORD)(GUI->pen_alloc & 0xffff),
 												 change_flags,
 												 edit_path,
 												 script_list)))

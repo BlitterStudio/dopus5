@@ -59,7 +59,7 @@ void _config_env_palette_update_sliders(config_env_data *data)
 		// Set current level
 		SetGadgetValue(data->option_list,
 					   GAD_ENVIRONMENT_PALETTE_RED + a,
-					   data->config->palette[data->sel_colour * 3 + a + 1] >> (32 - data->gun_bits[a]));
+					   CFG_PEN_RGB(data->config, data->sel_colour)[a] >> (32 - data->gun_bits[a]));
 	}
 }
 
@@ -67,10 +67,10 @@ void _config_env_palette_update_sliders(config_env_data *data)
 void _config_env_palette_change_colour(config_env_data *data, int gun, ULONG val)
 {
 	// Set new value
-	data->config->palette[data->sel_colour * 3 + gun + 1] = (val << (32 - data->gun_bits[gun]));
+	CFG_PEN_RGB(data->config, data->sel_colour)[gun] = (val << (32 - data->gun_bits[gun]));
 
 	// Load colour register
-	set_rgb32(data, data->sel_colour, data->config->palette + (data->sel_colour * 3) + 1);
+	set_rgb32(data, data->sel_colour, CFG_PEN_RGB(data->config, data->sel_colour));
 
 	// A truecolour screen doesn't show the new colour until the square is redrawn
 	_config_env_palette_redraw(data, data->orig_colour_sel);
@@ -330,8 +330,8 @@ void _config_env_palette_init(config_env_data *data)
 		if (data->own_screen > 4)
 		{
 			max = data->own_screen - 4;
-			if (max > 8)
-				max = 8;
+			if (max > ENV_MAX_USER_PENS)
+				max = ENV_MAX_USER_PENS;
 		}
 		else
 			max = 0;
@@ -347,8 +347,8 @@ void _config_env_palette_init(config_env_data *data)
 		max = (1 << data->window->WScreen->RastPort.BitMap->Depth) - 8;
 		if (max < 0)
 			max = 0;
-		if (max > 8)
-			max = 8;
+		if (max > ENV_MAX_USER_PENS)
+			max = ENV_MAX_USER_PENS;
 		SetGadgetChoices(data->option_list, GAD_ENVIRONMENT_PALETTE_COUNT, (APTR)(IPTR)(max << 16));
 		if (max == 0)
 			DisableObject(data->option_list, GAD_ENVIRONMENT_PALETTE_COUNT, TRUE);
@@ -363,8 +363,8 @@ void _config_env_colours_init(config_env_data *data)
 
 	// Get number of palette colours
 	data->palette_colours = (data->palette_table) ? data->config->palette_count : 0;
-	if (data->palette_colours > 8)
-		data->palette_colours = 8;
+	if (data->palette_colours > ENV_MAX_USER_PENS)
+		data->palette_colours = ENV_MAX_USER_PENS;
 
 	// Number of screen colours
 	num = 1 << data->window->RPort->BitMap->Depth;
@@ -401,7 +401,7 @@ void _config_env_colours_init(config_env_data *data)
 	data->palette_count = 4 + data->palette_colours;
 
 	// Initialise pen array
-	for (a = 4; a < 16; a++)
+	for (a = 4; a < 24; a++)
 		data->palette_array[a] = -1;
 
 	// Initialise palette array; OS colours first
@@ -453,7 +453,7 @@ void _config_env_reset_palette(config_env_data *data)
 
 	// Load palette
 	for (num = 0; num < data->palette_colours; num++, col++)
-		set_rgb32(data, col, data->env->env->palette + ((num + 8) * 3) + 1);
+		set_rgb32(data, col, CFG_USER_PEN_RGB(data->env->env, num));
 }
 
 // Load palette file

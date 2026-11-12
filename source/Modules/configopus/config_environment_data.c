@@ -117,7 +117,7 @@ const static struct TagItem
 											{TAG_MORE, (IPTR)_environment_relative_taglist}},
 
 	// Colour count slider
-	_environment_colour_count_taglist[] = {{GTSL_Max, 8}, {TAG_MORE, (IPTR)_environment_colour_slider_taglist}},
+	_environment_colour_count_taglist[] = {{GTSL_Max, 16}, {TAG_MORE, (IPTR)_environment_colour_slider_taglist}},
 
 	// Lister colour items
 	_environment_lister_colour_taglist[] = {{DLV_ShowSelected, 0}, {TAG_MORE, (IPTR)_environment_relative_taglist}},

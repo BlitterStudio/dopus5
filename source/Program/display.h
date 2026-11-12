@@ -59,8 +59,11 @@ typedef struct
 	APTR visual_info;			  // VisualInfo for the screen
 	struct AppWindow *appwindow;  // AppWindow pointer
 
-	UWORD pens[16];	  // Pen table
-	UWORD pen_alloc;  // Allocation flags
+	// Pen table: indexes 0-15 are the user pens, 16-19 the top four OS
+	// screen pens on our own screen.  pen_alloc bit n is set when pens[n]
+	// was allocated (bits 0-15 user pens, 16-19 the OS pens).
+	UWORD pens[20];	   // Pen table
+	ULONG pen_alloc;  // Allocation flags
 
 #ifdef __amigaos3__
 	UWORD magicwb_pen_alloc;  // MagicWB pens 4-7 we locked in place of Workbench
