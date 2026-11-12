@@ -172,7 +172,13 @@ void LIBFUNC L_UpdateGadgetValue(REG(a0, ObjectList *list),
 
 		// Store current value
 		if (msg)
+		{
 			object->gl_info.gl_gadget.data = msg->Code;
+
+			// Show slider level
+			if (object->object_kind == SLIDER_KIND)
+				_layout_slider_level(list->window, object, msg->Code);
+		}
 		break;
 
 	// Checkbox
@@ -646,6 +652,9 @@ void LIBFUNC L_SetGadgetValue(REG(a0, ObjectList *list), REG(d0, UWORD id), REG(
 
 		// Set number
 		GT_SetGadgetAttrs(gadget, list->window, 0, GTSL_Level, value, TAG_END);
+
+		// Show level
+		_layout_slider_level(list->window, object, value);
 		break;
 
 	// Scroller
@@ -1477,6 +1486,10 @@ struct IntuiMessage *LIBFUNC L_GetWindowMsg(REG(a0, struct MsgPort *port), REG(a
 				// Update gadget values
 				L_StoreGadgetValue(OBJLIST(msg->IDCMPWindow), msg, lib);
 			}
+
+			// A slider being dragged?
+			else if (msg->Class == IDCMP_MOUSEMOVE)
+				_layout_slider_message(msg);
 		}
 
 		// Break out; we only loop if we swallow a message
@@ -1562,6 +1575,9 @@ void LIBFUNC L_SetGadgetChoices(REG(a0, ObjectList *list), REG(d0, ULONG id), RE
 
 		// Change gadget settings
 		GT_SetGadgetAttrs(gadget, list->window, 0, GTSL_Min, min, GTSL_Max, max, TAG_END);
+
+		// Show level
+		_layout_slider_level(list->window, object, object->gl_info.gl_gadget.data);
 	}
 	break;
 
