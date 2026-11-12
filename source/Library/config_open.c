@@ -1462,6 +1462,7 @@ BOOL LIBFUNC L_OpenEnvironment(REG(a0, char *name), REG(a1, struct OpenEnvironme
 				data->env.window_pos.Height = AROS_BE2WORD(data->env.window_pos.Height);
 				data->env.general_screen_flags = AROS_BE2LONG(data->env.general_screen_flags);
 				data->env.palette_count = AROS_BE2WORD(data->env.palette_count);
+				data->env.palette_count_extra = AROS_BE2WORD(data->env.palette_count_extra);
 
 				for (i = 0; i < CUST_PENS; i++)
 				{

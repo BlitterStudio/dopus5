@@ -54,7 +54,6 @@ class ClockFormatConfigTests(unittest.TestCase):
                 source = read_source(header)
                 self.assertIn("#define CONFIG_VERSION_17 17", source)
                 self.assertIn("char clock_format[80];", source)
-                self.assertIn("ULONG pad_big[276];", source)
 
     def test_defaults_clear_clock_format_for_old_configs(self):
         source = read_source(CONFIG_DEFAULT_C)

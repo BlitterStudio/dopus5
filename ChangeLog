@@ -10,6 +10,10 @@ Program, dopus5.library and configopus change; version bump deferred.
   on-disk layout and old configuration files are unchanged.  An old
   environment loads as before; the new pens start with default colours
   and the user pen count stays as it was.
+- The pens past eight are counted in a field of their own, so 5.104
+  and older read at most eight pens from a newer environment.  Saving
+  it there drops pens 9-16; this version then gives them their
+  default colours again.
 - dopus set palette and dopus query palette accept and return 24
   colours, the last sixteen being the user pens; dopus set pens user
   takes counts up to 16.  Saved themes keep the whole palette.

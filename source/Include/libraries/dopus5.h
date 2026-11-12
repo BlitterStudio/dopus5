@@ -2230,7 +2230,10 @@ typedef struct
 	UBYTE dest_col[2];	  // Destination window colours
 
 	WORD palette_count;	 // Number of user colours
-	UWORD pad1;
+	// User pens beyond eight (CONFIG_VERSION_19). On disk palette_count
+	// stays at eight or less so older versions never index past their
+	// eight-pen tables; in memory palette_count holds the total.
+	UWORD palette_count_extra;
 
 	char font_name[4][80];	// Fonts to use
 

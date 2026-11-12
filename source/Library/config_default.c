@@ -374,7 +374,7 @@ void LIBFUNC L_DefaultEnvironment(REG(a0, CFG_ENVR *env))
 	env->clock_format[0] = 0;
 
 	// Set version
-	env->version = CONFIG_VERSION_18;
+	env->version = CONFIG_VERSION_19;
 
 	// Get default settings
 	L_DefaultSettings(&env->settings);
@@ -701,6 +701,12 @@ void LIBFUNC L_UpdateEnvironment(REG(a0, CFG_ENVR *env))
 	// Pre-version 19
 	if (env->version < CONFIG_VERSION_19)
 		set_default_palette2_colours(env);
+
+	// Since CONFIG_VERSION_19 the pens past eight are counted separately on
+	// disk; older environments have nothing there
+	if (env->version >= CONFIG_VERSION_19)
+		env->palette_count += env->palette_count_extra;
+	env->palette_count_extra = 0;
 
 	// The user palette has held up to sixteen pens since CONFIG_VERSION_19
 	if (env->palette_count < 0)
