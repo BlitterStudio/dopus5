@@ -88,7 +88,10 @@ Upgrade:
   Filetypes, Commands, Desktop, Groups, Themes, Sounds and System drawers
   hold your configuration; they only receive files they do not have yet.
   The installer also offers to remove the outdated stored filetypes that
-  older releases left in DOpus5:Storage/Filetypes.
+  older releases left in DOpus5:Storage/Filetypes, including the stored
+  copies of filetypes that are installed now.  Archives_over_XAD is
+  called Archive, XAD now; when an upgrade finds both, the installer asks
+  which one to keep.
 
 Images and icons:
   The installer asks which toolbar images and icons to use, and offers
@@ -2009,8 +2012,9 @@ XADOpen
 
 XADOpen is a command of xadopus.module and needs xadmaster.library.  It
 opens the selected archive or disk image in a new lister and shows its
-contents like a directory.  The Archives_over_XAD filetype (7z, LZX, LhA,
-RAR, ZIP and xz) runs it when you double-click an archive.
+contents like a directory.  The Archive, XAD filetype (7z, LZX, LhA, RAR,
+ZIP and xz; Archives_over_XAD in older releases) runs it when you
+double-click an archive.
 
 In the archive lister:
 
@@ -2042,7 +2046,7 @@ lister already shows another archive or an FTP site.  If the archive
 cannot be read, the lister stays as it was.
 
 The default filetypes do not use XADOpenInLister.  To make double-clicking
-an archive open it in place, edit the Archives_over_XAD filetype in the
+an archive open it in place, edit the Archive, XAD filetype in the
 @{" Filetype Editor " link "File Type Editor"} and change the command of its Double-click action
 from XADOpen to XADOpenInLister.  It can also be bound to the Ctrl or Alt
 double-click action, a button or a hotkey.
@@ -2054,8 +2058,8 @@ XADExtract
 
 XADExtract is a command of xadopus.module.  It extracts the selected
 archives in the source lister into the directory of the destination
-lister, which is read again afterwards.  The Archives_over_XAD filetype
-runs it when you drag an archive to another lister.
+lister, which is read again afterwards.  The Archive, XAD filetype runs
+it when you drag an archive to another lister.
 
 For a disk archive, such as a DMS file, XADExtract asks whether to extract
 the files on it or write it to a drive you pick.
@@ -4370,10 +4374,14 @@ install it again, either from the @{" Filetype Finder " link "Filetype Finder"} 
 the stored file and saving it in the Filetype Manager.  Opus 5 creates
 either drawer when it saves a filetype there and the drawer is missing.
 
-A new installation has filetypes for plain text (ASCII, shown with
-SmartRead) and AmigaGuide documents (shown with MultiView) installed, so
-double-clicking such files does not start the Filetype Finder.  More
-filetypes are waiting in DOpus5:Storage/Filetypes.
+A new installation has filetypes installed for plain text (ASCII, shown
+with SmartRead), AmigaGuide documents and pictures (shown with
+MultiView), sounds, archives (through XAD), fonts, ARexx and shell
+scripts, icons, themes, disk types and other common Amiga files, so
+double-clicking such files does not start the Filetype Finder.  Their
+names follow the "Category, Format" scheme, for example Graphics,
+Pic-GIF.  Filetypes that need other programs, such as the Prefs editors,
+disk image tools, LhA or LZX, are waiting in DOpus5:Storage/Filetypes.
 
 @endnode
 

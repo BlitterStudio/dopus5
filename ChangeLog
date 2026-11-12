@@ -1,3 +1,23 @@
+[dopus5 next] Install the common filetypes by default
+basedata and installer change; no program, library, module or command
+version changes.
+
+- New installations get 61 more filetypes in DOpus5:Filetypes; they
+  were only stored.  They cover pictures, IFF animations and sounds,
+  archives without actions of their own, documents, ARexx and shell
+  scripts, icons, themes, groups, disk types and other system files.
+- Filetypes that need other programs or one particular system stay in
+  DOpus5:Storage/Filetypes: the Prefs editors, disk images and devices,
+  LhA, LZX, Zoo, Tar, HTML, PDF, GPFax, ButtonMenu and WHDLoad.  So do
+  Volume RAM, whose menu deletes files, and WordPerfect and Anim-CDXL,
+  whose short recognition strings also match other files.
+- Archives_over_XAD is called Archive, XAD now.  Its file name and its
+  filetype name (7z,lzx,lha,rar,zip,xz) differed, so the Filetype Finder
+  could install it a second time.
+- An upgrade adds the new filetypes, offers to remove their stored
+  copies, and asks whether to keep Archives_over_XAD or the new
+  Archive, XAD.
+
 [dopus5 next] Build OS3 with GCC 16 again
 Build-system change; no existing program, library, module or command
 version changes.
