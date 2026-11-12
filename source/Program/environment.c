@@ -833,7 +833,7 @@ int environment_save(Cfg_Environment *env, char *name, short snapshot, CFG_ENVR 
 
 	// The copy that goes to disk (big-endian, eight pens or fewer in palette_count)
 	if (!(env_be = AllocVec(sizeof(CFG_ENVR), MEMF_CLEAR)))
-		return 0;
+		return ERROR_NO_FREE_STORE;
 
 	// Update main window position
 	if (snapshot & ENVSAVE_WINDOW)
