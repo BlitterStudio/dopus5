@@ -27,7 +27,7 @@ For more information on Directory Opus for Windows please see:
 	#include <prefs/workbench.h>
 #endif
 
-#define PEN_MAX 8
+#define PEN_MAX 16
 
 #ifdef __amigaos3__
 // Colours Workbench puts in pens 4-7 for "Set MagicWB colours"
@@ -110,11 +110,13 @@ void load_screen_palette(void)
 		// Load colours
 		for (pen = 0; pen < num; pen++)
 		{
+			const ULONG *rgb = CFG_USER_PEN_RGB(environment->env, pen);
+
 			SetRGB4(&GUI->screen->ViewPort,
 					pen + 4,
-					(environment->env->palette[(pen + 8) * 3 + 1] >> 28) & 0xf,
-					(environment->env->palette[(pen + 8) * 3 + 2] >> 28) & 0xf,
-					(environment->env->palette[(pen + 8) * 3 + 3] >> 28) & 0xf);
+					(rgb[0] >> 28) & 0xf,
+					(rgb[1] >> 28) & 0xf,
+					(rgb[2] >> 28) & 0xf);
 		}
 	}
 }
@@ -131,20 +133,20 @@ void get_colour_table()
 	GUI->flags |= GUIF_GOT_PALETTE;
 
 	// Initialise pens
-	for (pen = 0; pen < 16; pen++)
+	for (pen = 0; pen < 20; pen++)
 		GUI->pens[pen] = pen;
 	GUI->pen_alloc = 0;
 
 	// Using 37?
 	if (((struct Library *)GfxBase)->lib_Version < 39)
 	{
-		// On our own screen, pens go from 4 onwards
+		// On our own screen, user pens go from 4 onwards
 		if (GUI->screen)
 		{
 			// Pens go from 4 onwards
 			for (pen = 0; pen < 16; pen++)
 				GUI->pens[pen] = pen + 4;
-			GUI->pen_alloc = 0xff;
+			GUI->pen_alloc = 0xffff;
 		}
 		return;
 	}
@@ -164,7 +166,7 @@ void get_colour_table()
 			for (pen = 0; pen < 4; pen++)
 			{
 				// Get top four palette colours so they won't be used below
-				GUI->pens[12 + pen] = newpen = ObtainPen(GUI->screen_pointer->ViewPort.ColorMap,
+				GUI->pens[16 + pen] = newpen = ObtainPen(GUI->screen_pointer->ViewPort.ColorMap,
 														 top - pen,
 														 environment->env->palette[(pen + 4) * 3 + 1],
 														 environment->env->palette[(pen + 4) * 3 + 2],
@@ -172,7 +174,7 @@ void get_colour_table()
 														 0);
 				if (newpen != -1)
 				{
-					GUI->pen_alloc |= 1 << (12 + pen);
+					GUI->pen_alloc |= 1 << (16 + pen);
 				}
 			}
 		}
@@ -204,14 +206,16 @@ void get_colour_table()
 	// Go through user pens
 	for (pen = 0; pen < environment->env->palette_count; pen++)
 	{
+		const ULONG *rgb = CFG_USER_PEN_RGB(environment->env, pen);
+
 		// Not already allocated?
 		if (!(GUI->pen_alloc & (1 << pen)))
 		{
 			// Try to allocate a pen
 			GUI->pens[pen] = newpen = ObtainBestPen(GUI->screen_pointer->ViewPort.ColorMap,
-													environment->env->palette[(pen + 8) * 3 + 1],
-													environment->env->palette[(pen + 8) * 3 + 2],
-													environment->env->palette[(pen + 8) * 3 + 3],
+													rgb[0],
+													rgb[1],
+													rgb[2],
 													OBP_Precision,
 													PRECISION_EXACT,
 													OBP_FailIfBad,
@@ -220,11 +224,7 @@ void get_colour_table()
 			if (newpen == -1)
 			{
 				// Failed to allocate, find closest match
-				GUI->pens[pen] = FindColor(GUI->screen_pointer->ViewPort.ColorMap,
-										   environment->env->palette[(pen + 8) * 3 + 1],
-										   environment->env->palette[(pen + 8) * 3 + 2],
-										   environment->env->palette[(pen + 8) * 3 + 3],
-										   -1);
+				GUI->pens[pen] = FindColor(GUI->screen_pointer->ViewPort.ColorMap, rgb[0], rgb[1], rgb[2], -1);
 			}
 
 			// Otherwise, we have an exclusive pen
@@ -251,7 +251,7 @@ void free_colour_table()
 		short pen;
 
 		// Go through pens
-		for (pen = 0; pen < 16; pen++)
+		for (pen = 0; pen < 20; pen++)
 		{
 			// Was this pen allocated?
 			if (GUI->pen_alloc & (1 << pen))

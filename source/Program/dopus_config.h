@@ -45,6 +45,7 @@ For more information on Directory Opus for Windows please see:
 #define CONFIG_VERSION_16 16
 #define CONFIG_VERSION_17 17
 #define CONFIG_VERSION_18 18
+#define CONFIG_VERSION_19 19
 
 // Sort format
 typedef struct
@@ -514,8 +515,27 @@ typedef struct
 	// layout stays compatible.
 	char clock_format[80];  // Title bar clock format string
 
-	ULONG pad_big[276];
+	// Added in CONFIG_VERSION_19 (issue #236). palette[] only had room for
+	// eight user pens, so the colours of user pens 9-16 went into 96 reserved
+	// bytes stolen from pad_big; the on-disk layout stays compatible. Old
+	// configs have zeros here and get the default colours on load.
+	ULONG palette2[24];	 // User pen colours 9-16, RGB32 triplets
+
+	ULONG pad_big[252];
 } CFG_ENVR;
+
+// Maximum number of user pens (Environment, Palette); was 8 before
+// CONFIG_VERSION_19
+#define ENV_MAX_USER_PENS 16
+
+// Address of the RGB32 triplet (red, green, blue) of palette entry "pen" in
+// a CFG_ENVR.  Entries 0-3 are the system pens, 4-7 the top four OS screen
+// pens and 8-23 the user pens; the first sixteen live in palette[], the
+// user pens 9-16 added in CONFIG_VERSION_19 live in palette2[].
+#define CFG_PEN_RGB(env, pen) \
+	(((pen) < 16) ? (&(env)->palette[(pen) * 3 + 1]) : (&(env)->palette2[((pen) - 16) * 3]))
+// Address of the RGB32 triplet of user pen "pen" (0-15)
+#define CFG_USER_PEN_RGB(env, pen) CFG_PEN_RGB(env, (pen) + 8)
 
 #define SCRFLAGS_DEFWIDTH (1 << 0)	 // Default width
 #define SCRFLAGS_DEFHEIGHT (1 << 1)	 // Default height
@@ -893,6 +913,10 @@ typedef struct
 	unsigned short pen_alloc;
 	unsigned short pen_array[16];
 	short pen_count;
+	// User pens 9-16 of a palette-box pen table (system pens, top four OS
+	// pens, then the user pens); appended for CONFIG_VERSION_19. get_screen_data
+	// only fills pen_array, where all sixteen user pens fit.
+	unsigned short pen_array2[8];
 } DOpusScreenData;
 
 /****************************************************************************

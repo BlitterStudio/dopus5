@@ -29,7 +29,12 @@ For more information on Directory Opus for Windows please see:
 static ULONG default_palette[] = {0xefffffff, 0xafffffff, 0x4fffffff, 0x7fffffff, 0x00000000, 0x7fffffff,
 								  0xffffffff, 0xffffffff, 0x00000000, 0xcfffffff, 0x2fffffff, 0x00000000,
 								  0xffffffff, 0x8fffffff, 0x00000000, 0xffffffff, 0x00000000, 0xffffffff,
-								  0x9fffffff, 0x6fffffff, 0x3fffffff, 0x00000000, 0xffffffff, 0x9fffffff};
+								  0x9fffffff, 0x6fffffff, 0x3fffffff, 0x00000000, 0xffffffff, 0x9fffffff,
+								  // Pens 9-16, added with CONFIG_VERSION_19
+								  0x0fffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0x0fffffff, 0x0fffffff,
+								  0x0fffffff, 0xffffffff, 0x0fffffff, 0x0fffffff, 0x0fffffff, 0x0fffffff,
+								  0xffffffff, 0x6fffffff, 0x0fffffff, 0xafffffff, 0xafffffff, 0xafffffff,
+								  0x5fffffff, 0x5fffffff, 0x5fffffff, 0xffffffff, 0xdfffffff, 0xbfffffff};
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(x[0]))
 
@@ -55,6 +60,14 @@ static void set_default_stripe_colours(CFG_ENVR *env)
 	}
 	env->env_ColourFlag &= ~(1 << ENVCOL_STRIPE);
 	env->env_ColourFlag |= 1 << (ENVCOL_STRIPE + CUST_PENS);
+}
+
+// The colours of user pens 9-16 (palette2) were carved out of pad_big, which
+// configs saved before CONFIG_VERSION_19 leave zero (black); give them the
+// same defaults a new environment gets
+static void set_default_palette2_colours(CFG_ENVR *env)
+{
+	CopyMem((char *)(default_palette + 24), (char *)env->palette2, sizeof(env->palette2));
 }
 
 #ifdef __AROS__
@@ -233,7 +246,8 @@ void LIBFUNC L_DefaultEnvironment(REG(a0, CFG_ENVR *env))
 	}
 
 	// Copy default user colours
-	CopyMem((char *)default_palette, (char *)(env->palette + 25), sizeof(default_palette));
+	CopyMem((char *)default_palette, (char *)(env->palette + 25), sizeof(ULONG) * 24);
+	CopyMem((char *)(default_palette + 24), (char *)env->palette2, sizeof(env->palette2));
 
 	// Default window position
 	env->window_pos.Left = (WORD)-1;
@@ -684,11 +698,21 @@ void LIBFUNC L_UpdateEnvironment(REG(a0, CFG_ENVR *env))
 	if (env->version < CONFIG_VERSION_18)
 		set_default_stripe_colours(env);
 
+	// Pre-version 19
+	if (env->version < CONFIG_VERSION_19)
+		set_default_palette2_colours(env);
+
+	// The user palette has held up to sixteen pens since CONFIG_VERSION_19
+	if (env->palette_count < 0)
+		env->palette_count = 0;
+	else if (env->palette_count > ENV_MAX_USER_PENS)
+		env->palette_count = ENV_MAX_USER_PENS;
+
 	fix_list_format_display(&env->list_format);
 	fix_list_format_colours(&env->list_format, env->version < CONFIG_VERSION_12);
 
 	// Fix version
-	env->version = CONFIG_VERSION_18;
+	env->version = CONFIG_VERSION_19;
 
 	// Is themes path empty?
 	if (!env->themes_location[0])

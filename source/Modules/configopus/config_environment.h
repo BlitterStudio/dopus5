@@ -42,7 +42,7 @@ typedef struct
 
 	short palette_colours;	  // Number of colours in the palette
 	short palette_count;	  // Total number of colours
-	short palette_array[16];  // Palette array
+	short palette_array[24];  // Palette array
 	short *palette_table;
 
 	short sel_colour;  // Colour selected in palette
@@ -62,9 +62,9 @@ typedef struct
 	GL_Object *example;
 	UBYTE *colour_selection;
 
-	short palette_edit_pens[16];
-	unsigned short palette_edit_penalloc;
-	unsigned short palette_edit_freepen;
+	short palette_edit_pens[24];
+	unsigned long palette_edit_penalloc;
+	unsigned long palette_edit_freepen;
 	short alloc_pen_count;
 
 	short output_dims[4];
@@ -81,7 +81,7 @@ typedef struct
 
 	unsigned long font_pens;
 	unsigned short font_pen_count;
-	unsigned char font_pen_table[16];
+	unsigned char font_pen_table[24];
 
 	Att_List *desktop_drives[2];
 

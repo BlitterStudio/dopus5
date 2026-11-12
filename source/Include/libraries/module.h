@@ -183,6 +183,10 @@ struct DOpusScreenData
 	unsigned short pen_alloc;
 	unsigned short pen_array[16];
 	short pen_count;
+	// User pens 9-16 of a palette-box pen table (system pens, top four OS
+	// pens, then the user pens); appended for CONFIG_VERSION_19. get_screen_data
+	// only fills pen_array, where all sixteen user pens fit.
+	unsigned short pen_array2[8];
 };
 #ifndef __amigaos3__
 	#pragma pack()

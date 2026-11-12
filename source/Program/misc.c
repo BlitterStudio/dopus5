@@ -265,7 +265,7 @@ void get_screen_data(DOpusScreenData *data)
 		data->screen = GUI->screen_pointer;
 		data->draw_info = GUI->draw_info;
 		data->depth = GUI->screen_pointer->RastPort.BitMap->Depth;
-		data->pen_alloc = GUI->pen_alloc;
+		data->pen_alloc = (unsigned short)(GUI->pen_alloc & 0xffff);
 		memcpy((char *)data->pen_array, (char *)GUI->pens, sizeof(data->pen_array));
 		data->pen_count = environment->env->palette_count;
 	}

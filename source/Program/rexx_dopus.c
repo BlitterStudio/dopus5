@@ -591,7 +591,9 @@ BOOL rexx_dopus_cmd(struct RexxMsg *msg, short command, char *args)
 				break;
 			}
 			args = strstri(args, "0x");
-			for (val = 1; val < 49 && args; args = strstri(args, "0x"))
+			// Up to 24 colours: the system pens, the top four OS pens and the
+			// sixteen user pens; the colours of user pens 9-16 go to palette2
+			for (val = 1; val < 73 && args; args = strstri(args, "0x"))
 			{
 				short a;
 				if (*(args + 2) == ' ')
@@ -600,13 +602,16 @@ BOOL rexx_dopus_cmd(struct RexxMsg *msg, short command, char *args)
 					++args;
 					continue;
 				}
-				for (a = 0; a < 3; a++, val++)
+				for (a = 0; a < 3 && val < 73; a++, val++)
 				{
 					ULONG col;
 					args += 2;
 					col = Atoh(args, 2);
 					col |= (col << 24) | (col << 16) | (col << 8);
-					environment->env->palette[val] = col;
+					if (val < 49)
+						environment->env->palette[val] = col;
+					else
+						environment->env->palette2[val - 49] = col;
 				}
 			}
 			lsprintf(result, "%ld", (val - 1) / 3);
@@ -665,8 +670,8 @@ BOOL rexx_dopus_cmd(struct RexxMsg *msg, short command, char *args)
 					environment->env->palette_count = rexx_parse_number(&args, 0, environment->env->palette_count);
 					if (environment->env->palette_count < 0)
 						environment->env->palette_count = 0;
-					else if (environment->env->palette_count > 8)
-						environment->env->palette_count = 8;
+					else if (environment->env->palette_count > ENV_MAX_USER_PENS)
+						environment->env->palette_count = ENV_MAX_USER_PENS;
 				}
 
 				// Tooltips/alternate rows
@@ -896,8 +901,9 @@ BOOL rexx_dopus_cmd(struct RexxMsg *msg, short command, char *args)
 		// Palette
 		case RXCMD_PALETTE: {
 			short num;
-			ULONG palette[50];
-			CopyMem((char *)environment->env->palette, (char *)palette, sizeof(palette));
+			ULONG palette[74];
+			CopyMem((char *)environment->env->palette, (char *)palette, sizeof(environment->env->palette));
+			CopyMem((char *)environment->env->palette2, (char *)(palette + 49), sizeof(environment->env->palette2));
 			if (GUI->screen_pointer)
 			{
 				GetPalette32(&GUI->screen_pointer->ViewPort, &palette[1], 4, 0);
@@ -907,7 +913,7 @@ BOOL rexx_dopus_cmd(struct RexxMsg *msg, short command, char *args)
 								 4,
 								 (1 << GUI->screen_pointer->RastPort.BitMap->Depth) - 4);
 			}
-			for (num = 1; num < 49; num += 3)
+			for (num = 1; num < 73; num += 3)
 			{
 				char buf[40];
 				lsprintf(buf,

@@ -30,7 +30,7 @@ typedef struct
 	unsigned long flags;
 
 	DOpusScreenData screen_data;
-	short pen_array[18];
+	short pen_array[26];
 
 	unsigned char fgpen;
 	unsigned char bgpen;

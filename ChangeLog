@@ -1,3 +1,22 @@
+[dopus5 next] Sixteen user pens (issue #236)
+Program, dopus5.library and configopus change; version bump deferred.
+
+- Environment, Palette offers up to sixteen user pens instead of eight.
+  The slider limit, the palette display, the pen pickers of the
+  environment, button and start menu editors, the icon font requesters
+  and the Select Colours requester all take the extra pens.
+- User pens 9-16 are stored in a new palette2 array carved out of the
+  reserved space at the end of the environment configuration, so the
+  on-disk layout and old configuration files are unchanged.  An old
+  environment loads as before; the new pens start with default colours
+  and the user pen count stays as it was.
+- dopus set palette and dopus query palette accept and return 24
+  colours, the last sixteen being the user pens; dopus set pens user
+  takes counts up to 16.  Saved themes keep the whole palette.
+- On Opus's own screen the top four OS screen pens moved from the
+  internal pen table entries 12-15 to 16-19 to make room; the stored
+  pen numbers of listers, buttons and icons are unchanged.
+
 [dopus5 next] Slider values over a requester background (issue #236)
 dopus5.library change; version bump deferred.
 
