@@ -451,6 +451,10 @@ void _config_env_reset_palette(config_env_data *data)
 		}
 	}
 
+	// Not on our own screen, user pens are palette entries 8 onwards
+	else
+		col = 8;
+
 	// Load palette
 	for (num = 0; num < data->palette_colours; num++, col++)
 		set_rgb32(data, col, CFG_USER_PEN_RGB(data->env->env, num));

@@ -562,8 +562,11 @@ unsigned long LIBFUNC L_Config_Environment(REG(a0, Cfg_Environment *env),
 								else
 									data->sel_colour = msg_copy.Code + 8;
 							}
-							else
+							// User pens 9-16, or any user pen on our own screen
+							else if (data->own_screen)
 								data->sel_colour = msg_copy.Code;
+							else
+								data->sel_colour = msg_copy.Code + 8;
 
 							// Store original selection number
 							data->orig_colour_sel = msg_copy.Code;
