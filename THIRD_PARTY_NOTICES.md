@@ -71,8 +71,8 @@ OF SUCH DAMAGE.
 
 Source: https://zlib.net/
 
-The sacredbanana Amiga cross-build image currently provides zlib 1.3.1.1-motley
-for the m68k-amigaos target. Other target toolchains may provide a different
+The amigadev/crosstools m68k-amigaos image currently provides zlib 1.4 for the
+m68k-amigaos target. Other target toolchains may provide a different
 compatible zlib build.
 
 License notice from the zlib headers shipped in the cross-build toolchain:
@@ -80,7 +80,7 @@ License notice from the zlib headers shipped in the cross-build toolchain:
 ```text
 Copyright notice:
 
- (C) 1995-2024 Jean-loup Gailly and Mark Adler
+ (C) 1995-2026 Jean-loup Gailly and Mark Adler
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages

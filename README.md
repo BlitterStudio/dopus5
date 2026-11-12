@@ -102,7 +102,7 @@ via the prebuilt Docker images used by CI:
 
 | Target              | Docker image                                 |
 | ------------------- | -------------------------------------------- |
-| AmigaOS 3 (m68k)    | `sacredbanana/amiga-compiler:m68k-amigaos`   |
+| AmigaOS 3 (m68k)    | `amigadev/crosstools:m68k-amigaos`           |
 | AmigaOS 4 (PPC)     | `amigadev/crosstools:ppc-amigaos`             |
 | MorphOS (PPC)       | `amigadev/crosstools:ppc-morphos`             |
 | AROS i386 (ABIv0)   | `midwan/aros-compiler:i386-aros`             |
@@ -113,12 +113,12 @@ CI pins the tested Amiga images by digest in
 [the build workflow](.github/workflows/makefile.yml). Use those digest references
 instead of the mutable tags above to reproduce a CI build.
 
-The OS3 build stays on the GCC 6.5.0b toolchain: the GCC 16.2.0b amigadev
-image (then tagged `amigadev/crosstools:m68k-amigaos-gcc10`) shipped a binutils
-build whose linker emits broken library-call stub relocations (the base
-reference lands in the text hunk instead of the data hunk, crashing at runtime
-on the first such call). That toolchain is preserved on the
-`toolchain/gcc16-os3` branch until binutils is fixed upstream.
+The OS3 builds use GCC 16. Binutils 2.46.0.20260504 relocated the base load
+of library-call stubs against the code hunk in LTO links, so a program crashed
+on the first call through such a stub; OS3 stayed on GCC 6.5.0b until the
+binutils 2.47 build in `amigadev/crosstools:m68k-amigaos`. After an OS3 build,
+`make os3 verify-os3-stubs` (or `make os3-68000 verify-os3-stubs`) fails if a
+binary has such a stub. CI runs it for both OS3 targets.
 
 The OS4 and MorphOS images include the SDKs required by the FTP module
 (AmiSSL and codesets on OS4, codesets on MorphOS).
@@ -266,7 +266,7 @@ the build images:
 
 ```sh
 docker run --rm -v "$PWD:/work" -v "$HOME/Downloads:/mwb" \
-  sacredbanana/amiga-compiler:m68k-amigaos \
+  amigadev/crosstools:m68k-amigaos \
   sh -c 'cd /work && python3 archive/tools/magicwb_iconset.py /mwb/MWB_DOpus8c.lha /tmp/out --update'
 ```
 

@@ -291,6 +291,13 @@ verify-aarch64-aros: program library
 	@sh check_aros_aarch64_relocations.sh \
 		bin.aarch64-aros/DirectoryOpus bin.aarch64-aros/dopus5.library
 
+# Library-call stubs must load their base from data or bss; binutils
+# 2.46.0.20260504 relocated them against the code hunk.  Run after
+# `make os3 all` (or os3-68000).
+.PHONY : verify-os3-stubs
+verify-os3-stubs:
+	@python3 check_os3_stubs.py bin.$(NAME)
+
 ###########################################################
 
 .PHONY : clean-release

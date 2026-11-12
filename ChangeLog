@@ -1,3 +1,20 @@
+[dopus5 next] Build OS3 with GCC 16 again
+Build-system change; no existing program, library, module or command
+version changes.
+
+- Pin os3 and os3-68000 CI builds to amigadev/crosstools:m68k-amigaos
+  (GCC 16.2.1b, AmigaDev 16.2-rc24-9), replacing the sacredbanana
+  GCC 6.5.0b image.  Its binutils 2.47.20260726 relocates the base load
+  of every library-call stub against data or bss.  The 2.46.0.20260504
+  linker behind the 5.103 revert relocates 97 of them in 12 modules of
+  the current sources against the code hunk (43 in read.module).
+- Add `make os3 verify-os3-stubs` (or os3-68000), which fails a build
+  with such a stub; CI runs it after both OS3 builds.
+- Compile the AROS catalogs in the same image; FlexCat's output is
+  unchanged.
+- The new image provides zlib 1.4 for the SFTP code; update
+  THIRD_PARTY_NOTICES.md.
+
 [dopus5 next] Fix bugs hidden behind always-true tests (issue #234)
 Program, configopus and icon module change, ftp module source cleanup;
 version bump deferred.
