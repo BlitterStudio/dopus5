@@ -1,3 +1,17 @@
+[dopus5 next] Clean Up fits rows and columns to their icons (#235)
+Program change; version bump deferred.
+
+- Clean Up and Arrange Icons made every cell of the grid as wide as
+  the widest icon in the window and as tall as the tallest one, so a
+  single large icon spread out all the small ones.  Each column is now
+  as wide as its widest icon and each row as tall as its tallest icon.
+  Icons still fill the rows from left to right, and the labels within
+  a row still line up.
+- Opus lays out the icons of a drawer that has no icon positions at
+  all in the same way when it opens.  Icons without a position that it
+  places among positioned ones keep the even grid, which lets them step
+  around the icons already there.
+
 [dopus5 next] Install the common filetypes by default
 basedata and installer change; no program, library, module or command
 version changes.

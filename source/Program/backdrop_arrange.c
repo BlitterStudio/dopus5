@@ -158,11 +158,201 @@ static BOOL backdrop_cleanup_eligible(BackdropObject *object, UWORD flags)
 	return TRUE;
 }
 
-// New row-based, label-baseline-aligned cleanup. Mimics modern Workbench
-// cleanup: icons fill rows left-to-right (instead of columns top-to-bottom),
-// every cell shares the same width and height, and icon images are bottom-
-// aligned within the cell so all labels share a common Y baseline. Smaller
-// drawer icons therefore no longer push other labels around.
+// See if any icon in the window already has a position
+static BOOL backdrop_cleanup_positioned(BackdropInfo *info)
+{
+	BackdropObject *object;
+	BOOL found = FALSE;
+
+	lock_listlock(&info->objects, 0);
+	for (object = (BackdropObject *)info->objects.list.lh_Head; object->node.ln_Succ;
+		 object = (BackdropObject *)object->node.ln_Succ)
+	{
+		if (!(object->flags & BDOF_NO_POSITION))
+		{
+			found = TRUE;
+			break;
+		}
+	}
+	unlock_listlock(&info->objects);
+	return found;
+}
+
+// Size of one icon for the row cleanup
+typedef struct
+{
+	BackdropObject *object;
+	short width;	// Full width (image or label)
+	short image_h;	// Image height, borders included
+	short label_h;	// Label height, -1 for no label
+} CleanupCell;
+
+// Default row-based cleanup. Icons fill rows left-to-right. Each column is
+// as wide as its widest icon and each row as tall as its tallest icon, so a
+// single large icon does not spread out all the others. Icon images are
+// bottom-aligned within their row so the labels of a row share a baseline.
+// Returns -1 if out of memory.
+static short backdrop_cleanup_objects_rows(BackdropInfo *info, UWORD flags)
+{
+	BackdropObject *object;
+	CleanupCell *cells;
+	long *col_x;
+	short *col_w;
+	long count = 0, cols, num, col, row_start;
+	long usable_width, space_x, space_y, min_width = 0x7fff;
+	long row_top;
+	short icon_width, icon_height;
+
+	// Lock backdrop list for the duration of placement
+	lock_listlock(&info->objects, 0);
+
+	// Count the icons to place
+	for (object = (BackdropObject *)info->objects.list.lh_Head; object->node.ln_Succ;
+		 object = (BackdropObject *)object->node.ln_Succ)
+	{
+		if (backdrop_cleanup_eligible(object, flags))
+			++count;
+	}
+
+	// Nothing to do?
+	if (!count)
+	{
+		unlock_listlock(&info->objects);
+		return 0;
+	}
+
+	// Column positions, icon sizes and column widths in one block
+	if (!(col_x = AllocVec(count * (sizeof(long) + sizeof(CleanupCell) + sizeof(short)), 0)))
+	{
+		unlock_listlock(&info->objects);
+		return -1;
+	}
+	cells = (CleanupCell *)(col_x + count);
+	col_w = (short *)(cells + count);
+
+	// Spacing between icons (account for screen ratio for X)
+	space_x = environment->env->env_icon_space_x;
+	if (GUI->screen_info & SCRI_LORES)
+		space_x <<= 1;
+	space_y = environment->env->env_icon_space_y;
+
+	// Get the size of every icon
+	for (object = (BackdropObject *)info->objects.list.lh_Head, num = 0; object->node.ln_Succ;
+		 object = (BackdropObject *)object->node.ln_Succ)
+	{
+		if (!backdrop_cleanup_eligible(object, flags))
+			continue;
+
+		backdrop_icon_size(info, object, &icon_width, &icon_height);
+		cells[num].object = object;
+		cells[num].width = icon_width;
+		backdrop_icon_image_size(object, 0, &cells[num].image_h);
+		cells[num].label_h = -1;
+		if (!(object->flags & BDOF_NO_LABEL))
+		{
+			cells[num].label_h = icon_height - cells[num].image_h - ICON_LABEL_SPACE;
+			if (cells[num].label_h < 0)
+				cells[num].label_h = 0;
+		}
+		if (icon_width < min_width)
+			min_width = icon_width;
+		++num;
+	}
+
+	// Row width budget: visible area minus the start margin on both sides
+	usable_width = RECTWIDTH(&info->size) - (CLEANUP_START_X * 2);
+
+	// No more columns than the narrowest icons would allow
+	cols = (min_width + space_x > 0) ? (usable_width + space_x) / (min_width + space_x) : count;
+	if (cols > count)
+		cols = count;
+
+	// Find the most columns that fit
+	for (; cols > 1; cols--)
+	{
+		// Widest icon in each column
+		for (col = 0; col < cols; col++)
+			col_w[col] = 0;
+		for (num = 0; num < count; num++)
+		{
+			if (cells[num].width > col_w[num % cols])
+				col_w[num % cols] = cells[num].width;
+		}
+
+		// Column positions, snapped to the icon grid
+		col_x[0] = CLEANUP_START_X;
+		for (col = 1; col < cols; col++)
+		{
+			col_x[col] = col_x[col - 1] + col_w[col - 1] + space_x;
+			backdrop_check_grid(&col_x[col], 0);
+		}
+
+		// Does the last column fit?
+		if (col_x[cols - 1] + col_w[cols - 1] <= CLEANUP_START_X + usable_width)
+			break;
+	}
+
+	// One column: as wide as the widest icon
+	if (cols < 2)
+	{
+		cols = 1;
+		col_x[0] = CLEANUP_START_X;
+		col_w[0] = 0;
+		for (num = 0; num < count; num++)
+		{
+			if (cells[num].width > col_w[0])
+				col_w[0] = cells[num].width;
+		}
+	}
+
+	// Place the icons a row at a time
+	row_top = CLEANUP_START_Y;
+	for (row_start = 0; row_start < count; row_start += cols)
+	{
+		short image_h = 0, label_h = -1;
+
+		// Tallest image and label in this row
+		for (num = row_start; num < count && num < row_start + cols; num++)
+		{
+			if (cells[num].image_h > image_h)
+				image_h = cells[num].image_h;
+			if (cells[num].label_h > label_h)
+				label_h = cells[num].label_h;
+		}
+
+		// Place the icons of this row
+		for (num = row_start; num < count && num < row_start + cols; num++)
+		{
+			object = cells[num].object;
+			col = num - row_start;
+
+			// Centre the image horizontally in its column
+			object->pos.Left = col_x[col] + ((col_w[col] - object->pos.Width) >> 1);
+
+			// Bottom-align the image so the labels of the row line up
+			object->pos.Top = row_top + (image_h - cells[num].image_h);
+
+			// Now has a valid position
+			object->flags &= ~BDOF_NO_POSITION;
+		}
+
+		// Next row
+		row_top += image_h + space_y;
+		if (label_h > -1)
+			row_top += ICON_LABEL_SPACE + label_h;
+		backdrop_check_grid(0, &row_top);
+	}
+
+	FreeVec(col_x);
+	unlock_listlock(&info->objects);
+	return 1;
+}
+
+// Uniform-grid cleanup, used to place icons that have no position yet
+// (CLEANUPF_CHECK_POS) around the ones that do: icons fill rows left-to-
+// right, every cell has the size of the largest icon placed, and icon
+// images are bottom-aligned within the cell so all labels share a Y
+// baseline.
 static BOOL backdrop_cleanup_objects_grid(BackdropInfo *info, UWORD flags)
 {
 	BackdropObject *object;
@@ -343,9 +533,17 @@ BOOL backdrop_cleanup_objects(BackdropInfo *info, struct Rectangle *rect, UWORD 
 	// No rectangle supplied?
 	if (!rect)
 	{
-		// Default cleanup goes through the modern row-fill / label-aligned
-		// layout. The legacy column-fill code below is reserved for the
-		// CTRL+CleanUp align-selection-rectangle case.
+		short rows = -1;
+
+		// Default cleanup fills rows, sized to the icons in each row and
+		// column. Placing only new icons (CHECK_POS) among icons that
+		// already have a position uses the uniform grid, which can step
+		// around them. The legacy column-fill code below is reserved for
+		// the CTRL+CleanUp align-selection-rectangle case.
+		if (!(flags & CLEANUPF_CHECK_POS) || !backdrop_cleanup_positioned(info))
+			rows = backdrop_cleanup_objects_rows(info, flags);
+		if (rows >= 0)
+			return (BOOL)rows;
 		return backdrop_cleanup_objects_grid(info, flags);
 	}
 
