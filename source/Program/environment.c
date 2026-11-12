@@ -821,9 +821,7 @@ int environment_save(Cfg_Environment *env, char *name, short snapshot, CFG_ENVR 
 	long success = 0;
 	struct OpenEnvironmentData *opendata = 0;
 	BOOL old_env_valid = FALSE;
-#ifdef __AROS__
 	CFG_ENVR *env_be;
-#endif
 
 	// Invalid name?
 	if (!name || !*name)
@@ -833,10 +831,9 @@ int environment_save(Cfg_Environment *env, char *name, short snapshot, CFG_ENVR 
 	if (!data)
 		data = env->env;
 
-#ifdef __AROS__
+	// The copy that goes to disk (big-endian, eight pens or fewer in palette_count)
 	if (!(env_be = AllocVec(sizeof(CFG_ENVR), MEMF_CLEAR)))
 		return 0;
-#endif
 
 	// Update main window position
 	if (snapshot & ENVSAVE_WINDOW)
@@ -869,9 +866,18 @@ int environment_save(Cfg_Environment *env, char *name, short snapshot, CFG_ENVR 
 		Cfg_SoundEntry *sound;
 
 		// Write environment settings
-#ifdef __AROS__
 		CopyMem(data, env_be, sizeof(CFG_ENVR));
 
+		// Older versions have room for eight user pens; count the rest apart
+		if (env_be->palette_count > 8)
+		{
+			env_be->palette_count_extra = env_be->palette_count - 8;
+			env_be->palette_count = 8;
+		}
+		else
+			env_be->palette_count_extra = 0;
+
+#ifdef __AROS__
 		{
 			int i;
 
@@ -894,6 +900,7 @@ int environment_save(Cfg_Environment *env, char *name, short snapshot, CFG_ENVR 
 			env_be->window_pos.Height = AROS_WORD2BE(env_be->window_pos.Height);
 			env_be->general_screen_flags = AROS_LONG2BE(env_be->general_screen_flags);
 			env_be->palette_count = AROS_WORD2BE(env_be->palette_count);
+			env_be->palette_count_extra = AROS_WORD2BE(env_be->palette_count_extra);
 
 			for (i = 0; i < CUST_PENS; i++)
 			{
@@ -966,11 +973,9 @@ int environment_save(Cfg_Environment *env, char *name, short snapshot, CFG_ENVR 
 			for (i = 0; i < 4; i++)
 				env_be->env_BackgroundBorderColour[i] = AROS_LONG2BE(env_be->env_BackgroundBorderColour[i]);
 		}
+#endif
 
 		if (!(IFFWriteChunk(iff, env_be, ID_ENVR, sizeof(CFG_ENVR))))
-#else
-		if (!(IFFWriteChunk(iff, data, ID_ENVR, sizeof(CFG_ENVR))))
-#endif
 		{
 			success = IoErr();
 			break;
@@ -1372,9 +1377,7 @@ int environment_save(Cfg_Environment *env, char *name, short snapshot, CFG_ENVR 
 	else
 		IFFClose(iff);
 
-#ifdef __AROS__
 	FreeVec(env_be);
-#endif
 
 	// Write icon if successful (and enabled)
 	if ((!success) && (GUI->flags & GUIF_SAVE_ICONS))
