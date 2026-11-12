@@ -945,6 +945,7 @@ ObjectList *LIBFUNC L_AddObjectList(REG(a0, struct Window *window),
 			struct Gadget *firstgad;
 			HookData *hook = 0;
 			short place;
+			BOOL slider_level = FALSE;
 
 			// Set gadget text and font
 			newgad.ng_GadgetText = new_object->text;
@@ -1053,6 +1054,14 @@ ObjectList *LIBFUNC L_AddObjectList(REG(a0, struct Window *window),
 					new_object->gl_info.gl_gadget.choice_min = tag->ti_Data;
 				if ((tag = FindTagItem(GTSL_Max, taglist)))
 					new_object->gl_info.gl_gadget.choice_max = tag->ti_Data + 1;
+
+				// GadTools draws the level with JAM2 in BACKGROUNDPEN, which
+				// paints boxes over a window backfill. We draw it ourselves.
+				if (FindTagItem(GTSL_LevelFormat, taglist))
+				{
+					slider_level = TRUE;
+					new_object->gl_info.gl_gadget.data = GetTagData(GTSL_Level, 0, taglist);
+				}
 			}
 
 			/*
@@ -1486,6 +1495,8 @@ ObjectList *LIBFUNC L_AddObjectList(REG(a0, struct Window *window),
 																		2,
 																		(hook) ? STRINGA_EditHook : TAG_IGNORE,
 																		hook,
+																		(slider_level) ? GTSL_LevelFormat : TAG_IGNORE,
+																		0,
 																		TAG_MORE,
 																		(IPTR)taglist);
 				}
@@ -1493,8 +1504,8 @@ ObjectList *LIBFUNC L_AddObjectList(REG(a0, struct Window *window),
 			break;
 			}
 
-			// Want to keep the taglist?
-			if (FindTagItem(GTCustom_CopyTags, taglist))
+			// Want to keep the taglist? (the slider level drawing needs it)
+			if (slider_level || FindTagItem(GTCustom_CopyTags, taglist))
 			{
 				// Store taglist pointer
 				new_object->tags = taglist;
@@ -1838,6 +1849,84 @@ GL_Object *LIBFUNC L_GetObject(REG(a0, ObjectList *list), REG(d0, int id))
 }
 
 /****************************************************************************
+						Show the level of a slider
+ ****************************************************************************/
+
+// Draw the level of a slider created with GTSL_LevelFormat. The text goes
+// down in JAM1 after an EraseRect(), so a window backfill shows through
+// instead of the BACKGROUNDPEN box GadTools would draw.
+void _layout_slider_level(struct Window *window, GL_Object *object, long level)
+{
+	struct RastPort rp;
+	struct TextExtent extent;
+	char *format, buf[40];
+	short x, y, width, len;
+
+	// Only sliders with a level display
+	if (!window || !object || object->type != OD_GADGET || object->object_kind != SLIDER_KIND || !object->tags ||
+		!(format = (char *)GetTagData(GTSL_LevelFormat, 0, object->tags)))
+		return;
+
+	// GadTools keeps the level inside the range
+	if (object->gl_info.gl_gadget.choice_max > object->gl_info.gl_gadget.choice_min)
+	{
+		if (level < object->gl_info.gl_gadget.choice_min)
+			level = object->gl_info.gl_gadget.choice_min;
+		else if (level >= object->gl_info.gl_gadget.choice_max)
+			level = object->gl_info.gl_gadget.choice_max - 1;
+	}
+
+	// Get rastport copy
+	rp = *window->RPort;
+
+	// Space reserved for the level
+	if (!(width = GetTagData(GTSL_MaxPixelLen, 0, object->tags)))
+		width = GetTagData(GTSL_MaxLevelLen, 2, object->tags) * rp.Font->tf_XSize;
+
+	// Build the text and clip it to the reserved space
+	lsprintf(buf, format, level);
+	len = TextFit(&rp, buf, strlen(buf), &extent, 0, 1, width, rp.TxHeight);
+
+	// Position it beside the gadget, as GadTools does
+	if (GetTagData(GTSL_LevelPlace, PLACETEXT_LEFT, object->tags) == PLACETEXT_RIGHT)
+		x = object->dims.Left + object->dims.Width + 8;
+	else
+		x = object->dims.Left - width - 8;
+	y = object->dims.Top + ((object->dims.Height - rp.TxHeight + 1) >> 1);
+
+	// Clear the old level through the window backfill
+	EraseRect(&rp, x, y, x + width - 1, y + rp.TxHeight - 1);
+
+	// Draw the new one
+	SetAPen(&rp, DATA(window)->drawinfo->dri_Pens[TEXTPEN]);
+	SetDrMd(&rp, JAM1);
+	Move(&rp, x, y + rp.TxBaseline);
+	Text(&rp, buf, len);
+}
+
+// A slider sends IDCMP_MOUSEMOVE while it is dragged; show the new level
+void _layout_slider_message(struct IntuiMessage *msg)
+{
+	ObjectList *list;
+	GL_Object *object;
+
+	// Find the slider the message came from. IAddress need not be a gadget,
+	// so compare pointers only.
+	for (list = OBJLIST(msg->IDCMPWindow); list->node.mln_Succ; list = (ObjectList *)list->node.mln_Succ)
+	{
+		for (object = list->firstobject; object; object = object->next)
+		{
+			if (object->type == OD_GADGET && object->object_kind == SLIDER_KIND &&
+				(APTR)GADGET(object) == msg->IAddress)
+			{
+				_layout_slider_level(msg->IDCMPWindow, object, msg->Code);
+				return;
+			}
+		}
+	}
+}
+
+/****************************************************************************
 							  Display an object
  ****************************************************************************/
 
@@ -1858,9 +1947,12 @@ void LIBFUNC L_DisplayObject(REG(a0, struct Window *window),
 	if (!window || !object)
 		return;
 
-	// Don't do anything for gadgets (yet)
+	// Gadgets draw themselves, apart from slider levels
 	if (object->type == OD_GADGET)
+	{
+		_layout_slider_level(window, object, object->gl_info.gl_gadget.data);
 		return;
+	}
 
 	// Get window data
 	data = (WindowData *)window->UserData;
