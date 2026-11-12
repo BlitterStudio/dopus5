@@ -1,6 +1,6 @@
 @database dopus5
 @master dopus5.guide
-@$VER: Dopus5Guide 58.23 (09.11.2026)
+@$VER: Dopus5Guide 58.24 (12.11.2026)
 @author "Mark Anderson, Andrew Dunbar, Dr Greg Perry, Leo Davidson and Dave Clarke"
 @(c) "Directory Opus 5 Help Guide (c) GPSoftware 1999"
 @(c) "Directory Opus 5 Help Guide (c) DOPUS5 Open Source Team 2012-2026"
@@ -2821,6 +2821,10 @@ if no lister is currently active.
 This command attempts to adjust the positions of all the icons in the Opus
 Main Window and Icon windows to their optimal positions within the confines
 of their window's dimensions.
+
+The icons are laid out in rows from left to right.  Each column is as
+wide as its widest icon and each row as tall as its tallest icon, and the
+icons of a row stand on one line so that their labels line up.
 
 @endnode
 
