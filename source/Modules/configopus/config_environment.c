@@ -1572,7 +1572,7 @@ unsigned long LIBFUNC L_Config_Environment(REG(a0, Cfg_Environment *env),
 					}
 
 					// Need to create entry, but only if sound is set
-					else if (sound->dse_Sound)
+					else if (sound->dse_Sound[0])
 					{
 						// Create entry
 						if ((orig = AllocMemH(env->desktop_memory, sizeof(Cfg_SoundEntry))))

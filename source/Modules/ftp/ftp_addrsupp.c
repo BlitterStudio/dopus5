@@ -1701,7 +1701,7 @@ static ULONG encrypt(ULONG *magic)
 
 	d0 = *magic;
 
-	d1 = ((((((((d0 << 3 - d0) << 3) + d0) << 1) + d0) << 4) - d0) << 1) - d0;
+	d1 = (((((((((d0 << 3) - d0) << 3) + d0) << 1) + d0) << 4) - d0) << 1) - d0;
 	d1 = (d1 + 0xe60) & 0x7fffffff;
 	*magic = d1 - 1;
 

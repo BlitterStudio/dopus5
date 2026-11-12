@@ -533,7 +533,7 @@ int ASM buffer_sort_entries_owner(REG(a0, DirEntry *entry1), REG(a1, DirEntry *e
 		network2 = (NetworkInfo *)GetTagData(DE_NetworkInfo, 0, entry2->de_Tags);
 
 	// Compare owners
-	if (network1 && network1->owner && network2 && network2->owner)
+	if (network1 && *network1->owner && network2 && *network2->owner)
 	{
 		register short ret;
 
@@ -544,9 +544,9 @@ int ASM buffer_sort_entries_owner(REG(a0, DirEntry *entry1), REG(a1, DirEntry *e
 	}
 
 	// No owner on one file
-	else if (network1 && network1->owner)
+	else if (network1 && *network1->owner)
 		return 1;
-	else if (network2 && network2->owner)
+	else if (network2 && *network2->owner)
 		return -1;
 
 	// No owners on either, do name sort
@@ -565,7 +565,7 @@ int ASM buffer_sort_entries_group(REG(a0, DirEntry *entry1), REG(a1, DirEntry *e
 		network2 = (NetworkInfo *)GetTagData(DE_NetworkInfo, 0, entry2->de_Tags);
 
 	// Compare groups
-	if (network1 && network1->group && network2 && network2->group)
+	if (network1 && *network1->group && network2 && *network2->group)
 	{
 		register short ret;
 
@@ -576,9 +576,9 @@ int ASM buffer_sort_entries_group(REG(a0, DirEntry *entry1), REG(a1, DirEntry *e
 	}
 
 	// No group on one file
-	else if (network1 && network1->group)
+	else if (network1 && *network1->group)
 		return 1;
-	else if (network2 && network2->group)
+	else if (network2 && *network2->group)
 		return -1;
 
 	// No groups on either, do name sort

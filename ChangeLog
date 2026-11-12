@@ -1,3 +1,23 @@
+[dopus5 next] Fix bugs hidden behind always-true tests (issue #234)
+Program, configopus and icon module change, ftp module source cleanup;
+version bump deferred.
+
+- icon: the « » quotes around an icon's author are recognised again,
+  so the author tooltype is found and sorted first.  The quote
+  characters had been lost from the source.  The author parsing that
+  this brings back no longer reads past a tooltype without "Icon by "
+  or writes before the start of the author.
+- Program: sorting a lister by owner or group treats an entry with an
+  empty owner or group like one without network information.
+- configopus: saving the environment creates a sound entry only for
+  events that have a sound set.
+- The last two compared a string array with NULL, which is always
+  true; they now test for an empty string.
+- ftp: the AmFTP import's encrypt() and the address book's message
+  checks are written as intended.  Neither changes behaviour: only the
+  low byte of each AmFTP key is used, and the message checks could
+  only ever test the message pointer.
+
 [dopus5 next] Palette icons keep colours drawn in colour 0
 Program change; version bump deferred.
 
