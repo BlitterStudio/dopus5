@@ -177,7 +177,7 @@ void LIBFUNC L_UpdateGadgetValue(REG(a0, ObjectList *list),
 
 			// Show slider level
 			if (object->object_kind == SLIDER_KIND)
-				_layout_slider_level(list->window, object, msg->Code);
+				_layout_slider_level(list->window, object, (WORD)msg->Code);
 		}
 		break;
 
@@ -654,7 +654,7 @@ void LIBFUNC L_SetGadgetValue(REG(a0, ObjectList *list), REG(d0, UWORD id), REG(
 		GT_SetGadgetAttrs(gadget, list->window, 0, GTSL_Level, value, TAG_END);
 
 		// Show level
-		_layout_slider_level(list->window, object, value);
+		_layout_slider_level(list->window, object, (WORD)value);
 		break;
 
 	// Scroller
@@ -1577,7 +1577,7 @@ void LIBFUNC L_SetGadgetChoices(REG(a0, ObjectList *list), REG(d0, ULONG id), RE
 		GT_SetGadgetAttrs(gadget, list->window, 0, GTSL_Min, min, GTSL_Max, max, TAG_END);
 
 		// Show level
-		_layout_slider_level(list->window, object, object->gl_info.gl_gadget.data);
+		_layout_slider_level(list->window, object, (WORD)object->gl_info.gl_gadget.data);
 	}
 	break;
 

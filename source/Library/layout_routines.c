@@ -1057,7 +1057,7 @@ ObjectList *LIBFUNC L_AddObjectList(REG(a0, struct Window *window),
 
 				// GadTools draws the level with JAM2 in BACKGROUNDPEN, which
 				// paints boxes over a window backfill. We draw it ourselves.
-				if (FindTagItem(GTSL_LevelFormat, taglist))
+				if (_layout_slider_has_level(taglist))
 				{
 					slider_level = TRUE;
 					new_object->gl_info.gl_gadget.data = GetTagData(GTSL_Level, 0, taglist);
@@ -1482,6 +1482,21 @@ ObjectList *LIBFUNC L_AddObjectList(REG(a0, struct Window *window),
 				// Create gadget context
 				if (CreateContext(&new_object->gl_info.gl_gadget.context))
 				{
+					static const Tag level_ids[3] = {GTSL_LevelFormat, GTSL_MaxLevelLen, GTSL_MaxPixelLen};
+					struct TagItem *level_tags[3] = {0, 0, 0};
+					short lt;
+
+					// Hide the level tags from GadTools. Some GadTools (AROS)
+					// take the last of repeated tags and add the level for any
+					// of these, so they have to go, not just be overridden. The
+					// taglist is a flat copy, so they can be put back below.
+					if (slider_level)
+					{
+						for (lt = 0; lt < 3; lt++)
+							if ((level_tags[lt] = FindTagItem(level_ids[lt], taglist)))
+								level_tags[lt]->ti_Tag = TAG_IGNORE;
+					}
+
 					new_object->gl_info.gl_gadget.gadget = CreateGadget(new_object->object_kind,
 																		new_object->gl_info.gl_gadget.context,
 																		&newgad,
@@ -1495,10 +1510,13 @@ ObjectList *LIBFUNC L_AddObjectList(REG(a0, struct Window *window),
 																		2,
 																		(hook) ? STRINGA_EditHook : TAG_IGNORE,
 																		hook,
-																		(slider_level) ? GTSL_LevelFormat : TAG_IGNORE,
-																		0,
 																		TAG_MORE,
 																		(IPTR)taglist);
+
+					// Put the level tags back for _layout_slider_level()
+					for (lt = 0; lt < 3; lt++)
+						if (level_tags[lt])
+							level_tags[lt]->ti_Tag = level_ids[lt];
 				}
 			}
 			break;
@@ -1852,6 +1870,18 @@ GL_Object *LIBFUNC L_GetObject(REG(a0, ObjectList *list), REG(d0, int id))
 						Show the level of a slider
  ****************************************************************************/
 
+// Does the library draw the level of this slider? Only for the level
+// beside the right edge without a display function; anything else is left
+// to GadTools as before.
+BOOL _layout_slider_has_level(struct TagItem *tags)
+{
+	char *format;
+
+	return (BOOL)((format = (char *)GetTagData(GTSL_LevelFormat, 0, tags)) && strlen(format) <= 32 &&
+				  GetTagData(GTSL_LevelPlace, PLACETEXT_LEFT, tags) == PLACETEXT_RIGHT &&
+				  !FindTagItem(GTSL_DispFunc, tags));
+}
+
 // Draw the level of a slider created with GTSL_LevelFormat. The text goes
 // down in JAM1 after an EraseRect(), so a window backfill shows through
 // instead of the BACKGROUNDPEN box GadTools would draw.
@@ -1859,12 +1889,12 @@ void _layout_slider_level(struct Window *window, GL_Object *object, long level)
 {
 	struct RastPort rp;
 	struct TextExtent extent;
-	char *format, buf[40];
+	char buf[80];
 	short x, y, width, len;
 
-	// Only sliders with a level display
+	// Only sliders whose level we draw
 	if (!window || !object || object->type != OD_GADGET || object->object_kind != SLIDER_KIND || !object->tags ||
-		!(format = (char *)GetTagData(GTSL_LevelFormat, 0, object->tags)))
+		!_layout_slider_has_level(object->tags))
 		return;
 
 	// GadTools keeps the level inside the range
@@ -1884,14 +1914,11 @@ void _layout_slider_level(struct Window *window, GL_Object *object, long level)
 		width = GetTagData(GTSL_MaxLevelLen, 2, object->tags) * rp.Font->tf_XSize;
 
 	// Build the text and clip it to the reserved space
-	lsprintf(buf, format, level);
+	lsprintf(buf, (char *)GetTagData(GTSL_LevelFormat, 0, object->tags), level);
 	len = TextFit(&rp, buf, strlen(buf), &extent, 0, 1, width, rp.TxHeight);
 
 	// Position it beside the gadget, as GadTools does
-	if (GetTagData(GTSL_LevelPlace, PLACETEXT_LEFT, object->tags) == PLACETEXT_RIGHT)
-		x = object->dims.Left + object->dims.Width + 8;
-	else
-		x = object->dims.Left - width - 8;
+	x = object->dims.Left + object->dims.Width + 8;
 	y = object->dims.Top + ((object->dims.Height - rp.TxHeight + 1) >> 1);
 
 	// Clear the old level through the window backfill
@@ -1919,7 +1946,7 @@ void _layout_slider_message(struct IntuiMessage *msg)
 			if (object->type == OD_GADGET && object->object_kind == SLIDER_KIND &&
 				(APTR)GADGET(object) == msg->IAddress)
 			{
-				_layout_slider_level(msg->IDCMPWindow, object, msg->Code);
+				_layout_slider_level(msg->IDCMPWindow, object, (WORD)msg->Code);
 				return;
 			}
 		}
@@ -1950,7 +1977,7 @@ void LIBFUNC L_DisplayObject(REG(a0, struct Window *window),
 	// Gadgets draw themselves, apart from slider levels
 	if (object->type == OD_GADGET)
 	{
-		_layout_slider_level(window, object, object->gl_info.gl_gadget.data);
+		_layout_slider_level(window, object, (WORD)object->gl_info.gl_gadget.data);
 		return;
 	}
 
