@@ -752,6 +752,8 @@ unsigned long LIBFUNC L_Config_Environment(REG(a0, Cfg_Environment *env),
 						// Copy original palette
 						CopyMem(
 							(char *)env->env->palette, (char *)data->config->palette, sizeof(data->config->palette));
+						CopyMem(
+							(char *)env->env->palette2, (char *)data->config->palette2, sizeof(data->config->palette2));
 
 						// Update sliders
 						_config_env_palette_update_sliders(data);
