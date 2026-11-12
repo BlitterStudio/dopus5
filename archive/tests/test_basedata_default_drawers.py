@@ -125,10 +125,10 @@ class BasedataFiletypeTests(unittest.TestCase):
                 data = archive_member(member)
                 self.assertEqual(data, filetype_tool.encode(filetype_tool.parse(data)))
 
-    def test_stored_filetypes_are_named_after_the_filetype(self):
+    def test_filetypes_are_named_after_the_filetype(self):
         # The filetype finder installs a stored filetype under its name, the
         # editor installs it under its file name; they must agree.
-        members = drawer_files("DOpus5/Storage/Filetypes/")
+        members = drawer_files("DOpus5/Filetypes/") + drawer_files("DOpus5/Storage/Filetypes/")
         self.assertTrue(members)
 
         for member in members:
@@ -199,6 +199,21 @@ class InstallerTests(unittest.TestCase):
         installed_replacements = re.findall(r'#new \(tackon #dest "Filetypes/([^"]+)"\)', self.script)
         self.assertTrue(installed_replacements)
         self.assertEqual(set(), set(installed_replacements) - installed)
+
+    def test_renamed_filetypes_are_resolved_on_upgrade(self):
+        # An upgrade adds the file under its current name next to the old
+        # one; the script keeps one of them, which only works while the
+        # names match basedata.
+        installed = {m.rsplit("/", 1)[1] for m in drawer_files("DOpus5/Filetypes/")}
+        pairs = re.findall(r'\(set #oldft-name "([^"]+)"\)\s*\(set #newft-name "([^"]+)"\)\s*'
+                           r'\(P_RENAMED_FILETYPE\)', self.script)
+
+        self.assertIn(("All,_Directories", "All, Directories"), pairs)
+        self.assertIn(("Archives_over_XAD", "Archive, XAD"), pairs)
+        for old, new in pairs:
+            with self.subTest(old=old):
+                self.assertNotIn(old, installed)
+                self.assertIn(new, installed)
 
     def test_upgrade_handles_every_magicwb_file(self):
         # The MagicWB set is copied drawer by drawer on an upgrade; anything
