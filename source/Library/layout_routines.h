@@ -53,6 +53,7 @@ void _req_backfill(struct Window *window);
 #endif
 
 void _layout_add_gad_image(APTR *memory, struct Gadget *, struct Image *);
+BOOL _layout_slider_has_level(struct TagItem *tags);
 void _layout_slider_level(struct Window *window, GL_Object *object, long level);
 void _layout_slider_message(struct IntuiMessage *msg);
 

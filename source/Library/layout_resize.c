@@ -160,11 +160,12 @@ void LIBFUNC L_LayoutResize(REG(a0, struct Window *window))
 						gadget->Width = box.Width - 8;
 						gadget->Height = box.Height - 4;
 
-						// Get border gadget
-						gadget = gadget->NextGadget;
-
-						// This becomes the full size of the gadget
-						*((struct IBox *)&gadget->LeftEdge) = box;
+						// Get border gadget (AROS GadTools makes none)
+						if ((gadget = gadget->NextGadget))
+						{
+							// This becomes the full size of the gadget
+							*((struct IBox *)&gadget->LeftEdge) = box;
+						}
 						break;
 					}
 

@@ -1057,7 +1057,7 @@ ObjectList *LIBFUNC L_AddObjectList(REG(a0, struct Window *window),
 
 				// GadTools draws the level with JAM2 in BACKGROUNDPEN, which
 				// paints boxes over a window backfill. We draw it ourselves.
-				if (FindTagItem(GTSL_LevelFormat, taglist))
+				if (_layout_slider_has_level(taglist))
 				{
 					slider_level = TRUE;
 					new_object->gl_info.gl_gadget.data = GetTagData(GTSL_Level, 0, taglist);
@@ -1482,6 +1482,26 @@ ObjectList *LIBFUNC L_AddObjectList(REG(a0, struct Window *window),
 				// Create gadget context
 				if (CreateContext(&new_object->gl_info.gl_gadget.context))
 				{
+					static Tag level_ids[] = {GTSL_LevelFormat, GTSL_MaxLevelLen, GTSL_MaxPixelLen, TAG_DONE};
+					struct TagItem *gt_tags = taglist;
+
+					// Hide every level tag from GadTools. Some GadTools (AROS)
+					// take the last of repeated tags and add the level for any
+					// of these, so they have to go, not just be overridden.
+					// GadTools gets its own copy; we keep ours for drawing.
+					if (slider_level)
+					{
+						if ((gt_tags = CloneTagItems(taglist)))
+							FilterTagItems(gt_tags, level_ids, TAGFILTER_NOT);
+
+						// No memory: leave the level to GadTools
+						else
+						{
+							gt_tags = taglist;
+							slider_level = FALSE;
+						}
+					}
+
 					new_object->gl_info.gl_gadget.gadget = CreateGadget(new_object->object_kind,
 																		new_object->gl_info.gl_gadget.context,
 																		&newgad,
@@ -1495,10 +1515,18 @@ ObjectList *LIBFUNC L_AddObjectList(REG(a0, struct Window *window),
 																		2,
 																		(hook) ? STRINGA_EditHook : TAG_IGNORE,
 																		hook,
-																		(slider_level) ? GTSL_LevelFormat : TAG_IGNORE,
-																		0,
 																		TAG_MORE,
-																		(IPTR)taglist);
+																		(IPTR)gt_tags);
+
+					// Free the GadTools copy
+					if (gt_tags != taglist)
+						FreeTagItems(gt_tags);
+
+					// GadTools draws this level after all; a kept taglist
+					// (GTCustom_CopyTags) must not make us draw it again
+					else if (!slider_level && (tag = FindTagItem(GTSL_LevelFormat, taglist)) &&
+							 _layout_slider_has_level(taglist))
+						tag->ti_Tag = TAG_IGNORE;
 				}
 			}
 			break;
@@ -1852,6 +1880,43 @@ GL_Object *LIBFUNC L_GetObject(REG(a0, ObjectList *list), REG(d0, int id))
 						Show the level of a slider
  ****************************************************************************/
 
+// Is this a level format we can print safely: up to 32 characters with a
+// single plain %ld (no width or other conversions; %% is allowed)?
+static BOOL _layout_slider_format_ok(const char *format)
+{
+	short pos, conversions = 0;
+
+	for (pos = 0; format[pos]; pos++)
+	{
+		if (pos >= 32)
+			return FALSE;
+		if (format[pos] != '%')
+			continue;
+		if (format[pos + 1] == '%')
+			pos++;
+		else if (format[pos + 1] == 'l' && format[pos + 2] == 'd')
+		{
+			pos += 2;
+			conversions++;
+		}
+		else
+			return FALSE;
+	}
+	return (BOOL)(conversions == 1);
+}
+
+// Does the library draw the level of this slider? Only for the level
+// beside the right edge without a display function; anything else is left
+// to GadTools as before.
+BOOL _layout_slider_has_level(struct TagItem *tags)
+{
+	char *format;
+
+	return (BOOL)((format = (char *)GetTagData(GTSL_LevelFormat, 0, tags)) && _layout_slider_format_ok(format) &&
+				  GetTagData(GTSL_LevelPlace, PLACETEXT_LEFT, tags) == PLACETEXT_RIGHT &&
+				  !FindTagItem(GTSL_DispFunc, tags));
+}
+
 // Draw the level of a slider created with GTSL_LevelFormat. The text goes
 // down in JAM1 after an EraseRect(), so a window backfill shows through
 // instead of the BACKGROUNDPEN box GadTools would draw.
@@ -1859,12 +1924,12 @@ void _layout_slider_level(struct Window *window, GL_Object *object, long level)
 {
 	struct RastPort rp;
 	struct TextExtent extent;
-	char *format, buf[40];
+	char buf[80];
 	short x, y, width, len;
 
-	// Only sliders with a level display
+	// Only sliders whose level we draw
 	if (!window || !object || object->type != OD_GADGET || object->object_kind != SLIDER_KIND || !object->tags ||
-		!(format = (char *)GetTagData(GTSL_LevelFormat, 0, object->tags)))
+		!_layout_slider_has_level(object->tags))
 		return;
 
 	// GadTools keeps the level inside the range
@@ -1884,14 +1949,11 @@ void _layout_slider_level(struct Window *window, GL_Object *object, long level)
 		width = GetTagData(GTSL_MaxLevelLen, 2, object->tags) * rp.Font->tf_XSize;
 
 	// Build the text and clip it to the reserved space
-	lsprintf(buf, format, level);
+	lsprintf(buf, (char *)GetTagData(GTSL_LevelFormat, 0, object->tags), level);
 	len = TextFit(&rp, buf, strlen(buf), &extent, 0, 1, width, rp.TxHeight);
 
 	// Position it beside the gadget, as GadTools does
-	if (GetTagData(GTSL_LevelPlace, PLACETEXT_LEFT, object->tags) == PLACETEXT_RIGHT)
-		x = object->dims.Left + object->dims.Width + 8;
-	else
-		x = object->dims.Left - width - 8;
+	x = object->dims.Left + object->dims.Width + 8;
 	y = object->dims.Top + ((object->dims.Height - rp.TxHeight + 1) >> 1);
 
 	// Clear the old level through the window backfill
@@ -1919,7 +1981,7 @@ void _layout_slider_message(struct IntuiMessage *msg)
 			if (object->type == OD_GADGET && object->object_kind == SLIDER_KIND &&
 				(APTR)GADGET(object) == msg->IAddress)
 			{
-				_layout_slider_level(msg->IDCMPWindow, object, msg->Code);
+				_layout_slider_level(msg->IDCMPWindow, object, (WORD)msg->Code);
 				return;
 			}
 		}
@@ -1950,7 +2012,7 @@ void LIBFUNC L_DisplayObject(REG(a0, struct Window *window),
 	// Gadgets draw themselves, apart from slider levels
 	if (object->type == OD_GADGET)
 	{
-		_layout_slider_level(window, object, object->gl_info.gl_gadget.data);
+		_layout_slider_level(window, object, (WORD)object->gl_info.gl_gadget.data);
 		return;
 	}
 

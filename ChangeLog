@@ -24,7 +24,8 @@ dopus5.library change; version bump deferred.
   sliders of the Environment Palette page on a box of the background
   colour, which showed over a requester background picture or
   pattern.  dopus5.library now draws the value of every slider that
-  shows one itself, over the window's background.
+  shows one beside its right edge itself, over the window's
+  background, and hides the level from GadTools on every platform.
 
 [dopus5 next] Clean Up fits rows and columns to their icons (#235)
 Program change; version bump deferred.
