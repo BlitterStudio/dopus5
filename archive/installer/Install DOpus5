@@ -542,25 +542,33 @@
                )))
     ))
 
-; Releases up to 5.104 installed the XAD filetype as Archives_over_XAD; it is
-; "Archive, XAD" now.  An upgrade adds the new file, so keep only one of them.
-(set #oldxad (tackon #dest "Filetypes/Archives_over_XAD"))
-(set #newxad (tackon #dest "Filetypes/Archive, XAD"))
-(if (and #upgrade
-         (= 1 (exists #oldxad (noreq)))
-         (= 1 (exists #newxad (noreq))))
-    (if (askbool
-           (prompt "The Archives_over_XAD filetype is now called Archive, XAD.\n\nRemove Archives_over_XAD and use the new Archive, XAD?")
-           (help "Both filetypes open and extract archives with XAD. Answer Yes to use the one from this release.\n\nIf you changed Archives_over_XAD, for example to open archives with XADOpenInLister, answer No: Archives_over_XAD stays and the new Archive, XAD is removed.")
-           (default 1))
-        (delete #oldxad
-           (prompt "Remove " #oldxad)
-           (help "")
-           (optional "force"))
-        (delete #newxad
-           (prompt "Remove " #newxad)
-           (help "")
-           (optional "force"))))
+; Installed filetypes that releases or older installations had under
+; another file name.  An upgrade adds the file under the current name, so
+; keep only one of them.  "All,_Directories" is a copy of "All, Directories"
+; that some installations have; Archives_over_XAD is "Archive, XAD" since
+; the release after 5.104.
+
+(procedure P_RENAMED_FILETYPE
+   (set #oldft (tackon #dest (cat "Filetypes/" #oldft-name)))
+   (set #newft (tackon #dest (cat "Filetypes/" #newft-name)))
+   (if (and #upgrade
+            (= 1 (exists #oldft (noreq)))
+            (= 1 (exists #newft (noreq))))
+       (if (askbool
+              (prompt "The " #oldft-name " filetype is now called " #newft-name ".\n\nRemove " #oldft-name " and use " #newft-name "?")
+              (help "Both files hold the same filetype, so Opus would use it twice. Answer Yes to use the one from this release.\n\nIf you changed " #oldft-name ", answer No: it stays and " #newft-name " is removed.")
+              (default 1))
+           (delete #oldft
+              (prompt "Remove " #oldft)
+              (help "")
+              (optional "force"))
+           (delete #newft
+              (prompt "Remove " #newft)
+              (help "")
+              (optional "force")))))
+
+(set #oldft-name "All,_Directories")  (set #newft-name "All, Directories") (P_RENAMED_FILETYPE)
+(set #oldft-name "Archives_over_XAD") (set #newft-name "Archive, XAD")     (P_RENAMED_FILETYPE)
 
 (complete 85)
 

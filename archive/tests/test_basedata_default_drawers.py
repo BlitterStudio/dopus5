@@ -200,16 +200,20 @@ class InstallerTests(unittest.TestCase):
         self.assertTrue(installed_replacements)
         self.assertEqual(set(), set(installed_replacements) - installed)
 
-    def test_renamed_xad_filetype_is_resolved_on_upgrade(self):
-        # An upgrade adds the renamed file next to the old one; the script
-        # keeps one of them, which only works while the names match basedata.
+    def test_renamed_filetypes_are_resolved_on_upgrade(self):
+        # An upgrade adds the file under its current name next to the old
+        # one; the script keeps one of them, which only works while the
+        # names match basedata.
         installed = {m.rsplit("/", 1)[1] for m in drawer_files("DOpus5/Filetypes/")}
-        old = re.search(r'\(set #oldxad \(tackon #dest "Filetypes/([^"]+)"\)\)', self.script)
-        new = re.search(r'\(set #newxad \(tackon #dest "Filetypes/([^"]+)"\)\)', self.script)
+        pairs = re.findall(r'\(set #oldft-name "([^"]+)"\)\s*\(set #newft-name "([^"]+)"\)\s*'
+                           r'\(P_RENAMED_FILETYPE\)', self.script)
 
-        self.assertTrue(old and new)
-        self.assertNotIn(old.group(1), installed)
-        self.assertIn(new.group(1), installed)
+        self.assertIn(("All,_Directories", "All, Directories"), pairs)
+        self.assertIn(("Archives_over_XAD", "Archive, XAD"), pairs)
+        for old, new in pairs:
+            with self.subTest(old=old):
+                self.assertNotIn(old, installed)
+                self.assertIn(new, installed)
 
     def test_upgrade_handles_every_magicwb_file(self):
         # The MagicWB set is copied drawer by drawer on an upgrade; anything

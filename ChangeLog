@@ -16,7 +16,9 @@ version changes.
   could install it a second time.
 - An upgrade adds the new filetypes, offers to remove their stored
   copies, and asks whether to keep Archives_over_XAD or the new
-  Archive, XAD.
+  Archive, XAD.  It asks the same about All,_Directories, a copy of
+  All, Directories that some installations have; with both installed,
+  Opus lists the directory menu items twice.
 
 [dopus5 next] Build OS3 with GCC 16 again
 Build-system change; no existing program, library, module or command

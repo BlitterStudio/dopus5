@@ -90,8 +90,9 @@ Upgrade:
   The installer also offers to remove the outdated stored filetypes that
   older releases left in DOpus5:Storage/Filetypes, including the stored
   copies of filetypes that are installed now.  Archives_over_XAD is
-  called Archive, XAD now; when an upgrade finds both, the installer asks
-  which one to keep.
+  called Archive, XAD now, and some installations have a second copy of
+  All, Directories called All,_Directories; when an upgrade finds both
+  names of one of them, the installer asks which one to keep.
 
 Images and icons:
   The installer asks which toolbar images and icons to use, and offers
