@@ -1,3 +1,14 @@
+[dopus5 next] Module open fails cleanly (issue #244)
+All modules change; version bump deferred.
+
+- xadopus.module no longer opens when xadmaster.library is missing.
+  The XAD commands are simply not available, instead of dopus_function
+  jumping through a NULL library base.
+- Every module now fails its open when UserLibInit fails. Cleanup runs
+  once, so locale.library and dopus5.library are not closed twice or
+  leaked, and a failed open no longer leaves the module's open count
+  raised.
+
 [dopus5 next] Sixteen user pens (issue #236)
 Program, dopus5.library and configopus change; version bump deferred.
 

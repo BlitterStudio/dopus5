@@ -760,6 +760,10 @@ static struct LibraryHeader *LIBFUNC LibOpen(REG(d0, UNUSED ULONG version), REG(
 	// unprotect initBase()
 	ReleaseSemaphore(&base->libSem);
 
+	// A failed first open must not leave the open count raised.
+	if (base->initialized == 0)
+		base->libBase.lib_OpenCnt--;
+
 	return base->initialized ? base : NULL;
 #ifdef __AROS__
 	AROS_LIBFUNC_EXIT
@@ -992,13 +996,12 @@ ULONG initBase(struct LibraryHeader *lib)
 	#endif
 #endif
 
-															UserLibInit();
-
-															return TRUE;
+															// failed UserLibInit falls through to cleanup
+															if (UserLibInit() == 0)
+																return TRUE;
 														}
 
-	UserLibCleanup();
-
+	// freeBase() calls UserLibCleanup(); do not run it twice
 	freeBase(lib);
 
 	return FALSE;
@@ -1016,11 +1019,9 @@ int UserLibInit()
 	}
 
 #ifdef __amigaos4__
+	// Leave DOpusBase set; UserLibCleanup() closes it.
 	if (!(IDOpus = (struct DOpusIFace *)GetInterface(DOpusBase, "main", 1, NULL)))
-	{
-		CloseLibrary(DOpusBase);
 		return (10);
-	}
 #endif
 
 	// Allocate and open locale data
@@ -1028,13 +1029,9 @@ int UserLibInit()
 		return 1;
 	init_locale_data(locale);
 
-#if defined(__amigaos4__) || defined(__MORPHOS__)
-	if ((LocaleBase = OpenLibrary("locale.library", 38)))
-#else
-	if ((LocaleBase = (struct LocaleBase *)OpenLibrary("locale.library", 38)))
-#endif
+	// v38 open is ours; leave initBase's LocaleBase for freeBase
+	if ((locale->li_LocaleBase = (APTR)OpenLibrary("locale.library", 38)))
 	{
-		locale->li_LocaleBase = LocaleBase;
 		locale->li_Catalog = OpenCatalogA(0, "configopus.catalog", 0);
 	}
 
@@ -1045,19 +1042,25 @@ int UserLibInit()
 // Clean up
 void UserLibCleanup()
 {
-	// Free locale stuff
+	// Close only the v38 locale open UserLibInit made. freeBase closes
+	// initBase's v37 LocaleBase, so this must not close that global.
 	if (locale)
 	{
-		if (LocaleBase)
+		if (locale->li_LocaleBase)
 		{
 			CloseCatalog(locale->li_Catalog);
-			CloseLibrary(LocaleBase);
+			CloseLibrary((struct Library *)locale->li_LocaleBase);
+			locale->li_LocaleBase = NULL;
+			locale->li_Catalog = NULL;
 		}
 		FreeVec(locale);
+		locale = NULL;
 	}
 
 #ifdef __amigaos4__
 	DropInterface((struct Interface *)IDOpus);
+	IDOpus = NULL;
 #endif
 	CloseLibrary(DOpusBase);
+	DOpusBase = NULL;
 }
