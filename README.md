@@ -120,8 +120,9 @@ binutils 2.47 build in `amigadev/crosstools:m68k-amigaos`. After an OS3 build,
 `make os3 verify-os3-stubs` (or `make os3-68000 verify-os3-stubs`) fails if a
 binary has such a stub. CI runs it for both OS3 targets.
 
-The OS4 and MorphOS images include the SDKs required by the FTP module
-(AmiSSL and codesets on OS4, codesets on MorphOS).
+The images include the SDKs required by the FTP module: the AmiSSL 5 SDK
+and zlib on OS3, AmiSSL, zlib and codesets on OS4, and codesets on MorphOS,
+whose SDK provides OpenSSL and zlib.
 
 The AROS aarch64 image uses Clang 18 with the large, non-PIC code model and
 links through AROS `collect-aros`; the other AROS images use GCC. The makefiles
@@ -133,6 +134,27 @@ and rejects GOT relocations that the loader cannot apply.
 
 Native builds on Amiga / MorphOS / AROS are also possible if you have a
 working compiler, libc, and the platform SDK installed.
+
+### Using your own toolchain
+
+Outside the images, the FTP module needs the same SDKs in your cross
+toolchain. For OS3 these are:
+
+- the AmiSSL 5 SDK (`AmiSSL-5.x-SDK.lha` from the
+  [AmiSSL releases](https://github.com/jens-maus/amissl/releases)): copy
+  `AmiSSL/Developer/include/*` into the compiler's include directory
+  (`<prefix>/m68k-amigaos/include`) and
+  `AmiSSL/Developer/lib/AmigaOS3/libamissl*.a` into
+  `<prefix>/m68k-amigaos/lib`;
+- zlib (`zlib.h`, `zconf.h` and `libz.a`) built for m68k-amigaos.
+
+The [AmigaPorts toolchain](https://github.com/AmigaPorts/m68k-amigaos-gcc)
+installs both with `make sdk-amissl zlib`. Without the AmiSSL headers the
+build stops in the bundled libssh2 with
+`openssl/opensslconf.h: No such file or directory`. The FTP makefiles also
+look in `$(CROSS_ROOT)/usr/include` and `$(CROSS_ROOT)/usr/lib`;
+`CROSS_ROOT` defaults to `/opt/m68k-amigaos`, so pass
+`CROSS_ROOT=<prefix>` if your toolchain is installed elsewhere.
 
 ### Per-platform make targets
 
