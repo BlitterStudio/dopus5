@@ -730,6 +730,7 @@ static struct LibraryHeader *LIBFUNC LibOpen(REG(d0, UNUSED ULONG version), REG(
 {
 #endif
 	BOOL success = FALSE;
+	struct LibraryHeader *ret;
 
 	// LibOpen(), LibClose() and LibExpunge() are called while the system is in
 	// Forbid() state. That means that these functions should be quick and should
@@ -761,14 +762,17 @@ static struct LibraryHeader *LIBFUNC LibOpen(REG(d0, UNUSED ULONG version), REG(
 			base->initialized = 1;
 	}
 
+	// Take the result while still holding the semaphore
+	ret = base->initialized ? base : NULL;
+
 	// unprotect initBase()
 	ReleaseSemaphore(&base->libSem);
 
 	// A failed first open must not leave the open count raised.
-	if (base->initialized == 0)
+	if (!ret)
 		base->libBase.lib_OpenCnt--;
 
-	return base->initialized ? base : NULL;
+	return ret;
 #ifdef __AROS__
 	AROS_LIBFUNC_EXIT
 #endif
