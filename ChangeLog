@@ -1,5 +1,73 @@
-[dopus5 next] Module open fails cleanly (issue #244)
-All modules change; version bump deferred.
+[dopus5 5.105] Release summary
+Program bumps to 5.105, library and modules to v73r9; the commands
+stay at v65r6.  The release offers up to sixteen user pens, sizes
+Clean Up to the icons, fixes the xadopus crash without
+xadmaster.library, ships the translated catalogs, installs the common
+filetypes, leaves later system patches in place when Opus quits, and
+builds OS3 with GCC 16 again.  The detailed entries for each change
+follow this summary.
+
+Program:
+- Environment > Palette offers up to sixteen user pens (#236).
+- Clean Up and Arrange Icons size each column to its widest icon and
+  each row to its tallest icon, so one large icon no longer spreads
+  out the small ones (#235).
+- On screens of up to 256 colours, palette icons keep the colours that
+  the remap puts on colour 0.
+- ARexx 'lister set <h> mode icon showall' on a lister already in that
+  icon mode shows the extra files and updates the View As menu.
+- Sorting by owner or group handles entries with an empty owner or
+  group like ones without network information (#234).
+- ARexx 'dopus query palette' returns 24 colours, the last sixteen
+  being the user pens, and 'dopus set palette' takes as many; 'dopus
+  set pens user' takes up to 16.
+
+dopus5.library:
+- Environment config version 19 stores the colours of user pens 9-16;
+  older environments load with their pens unchanged, and older
+  versions of Opus read at most eight pens from a newer one.
+- Slider values are drawn over the window's background instead of a
+  box of the background colour, on every platform (#236).
+- Closing the library leaves patches that other programs made after
+  Opus in place (#231).  With dopus/NoSysPatch set, the calls that
+  bypass the patches no longer read a patch table that was never
+  allocated, and on OS4 the OpenWorkbenchObject() patch returns TRUE
+  when the object opened.
+
+Modules:
+- All modules: an open whose own initialisation fails now fails
+  cleanly instead of opening half set up, leaking or closing things
+  twice.  xadopus.module without xadmaster.library no longer crashes
+  when an XAD command runs (#244).
+- configopus: sixteen user pens in the palette editor, pen pickers and
+  Select Colours; sound entries are saved only for events with a
+  sound (#234).
+- icon: the author tooltype is recognised again (#234).
+
+Release archives and installer:
+- The archives carry the translated catalogs and the installer copies
+  the chosen languages to LOCALE:Catalogs.
+- New installations get 61 more filetypes in DOpus5:Filetypes.
+
+Build:
+- OS3 is built with GCC 16 again, and the whole tree builds without
+  compiler warnings on GCC 16 (#228).
+- The README lists the SDKs the FTP module needs outside the build
+  images (#248).
+
+Documentation:
+- DOpus5.guide 58.25 and DOpusM2_ARexx.guide 57.10.
+
+Versioning notes:
+- PROG_REVISION moves 104 -> 105.
+- Global LIB_REVISION moves 8 -> 9 (dopus5.library and all modules
+  ship at v73r9).
+- CMD_REVISION stays at 6: nothing under source/Misc/C changed.
+
+2026-11-13 by Dimitris Panokostas <midwan@gmail.com>
+
+[dopus5 5.105] Module open fails cleanly (issue #244)
+All modules change; ships in 5.105.
 
 - xadopus.module no longer opens when xadmaster.library is missing.
   The XAD commands are simply not available, instead of dopus_function
@@ -9,8 +77,8 @@ All modules change; version bump deferred.
   leaked, and a failed open no longer leaves the module's open count
   raised.
 
-[dopus5 next] Sixteen user pens (issue #236)
-Program, dopus5.library and configopus change; version bump deferred.
+[dopus5 5.105] Sixteen user pens (issue #236)
+Program, dopus5.library and configopus change; ships in 5.105.
 
 - Environment, Palette offers up to sixteen user pens instead of eight.
   The slider limit, the palette display, the pen pickers of the
@@ -32,8 +100,8 @@ Program, dopus5.library and configopus change; version bump deferred.
   internal pen table entries 12-15 to 16-19 to make room; the stored
   pen numbers of listers, buttons and icons are unchanged.
 
-[dopus5 next] Slider values over a requester background (issue #236)
-dopus5.library change; version bump deferred.
+[dopus5 5.105] Slider values over a requester background (issue #236)
+dopus5.library change; ships in 5.105.
 
 - GadTools drew the values beside the User Pens, Red, Green and Blue
   sliders of the Environment Palette page on a box of the background
@@ -42,8 +110,8 @@ dopus5.library change; version bump deferred.
   shows one beside its right edge itself, over the window's
   background, and hides the level from GadTools on every platform.
 
-[dopus5 next] Clean Up fits rows and columns to their icons (#235)
-Program change; version bump deferred.
+[dopus5 5.105] Clean Up fits rows and columns to their icons (#235)
+Program change; ships in 5.105.
 
 - Clean Up and Arrange Icons made every cell of the grid as wide as
   the widest icon in the window and as tall as the tallest one, so a
@@ -56,7 +124,7 @@ Program change; version bump deferred.
   places among positioned ones keep the even grid, which lets them step
   around the icons already there.
 
-[dopus5 next] Install the common filetypes by default
+[dopus5 5.105] Install the common filetypes by default
 basedata and installer change; no program, library, module or command
 version changes.
 
@@ -78,7 +146,7 @@ version changes.
   All, Directories that some installations have; with both installed,
   Opus lists the directory menu items twice.
 
-[dopus5 next] Build OS3 with GCC 16 again
+[dopus5 5.105] Build OS3 with GCC 16 again
 Build-system change; no existing program, library, module or command
 version changes.
 
@@ -95,9 +163,9 @@ version changes.
 - The new image provides zlib 1.4 for the SFTP code; update
   THIRD_PARTY_NOTICES.md.
 
-[dopus5 next] Fix bugs hidden behind always-true tests (issue #234)
+[dopus5 5.105] Fix bugs hidden behind always-true tests (issue #234)
 Program, configopus and icon module change, ftp module source cleanup;
-version bump deferred.
+ships in 5.105.
 
 - icon: the « » quotes around an icon's author are recognised again,
   so the author tooltype is found and sorted first.  The quote
@@ -115,8 +183,8 @@ version bump deferred.
   low byte of each AmFTP key is used, and the message checks could
   only ever test the message pointer.
 
-[dopus5 next] Palette icons keep colours drawn in colour 0
-Program change; version bump deferred.
+[dopus5 5.105] Palette icons keep colours drawn in colour 0
+Program change; ships in 5.105.
 
 - Opus built the mask of a borderless icon from the image remapped to
   the screen, so every pixel drawn in colour 0 counted as background.
@@ -133,8 +201,8 @@ Program change; version bump deferred.
   something asks it for their image data, so Opus does not ask there
   (reported by Peter Keunecke).
 
-[dopus5 next] ARexx Show All on an icon mode lister
-Program change; version bump deferred.
+[dopus5 5.105] ARexx Show All on an icon mode lister
+Program change; ships in 5.105.
 
 - 'lister set <h> mode icon showall' (or 'mode icon' to turn it off)
   on a lister already in that icon mode answered with the new mode,
@@ -142,9 +210,9 @@ Program change; version bump deferred.
   lister's View As menu.  The files are read again and the menu is
   updated.
 
-[dopus5 next] Build without compiler warnings on GCC 16 (issue #228)
-Program, dopus5.library, all modules and build-system change; version
-bump deferred.
+[dopus5 5.105] Build without compiler warnings on GCC 16 (issue #228)
+Program, dopus5.library, all modules and build-system change; ships in
+5.105.
 
 - The warning flags are passed to the linker too, because LTO generates
   the code at link time, and the code is built with
@@ -166,8 +234,8 @@ bump deferred.
   misleading indentation are fixed across the program, the library and
   the modules.  None of this is meant to change behaviour.
 
-[dopus5 next] Quitting Opus leaves later system patches in place
-dopus5.library change; version bump deferred.
+[dopus5 5.105] Quitting Opus leaves later system patches in place
+dopus5.library change; ships in 5.105.
 
 - dopus5.library patches exec, DOS, Intuition, icon.library and
   workbench.library functions.  When the library closed, it wrote the
@@ -191,8 +259,8 @@ dopus5.library change; version bump deferred.
 - OS4: the OpenWorkbenchObject() patch returned FALSE even when the
   object was opened.
 
-[dopus5 next] Release archives carry the translated catalogs
-Release packaging and installer change; version bump deferred.
+[dopus5 5.105] Release archives carry the translated catalogs
+Release packaging and installer change; ships in 5.105.
 
 - The release archives have Catalogs/<language> with the compiled
   catalogs of every translation (deutsch, español, français, greek,
