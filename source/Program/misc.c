@@ -471,7 +471,7 @@ BOOL check_closescreen(struct Screen *screen)
 					if (task && task->tc_Node.ln_Name)
 					{
 						// Owned by IPrefs?
-						if (strcmp(task->tc_Node.ln_Name, "� IPrefs �") == 0)
+						if (strcmp(task->tc_Node.ln_Name, "\xab IPrefs \xbb") == 0)
 							ok = 1;
 					}
 
