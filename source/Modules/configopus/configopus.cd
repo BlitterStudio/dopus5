@@ -1329,6 +1329,18 @@ Stri_ped Rows
 MSG_ENVIRONMENT_STRIPE_COLOUR (//)
 Alternate Rows
 ;
+MSG_PALETTE_CUSTOM (//)
+Custom
+;
+MSG_PALETTE_RED (//)
+R
+;
+MSG_PALETTE_GREEN (//)
+G
+;
+MSG_PALETTE_BLUE (//)
+B
+;
 ;
 ;
 ; Button editor strings
