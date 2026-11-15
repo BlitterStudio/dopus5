@@ -3,7 +3,7 @@
 // Palette box window dimensions
 ConfigWindow _palette_box_window = {{POS_RIGHT_JUSTIFY, POS_RIGHT_JUSTIFY, 16, 5}, {0, 0, 76, 28}},
 
-			 _palette_box_cust_window = {{POS_RIGHT_JUSTIFY, POS_RIGHT_JUSTIFY, 20, 7}, {0, 0, 74, 64}};
+			 _palette_box_cust_window = {{POS_RIGHT_JUSTIFY, POS_RIGHT_JUSTIFY, 20, 8}, {0, 0, 74, 66}};
 
 // Tag lists
 struct TagItem _palette_box_tags[] = {{GTCustom_LayoutRel, GAD_PALETTE_LAYOUT}, {TAG_END, 0}},
@@ -81,23 +81,71 @@ ObjectDef
 		 GAD_PALETTE_BACKGROUND,
 		 _palette_box_tags},
 
+		// Custom colour caption foreground
+		{OD_TEXT, TEXTPEN, {0, 6, 10, 1}, {4, 14, 24, 0}, MSG_PALETTE_CUSTOM, TEXTFLAG_CENTER, 0, _palette_box_tags},
+
+		// Custom colour caption background
+		{OD_TEXT, TEXTPEN, {10, 6, 10, 1}, {36, 14, 24, 0}, MSG_PALETTE_CUSTOM, TEXTFLAG_CENTER, 0, _palette_box_tags},
+
 		// Red slider foreground
-		{OD_GADGET, SLIDER_KIND, {0, 6, 10, 0}, {4, 14, 24, 10}, 0, 0, GAD_PALETTE_RED_FORE, _palette_slider_tags},
+		{OD_GADGET,
+		 SLIDER_KIND,
+		 {2, 7, 8, 0},
+		 {4, 16, 24, 10},
+		 MSG_PALETTE_RED,
+		 PLACETEXT_LEFT,
+		 GAD_PALETTE_RED_FORE,
+		 _palette_slider_tags},
 
 		// Green slider foreground
-		{OD_GADGET, SLIDER_KIND, {0, 6, 10, 0}, {4, 25, 24, 10}, 0, 0, GAD_PALETTE_GREEN_FORE, _palette_slider_tags},
+		{OD_GADGET,
+		 SLIDER_KIND,
+		 {2, 7, 8, 0},
+		 {4, 27, 24, 10},
+		 MSG_PALETTE_GREEN,
+		 PLACETEXT_LEFT,
+		 GAD_PALETTE_GREEN_FORE,
+		 _palette_slider_tags},
 
 		// Blue slider foreground
-		{OD_GADGET, SLIDER_KIND, {0, 6, 10, 0}, {4, 36, 24, 10}, 0, 0, GAD_PALETTE_BLUE_FORE, _palette_slider_tags},
+		{OD_GADGET,
+		 SLIDER_KIND,
+		 {2, 7, 8, 0},
+		 {4, 38, 24, 10},
+		 MSG_PALETTE_BLUE,
+		 PLACETEXT_LEFT,
+		 GAD_PALETTE_BLUE_FORE,
+		 _palette_slider_tags},
 
 		// Red slider background
-		{OD_GADGET, SLIDER_KIND, {10, 6, 10, 0}, {36, 14, 24, 10}, 0, 0, GAD_PALETTE_RED_BACK, _palette_slider_tags},
+		{OD_GADGET,
+		 SLIDER_KIND,
+		 {12, 7, 8, 0},
+		 {36, 16, 24, 10},
+		 MSG_PALETTE_RED,
+		 PLACETEXT_LEFT,
+		 GAD_PALETTE_RED_BACK,
+		 _palette_slider_tags},
 
 		// Green slider background
-		{OD_GADGET, SLIDER_KIND, {10, 6, 10, 0}, {36, 25, 24, 10}, 0, 0, GAD_PALETTE_GREEN_BACK, _palette_slider_tags},
+		{OD_GADGET,
+		 SLIDER_KIND,
+		 {12, 7, 8, 0},
+		 {36, 27, 24, 10},
+		 MSG_PALETTE_GREEN,
+		 PLACETEXT_LEFT,
+		 GAD_PALETTE_GREEN_BACK,
+		 _palette_slider_tags},
 
 		// Blue slider background
-		{OD_GADGET, SLIDER_KIND, {10, 6, 10, 0}, {36, 36, 24, 10}, 0, 0, GAD_PALETTE_BLUE_BACK, _palette_slider_tags},
+		{OD_GADGET,
+		 SLIDER_KIND,
+		 {12, 7, 8, 0},
+		 {36, 38, 24, 10},
+		 MSG_PALETTE_BLUE,
+		 PLACETEXT_LEFT,
+		 GAD_PALETTE_BLUE_BACK,
+		 _palette_slider_tags},
 
 		// Use
 		{OD_GADGET,
