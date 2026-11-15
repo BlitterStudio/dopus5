@@ -1,3 +1,15 @@
+[dopus5 next] Pens 4-7 on Opus's own screen hold the top four colours
+Program and configopus change; version bump deferred.
+
+- On its own screen with more than eight colours, Opus now also locks
+  pens 4-7 to the last four system colours, as Workbench does with
+  "Set MagicWB Colors".  MagicWB icons drawn without 'Remap icon
+  images', or remapped by icon.library from the first eight colours
+  of the screen, showed whatever those pens held, often a user pen.
+  The Environment palette editor changes them along with the top
+  four.  On a 16 colour screen this leaves four pens for user pens
+  of their own instead of eight; the others use the closest colour.
+
 [dopus5 5.105] Release summary
 Program bumps to 5.105, library and modules to v73r9; the commands
 stay at v65r6.  The release offers up to sixteen user pens, sizes

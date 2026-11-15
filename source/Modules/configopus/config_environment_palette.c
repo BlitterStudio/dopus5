@@ -241,6 +241,11 @@ void set_rgb32(config_env_data *data, short col, ULONG *palette)
 	if (((struct Library *)GfxBase)->lib_Version >= 39)
 	{
 		SetRGB32(&data->window->WScreen->ViewPort, reg, palette[0], palette[1], palette[2]);
+
+		// Opus locks pens 4-7 of a deeper own screen to the top four colours;
+		// col is the low pen here
+		if (data->own_screen > 8 && col >= 4 && col < 8)
+			SetRGB32(&data->window->WScreen->ViewPort, col, palette[0], palette[1], palette[2]);
 	}
 	else
 	{

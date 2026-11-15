@@ -1,6 +1,6 @@
 @database dopus5
 @master dopus5.guide
-@$VER: Dopus5Guide 58.25 (12.11.2026)
+@$VER: Dopus5Guide 58.26 (15.11.2026)
 @author "Mark Anderson, Andrew Dunbar, Dr Greg Perry, Leo Davidson and Dave Clarke"
 @(c) "Directory Opus 5 Help Guide (c) GPSoftware 1999"
 @(c) "Directory Opus 5 Help Guide (c) DOPUS5 Open Source Team 2012-2026"
@@ -3842,9 +3842,12 @@ This section controls various aspects of Opus's icon display routines.
     Directory Opus will, by default, draw colours 4 to 7 of 8 colour icons
     in the last four pens of the screen, which hold the system colours on
     its own screen.  Turn this off to draw them in pens 4 to 7, as
-    Workbench does.  On AmigaOS 3 with "Set MagicWB Colors" on in the
-    Workbench preferences, icons on the Workbench screen are never
-    remapped, because pens 4 to 7 hold the MagicWB colours there.
+    Workbench does.  On its own screen with more than eight colours, Opus
+    gives pens 4 to 7 the same colours as the last four pens, so both
+    settings look the same there.  On AmigaOS 3 with "Set MagicWB
+    Colors" on in the Workbench preferences, icons on the Workbench
+    screen are never remapped, because pens 4 to 7 hold the MagicWB
+    colours there.
 
   Remove Opus icon positions:
     Setting this option along with the Use Workbench Icon Positions flag
@@ -4252,10 +4255,12 @@ Environment editor.
 When Opus has its own screen, the Presets button sets its eight system
 colours.  'Workbench Screen' copies them from the Workbench screen;
 'Workbench 3.1' and 'MagicWB' use those standard palettes.  MagicWB icons
-need the MagicWB palette, and on a screen with more than eight colours also
-'Remap icon images' on in Icon Settings.  Load reads the colours from a
-palette preferences file as used by the Workbench 'Palette' program, or from
-the colour map of an IFF picture.  On the Workbench screen only the user pens
+need the MagicWB palette.  On a screen with more than eight colours, Opus
+locks pens 4 to 7 to the same colours as the last four pens, so the icons
+are right with 'Remap icon images' on or off, and also when icon.library
+remaps them.  Those four pens are then not available as user pens.  Load
+reads the colours from a palette preferences file as used by the Workbench
+'Palette' program, or from the colour map of an IFF picture.  On the Workbench screen only the user pens
 can be edited, so these two buttons are disabled there.
 
 This is also the case when Opus replaces Workbench: the Workbench screen
