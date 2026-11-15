@@ -618,7 +618,7 @@ void startup_init_gui()
 		GUI->date_length = 9;
 
 	// See if SysIHack is running
-	if (FindTask("� sysihack �"))
+	if (FindTask("\xab sysihack \xbb"))
 		GUI->flags |= GUIF_SYSIHACK;
 
 	// Allocate a string for spaces, and the global undo buffer

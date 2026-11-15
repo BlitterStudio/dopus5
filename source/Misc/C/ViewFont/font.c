@@ -1097,7 +1097,7 @@ void font_show_about(font_data *data)
 	easy.es_StructSize = sizeof(easy);
 	easy.es_Flags = 0;
 	easy.es_Title = 0;
-	easy.es_TextFormat = "Directory Opus 5 Font Viewer\nv55.0 (01.08.96)\n\n� 1996 Jonathan Potter";
+	easy.es_TextFormat = "Directory Opus 5 Font Viewer\nv55.0 (01.08.96)\n\n\xa9 1996 Jonathan Potter";
 	easy.es_GadgetFormat = GetString(&data->locale, MSG_OK);
 
 	// Open requester
