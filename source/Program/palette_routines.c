@@ -177,6 +177,24 @@ void get_colour_table()
 					GUI->pen_alloc |= 1 << (16 + pen);
 				}
 			}
+
+			// Pens 4-7 of a deeper screen get the same colours and are locked too:
+			// 8 colour icons drawn without remapping, or remapped by icon.library
+			// from the screen's first eight colours, use them. Pen 4 matches the
+			// fourth pen from the top, which holds palette entry 7.
+			if (top > 7)
+			{
+				for (pen = 0; pen < 4; pen++)
+				{
+					if (ObtainPen(GUI->screen_pointer->ViewPort.ColorMap,
+								  pen + 4,
+								  environment->env->palette[(7 - pen) * 3 + 1],
+								  environment->env->palette[(7 - pen) * 3 + 2],
+								  environment->env->palette[(7 - pen) * 3 + 3],
+								  0) != -1)
+						GUI->magicwb_pen_alloc |= 1 << pen;
+				}
+			}
 		}
 	}
 
@@ -261,15 +279,13 @@ void free_colour_table()
 			}
 		}
 
-#ifdef __amigaos3__
-		// Free the MagicWB pens
+		// Free pens 4-7
 		for (pen = 0; pen < 4; pen++)
 		{
 			if (GUI->magicwb_pen_alloc & (1 << pen))
 				ReleasePen(GUI->screen_pointer->ViewPort.ColorMap, pen + 4);
 		}
 		GUI->magicwb_pen_alloc = 0;
-#endif
 	}
 
 	// Clear allocation flags

@@ -65,9 +65,7 @@ typedef struct
 	UWORD pens[20];	   // Pen table
 	ULONG pen_alloc;  // Allocation flags
 
-#ifdef __amigaos3__
-	UWORD magicwb_pen_alloc;  // MagicWB pens 4-7 we locked in place of Workbench
-#endif
+	UWORD magicwb_pen_alloc;  // Pens 4-7 we locked for 8 colour icons (MagicWB)
 
 	struct Menu *menus;					// Menu strip
 	struct DOpusRemember *menu_memory;	// Memory for the menus
