@@ -130,8 +130,8 @@ BOOL display_open(long flags)
 	struct TextFont *font = 0;
 	BOOL pattern_started = FALSE;
 
-	// Clear "display-closed" flag
-	GUI->flags &= ~GUIF_CLOSED;
+	// Clear "display-closed" flag (and any pending Workbench close, which this open supersedes)
+	GUI->flags &= ~(GUIF_CLOSED | GUIF_CLOSE_PENDING);
 	GUI->flags2 &= ~GUIF2_PATTERN_SHOWN;
 
 	// Kill "hidden" clock if it's open
