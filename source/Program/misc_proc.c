@@ -1111,7 +1111,7 @@ IPC_EntryCode(misc_proc)
 		case MAIN_CLOSEWB:
 
 			// Send command back to main program with result
-			IPC_Command(&main_ipc, MAIN_CLOSEWB, check_closescreen(startup->window->WScreen), 0, 0, 0);
+			IPC_Command(&main_ipc, MAIN_CLOSEWB, check_closescreen((struct Screen *)startup->data), 0, 0, 0);
 			break;
 
 		// Icon positioning

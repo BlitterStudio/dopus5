@@ -442,6 +442,7 @@ BOOL check_closescreen(struct Screen *screen)
 {
 	ULONG lock;
 	struct Window *window = 0;
+	struct Screen *scr = 0;
 	TimerHandle *timer = 0;
 	short a;
 
@@ -450,6 +451,15 @@ BOOL check_closescreen(struct Screen *screen)
 	{
 		// Lock IntuitionBase
 		lock = LockIBase(0);
+
+		// Screen gone? It may have closed and been freed since the check started
+		for (scr = IntuitionBase->FirstScreen; scr && scr != screen; scr = scr->NextScreen)
+			;
+		if (!scr)
+		{
+			UnlockIBase(lock);
+			break;
+		}
 
 		// Go through window list
 		for (window = screen->FirstWindow; window; window = window->NextWindow)
@@ -502,8 +512,8 @@ BOOL check_closescreen(struct Screen *screen)
 	// Free timer
 	FreeTimer(timer);
 
-	// If window==NULL we can shut
-	return (BOOL)(!window);
+	// If the screen is still there and window==NULL we can shut
+	return (BOOL)(scr && !window);
 }
 
 // See if qualifier matches

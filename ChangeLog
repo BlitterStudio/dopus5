@@ -10,11 +10,15 @@ Program and configopus change; version bump deferred.
   four.  On a 16 colour screen this leaves four pens for user pens
   of their own instead of eight; the others use the closest colour.
 
-- Opening the display now also cancels a pending Workbench close.  A
-  reset or refresh that reopened the display while a CloseWorkBench()
-  was pending left Opus ignoring every later close request, so it
-  stayed open on the screen and anything waiting for the Workbench
-  screen to close (such as the IPrefs reset requester) hung.
+- Opus could stop closing for CloseWorkBench() for good.  A reset,
+  refresh or reveal that reopened the display after Opus had closed
+  for a CloseWorkBench(), before Opus reopened it itself, left it
+  ignoring every later close request, so it stayed open on the screen
+  and anything waiting for the Workbench screen to close (such as the
+  IPrefs reset requester) hung.  The same happened when the process
+  that checks whether the screen can close failed to start.  That
+  process also no longer reads the main window, which a reset could
+  close and free while it ran.
 
 [dopus5 5.105] Release summary
 Program bumps to 5.105, library and modules to v73r9; the commands

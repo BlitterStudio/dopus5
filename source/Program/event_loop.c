@@ -620,8 +620,11 @@ void event_loop()
 						// Set flag
 						GUI->flags |= GUIF_CLOSE_PENDING;
 
-						// Launch process to shut Opus down
-						misc_startup("dopus_closewb", MAIN_CLOSEWB, GUI->window, 0, TRUE);
+						// Launch process to shut Opus down; it gets the screen, not the
+						// window, which a reset can close while the process is running.
+						// If it fails to start no reply comes, so clear the flag now.
+						if (!misc_startup("dopus_closewb", MAIN_CLOSEWB, 0, GUI->window->WScreen, TRUE))
+							GUI->flags &= ~GUIF_CLOSE_PENDING;
 					}
 				}
 
